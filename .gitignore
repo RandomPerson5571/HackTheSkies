@@ -2,6 +2,7 @@
 
 # Dependencies
 node_modules
+.pnpm-store/
 .pnp
 .pnp.js
 
@@ -38,3 +39,7 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Generated Expo native projects
+apps/mobile/ios/
+apps/mobile/android/

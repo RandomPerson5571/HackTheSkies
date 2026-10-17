@@ -5,7 +5,7 @@ export const colors = {
   paper: "#FFFDF5",
   white: "#FFFDF5",
   accent: "#3D568F",
-  border: "#D5DDB1",
+  border: "#E6E9D2",
   tint: "#EAF3B2",
   blue: "#3D568F",
   scrim: "#3D568F66",

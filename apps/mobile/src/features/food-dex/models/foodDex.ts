@@ -22,24 +22,37 @@ export type FoodEntry = {
 export type Dish = CatalogDish;
 export const dishes: Dish[] = catalogDishes;
 
-const defaultImage =
-  "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80";
-const starterImages: Partial<Record<Cuisine, string>> = {
-  Japanese:
-    "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80",
-  Italian:
-    "https://images.unsplash.com/photo-1579751626657-72bc17010498?w=600&q=80",
-  Latin:
-    "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80",
-  "South Asian":
-    "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80",
-  Chinese:
-    "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80",
-  Thai: "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=600&q=80",
+const coverIds: Partial<Record<Cuisine, string>> = {
+  Chinese: "dumplings",
+  Korean: "bibimbap",
+  Japanese: "ramen",
+  Vietnamese: "pho",
+  Thai: "pad-thai",
+  "South Asian": "biryani",
+  Levant: "musakhan",
+  Greek: "souvlaki",
+  Persian: "ghormeh-sabzi",
+  French: "croissant",
+  Italian: "pizza",
+  Latin: "tacos",
+  Caribbean: "jerk-chicken",
+  American: "cheeseburger",
 };
-export const cuisineImages = Object.fromEntries(
-  cuisines.map((cuisine) => [cuisine, starterImages[cuisine] ?? defaultImage]),
-) as Record<Cuisine, string>;
+
+export const cuisineCovers = Object.fromEntries(
+  cuisines.map((cuisine) => [
+    cuisine,
+    dishes.find(
+      (dish) => dish.cuisine === cuisine && dish.id === coverIds[cuisine],
+    ) ?? dishes.find((dish) => dish.cuisine === cuisine && dish.image),
+  ]),
+) as Record<Cuisine, Dish | undefined>;
+
+export function findCatalogDish(name: string, cuisine: Cuisine) {
+  return dishes.find(
+    (dish) => foodKey(dish.name, dish.cuisine) === foodKey(name, cuisine),
+  );
+}
 
 export function foodKey(name: string, cuisine: Cuisine) {
   return `${cuisine}:${name.trim().normalize("NFKC").toLocaleLowerCase().replace(/\s+/g, " ")}`;

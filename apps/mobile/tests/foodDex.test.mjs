@@ -7,7 +7,12 @@ import {
   dishes,
   cuisines,
   cuisineRegions,
+  cuisineCovers,
+  findCatalogDish,
 } from "../src/features/food-dex/models/foodDex.ts";
+import { readFileSync, existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 
 const ramen = {
   id: "one",
@@ -109,5 +114,43 @@ test("all requested cuisine groups and regions are represented", () => {
         region,
       );
     }
+  }
+});
+
+test("cuisine covers are actual dishes from their own collections", () => {
+  for (const cuisine of cuisines.filter((cuisine) => cuisine !== "Other")) {
+    const cover = cuisineCovers[cuisine];
+    assert.equal(cover.cuisine, cuisine);
+    assert.ok(cover.image?.localPath, `Missing cover image for ${cuisine}`);
+    assert.equal(findCatalogDish(cover.name, cuisine), cover);
+  }
+  assert.equal(cuisineCovers.Other, undefined);
+  assert.equal(findCatalogDish("Unknown custom dish", "Other"), undefined);
+});
+
+test("every imported dish photo is registered as a bundled local asset", () => {
+  const manifestUrl = new URL(
+    "../src/features/food-dex/data/catalogImages.ts",
+    import.meta.url,
+  );
+  const manifest = readFileSync(manifestUrl, "utf8");
+  const directory = dirname(fileURLToPath(manifestUrl));
+  const entries = [
+    ...manifest.matchAll(
+      /("(?:\\.|[^"\\])*"):\s*require\(("(?:\\.|[^"\\])*")\)/g,
+    ),
+  ];
+  const assets = new Map(
+    entries.map((match) => [JSON.parse(match[1]), JSON.parse(match[2])]),
+  );
+  assert.ok(dishes.length >= 256);
+  assert.equal(
+    assets.size,
+    dishes.filter((dish) => dish.image?.localPath).length,
+  );
+  for (const dish of dishes) {
+    const asset = assets.get(dish.id);
+    assert.ok(asset, `Missing bundled photo for ${dish.name}`);
+    assert.ok(existsSync(resolve(directory, asset)), asset);
   }
 });

@@ -76,7 +76,9 @@ The command stores:
   source and license credits, local picture paths, and import coverage.
 - `data/catalog.md`: a browsable list grouped by cuisine with local pictures and credits.
 - `data/images/`: downloaded JPEG, PNG, or WebP pictures for offline use.
-- `data/catalog.ts`: the same dishes for FoodDex.
+- `data/catalog.ts`: the same dishes for FoodDex. The default import also refreshes
+  `apps/mobile/src/features/food-dex/data/catalogImages.ts`, whose literal asset
+  references bundle downloaded photos on iOS, Android, and web.
 - `data/import-report.json`: provider counts and unresolved coverage.
 
 `--json /path/catalog.json` changes the JSON export location. By default it is
@@ -86,10 +88,12 @@ its individual license and artist credit, including share-alike requirements.
 
 ## Image review and coverage
 
-New photo candidates have `reviewed: false`. Check that the image matches the
-dish and that the source's reuse terms fit your use, then set `reviewed: true`
-on its image record in `data/catalog.ts`. FoodDex displays reviewed dish images
-with a linked credit. Unreviewed or missing photos use the existing dish icon.
+New photo candidates have `reviewed: false`; this records editorial review status.
+FoodDex displays the imported photos, prefers bundled downloads, and uses dish
+photos as cuisine covers. The review flag does not hide images in the app.
+Each photo has an expandable credit with source and license links. User-taken
+photos take priority for discoveries. Missing or failed photos use a neutral
+food icon. `Other` is available for custom discoveries and has no imported cover.
 The importer validates HTTPS URLs and provider domains; it does not claim that
 image contents or reuse permissions have been automatically verified.
 

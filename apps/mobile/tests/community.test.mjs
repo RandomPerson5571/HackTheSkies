@@ -8,18 +8,34 @@ import {
 import { places } from "../src/features/restaurants/data/places.ts";
 
 test("badges count distinct visited places in their own category", () => {
+  // Test category behavior independently of the imported restaurant catalog.
+  const fixtures = [
+    ["test-bakery", "Bakery"],
+    ["test-bread", "Bakery"],
+    ["test-ramen", "Ramen"],
+    ["test-coffee", "Coffee"],
+    ["test-espresso", "Coffee"],
+    ["test-pizza", "Pizza"],
+  ].map(([id, category]) => ({ ...places[0], id, category }));
   assert.equal(
-    badgeProgress("Bakery", ["bakery", "bakery", "ramen"], places),
+    badgeProgress(
+      "Bakery",
+      ["test-bakery", "test-bakery", "test-ramen"],
+      fixtures,
+    ),
     1,
   );
-  assert.equal(badgeProgress("Bakery", ["bakery", "bread"], places), 2);
-  assert.equal(badgeProgress("Ramen", [], places), 0);
+  assert.equal(
+    badgeProgress("Bakery", ["test-bakery", "test-bread"], fixtures),
+    2,
+  );
+  assert.equal(badgeProgress("Ramen", [], fixtures), 0);
   for (const badge of cuisineBadges) {
     assert.ok(
       badgeProgress(
         badge.category,
-        places.map((place) => place.id),
-        places,
+        fixtures.map((place) => place.id),
+        fixtures,
       ) >= badge.goal,
     );
   }

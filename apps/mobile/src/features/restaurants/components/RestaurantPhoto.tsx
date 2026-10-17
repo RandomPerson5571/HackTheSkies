@@ -1,4 +1,6 @@
-import { Image, type ImageStyle, type StyleProp } from "react-native";
+import { useState } from "react";
+import { Text, View, type ImageStyle, type StyleProp } from "react-native";
+import { LazyImage } from "../../../components/images/LazyImage";
 import type { Place } from "../data/places";
 import type { Recommendation } from "../models/recommendations";
 
@@ -7,11 +9,34 @@ export function RestaurantPhoto({
   place,
   recommendation,
   style,
+  showAll = false,
+  eager = false,
 }: {
+  showAll?: boolean;
+  eager?: boolean;
   place: Place;
   recommendation: Recommendation | undefined;
   style: StyleProp<ImageStyle>;
 }) {
-  if (!recommendation?.suggested) return null;
-  return <Image source={{ uri: place.image }} style={style} />;
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  if (!showAll && !recommendation?.suggested) return null;
+  if (failedUrl === place.image)
+    return (
+      <View style={style}>
+        <Text>Photo unavailable</Text>
+      </View>
+    );
+  return (
+    <LazyImage
+      eager={eager}
+      onError={() => setFailedUrl(place.image)}
+      source={{ uri: place.image }}
+      accessibilityLabel={
+        place.photo
+          ? `${place.name}${place.photo.kind === "illustration" ? `. Food illustration: ${place.photo.dishName}, not photographed at this restaurant` : ""}. Photo: ${place.photo.photographer || "source website"}${place.photo.licenseName ? `, ${place.photo.licenseName}` : ""}. Credits in restaurant details.`
+          : `${place.name} placeholder photo`
+      }
+      style={style}
+    />
+  );
 }

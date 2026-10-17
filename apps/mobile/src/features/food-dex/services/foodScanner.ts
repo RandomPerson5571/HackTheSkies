@@ -1,7 +1,15 @@
+import { normalizeCuisine, dishes } from "../models/foodDex.ts";
+import type { Cuisine } from "../models/foodDex";
+export type FoodRecognition = {
+  name: string;
+  cuisine: Cuisine;
+  catalogId: string | null;
+};
+
 export async function recognizeFood(
   base64: string,
   signal: AbortSignal,
-): Promise<{ name: string; cuisine: string } | null> {
+): Promise<FoodRecognition | null> {
   const endpoint = process.env.EXPO_PUBLIC_FOOD_SCAN_URL;
   if (!endpoint)
     throw new Error(
@@ -11,26 +19,48 @@ export async function recognizeFood(
     throw new Error(
       "This photo is too large to scan. Try a smaller photo or enter the dish below.",
     );
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ image: base64 }),
-    signal,
-  });
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: base64 }),
+      signal,
+    });
+  } catch (error) {
+    if (signal.aborted) throw error;
+    throw new Error(
+      "Couldn’t reach food recognition. Check your connection and the recognition server address, then retry.",
+      { cause: error },
+    );
+  }
   if (!response.ok)
     throw new Error(
-      "The photo couldn’t be identified. Try again or enter the dish below.",
+      response.status === 503
+        ? "Recognition isn’t configured. You can still add this meal by hand."
+        : response.status === 429
+          ? "Recognition is busy. Wait a moment and retry, or enter the dish below."
+          : "The photo couldn’t be identified. Try again or enter the dish below.",
     );
   const result: unknown = await response.json();
   if (
     !result ||
     typeof result !== "object" ||
     !("name" in result) ||
-    !("cuisine" in result)
+    !("cuisine" in result) ||
+    typeof result.name !== "string" ||
+    typeof result.cuisine !== "string"
   )
     return null;
-  const { name, cuisine } = result;
-  return typeof name === "string" && name.trim() && typeof cuisine === "string"
-    ? { name: name.trim().slice(0, 80), cuisine }
-    : null;
+  const cuisine = normalizeCuisine(result.cuisine);
+  if (!result.name.trim() || !cuisine) return null;
+  const catalogId =
+    "catalogId" in result &&
+    typeof result.catalogId === "string" &&
+    dishes.some(
+      (dish) => dish.id === result.catalogId && dish.cuisine === cuisine,
+    )
+      ? result.catalogId
+      : null;
+  return { name: result.name.trim().slice(0, 80), cuisine, catalogId };
 }

@@ -22,8 +22,12 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { migrateWebBookmarks } from "../lib/migrateWebBookmarks";
+import { places as bundledPlaces } from "../features/restaurants/data/places";
 import { StatusBar } from "expo-status-bar";
 import { Ionicons } from "@expo/vector-icons";
+import { FoodCameraScreen } from "../features/food-dex/screens/FoodCameraScreen";
 import MapView, { type MapCamera } from "../components/maps";
 import {
   SafeAreaProvider,
@@ -35,7 +39,6 @@ import {
   foodSpecialties,
   restaurantTypes,
   mapCenter,
-  places,
   type Category,
   type Place,
 } from "../features/restaurants/data/places";
@@ -53,10 +56,17 @@ import {
   buildRecommendations,
   recommendationLabel,
 } from "../features/restaurants/models/recommendations";
+import { FoodRecommender } from "../features/restaurants/components/FoodRecommender";
+import { RestaurantPhotoCredit } from "../features/restaurants/components/RestaurantPhotoCredit";
 import { RestaurantPhoto } from "../features/restaurants/components/RestaurantPhoto";
 import { CommunityScreen } from "../features/community/screens/CommunityScreens";
-import { FoodDexScreen } from "../features/food-dex/screens/FoodDexScreen";
-import { startSupabaseSessionRefresh } from "../lib/supabase";
+import {
+  FoodDexScreen,
+  type FoodCapture,
+} from "../features/food-dex/screens/FoodDexScreen";
+import { BackendProvider, useBackend } from "../lib/BackendProvider";
+import { useGuestDocument } from "../hooks/useGuestDocument";
+import { parseProfile } from "../features/profile/models/profile";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 type FilterDimension =
@@ -100,7 +110,18 @@ function Icon({
   return <Ionicons name={name} size={size} color={color} accessible={false} />;
 }
 
-function FoodMap() {
+function FoodMap({ migrationError = "" }: { migrationError?: string }) {
+  const { places, error: backendError } = useBackend();
+  const cuisineCategories = [
+    "All",
+    ...Array.from(
+      new Set(
+        places
+          .map((place) => place.cuisine)
+          .filter((cuisine): cuisine is string => Boolean(cuisine)),
+      ),
+    ).sort(),
+  ];
   const insets = useSafeAreaInsets();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const camera = useRef<MapCamera>(null);
@@ -124,16 +145,33 @@ function FoodMap() {
   const saved = collection.saved;
   const recommendations = useMemo(
     () => buildRecommendations(places, collection.ratings),
-    [collection.ratings],
+    [places, collection.ratings],
   );
   const [tab, setTab] = useState<
-    "explore" | "saved" | "restaurants" | "profile" | "favorites" | "dex"
+    | "explore"
+    | "saved"
+    | "restaurants"
+    | "profile"
+    | "favorites"
+    | "dex"
+    | "camera"
   >("explore");
-  const [profile, setProfile] = useState<Profile>({
-    name: "Food explorer",
-    neighborhood: "Toronto",
-    diet: "No preference",
-  });
+  const cameraReturnTab = useRef<Exclude<typeof tab, "camera">>("explore");
+  const {
+    value: profile,
+    update: setProfile,
+    error: profileError,
+  } = useGuestDocument<Profile>(
+    "profile",
+    () => ({
+      name: "Food explorer",
+      neighborhood: "Toronto",
+      diet: "No preference",
+    }),
+    parseProfile,
+  );
+  const [recommenderVisible, setRecommenderVisible] = useState(false);
+  const [foodCapture, setFoodCapture] = useState<FoodCapture | null>(null);
   const [listVisible, setListVisible] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
@@ -203,6 +241,14 @@ function FoodMap() {
   function toggleSave(place: Place) {
     dispatch({ type: "save", placeId: place.id });
   }
+  function openFoodCamera() {
+    Keyboard.dismiss();
+    if (tab !== "camera") cameraReturnTab.current = tab;
+    setTab("camera");
+    setFoodCapture(null);
+    setSelected(null);
+    setListVisible(false);
+  }
   function resetMap() {
     setSelected(null);
     camera.current?.setCamera({
@@ -264,14 +310,26 @@ function FoodMap() {
 
   return (
     <View style={styles.screen}>
-      <StatusBar style="dark" />
-      {tab === "dex" ? (
-        <FoodDexScreen />
+      <StatusBar style={tab === "camera" ? "light" : "dark"} />
+      {tab === "camera" ? (
+        <FoodCameraScreen
+          onClose={() => setTab(cameraReturnTab.current)}
+          onCapture={(capture) => {
+            setFoodCapture(capture);
+            setTab("dex");
+          }}
+        />
+      ) : tab === "dex" ? (
+        <FoodDexScreen
+          key={foodCapture?.id ?? "dex"}
+          capture={foodCapture}
+          onOpenCamera={openFoodCamera}
+        />
       ) : tab === "favorites" ? (
         <CommunityScreen
           collection={collection}
           dispatch={dispatch}
-          storageError={storageError}
+          storageError={migrationError || storageError || backendError}
           onShowMap={(place) => {
             setTab("explore");
             setCategory("All");
@@ -284,6 +342,7 @@ function FoodMap() {
           saved={saved}
           profile={profile}
           onSave={setProfile}
+          storageError={migrationError || profileError}
           topInset={insets.top}
           bottomInset={insets.bottom}
         />
@@ -291,7 +350,7 @@ function FoodMap() {
         <RestaurantsScreen
           collection={collection}
           dispatch={dispatch}
-          storageError={storageError}
+          storageError={migrationError || storageError || backendError}
           onShowMap={(place) => {
             setTab("explore");
             setCategory("All");
@@ -323,7 +382,7 @@ function FoodMap() {
               <Text style={styles.emptyTitle}>Your next bite starts here</Text>
               <Text style={styles.emptyCopy}>
                 Add your Mapbox public token to load the map. You can explore
-                the sample places below.
+                the restaurants below.
               </Text>
               <Text style={styles.setupCode}>
                 EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN
@@ -363,14 +422,25 @@ function FoodMap() {
                 />
                 <Text style={styles.eyebrow}>GOOD FOOD. GREAT FINDS.</Text>
               </View>
-              <View style={styles.brand}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Open AI food recommender"
+                onPress={() => {
+                  Keyboard.dismiss();
+                  setRecommenderVisible(true);
+                }}
+                style={({ pressed }) => [
+                  styles.brand,
+                  pressed && styles.pressed,
+                ]}
+              >
                 <Icon name="sparkles-outline" size={23} color={colors.accent} />
-              </View>
+              </Pressable>
             </View>
             <View style={styles.search}>
               <Icon name="search-outline" color={colors.muted} />
               <TextInput
-                accessibilityLabel="Search sample food places"
+                accessibilityLabel="Search restaurants"
                 placeholder="Coffee, pizza, a little treat…"
                 placeholderTextColor={colors.muted}
                 value={query}
@@ -652,14 +722,10 @@ function FoodMap() {
             style={[styles.bottom, { bottom: insets.bottom + 90 }]}
           >
             <View style={styles.mapActions}>
-              <View style={styles.areaPill}>
-                <View style={styles.dot} />
-                <Text style={styles.small}>Toronto · Sample places</Text>
-              </View>
               {token && (
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Show all Toronto sample places"
+                  accessibilityLabel="Show all Toronto restaurants"
                   onPress={resetMap}
                   style={({ pressed }) => [
                     styles.roundButton,
@@ -674,6 +740,8 @@ function FoodMap() {
               <View style={styles.placeCard}>
                 <View style={styles.cardTop}>
                   <RestaurantPhoto
+                    eager
+                    showAll
                     place={active}
                     recommendation={recommendations.get(active.id)}
                     style={styles.cardImage}
@@ -684,6 +752,7 @@ function FoodMap() {
                     </Text>
                     <Text style={styles.placeName}>{active.name}</Text>
                     <Text style={styles.small}>{active.note}</Text>
+                    <RestaurantPhotoCredit place={active} />
                   </View>
                   <Pressable
                     accessibilityRole="button"
@@ -696,7 +765,8 @@ function FoodMap() {
                 </View>
                 <Text style={styles.address}>{active.address}</Text>
                 <Text style={styles.small}>
-                  {recommendationLabel(recommendations.get(active.id))}
+                  {recommendationLabel(recommendations.get(active.id))} · Sample
+                  community reviews
                 </Text>
                 <View style={styles.ratingRow}>
                   <Text style={styles.small}>Your rating</Text>
@@ -776,13 +846,31 @@ function FoodMap() {
                     />
                   </Pressable>
                 </View>
+                {active.sourceUrl && (
+                  <Pressable
+                    accessibilityRole="link"
+                    accessibilityLabel={`View listing source for ${active.name}`}
+                    onPress={() => {
+                      setLinkError(false);
+                      void Linking.openURL(active.sourceUrl!).catch(() =>
+                        setLinkError(true),
+                      );
+                    }}
+                    style={({ pressed }) => [
+                      { minHeight: 44, justifyContent: "center" },
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <Text style={styles.small}>View listing source ↗</Text>
+                  </Pressable>
+                )}
                 {linkError && (
                   <Text accessibilityRole="alert" style={styles.small}>
-                    Couldn’t open directions. Please try again.
+                    Couldn’t open this link. Please try again.
                   </Text>
                 )}
               </View>
-            ) : (
+            ) : tab === "saved" ? (
               <Pressable
                 accessibilityRole="button"
                 onPress={() => setListVisible(true)}
@@ -805,7 +893,7 @@ function FoodMap() {
                 <View style={styles.flex}>
                   <Text style={styles.browseTitle}>
                     {visible.length
-                      ? `${visible.length} spots to ${tab === "saved" ? "come back to" : "fall in love with"}`
+                      ? `${visible.length} spots to come back to`
                       : "No spots here yet"}
                   </Text>
                   <Text style={styles.small}>
@@ -818,75 +906,108 @@ function FoodMap() {
                 </View>
                 <Icon name="chevron-up" size={18} />
               </Pressable>
-            )}
+            ) : null}
           </View>
         </>
       )}
-      <View
-        style={[
-          styles.nav,
-          { position: "absolute", bottom: insets.bottom + 12 },
-        ]}
-      >
-        {(
-          [
-            "explore",
-            "restaurants",
-            "dex",
-            "favorites",
-            "saved",
-            "profile",
-          ] as const
-        ).map((item) => (
-          <Pressable
-            key={item}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: tab === item }}
-            onPress={() => {
-              setTab(item);
-              setSelected(null);
-            }}
-            style={({ pressed }) => [
-              styles.navItem,
-              tab === item && styles.navActive,
-              pressed && styles.pressed,
-            ]}
-          >
-            <Icon
-              name={
-                item === "explore"
-                  ? "compass-outline"
-                  : item === "dex"
-                    ? "book-outline"
-                    : item === "restaurants"
-                      ? "restaurant-outline"
-                      : item === "saved"
-                        ? "bookmark-outline"
-                        : item === "favorites"
-                          ? "heart-outline"
-                          : "person-outline"
-              }
-              color={tab === item ? colors.accent : colors.muted}
-            />
-            <Text
-              style={[styles.navText, tab === item && styles.navTextActive]}
-            >
-              {item === "explore"
-                ? "Explore"
-                : item === "dex"
-                  ? "Food Dex"
-                  : item === "restaurants"
-                    ? "Restaurants"
-                    : item === "saved"
-                      ? `Saved${saved.length ? ` · ${saved.length}` : ""}`
-                      : item === "favorites"
-                        ? "Favorites"
-                        : "Profile"}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
+      {tab !== "camera" && (
+        <View
+          style={[
+            styles.nav,
+            { position: "absolute", bottom: insets.bottom + 12 },
+          ]}
+        >
+          {(
+            [
+              ["explore", "restaurants", "dex"],
+              "camera",
+              ["favorites", "saved", "profile"],
+            ] as const
+          ).map((group, index) =>
+            group === "camera" ? (
+              <View key="camera" style={styles.cameraSlot}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Take a food photo"
+                  accessibilityHint="Opens the camera to photograph food for your Food Dex"
+                  onPress={openFoodCamera}
+                  style={({ pressed }) => [
+                    styles.cameraButton,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Icon name="camera" size={28} color={colors.white} />
+                </Pressable>
+              </View>
+            ) : (
+              <View key={index} style={styles.navGroup}>
+                {group.map((item) => (
+                  <Pressable
+                    key={item}
+                    accessibilityRole="tab"
+                    accessibilityLabel={
+                      item === "explore"
+                        ? "Explore"
+                        : item === "dex"
+                          ? "Food Dex"
+                          : item === "restaurants"
+                            ? "Restaurants"
+                            : item === "saved"
+                              ? `Saved${saved.length ? ` · ${saved.length}` : ""}`
+                              : item === "favorites"
+                                ? "Favorites"
+                                : "Profile"
+                    }
+                    accessibilityState={{ selected: tab === item }}
+                    onPress={() => {
+                      setTab(item);
+                      setFoodCapture(null);
+                      setSelected(null);
+                    }}
+                    style={({ pressed }) => [
+                      styles.navItem,
+                      tab === item && styles.navActive,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <Icon
+                      name={
+                        item === "explore"
+                          ? "compass-outline"
+                          : item === "dex"
+                            ? "book-outline"
+                            : item === "restaurants"
+                              ? "restaurant-outline"
+                              : item === "saved"
+                                ? "bookmark-outline"
+                                : item === "favorites"
+                                  ? "heart-outline"
+                                  : "person-outline"
+                      }
+                      color={tab === item ? colors.accent : colors.muted}
+                    />
+                  </Pressable>
+                ))}
+              </View>
+            ),
+          )}
+        </View>
+      )}
 
+      {recommenderVisible && (
+        <FoodRecommender
+          visible={recommenderVisible}
+          diet={profile.diet}
+          onClose={() => setRecommenderVisible(false)}
+          onSelect={(place) => {
+            setRecommenderVisible(false);
+            setTab("explore");
+            setCategory("All");
+            setQuery("");
+            choose(place);
+          }}
+        />
+      )}
       <Modal
         visible={listVisible}
         animationType="none"
@@ -916,7 +1037,7 @@ function FoodMap() {
                     : "Good food, close by"}
                 </Text>
                 <Text style={styles.small}>
-                  {visible.length} sample places ·{" "}
+                  {visible.length} restaurants ·{" "}
                   {tab === "saved" ? "Saved on this device" : "Toronto"}
                 </Text>
               </View>
@@ -953,12 +1074,14 @@ function FoodMap() {
                     ]}
                   >
                     <RestaurantPhoto
+                      showAll
                       place={item}
                       recommendation={recommendations.get(item.id)}
                       style={styles.listImage}
                     />
                     <View style={styles.flex}>
                       <Text style={styles.browseTitle}>{item.name}</Text>
+                      <RestaurantPhotoCredit place={item} />
                       <Text style={styles.small}>
                         {item.category} · {item.neighborhood}
                       </Text>
@@ -979,11 +1102,47 @@ function FoodMap() {
 }
 
 export default function App() {
-  useEffect(() => startSupabaseSessionRefresh(), []);
-
+  const [ready, setReady] = useState(Platform.OS !== "web");
+  const [migrationError, setMigrationError] = useState("");
+  useEffect(() => {
+    if (Platform.OS !== "web") return;
+    let cancelled = false;
+    void migrateWebBookmarks(
+      AsyncStorage,
+      bundledPlaces.map((place) => place.id),
+    )
+      .catch(() => {
+        if (!cancelled)
+          setMigrationError(
+            "Previous browser bookmarks couldn’t be imported. Reload to retry; the original bookmarks are still stored.",
+          );
+      })
+      .finally(() => {
+        if (!cancelled) setReady(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  if (!ready)
+    return (
+      <View
+        style={[
+          styles.screen,
+          { alignItems: "center", justifyContent: "center" },
+        ]}
+      >
+        <ActivityIndicator
+          color={colors.accent}
+          accessibilityLabel="Loading your saved places"
+        />
+      </View>
+    );
   return (
     <SafeAreaProvider>
-      <FoodMap />
+      <BackendProvider>
+        <FoodMap migrationError={migrationError} />
+      </BackendProvider>
     </SafeAreaProvider>
   );
 }
@@ -1152,7 +1311,7 @@ const styles = StyleSheet.create({
   bottom: { position: "absolute", left: 16, right: 16, gap: 12 },
   mapActions: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   areaPill: {
@@ -1167,7 +1326,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.accent },
-  small: { fontSize: 12, lineHeight: 18, color: colors.ink },
+  small: { fontSize: 12, lineHeight: 18, color: colors.muted },
   roundButton: {
     width: 46,
     height: 46,
@@ -1208,32 +1367,49 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 5,
     borderRadius: 32,
+    alignItems: "center",
+  },
+  cameraSlot: {
+    width: 64,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cameraButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginTop: -16,
+    backgroundColor: colors.accent,
+    borderWidth: 4,
+    borderColor: colors.paper,
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 4px 12px #364C8433",
+  },
+  navGroup: {
+    flex: 1,
+    flexDirection: "row",
+    padding: 4,
+    borderRadius: 32,
     backgroundColor: colors.paper,
     borderWidth: 1,
     borderColor: colors.border,
     boxShadow: "0 4px 20px #3D568F12",
   },
   navItem: {
+    backgroundColor: colors.paper,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 4,
     paddingVertical: 8,
     paddingHorizontal: 3,
     flex: 1,
-    minWidth: 48,
+    minWidth: 0,
     flexShrink: 1,
     borderRadius: 28,
     minHeight: 48,
   },
   navActive: { backgroundColor: colors.tint },
-  navText: {
-    fontSize: 10,
-    fontWeight: "600",
-    color: colors.muted,
-    textAlign: "center",
-  },
-  navTextActive: { color: colors.accent },
   placeCard: {
     backgroundColor: colors.paper,
     borderRadius: 24,

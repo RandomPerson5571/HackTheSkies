@@ -6,9 +6,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "server", "scripts", "tests", "metro.config.cjs", "dist", "ios", "android"]
 }

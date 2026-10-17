@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { places, type Place } from "../../restaurants/data/places";
+import { type Place } from "../../restaurants/data/places";
 import { buildRecommendations } from "../../restaurants/models/recommendations";
 import { RestaurantPhoto } from "../../restaurants/components/RestaurantPhoto";
 import { colors } from "../../../theme/index";
@@ -25,11 +25,9 @@ import type {
   CollectionAction,
   RestaurantCollection,
 } from "../../restaurants/models/restaurantCollection";
-import {
-  badgeProgress,
-  cuisineBadges,
-  sampleFriends,
-} from "../models/community";
+import { badgeProgress, cuisineBadges } from "../models/community";
+
+import { useBackend } from "../../../lib/BackendProvider";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
 type Props = {
@@ -182,9 +180,10 @@ export function FavoritesScreen({
   storageError,
   onShowMap,
 }: Props) {
+  const { places } = useBackend();
   const recommendations = useMemo(
     () => buildRecommendations(places, collection.ratings),
-    [collection.ratings],
+    [places, collection.ratings],
   );
   const [query, setQuery] = useState("");
   const ranked = collection.favorites.flatMap((id) => {
@@ -335,9 +334,10 @@ export function FriendsScreen({
   storageError,
   onShowMap,
 }: Props) {
+  const { places, friends: sampleFriends } = useBackend();
   const recommendations = useMemo(
     () => buildRecommendations(places, collection.ratings),
-    [collection.ratings],
+    [places, collection.ratings],
   );
   const [mode, setMode] = useState<"activity" | "find">("activity");
   const [query, setQuery] = useState("");
@@ -363,7 +363,7 @@ export function FriendsScreen({
     >
       <Text style={s.notice}>
         Sample community · These profiles and visits are fictional. Adding a
-        friend updates this device only.
+        friend saves them to your private food journal.
       </Text>
       <View style={s.actions}>
         <Action
@@ -530,6 +530,7 @@ export function AchievementsScreen({
   storageError,
   onShowMap,
 }: Props) {
+  const { places } = useBackend();
   const [filter, setFilter] = useState<"all" | "earned" | "progress">("all");
   const badges = cuisineBadges.map((badge) => ({
     ...badge,

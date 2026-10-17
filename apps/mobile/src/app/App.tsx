@@ -1,11 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Image,
   Keyboard,
   Linking,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -28,12 +35,20 @@ import {
   type Place,
 } from "../features/restaurants/data/places";
 
-import { ProfileScreen, type Profile } from "../features/profile/screens/ProfileScreen";
+import {
+  ProfileScreen,
+  type Profile,
+} from "../features/profile/screens/ProfileScreen";
 
 const token = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
 import { colors } from "../theme/index";
 import { RestaurantsScreen } from "../features/restaurants/screens/RestaurantsScreen";
 import { useRestaurantCollection } from "../features/restaurants/hooks/useRestaurantCollection";
+import {
+  buildRecommendations,
+  recommendationLabel,
+} from "../features/restaurants/models/recommendations";
+import { RestaurantPhoto } from "../features/restaurants/components/RestaurantPhoto";
 import { CommunityScreen } from "../features/community/screens/CommunityScreens";
 import { FoodDexScreen } from "../features/food-dex/screens/FoodDexScreen";
 import { startSupabaseSessionRefresh } from "../lib/supabase";
@@ -45,6 +60,7 @@ const categoryIcons: Record<Category, IconName> = {
   Pizza: "pizza-outline",
   Bakery: "storefront-outline",
   Ramen: "restaurant-outline",
+  Restaurant: "restaurant-outline",
 };
 
 function Icon({
@@ -67,6 +83,10 @@ function FoodMap() {
   const [selected, setSelected] = useState<Place | null>(null);
   const { collection, dispatch, storageError } = useRestaurantCollection();
   const saved = collection.saved;
+  const recommendations = useMemo(
+    () => buildRecommendations(places, collection.ratings),
+    [collection.ratings],
+  );
   const [tab, setTab] = useState<
     "explore" | "saved" | "restaurants" | "profile" | "favorites" | "dex"
   >("explore");
@@ -79,20 +99,35 @@ function FoodMap() {
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
   const [linkError, setLinkError] = useState(false);
-  const visible = places.filter(
-    (place) =>
-      (category === "All" || place.category === category) &&
-      (tab === "explore" || saved.includes(place.id)) &&
-      `${place.name} ${place.category} ${place.neighborhood}`
-        .toLowerCase()
-        .includes(query.toLowerCase().trim()),
+  const deferredQuery = useDeferredValue(query);
+  const savedFilter = tab === "explore" ? null : saved;
+  const visible = useMemo(() => {
+    const normalizedQuery = deferredQuery.toLowerCase().trim();
+    const savedIds = savedFilter ? new Set(savedFilter) : null;
+    return places.filter(
+      (place) =>
+        (category === "All" || place.category === category) &&
+        (!savedIds || savedIds.has(place.id)) &&
+        `${place.name} ${place.category} ${place.cuisine ?? ""} ${place.neighborhood} ${place.address}`
+          .toLowerCase()
+          .includes(normalizedQuery),
+    );
+  }, [category, deferredQuery, savedFilter]);
+  const rankedVisible = useMemo(
+    () =>
+      [...visible].sort(
+        (a, b) =>
+          (recommendations.get(b.id)?.score ?? 0) -
+          (recommendations.get(a.id)?.score ?? 0),
+      ),
+    [visible, recommendations],
   );
   const active =
     selected && visible.some((place) => place.id === selected.id)
       ? selected
       : null;
 
-  function choose(place: Place) {
+  const choose = useCallback((place: Place) => {
     Keyboard.dismiss();
     setSelected(place);
     setLinkError(false);
@@ -102,7 +137,15 @@ function FoodMap() {
       zoomLevel: 14.7,
       animationDuration: 0,
     });
-  }
+  }, []);
+  const onMapReady = useCallback(() => {
+    setMapReady(true);
+    setMapError(false);
+  }, []);
+  const onMapError = useCallback(() => {
+    setMapError(true);
+    setMapReady(false);
+  }, []);
   function toggleSave(place: Place) {
     dispatch({ type: "save", placeId: place.id });
   }
@@ -110,10 +153,47 @@ function FoodMap() {
     setSelected(null);
     camera.current?.setCamera({
       centerCoordinate: mapCenter,
-      zoomLevel: 13.5,
+      zoomLevel: 10.5,
       animationDuration: 0,
     });
   }
+
+  const renderPlaceMarker = useCallback(
+    (place: Place, selected: boolean) => (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${recommendations.get(place.id)?.suggested ? "Suggested: " : ""}View ${place.name}, ${place.category}`}
+        accessibilityState={{ selected }}
+        onPress={() => choose(place)}
+        style={({ pressed }) => [styles.markerWrap, pressed && styles.pressed]}
+      >
+        <View
+          style={[
+            styles.photoMarker,
+            selected && styles.selectedMarker,
+            !recommendations.get(place.id)?.suggested && styles.plainMarker,
+          ]}
+        >
+          <RestaurantPhoto
+            place={place}
+            recommendation={recommendations.get(place.id)}
+            style={styles.markerImage}
+          />
+          {!recommendations.get(place.id)?.suggested && (
+            <Icon name={categoryIcons[place.category]} />
+          )}
+          <View style={styles.markerBadge}>
+            <Icon name={categoryIcons[place.category]} size={12} />
+          </View>
+        </View>
+        <Text numberOfLines={1} style={styles.markerLabel}>
+          {recommendations.get(place.id)?.suggested ? "Suggested · " : ""}
+          {place.name}
+        </Text>
+      </Pressable>
+    ),
+    [choose, recommendations],
+  );
 
   return (
     <View style={styles.screen}>
@@ -159,44 +239,16 @@ function FoodMap() {
               ref={camera}
               token={token}
               center={selected?.coordinate ?? mapCenter}
-              zoom={selected ? 14.7 : 13.5}
+              zoom={selected ? 14.7 : 10.5}
               topInset={insets.top}
               bottomInset={insets.bottom}
               places={visible}
               selectedId={active?.id}
               onSelect={choose}
-              onReady={() => { setMapReady(true); setMapError(false); }}
-              onError={() => { setMapError(true); setMapReady(false); }}
-              renderMarker={(place) => (
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={`View ${place.name}, ${place.category}`}
-                    accessibilityState={{ selected: active?.id === place.id }}
-                    onPress={() => choose(place)}
-                    style={({ pressed }) => [
-                      styles.markerWrap,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <View
-                      style={[
-                        styles.photoMarker,
-                        active?.id === place.id && styles.selectedMarker,
-                      ]}
-                    >
-                      <Image
-                        source={{ uri: place.image }}
-                        style={styles.markerImage}
-                      />
-                      <View style={styles.markerBadge}>
-                        <Icon name={categoryIcons[place.category]} size={12} />
-                      </View>
-                    </View>
-                    <Text numberOfLines={1} style={styles.markerLabel}>
-                      {place.name}
-                    </Text>
-                  </Pressable>
-              )}
+              onReady={onMapReady}
+              onError={onMapError}
+              renderPlaceMarker={renderPlaceMarker}
+              recommendations={recommendations}
             />
           ) : (
             <View style={styles.emptyMap}>
@@ -236,15 +288,13 @@ function FoodMap() {
           >
             <View style={styles.headingRow}>
               <View>
-                <Text style={styles.eyebrow}>A LITTLE HUNGRY?</Text>
-                <Text style={styles.title}>Find your next bite.</Text>
+                <Text accessibilityRole="header" style={styles.wordmark}>
+                  Cibo
+                </Text>
+                <Text style={styles.eyebrow}>GOOD FOOD. GREAT FINDS.</Text>
               </View>
               <View style={styles.brand}>
-                <Icon
-                  name="restaurant-outline"
-                  size={23}
-                  color={colors.accent}
-                />
+                <Icon name="sparkles-outline" size={23} color={colors.accent} />
               </View>
             </View>
             <View style={styles.search}>
@@ -331,8 +381,9 @@ function FoodMap() {
             {active ? (
               <View style={styles.placeCard}>
                 <View style={styles.cardTop}>
-                  <Image
-                    source={{ uri: active.image }}
+                  <RestaurantPhoto
+                    place={active}
+                    recommendation={recommendations.get(active.id)}
                     style={styles.cardImage}
                   />
                   <View style={styles.cardInfo}>
@@ -352,6 +403,44 @@ function FoodMap() {
                   </Pressable>
                 </View>
                 <Text style={styles.address}>{active.address}</Text>
+                <Text style={styles.small}>
+                  {recommendationLabel(recommendations.get(active.id))}
+                </Text>
+                <View style={styles.ratingRow}>
+                  <Text style={styles.small}>Your rating</Text>
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <Pressable
+                      key={value}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Rate ${active.name} ${value} ${value === 1 ? "star" : "stars"}`}
+                      accessibilityHint="Tap the selected rating again to clear it."
+                      accessibilityState={{
+                        selected: collection.ratings[active.id] === value,
+                      }}
+                      onPress={() =>
+                        dispatch({
+                          type: "rate",
+                          placeId: active.id,
+                          rating:
+                            collection.ratings[active.id] === value ? 0 : value,
+                        })
+                      }
+                      style={({ pressed }) => [
+                        styles.ratingStar,
+                        pressed && styles.pressed,
+                      ]}
+                    >
+                      <Icon
+                        name={
+                          value <= (collection.ratings[active.id] ?? 0)
+                            ? "star"
+                            : "star-outline"
+                        }
+                        color={colors.accent}
+                      />
+                    </Pressable>
+                  ))}
+                </View>
                 <View style={styles.cardButtons}>
                   <Pressable
                     accessibilityRole="button"
@@ -428,7 +517,7 @@ function FoodMap() {
                   </Text>
                   <Text style={styles.small}>
                     {visible.length
-                      ? "A few good places. Something for every craving."
+                      ? "Suggestions favor high ratings and fewer reviews."
                       : tab === "saved"
                         ? "Save a place from Explore to find it here."
                         : "Try another category or search."}
@@ -447,7 +536,14 @@ function FoodMap() {
         ]}
       >
         {(
-          ["explore", "restaurants", "dex", "favorites", "saved", "profile"] as const
+          [
+            "explore",
+            "restaurants",
+            "dex",
+            "favorites",
+            "saved",
+            "profile",
+          ] as const
         ).map((item) => (
           <Pressable
             key={item}
@@ -469,13 +565,13 @@ function FoodMap() {
                   ? "compass-outline"
                   : item === "dex"
                     ? "book-outline"
-                  : item === "restaurants"
-                    ? "restaurant-outline"
-                    : item === "saved"
-                      ? "bookmark-outline"
-                      : item === "favorites"
-                        ? "heart-outline"
-                        : "person-outline"
+                    : item === "restaurants"
+                      ? "restaurant-outline"
+                      : item === "saved"
+                        ? "bookmark-outline"
+                        : item === "favorites"
+                          ? "heart-outline"
+                          : "person-outline"
               }
               color={tab === item ? colors.accent : colors.muted}
             />
@@ -486,13 +582,13 @@ function FoodMap() {
                 ? "Explore"
                 : item === "dex"
                   ? "Food Dex"
-                : item === "restaurants"
-                  ? "Restaurants"
-                  : item === "saved"
-                    ? `Saved${saved.length ? ` · ${saved.length}` : ""}`
-                    : item === "favorites"
-                      ? "Favorites"
-                      : "Profile"}
+                  : item === "restaurants"
+                    ? "Restaurants"
+                    : item === "saved"
+                      ? `Saved${saved.length ? ` · ${saved.length}` : ""}`
+                      : item === "favorites"
+                        ? "Favorites"
+                        : "Profile"}
             </Text>
           </Pressable>
         ))}
@@ -540,39 +636,48 @@ function FoodMap() {
                 <Icon name="close" />
               </Pressable>
             </View>
-            <FlatList
-              data={visible}
-              keyExtractor={(place) => place.id}
-              ListEmptyComponent={
-                <Text style={styles.emptyList}>
-                  {tab === "saved"
-                    ? "Nothing saved yet. Bookmark a spot in Explore."
-                    : "No matches. Try a different search or category."}
-                </Text>
-              }
-              renderItem={({ item }) => (
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => choose(item)}
-                  style={({ pressed }) => [
-                    styles.listRow,
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <Image
-                    source={{ uri: item.image }}
-                    style={styles.listImage}
-                  />
-                  <View style={styles.flex}>
-                    <Text style={styles.browseTitle}>{item.name}</Text>
-                    <Text style={styles.small}>
-                      {item.category} · {item.neighborhood}
-                    </Text>
-                  </View>
-                  <Icon name="chevron-forward" size={18} />
-                </Pressable>
-              )}
-            />
+            {listVisible && (
+              <FlatList
+                data={rankedVisible}
+                initialNumToRender={8}
+                maxToRenderPerBatch={8}
+                windowSize={5}
+                keyExtractor={(place) => place.id}
+                ListEmptyComponent={
+                  <Text style={styles.emptyList}>
+                    {tab === "saved"
+                      ? "Nothing saved yet. Bookmark a spot in Explore."
+                      : "No matches. Try a different search or category."}
+                  </Text>
+                }
+                renderItem={({ item }) => (
+                  <Pressable
+                    accessibilityRole="button"
+                    onPress={() => choose(item)}
+                    style={({ pressed }) => [
+                      styles.listRow,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <RestaurantPhoto
+                      place={item}
+                      recommendation={recommendations.get(item.id)}
+                      style={styles.listImage}
+                    />
+                    <View style={styles.flex}>
+                      <Text style={styles.browseTitle}>{item.name}</Text>
+                      <Text style={styles.small}>
+                        {item.category} · {item.neighborhood}
+                      </Text>
+                      <Text style={styles.small}>
+                        {recommendationLabel(recommendations.get(item.id))}
+                      </Text>
+                    </View>
+                    <Icon name="chevron-forward" size={18} />
+                  </Pressable>
+                )}
+              />
+            )}
           </View>
         </View>
       </Modal>
@@ -591,7 +696,7 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#E9EDE3" },
+  screen: { flex: 1, backgroundColor: colors.blue },
   flex: { flex: 1 },
   pressed: { opacity: 0.65 },
   top: { position: "absolute", left: 20, right: 20, gap: 14 },
@@ -606,18 +711,24 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     color: colors.muted,
   },
-  title: {
-    fontSize: 29,
-    fontWeight: "700",
-    letterSpacing: -1.1,
+  wordmark: {
+    fontFamily: Platform.select({
+      ios: "Baskerville",
+      android: "serif",
+      web: "Georgia, 'Times New Roman', serif",
+    }),
+    fontSize: 58,
+    lineHeight: 68,
+    fontStyle: "italic",
+    fontWeight: "600",
+    letterSpacing: -3,
     color: colors.ink,
-    marginTop: 4,
   },
   brand: {
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: colors.paper,
+    backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
@@ -631,7 +742,7 @@ const styles = StyleSheet.create({
     minHeight: 52,
     backgroundColor: colors.white,
     borderRadius: 18,
-    boxShadow: "0 3px 18px #25292310",
+    boxShadow: "0 3px 18px #364C8410",
     gap: 10,
   },
   input: { flex: 1, color: colors.ink, fontSize: 14, paddingVertical: 15 },
@@ -656,6 +767,24 @@ const styles = StyleSheet.create({
   chipActive: { backgroundColor: colors.ink, borderColor: colors.ink },
   chipText: { fontSize: 12, fontWeight: "600", color: colors.ink },
   chipTextActive: { color: colors.white },
+  ratingRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  ratingStar: {
+    minWidth: 44,
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  plainMarker: {
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   markerWrap: { alignItems: "center", width: 112, paddingVertical: 5 },
   photoMarker: {
     width: 58,
@@ -664,7 +793,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.white,
     backgroundColor: colors.paper,
-    boxShadow: "0 3px 8px #25292333",
+    boxShadow: "0 3px 8px #364C8433",
   },
   selectedMarker: { borderColor: colors.accent, width: 66, height: 70 },
   markerImage: { width: "100%", height: "100%", borderRadius: 11 },
@@ -681,7 +810,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: colors.ink,
     marginTop: 7,
-    backgroundColor: "#FFFFFFE8",
+    backgroundColor: colors.paper,
     paddingHorizontal: 5,
     paddingVertical: 2,
     borderRadius: 5,
@@ -718,13 +847,13 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 24,
     backgroundColor: colors.paper,
-    boxShadow: "0 4px 24px #25292312",
+    boxShadow: "0 4px 24px #364C8412",
   },
   browseIcon: {
     width: 44,
     height: 44,
     borderRadius: 15,
-    backgroundColor: "#E9EFE3",
+    backgroundColor: colors.blue,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -744,7 +873,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.paper,
     borderWidth: 1,
     borderColor: colors.border,
-    boxShadow: "0 4px 20px #25292312",
+    boxShadow: "0 4px 20px #364C8412",
   },
   navItem: {
     flexDirection: "column",
@@ -759,7 +888,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     minHeight: 48,
   },
-  navActive: { backgroundColor: "#E7EDDF" },
+  navActive: { backgroundColor: colors.tint },
   navText: {
     fontSize: 10,
     fontWeight: "600",
@@ -852,7 +981,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: "#25292355",
+    backgroundColor: colors.scrim,
   },
   sheet: {
     backgroundColor: colors.paper,

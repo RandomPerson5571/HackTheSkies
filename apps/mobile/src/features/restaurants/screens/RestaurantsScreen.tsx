@@ -1,7 +1,6 @@
-import { useState, type Dispatch, type ComponentProps } from "react";
+import { useMemo, useState, type Dispatch, type ComponentProps } from "react";
 import {
   FlatList,
-  Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -15,6 +14,11 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { categories, places, type Category, type Place } from "../data/places";
+import {
+  buildRecommendations,
+  recommendationLabel,
+} from "../models/recommendations";
+import { RestaurantPhoto } from "../components/RestaurantPhoto";
 import { colors } from "../../../theme/index";
 import type {
   CollectionAction,
@@ -48,6 +52,10 @@ export function RestaurantsScreen({
   onShowMap,
 }: Props) {
   const insets = useSafeAreaInsets();
+  const recommendations = useMemo(
+    () => buildRecommendations(places, collection.ratings),
+    [collection.ratings],
+  );
   const [filter, setFilter] = useState<Filter>("discover");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("All");
@@ -92,22 +100,28 @@ export function RestaurantsScreen({
       icon: "list-outline" as const,
     })),
   ];
-  const visible = places.filter((place) => {
-    const matchesList =
-      filter === "discover" ||
-      (filter === "want" &&
-        collection.saved.includes(place.id) &&
-        !collection.visited.includes(place.id)) ||
-      (filter === "visited" && collection.visited.includes(place.id)) ||
-      activeList?.placeIds.includes(place.id);
-    return (
-      matchesList &&
-      (category === "All" || place.category === category) &&
-      `${place.name} ${place.category} ${place.neighborhood}`
-        .toLowerCase()
-        .includes(query.trim().toLowerCase())
+  const visible = places
+    .filter((place) => {
+      const matchesList =
+        filter === "discover" ||
+        (filter === "want" &&
+          collection.saved.includes(place.id) &&
+          !collection.visited.includes(place.id)) ||
+        (filter === "visited" && collection.visited.includes(place.id)) ||
+        activeList?.placeIds.includes(place.id);
+      return (
+        matchesList &&
+        (category === "All" || place.category === category) &&
+        `${place.name} ${place.category} ${place.cuisine ?? ""} ${place.neighborhood} ${place.address}`
+          .toLowerCase()
+          .includes(query.trim().toLowerCase())
+      );
+    })
+    .sort(
+      (a, b) =>
+        (recommendations.get(b.id)?.score ?? 0) -
+        (recommendations.get(a.id)?.score ?? 0),
     );
-  });
 
   function createList() {
     const name = listName.trim();
@@ -166,7 +180,8 @@ export function RestaurantsScreen({
               </View>
             </View>
             <Text style={styles.intro}>
-              A little inspiration. A list for every craving.
+              Suggested places favor great ratings (60%) and fewer reviews
+              (40%). Rate a place from its map card.
             </Text>
             <View style={styles.summary}>
               <View style={styles.flex}>
@@ -372,13 +387,20 @@ export function RestaurantsScreen({
                   pressed && styles.pressed,
                 ]}
               >
-                <Image source={{ uri: item.image }} style={styles.photo} />
+                <RestaurantPhoto
+                  place={item}
+                  recommendation={recommendations.get(item.id)}
+                  style={styles.photo}
+                />
                 <View style={styles.flex}>
                   <Text style={styles.eyebrow}>
                     {item.category.toUpperCase()}
                   </Text>
                   <Text style={styles.name}>{item.name}</Text>
                   <Text style={styles.small}>{item.neighborhood}</Text>
+                  <Text style={styles.small}>
+                    {recommendationLabel(recommendations.get(item.id))}
+                  </Text>
                 </View>
                 <Icon name="chevron-forward" size={18} color={colors.muted} />
               </Pressable>
@@ -795,7 +817,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "#25292366",
+    backgroundColor: colors.scrim,
   },
   sheet: {
     backgroundColor: colors.paper,

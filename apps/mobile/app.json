@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "HackTheSkies",
+    "name": "Cibo",
     "slug": "hack-the-skies",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,7 +12,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#95B1EE",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -29,8 +29,8 @@
       [
         "expo-image-picker",
         {
-          "cameraPermission": "Allow HackTheSkies to photograph food for your Food Dex.",
-          "photosPermission": "Allow HackTheSkies to choose food photos for your Food Dex.",
+          "cameraPermission": "Allow Cibo to photograph food for your Food Dex.",
+          "photosPermission": "Allow Cibo to choose food photos for your Food Dex.",
           "microphonePermission": false
         }
       ]

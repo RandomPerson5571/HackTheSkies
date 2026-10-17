@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 24,
-    backgroundColor: "#E7EDDF",
+    backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
   tag: { color: colors.accent, fontSize: 12, fontWeight: "600", marginTop: 3 },
   stats: {
     flexDirection: "row",
-    backgroundColor: "#E7EDDF",
+    backgroundColor: colors.tint,
     borderRadius: 22,
     paddingVertical: 20,
   },

@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "HackTheSkies",
-  description: "HackTheSkies web app",
+  title: "Cibo",
+  description: "Cibo — find your next bite.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

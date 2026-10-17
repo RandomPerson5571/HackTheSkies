@@ -19,6 +19,26 @@ FoodDex uses all 15 cuisine collections and the imported meal catalog. Downloade
 
 The native map uses `@rnmapbox/maps` and requires a compatible development build. The browser map uses `mapbox-gl`. Both read `EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN` and optionally `EXPO_PUBLIC_MAPBOX_STYLE_URL`. Platform resolution keeps the native map dependency out of the web bundle.
 
+Both maps render restaurant points and clusters through Mapbox layers, with at most
+eight marker views for visible suggested places and the current selection. Only
+suggested places mount photos; other selections use a plain pin. Cluster taps zoom into the group; labels
+appear at neighborhood zoom and use collision detection. Keep the shared GeoJSON
+payload in `src/components/maps/placeFeatures.ts` limited to coordinates, IDs, and
+names. Selection and unrelated UI updates must not rebuild that source or create
+per-restaurant marker views. The browse sheet mounts its virtualized photo list only
+while open.
+
+Restaurant suggestions use `models/recommendations.ts`: 60% average rating quality
+and 40% a lesser-known bonus based on log-scaled review count. Suggestions require
+an average of at least 4/5 and a combined score of at least 75/100. Missing ratings
+are not treated as high quality or zero popularity. Imported listings have no
+invented reviews; optional `Place.ratingSummary` accepts an aggregate average and
+count when a real feed is available. The six fictional sample places use the existing
+sample friend ratings and explicitly label them. Personal ratings contribute one
+vote, update rather than duplicate that vote, and persist in the browser's local
+storage or the native restaurant journal. Restaurant lists, detail cards, and community
+photos share the same suggestion eligibility rule.
+
 Add shared components, storage adapters, clients, and providers when needed; avoid empty placeholder folders. Expo configuration and scripts live here, while workspace configuration stays at the repository root.
 
 ## Supabase
@@ -26,3 +46,12 @@ Add shared components, storage adapters, clients, and providers when needed; avo
 Set `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local` (see `.env.example`), then restart Expo. Import the shared client with `import { supabase } from "@/lib/supabase"` for database, auth, and storage calls. Only use the public publishable key in the app.
 
 Sessions persist with AsyncStorage. The app shell starts token refresh while the native app is active and stops it in the background. Rebuild the development client after installing the native storage dependency. Authentication screens and database synchronization are not added by this setup.
+
+Restaurant CSV listings are bundled in `src/features/restaurants/data/importedRestaurants.json`
+from the two files in the repository's `data/` directory. To refresh their coordinates,
+run `python3 scripts/import-restaurants.py` from the repository root (requires network
+access). Existing coordinates are cached. Addresses are geocoded with OpenStreetMap;
+listings with approximate matches say so in their description. Listing source URLs
+and original cuisine/service categories are retained. The shared restaurant collection
+feeds both map platforms, restaurant search, and saved lists. Imported listing photos
+use a generic restaurant image rather than venue-specific photography.

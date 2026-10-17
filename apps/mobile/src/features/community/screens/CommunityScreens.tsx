@@ -1,13 +1,13 @@
 import {
   createContext,
   useContext,
+  useMemo,
   useState,
   type ComponentProps,
   type Dispatch,
   type ReactNode,
 } from "react";
 import {
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -18,12 +18,18 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { places, type Place } from "../../restaurants/data/places";
+import { buildRecommendations } from "../../restaurants/models/recommendations";
+import { RestaurantPhoto } from "../../restaurants/components/RestaurantPhoto";
 import { colors } from "../../../theme/index";
 import type {
   CollectionAction,
   RestaurantCollection,
 } from "../../restaurants/models/restaurantCollection";
-import { badgeProgress, cuisineBadges, sampleFriends } from "../models/community";
+import {
+  badgeProgress,
+  cuisineBadges,
+  sampleFriends,
+} from "../models/community";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
 type Props = {
@@ -176,6 +182,10 @@ export function FavoritesScreen({
   storageError,
   onShowMap,
 }: Props) {
+  const recommendations = useMemo(
+    () => buildRecommendations(places, collection.ratings),
+    [collection.ratings],
+  );
   const [query, setQuery] = useState("");
   const ranked = collection.favorites.flatMap((id) => {
     const place = places.find((item) => item.id === id);
@@ -195,7 +205,11 @@ export function FavoritesScreen({
       <View key={place.id} style={s.card}>
         <View style={s.row}>
           {rank !== undefined && <Text style={s.rank}>#{rank + 1}</Text>}
-          <Image source={{ uri: place.image }} style={s.photo} />
+          <RestaurantPhoto
+            place={place}
+            recommendation={recommendations.get(place.id)}
+            style={s.photo}
+          />
           <View style={s.flex}>
             <Text style={s.eyebrow}>{place.category.toUpperCase()}</Text>
             <Text style={s.name}>{place.name}</Text>
@@ -321,6 +335,10 @@ export function FriendsScreen({
   storageError,
   onShowMap,
 }: Props) {
+  const recommendations = useMemo(
+    () => buildRecommendations(places, collection.ratings),
+    [collection.ratings],
+  );
   const [mode, setMode] = useState<"activity" | "find">("activity");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string | null>(null);
@@ -464,7 +482,11 @@ export function FriendsScreen({
                       </Text>
                     </View>
                   </View>
-                  <Image source={{ uri: place.image }} style={s.feedPhoto} />
+                  <RestaurantPhoto
+                    place={place}
+                    recommendation={recommendations.get(place.id)}
+                    style={s.feedPhoto}
+                  />
                   <View style={s.row}>
                     <Text style={[s.name, s.flex]}>{place.name}</Text>
                     <Icon name="star" size={16} />

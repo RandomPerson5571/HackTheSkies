@@ -1,4 +1,6 @@
-export type Category = "All" | "Coffee" | "Pizza" | "Bakery" | "Ramen";
+import importedRestaurants from "./importedRestaurants.json" with { type: "json" };
+
+export type Category = "All" | "Coffee" | "Pizza" | "Bakery" | "Ramen" | "Restaurant";
 export type Place = {
   id: string;
   name: string;
@@ -8,9 +10,14 @@ export type Place = {
   coordinate: [number, number];
   image: string;
   note: string;
+  cuisine?: string;
+  sourceUrl?: string;
+  locationAccuracy?: string;
+  // Optional aggregate from a future community/provider feed. Missing is unrated.
+  ratingSummary?: { averageRating: number; reviewCount: number };
 };
 
-// Curated demo content, not a live restaurant search or availability feed.
+// Demo places plus CSV restaurant listings; not a live availability feed.
 export const places: Place[] = [
   {
     id: "coffee",
@@ -78,6 +85,19 @@ export const places: Place[] = [
       "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&h=400&fit=crop",
     note: "Fresh bread and a small everyday reason to get outside.",
   },
+  ...importedRestaurants.map((restaurant): Place => ({
+    id: restaurant.id,
+    name: restaurant.restaurant_name,
+    category: "Restaurant",
+    cuisine: restaurant.cuisine,
+    neighborhood: restaurant.neighbourhood,
+    address: `${restaurant.address}, Toronto, ON`,
+    coordinate: [restaurant.coordinate[0]!, restaurant.coordinate[1]!],
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=400&fit=crop",
+    note: `${restaurant.cuisine} · ${restaurant.category}.${restaurant.locationAccuracy === "approximate" ? " Approximate map location." : ""} Map data © OpenStreetMap contributors.`,
+    sourceUrl: restaurant.source_url,
+    locationAccuracy: restaurant.locationAccuracy,
+  })),
 ];
 
 export const categories: Category[] = [
@@ -86,5 +106,6 @@ export const categories: Category[] = [
   "Pizza",
   "Bakery",
   "Ramen",
+  "Restaurant",
 ];
-export const mapCenter = [-79.406, 43.6555];
+export const mapCenter = [-79.48, 43.67];

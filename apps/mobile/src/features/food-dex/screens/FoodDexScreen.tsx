@@ -1070,7 +1070,7 @@ const s = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "#25292399",
+    backgroundColor: "#364C8499",
   },
   detailSheet: {
     backgroundColor: colors.paper,

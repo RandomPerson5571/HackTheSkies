@@ -34,7 +34,6 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import {
-  categories,
   cuisines,
   foodSpecialties,
   restaurantTypes,
@@ -112,16 +111,6 @@ function Icon({
 
 function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const { places, error: backendError } = useBackend();
-  const cuisineCategories = [
-    "All",
-    ...Array.from(
-      new Set(
-        places
-          .map((place) => place.cuisine)
-          .filter((cuisine): cuisine is string => Boolean(cuisine)),
-      ),
-    ).sort(),
-  ];
   const insets = useSafeAreaInsets();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const camera = useRef<MapCamera>(null);
@@ -196,6 +185,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           .includes(normalizedQuery),
     );
   }, [
+    places,
     category,
     deferredQuery,
     savedFilter,
@@ -696,7 +686,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   ) : openFilter === "cuisine" ? (
                     [
                       "Any cuisine",
-                      ...cuisines.filter((value) => value !== "Bakery"),
+                      ...cuisines,
                     ].map((value) => (
                       <Pressable
                         key={value}

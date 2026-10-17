@@ -350,6 +350,21 @@ function FoodMap() {
           )}
 
           <View
+            pointerEvents="none"
+            style={[
+              styles.topBlur,
+              { height: insets.top + 205 },
+              Platform.OS === "web"
+                ? ({
+                    backdropFilter: "blur(4px)",
+                    WebkitBackdropFilter: "blur(4px)",
+                    maskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
+                    WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
+                  } as never)
+                : null,
+            ]}
+          />
+          <View
             pointerEvents="box-none"
             style={[styles.top, { top: insets.top + 12 }]}
           >
@@ -362,9 +377,6 @@ function FoodMap() {
                   style={styles.wordmark}
                 />
                 <Text style={styles.eyebrow}>GOOD FOOD. GREAT FINDS.</Text>
-              </View>
-              <View style={styles.brand}>
-                <Icon name="sparkles-outline" size={23} color={colors.accent} />
               </View>
             </View>
             <View style={styles.search}>
@@ -998,6 +1010,14 @@ const styles = StyleSheet.create({
     gap: 14,
     zIndex: 30,
     elevation: 30,
+  },
+  topBlur: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    backgroundColor: `${colors.paper}99`,
   },
   headingRow: {
     flexDirection: "row",

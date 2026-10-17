@@ -32,11 +32,11 @@ const coverIds: Partial<Record<Cuisine, string>> = {
   Levant: "musakhan",
   Greek: "souvlaki",
   Persian: "ghormeh-sabzi",
-  French: "croissant",
+  French: "duck-confit",
   Italian: "pizza",
   Latin: "tacos",
   Caribbean: "jerk-chicken",
-  American: "cheeseburger",
+  American: "barbecue-ribs",
 };
 
 export const cuisineCovers = Object.fromEntries(

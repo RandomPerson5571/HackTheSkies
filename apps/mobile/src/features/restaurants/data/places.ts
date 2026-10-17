@@ -1,4 +1,5 @@
 import { catalogDishes } from "../../../../../../packages/food-catalog/data/catalog.ts";
+import { cuisineCovers } from "../../food-dex/models/foodDex.ts";
 import restaurantPhotos from "./restaurantPhotos.json" with { type: "json" };
 import importedRestaurants from "./importedRestaurants.json" with { type: "json" };
 
@@ -80,13 +81,19 @@ export type Place = {
 
 const photos: Record<string, NonNullable<Place["photo"]>> = restaurantPhotos;
 
+// Venues in these cuisines show the Food Dex cover rather than a random dish,
+// so they don't land on a studio cut-out like the cheeseburger or croissant.
+const coverOnlyCuisines = new Set(["French", "American"]);
+
 // A cuisine illustration is explicitly distinguished from a photo of the venue.
 function photoFor(restaurant: (typeof importedRestaurants)[number]): Place["photo"] {
   if (photos[restaurant.id]) return photos[restaurant.id];
   const candidates = catalogDishes.filter((dish) => dish.image && dish.cuisine === restaurant.cuisine);
   const pool = candidates.length ? candidates : catalogDishes.filter((dish) => dish.image);
   const hash = [...restaurant.id].reduce((value, char) => (value * 31 + char.charCodeAt(0)) >>> 0, 0);
-  const dish = pool[hash % pool.length];
+  const dish = coverOnlyCuisines.has(restaurant.cuisine)
+    ? cuisineCovers[restaurant.cuisine as keyof typeof cuisineCovers]
+    : pool[hash % pool.length];
   if (!dish?.image) return undefined;
   return {
     url: dish.image.url,

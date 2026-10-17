@@ -184,15 +184,15 @@ export function RestaurantsScreen({
               (40%). Rate a place from its map card.
             </Text>
             <View style={styles.summary}>
-              <View style={styles.flex}>
+              <View style={styles.statCard}>
                 <Text style={styles.stat}>{wantCount}</Text>
                 <Text style={styles.small}>Want to try</Text>
               </View>
-              <View style={styles.flex}>
+              <View style={styles.statCard}>
                 <Text style={styles.stat}>{collection.visited.length}</Text>
                 <Text style={styles.small}>Visited</Text>
               </View>
-              <View style={styles.flex}>
+              <View style={styles.statCard}>
                 <Text style={styles.stat}>{collection.lists.length}</Text>
                 <Text style={styles.small}>Your lists</Text>
               </View>
@@ -660,10 +660,19 @@ const styles = StyleSheet.create({
   intro: { fontSize: 14, lineHeight: 21, color: colors.muted },
   summary: {
     flexDirection: "row",
-    gap: 12,
-    padding: 20,
+    gap: 10,
+    padding: 12,
     borderRadius: 22,
     backgroundColor: colors.tint,
+  },
+  statCard: {
+    flex: 1,
+    minHeight: 92,
+    padding: 14,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#C9D77A",
+    justifyContent: "center",
   },
   stat: {
     fontSize: 27,
@@ -677,6 +686,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     justifyContent: "space-between",
+    marginTop: 10,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   sectionTitle: {
     fontSize: 19,

@@ -798,7 +798,8 @@ function FoodMap() {
                         ? "bookmark-outline"
                         : "restaurant-outline"
                     }
-                    color={colors.accent}
+                    color={colors.white}
+                    size={24}
                   />
                 </View>
                 <View style={styles.flex}>
@@ -1159,12 +1160,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 7,
     backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: 20,
   },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.accent },
-  small: { fontSize: 12, lineHeight: 18, color: colors.muted },
+  small: { fontSize: 12, lineHeight: 18, color: colors.ink },
   roundButton: {
     width: 46,
     height: 46,
@@ -1180,6 +1183,8 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 24,
     backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.border,
     boxShadow: "0 4px 24px #3D568F12",
   },
   browseIcon: {

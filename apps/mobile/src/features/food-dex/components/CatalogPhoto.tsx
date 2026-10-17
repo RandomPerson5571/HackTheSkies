@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Image,
   View,
   StyleSheet,
   type ImageSourcePropType,
@@ -9,15 +8,18 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/index";
+import { LazyImage } from "../../../components/images/LazyImage";
 
 export function CatalogPhoto({
   source,
   label,
   style,
+  eager = false,
 }: {
   source: ImageSourcePropType | undefined;
   label: string;
   style: StyleProp<ImageStyle>;
+  eager?: boolean;
 }) {
   const [failedSource, setFailedSource] = useState<string | null>(null);
   const sourceKey = JSON.stringify(source);
@@ -37,7 +39,8 @@ export function CatalogPhoto({
       </View>
     );
   return (
-    <Image
+    <LazyImage
+      eager={eager}
       source={source}
       style={style}
       accessibilityLabel={label}

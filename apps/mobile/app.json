@@ -12,7 +12,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#95B1EE",
+        "backgroundColor": "#EAF3B2",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -32,6 +32,14 @@
           "cameraPermission": "Allow Cibo to photograph food for your Food Dex.",
           "photosPermission": "Allow Cibo to choose food photos for your Food Dex.",
           "microphonePermission": false
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Cibo to photograph food for your Food Dex.",
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": false
         }
       ]
     ]

@@ -1,5 +1,4 @@
 import type { Place } from "../data/places";
-import { sampleFriends } from "../../community/models/community.ts";
 
 export const recommendationPolicy = {
   qualityWeight: 0.6,
@@ -15,7 +14,6 @@ export type Recommendation = {
   reviewCount: number;
   score: number;
   suggested: boolean;
-  sampleReviewCount: number;
 };
 export type Recommendations = ReadonlyMap<string, Recommendation>;
 
@@ -52,25 +50,14 @@ export function buildRecommendations(
   places: readonly Place[],
   personalRatings: Readonly<Record<string, number>>,
 ): Recommendations {
-  const sampleVotes = new Map<string, number[]>();
-  for (const friend of sampleFriends) {
-    for (const visit of friend.visits) {
-      const votes = sampleVotes.get(visit.placeId) ?? [];
-      votes.push(visit.rating);
-      sampleVotes.set(visit.placeId, votes);
-    }
-  }
   return new Map(
     places.map((place) => {
       const aggregate = place.ratingSummary;
       const validAggregate =
         aggregate &&
         scoreRestaurant(aggregate.averageRating, aggregate.reviewCount) > 0;
-      const samples = validAggregate ? [] : (sampleVotes.get(place.id) ?? []);
-      let reviewCount = validAggregate ? aggregate.reviewCount : samples.length;
-      let total = validAggregate
-        ? aggregate.averageRating * reviewCount
-        : samples.reduce((sum, vote) => sum + vote, 0);
+      let reviewCount = validAggregate ? aggregate.reviewCount : 0;
+      let total = validAggregate ? aggregate.averageRating * reviewCount : 0;
       const personal = personalRatings[place.id];
       if (
         typeof personal === "number" &&
@@ -96,7 +83,6 @@ export function buildRecommendations(
             averageRating !== null &&
             averageRating >= recommendationPolicy.minimumRating &&
             score >= recommendationPolicy.minimumScore,
-          sampleReviewCount: samples.length,
         },
       ];
     }),
@@ -107,7 +93,7 @@ export function recommendationLabel(
   rating: Recommendation | undefined,
 ): string {
   if (!rating || rating.averageRating === null) return "Not rated yet";
-  return `${rating.suggested ? "Suggested · " : ""}${rating.averageRating.toFixed(1)}/5 · ${rating.reviewCount} ${rating.reviewCount === 1 ? "rating" : "ratings"} · Score ${Math.round(rating.score)}/100${rating.sampleReviewCount ? " · Includes sample ratings" : ""}`;
+  return `${rating.suggested ? "Suggested · " : ""}${rating.averageRating.toFixed(1)}/5 · ${rating.reviewCount} ${rating.reviewCount === 1 ? "rating" : "ratings"} · Score ${Math.round(rating.score)}/100`;
 }
 
 // Only unclustered points in the viewport receive photos; selection stays visible

@@ -7,7 +7,8 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.boberto2790.hack-the-skies"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,6 +22,17 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["@rnmapbox/maps", "expo-dev-client"]
+    "plugins": [
+      "@rnmapbox/maps",
+      "expo-dev-client",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Allow HackTheSkies to photograph food for your Food Dex.",
+          "photosPermission": "Allow HackTheSkies to choose food photos for your Food Dex.",
+          "microphonePermission": false
+        }
+      ]
+    ]
   }
 }

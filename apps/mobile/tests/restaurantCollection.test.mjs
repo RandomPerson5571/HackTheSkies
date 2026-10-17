@@ -4,7 +4,7 @@ import {
   emptyCollection,
   parseCollection,
   updateCollection,
-} from "../src/restaurantCollection.ts";
+} from "../src/features/restaurants/models/restaurantCollection.ts";
 
 test("adding a restaurant to a custom list saves it once and preserves other memberships", () => {
   const original = structuredClone(emptyCollection);

@@ -5,16 +5,20 @@
   "dependencies": {
     "@expo/metro-runtime": "~57.0.17",
     "@expo/vector-icons": "^15.1.1",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@rnmapbox/maps": "^10.3.8",
+    "@supabase/supabase-js": "^2.118.0",
     "expo": "~57.0.30",
     "expo-dev-client": "^57.0.20",
     "expo-file-system": "~57.0.7",
+    "expo-image-picker": "~57.0.20",
     "expo-status-bar": "~57.0.1",
     "mapbox-gl": "^2.15.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
     "react-native-safe-area-context": "^5.7.0",
+    "react-native-url-polyfill": "^4.0.0",
     "react-native-web": "^0.21.4"
   },
   "devDependencies": {

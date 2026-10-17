@@ -2,6 +2,8 @@
   "name": "HackTheSkies",
   "private": true,
   "scripts": {
+    "catalog:import": "node --env-file-if-exists=.env.local scripts/import-food-catalog.mjs",
+    "test:catalog": "node --test scripts/tests/foodCatalog.test.mjs",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:web": "pnpm --filter web dev",

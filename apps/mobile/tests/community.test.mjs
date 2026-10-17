@@ -4,8 +4,8 @@ import {
   badgeProgress,
   cuisineBadges,
   sampleFriends,
-} from "../src/community.ts";
-import { places } from "../src/places.ts";
+} from "../src/features/community/models/community.ts";
+import { places } from "../src/features/restaurants/data/places.ts";
 
 test("badges count distinct visited places in their own category", () => {
   assert.equal(

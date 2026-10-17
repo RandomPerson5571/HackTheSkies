@@ -48,6 +48,45 @@ The Favorites tab opens your personal ranking, Friends, and Badges pages:
 Ratings, ranking, and sample friend selections persist with the restaurant journal.
 Older saved-list files load without losing existing bookmarks or visits.
 
+## Food Dex
+
+The Food Dex tab groups food discoveries by Japanese, Italian, Mexican, Indian,
+Chinese, and Thai cuisine, with four starter dishes per cuisine. Other cuisines
+and custom dishes can be added too. Each cuisine shows starter-dish progress and
+its collected foods. Repeat discoveries of the same dish in a cuisine do not
+increase progress. Discoveries and captured photos are saved on the device.
+Open a discovery to view its photo/date or remove an accidental addition.
+
+Choose **Scan a new bite**, take a photo or select one from your library, then
+choose **Analyze photo**. Review or correct the suggested dish and cuisine before
+adding it. Manual entry works without a recognition service, including when
+offline or camera access is denied. Photos are sent for recognition only when
+Analyze photo is pressed, using the OpenAI
+[image input API](https://developers.openai.com/api/docs/guides/images-vision).
+
+To enable recognition locally:
+
+1. Copy `apps/web/.env.example` to `apps/web/.env.local` and set `OPENAI_API_KEY`.
+   Keep this key on the server; never put it in a public mobile environment variable.
+   Configure the Supabase public variables in the same example for the web app's
+   session middleware as well.
+2. Run `pnpm dev:web` to serve `/api/food-scan`.
+3. Set `EXPO_PUBLIC_FOOD_SCAN_URL` in `apps/mobile/.env` to that endpoint, e.g.
+   `http://localhost:3000/api/food-scan` for the iOS simulator. For a physical phone,
+   use the development computer's LAN IP; Android emulator uses `10.0.2.2`.
+4. Rebuild the mobile development client (`pnpm ios` or `pnpm android`) for the
+   new image-picker native module and camera/photo permission descriptions.
+
+The recognition route is intended for local development. Before exposing it as a
+public service, add authenticated access and a shared rate limit for API usage.
+Photo requests are bounded to 8 MB of base64 data and time out; recognition errors
+keep the photo available for retry or manual entry. Live AI recognition requires
+a configured API key and network connection.
+
+UI references from Mobbin: [Woolworths cuisine browsing](https://mobbin.com/screens/7531ca44-b035-416f-9d9d-48dff270bd6c),
+[Alma collection cards](https://mobbin.com/screens/a8cb20c1-d653-4348-b40a-08aaffbe4972),
+and [Life Reset food scanning](https://mobbin.com/flows/31b12473-9be8-4428-9a65-962ba177f25a).
+
 
 Before running the map:
 

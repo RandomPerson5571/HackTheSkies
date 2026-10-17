@@ -21,6 +21,7 @@ import {
   TextInput,
   View,
   useWindowDimensions,
+  type ViewStyle,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { migrateWebBookmarks } from "../lib/migrateWebBookmarks";
@@ -109,6 +110,15 @@ function Icon({
 }) {
   return <Ionicons name={name} size={size} color={color} accessible={false} />;
 }
+
+const webGlassBlur = (
+  Platform.OS === "web"
+    ? {
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+      }
+    : {}
+) as ViewStyle;
 
 function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const { places, error: backendError } = useBackend();
@@ -1185,14 +1195,17 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   search: {
+    ...webGlassBlur,
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 16,
     paddingRight: 6,
     minHeight: 52,
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.50)",
     borderRadius: 18,
-    boxShadow: "0 3px 18px #3D568F10",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.68)",
+    boxShadow: "0 8px 26px #3D568F20",
     gap: 10,
   },
   input: { flex: 1, color: colors.ink, fontSize: 14, paddingVertical: 15 },
@@ -1243,19 +1256,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   chip: {
+    ...webGlassBlur,
     minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingHorizontal: 15,
     borderRadius: 24,
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.46)",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.68)",
+    boxShadow: "0 4px 16px #3D568F14",
   },
   selectedFilterChip: {
-    backgroundColor: colors.tint,
-    borderColor: colors.accent,
+    backgroundColor: "rgba(234,243,178,0.64)",
+    borderColor: "rgba(61,86,143,0.42)",
   },
   chipActive: { backgroundColor: colors.ink, borderColor: colors.ink },
   chipText: { fontSize: 12, fontWeight: "600", color: colors.ink },
@@ -1381,23 +1396,24 @@ const styles = StyleSheet.create({
     marginTop: -16,
     backgroundColor: colors.accent,
     borderWidth: 4,
-    borderColor: colors.paper,
+    borderColor: "rgba(255,253,245,0.88)",
     alignItems: "center",
     justifyContent: "center",
     boxShadow: "0 4px 12px #364C8433",
   },
   navGroup: {
+    ...webGlassBlur,
     flex: 1,
     flexDirection: "row",
     padding: 4,
     borderRadius: 32,
-    backgroundColor: colors.paper,
+    backgroundColor: "rgba(255,253,245,0.50)",
     borderWidth: 1,
-    borderColor: colors.border,
-    boxShadow: "0 4px 20px #3D568F12",
+    borderColor: "rgba(255,255,255,0.62)",
+    boxShadow: "0 8px 22px #3D568F1A",
   },
   navItem: {
-    backgroundColor: colors.paper,
+    backgroundColor: "transparent",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
@@ -1409,7 +1425,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     minHeight: 48,
   },
-  navActive: { backgroundColor: colors.tint },
+  navActive: { backgroundColor: "rgba(234,243,178,0.66)" },
   placeCard: {
     backgroundColor: colors.paper,
     borderRadius: 24,

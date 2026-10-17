@@ -1,10 +1,68 @@
 import importedRestaurants from "./importedRestaurants.json" with { type: "json" };
 
-export type Category = "All" | "Coffee" | "Pizza" | "Bakery" | "Ramen" | "Restaurant";
+export type Category =
+  "All" | "Coffee" | "Pizza" | "Bakery" | "Ramen" | "Restaurant";
+export const restaurantTypes = [
+  "Fast Food/QSR",
+  "Bakery",
+  "Dine-in",
+  "Fine Dining",
+  "Cafe",
+  "Beverage",
+  "Bar & Lounge",
+  "Food Truck/Stand",
+] as const;
+export const foodSpecialties = [
+  "Sushi",
+  "Healthy",
+  "Bubble Tea",
+  "Wings",
+  "Sandwiches",
+  "Soup",
+  "Poke",
+  "Burgers",
+  "BBQ",
+  "Salads",
+] as const;
+export const cuisines = [
+  "Chinese",
+  "Korean",
+  "Japanese",
+  "Vietnamese",
+  "Thai",
+  "South Asian",
+  "Levant",
+  "Greek",
+  "Persian",
+  "French",
+  "Italian",
+  "Latin",
+  "Caribbean",
+  "American",
+  "Other",
+] as const;
+export const cuisineRegions: Record<(typeof cuisines)[number], string> = {
+  Chinese: "China, Taiwan, Tibet, Hong Kong",
+  Korean: "North Korea, South Korea",
+  Japanese: "Japan",
+  Vietnamese: "Vietnam",
+  Thai: "Thailand",
+  "South Asian": "North/South India, Pakistan, Bangladesh, Nepal, Sri Lanka",
+  Levant: "Turkey, Jordan, Syria, Lebanon, Israel, Palestine",
+  Greek: "",
+  Persian: "Iran, Iraq, Afghanistan",
+  French: "",
+  Italian: "",
+  Latin: "Mexico, Puerto Rico, Argentina, Chile, Brazil, Colombia, Costa Rica",
+  Caribbean: "Jamaica, Cuba, Haiti, Dominican Republic, Trinidad",
+  American: "",
+  Other: "",
+};
 export type Place = {
   id: string;
   name: string;
   category: Exclude<Category, "All">;
+  type?: string;
   neighborhood: string;
   address: string;
   coordinate: [number, number];
@@ -23,6 +81,7 @@ export const places: Place[] = [
     id: "coffee",
     name: "Sunday Coffee",
     category: "Coffee",
+    type: "Cafe",
     neighborhood: "Kensington Market",
     address: "Kensington Ave, Toronto",
     coordinate: [-79.4004, 43.6547],
@@ -34,6 +93,7 @@ export const places: Place[] = [
     id: "pizza",
     name: "Little Slice",
     category: "Pizza",
+    type: "Dine-in",
     neighborhood: "Little Italy",
     address: "College St, Toronto",
     coordinate: [-79.4142, 43.6552],
@@ -45,6 +105,7 @@ export const places: Place[] = [
     id: "bakery",
     name: "Butter & Crumb",
     category: "Bakery",
+    type: "Bakery",
     neighborhood: "Trinity Bellwoods",
     address: "Dundas St W, Toronto",
     coordinate: [-79.4129, 43.6503],
@@ -56,6 +117,7 @@ export const places: Place[] = [
     id: "ramen",
     name: "Noodle House",
     category: "Ramen",
+    type: "Dine-in",
     neighborhood: "Chinatown",
     address: "Spadina Ave, Toronto",
     coordinate: [-79.3985, 43.6517],
@@ -67,6 +129,7 @@ export const places: Place[] = [
     id: "espresso",
     name: "Good Company",
     category: "Coffee",
+    type: "Cafe",
     neighborhood: "Queen West",
     address: "Queen St W, Toronto",
     coordinate: [-79.406, 43.6477],
@@ -78,6 +141,7 @@ export const places: Place[] = [
     id: "bread",
     name: "Morning Ritual",
     category: "Bakery",
+    type: "Bakery",
     neighborhood: "The Annex",
     address: "Bloor St W, Toronto",
     coordinate: [-79.4074, 43.6655],
@@ -89,11 +153,13 @@ export const places: Place[] = [
     id: restaurant.id,
     name: restaurant.restaurant_name,
     category: "Restaurant",
+    type: restaurant.category,
     cuisine: restaurant.cuisine,
     neighborhood: restaurant.neighbourhood,
     address: `${restaurant.address}, Toronto, ON`,
     coordinate: [restaurant.coordinate[0]!, restaurant.coordinate[1]!],
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=400&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=400&fit=crop",
     note: `${restaurant.cuisine} · ${restaurant.category}.${restaurant.locationAccuracy === "approximate" ? " Approximate map location." : ""} Map data © OpenStreetMap contributors.`,
     sourceUrl: restaurant.source_url,
     locationAccuracy: restaurant.locationAccuracy,

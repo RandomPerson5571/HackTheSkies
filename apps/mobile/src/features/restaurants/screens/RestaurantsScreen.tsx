@@ -16,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { categories, places, type Category, type Place } from "../data/places";
 import { colors } from "../../../theme/index";
+import { pointsForVisit } from "../../rewards/models/rewards";
 import type {
   CollectionAction,
   RestaurantCollection,
@@ -361,6 +362,7 @@ export function RestaurantsScreen({
         renderItem={({ item }) => {
           const saved = collection.saved.includes(item.id);
           const visited = collection.visited.includes(item.id);
+          const reward = pointsForVisit(item, collection, places);
           return (
             <View style={styles.card}>
               <Pressable
@@ -379,6 +381,14 @@ export function RestaurantsScreen({
                   </Text>
                   <Text style={styles.name}>{item.name}</Text>
                   <Text style={styles.small}>{item.neighborhood}</Text>
+                  {reward && (
+                    <Text style={styles.reward}>
+                      +{reward.points} points
+                      {reward.newRegion
+                        ? ` · New region: ${reward.region.name}`
+                        : ""}
+                    </Text>
+                  )}
                 </View>
                 <Icon name="chevron-forward" size={18} color={colors.muted} />
               </Pressable>
@@ -650,6 +660,12 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
   small: { fontSize: 12, lineHeight: 18, color: colors.muted },
+  reward: {
+    fontSize: 11,
+    lineHeight: 17,
+    fontWeight: "600",
+    color: colors.accent,
+  },
   sectionRow: {
     flexDirection: "row",
     alignItems: "center",

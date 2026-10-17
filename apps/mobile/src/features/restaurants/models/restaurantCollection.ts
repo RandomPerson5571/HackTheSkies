@@ -6,6 +6,8 @@ export type RestaurantCollection = {
   ratings: Record<string, number>;
   favorites: string[];
   friendIds: string[];
+  // ISO timestamp of when each visited place was marked visited. Older journals may lack dates.
+  visitedAt: Record<string, string>;
 };
 
 export const emptyCollection: RestaurantCollection = {
@@ -15,16 +17,28 @@ export const emptyCollection: RestaurantCollection = {
   ratings: {},
   favorites: [],
   friendIds: [],
+  visitedAt: {},
 };
 
 export type CollectionAction =
-  | { type: "rate"; placeId: string; rating: number }
+  | { type: "rate"; placeId: string; rating: number; at?: string }
   | { type: "rank"; placeId: string; direction: -1 | 1 }
   | { type: "friend"; friendId: string }
   | { type: "save"; placeId: string }
-  | { type: "visit"; placeId: string }
+  | { type: "visit"; placeId: string; at?: string }
   | { type: "create-list"; id: string; name: string }
   | { type: "membership"; listId: string; placeId: string };
+
+function omit(record: Record<string, string>, key: string) {
+  return Object.fromEntries(
+    Object.entries(record).filter(([item]) => item !== key),
+  );
+}
+
+function stamp(state: RestaurantCollection, placeId: string, at?: string) {
+  if (state.visited.includes(placeId) || !at) return state.visitedAt;
+  return { ...state.visitedAt, [placeId]: at };
+}
 
 export function updateCollection(
   state: RestaurantCollection,
@@ -58,6 +72,7 @@ export function updateCollection(
     return {
       ...state,
       ratings,
+      visitedAt: stamp(state, action.placeId, action.at),
       saved: [...new Set([...state.saved, action.placeId])],
       visited: [...new Set([...state.visited, action.placeId])],
       favorites: [...new Set([...state.favorites, action.placeId])],
@@ -103,6 +118,7 @@ export function updateCollection(
         Object.entries(state.ratings).filter(([key]) => key !== id),
       ),
       favorites: state.favorites.filter((item) => item !== id),
+      visitedAt: omit(state.visitedAt, id),
       lists: state.lists.map((list) => ({
         ...list,
         placeIds: list.placeIds.filter((item) => item !== id),
@@ -124,6 +140,9 @@ export function updateCollection(
       favorites: state.visited.includes(id)
         ? state.favorites.filter((item) => item !== id)
         : state.favorites,
+      visitedAt: state.visited.includes(id)
+        ? omit(state.visitedAt, id)
+        : stamp(state, id, action.at),
     };
   }
   if (!state.lists.some((list) => list.id === action.listId)) return state;
@@ -214,5 +233,20 @@ export function parseCollection(
         ),
       ]
     : [];
-  return { saved, visited, lists, ratings, favorites, friendIds };
+  const visitedAt: Record<string, string> = {};
+  if (
+    value.visitedAt &&
+    typeof value.visitedAt === "object" &&
+    !Array.isArray(value.visitedAt)
+  ) {
+    for (const [id, at] of Object.entries(value.visitedAt)) {
+      if (
+        visited.includes(id) &&
+        typeof at === "string" &&
+        !Number.isNaN(Date.parse(at))
+      )
+        visitedAt[id] = at;
+    }
+  }
+  return { saved, visited, lists, ratings, favorites, friendIds, visitedAt };
 }

@@ -35,7 +35,12 @@ export function useRestaurantCollection() {
   const readFailed = useRef(Boolean(state.error));
 
   const dispatch = useCallback((action: CollectionAction) => {
-    const collection = updateCollection(current.current, action);
+    const collection = updateCollection(
+      current.current,
+      action.type === "visit" || action.type === "rate"
+        ? { ...action, at: action.at ?? new Date().toISOString() }
+        : action,
+    );
     if (collection === current.current) return;
     current.current = collection;
     let error = "";

@@ -23,7 +23,17 @@ import type {
   CollectionAction,
   RestaurantCollection,
 } from "../../restaurants/models/restaurantCollection";
-import { badgeProgress, cuisineBadges, sampleFriends } from "../models/community";
+import {
+  badgeProgress,
+  cuisineBadges,
+  sampleFriends,
+} from "../models/community";
+import {
+  isComplete,
+  newRegionPoints,
+  rewardsSummary,
+  visitPoints,
+} from "../../rewards/models/rewards";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
 type Props = {
@@ -145,14 +155,14 @@ function Page({
                   ? "Favorites"
                   : section === "friends"
                     ? "Friends"
-                    : "Badges"
+                    : "Rewards"
               }
               icon={
                 section === "favorites"
                   ? "heart-outline"
                   : section === "friends"
                     ? "people-outline"
-                    : "ribbon-outline"
+                    : "trophy-outline"
               }
               selected={navigation.section === section}
               onPress={() => navigation.setSection(section)}
@@ -509,6 +519,8 @@ export function AchievementsScreen({
   onShowMap,
 }: Props) {
   const [filter, setFilter] = useState<"all" | "earned" | "progress">("all");
+  const now = new Date();
+  const rewards = rewardsSummary(collection, places, now);
   const badges = cuisineBadges.map((badge) => ({
     ...badge,
     count: badgeProgress(badge.category, collection.visited, places),
@@ -525,10 +537,115 @@ export function AchievementsScreen({
     <Page
       title="A taste for adventure."
       eyebrow="YOUR CUISINE PASSPORT"
-      intro="Little rewards for following your appetite. Visit different spots to build your collection."
-      icon="ribbon-outline"
+      intro="Little rewards for following your appetite. Earn points for every new spot, and more for exploring a new part of the city."
+      icon="trophy-outline"
       error={storageError}
     >
+      <View style={s.hero}>
+        <Icon name="flash-outline" size={38} />
+        <View style={s.flex}>
+          <Text style={s.heroNumber}>{rewards.total} points</Text>
+          <Text style={s.small}>
+            {rewards.monthPoints} this month · {rewards.regionBonusCount}{" "}
+            {rewards.regionBonusCount === 1 ? "region" : "regions"} discovered
+          </Text>
+        </View>
+      </View>
+      <Text style={s.small}>
+        Each different spot earns {visitPoints} points. Your first spot in a new
+        region earns {newRegionPoints} more. Finish monthly challenges for bonus
+        points.
+      </Text>
+      <Text accessibilityRole="header" style={s.section}>
+        {monthNames[now.getMonth()]} challenges
+      </Text>
+      <Text style={s.small}>
+        {rewards.daysLeft} {rewards.daysLeft === 1 ? "day" : "days"} left ·
+        Challenges reset on the 1st
+      </Text>
+      {rewards.challenges.map((challenge) => {
+        const done = isComplete(challenge);
+        const progress = Math.min(challenge.progress, challenge.goal);
+        return (
+          <View key={challenge.id} style={[s.card, done && s.earnedCard]}>
+            <View style={s.row}>
+              <View style={s.badge}>
+                <Icon name={challenge.icon} size={28} />
+              </View>
+              <View style={s.flex}>
+                <Text style={s.eyebrow}>
+                  {done ? "COMPLETE" : `+${challenge.reward} POINTS`}
+                </Text>
+                <Text style={s.name}>{challenge.title}</Text>
+              </View>
+              {done && <Icon name="checkmark-circle" />}
+            </View>
+            <Text style={s.small}>{challenge.description}</Text>
+            <View
+              accessibilityRole="progressbar"
+              accessibilityLabel={`${challenge.title} progress`}
+              accessibilityValue={{
+                min: 0,
+                max: challenge.goal,
+                now: progress,
+                text: `${progress} of ${challenge.goal}`,
+              }}
+              style={s.track}
+            >
+              <View
+                style={[
+                  s.fill,
+                  {
+                    width: `${(progress / Math.max(challenge.goal, 1)) * 100}%`,
+                  },
+                ]}
+              />
+            </View>
+            <Text style={s.buttonText}>
+              {progress} / {challenge.goal}
+              {done ? ` · ${challenge.reward} points earned` : ""}
+            </Text>
+          </View>
+        );
+      })}
+      <Text accessibilityRole="header" style={s.section}>
+        Regions
+      </Text>
+      <Text style={s.small}>
+        Restaurants are grouped by area. Eat somewhere new to claim a region and
+        its {newRegionPoints}-point bonus.
+      </Text>
+      {rewards.regions.map((region) => (
+        <View
+          key={region.id}
+          style={[s.card, region.discovered && s.earnedCard]}
+        >
+          <View style={s.row}>
+            <Icon
+              name={region.discovered ? "flag" : "flag-outline"}
+              size={24}
+            />
+            <View style={s.flex}>
+              <Text style={s.name}>{region.name}</Text>
+              <Text style={s.small}>
+                {region.visited} of {region.total}{" "}
+                {region.total === 1 ? "spot" : "spots"} visited
+                {region.discovered ? " · Discovered" : ""}
+              </Text>
+            </View>
+          </View>
+          {!region.discovered && region.next && (
+            <Action
+              label={`Try ${region.next.name} · +${visitPoints + newRegionPoints} points`}
+              icon="arrow-forward-outline"
+              onPress={() => onShowMap(region.next!)}
+            />
+          )}
+        </View>
+      ))}
+      <Text accessibilityRole="header" style={s.section}>
+        Badges
+      </Text>
       <View style={s.hero}>
         <Icon name="trophy-outline" size={38} />
         <View style={s.flex}>
@@ -639,6 +756,21 @@ export function AchievementsScreen({
     </Page>
   );
 }
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 const s = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.paper },

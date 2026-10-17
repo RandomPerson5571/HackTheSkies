@@ -16,6 +16,7 @@ import {
   Text,
   TextInput,
   View,
+  type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -46,6 +47,15 @@ type Props = {
   onShowMap: (place: Place) => void;
 };
 type Filter = "discover" | "saved" | "want" | "visited" | `list:${string}`;
+
+const webGlassBlur = (
+  Platform.OS === "web"
+    ? {
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+      }
+    : {}
+) as ViewStyle;
 
 function Icon({
   name,
@@ -823,29 +833,36 @@ const styles = StyleSheet.create({
   actionText: { fontSize: 12, fontWeight: "600", color: colors.accent },
   chips: { flexDirection: "row", gap: 8 },
   listChip: {
+    ...webGlassBlur,
     minHeight: 48,
     paddingHorizontal: 15,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.68)",
     flexDirection: "row",
     gap: 8,
     alignItems: "center",
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.48)",
+    boxShadow: "0 5px 18px #3D568F14",
   },
-  activeChip: { backgroundColor: colors.accent, borderColor: colors.accent },
+  activeChip: {
+    backgroundColor: "rgba(61,86,143,0.76)",
+    borderColor: "rgba(255,255,255,0.48)",
+  },
   chipText: { fontSize: 13, fontWeight: "600", color: colors.ink },
   activeText: { color: colors.white },
   search: {
+    ...webGlassBlur,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
     paddingLeft: 14,
     paddingRight: 4,
     borderRadius: 16,
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.50)",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.70)",
+    boxShadow: "0 8px 24px #3D568F18",
   },
   input: {
     flex: 1,
@@ -861,12 +878,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   category: {
+    ...webGlassBlur,
     minHeight: 44,
     paddingHorizontal: 14,
     justifyContent: "center",
     borderRadius: 14,
+    backgroundColor: "rgba(255,253,245,0.44)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.68)",
   },
-  selectedCategory: { backgroundColor: colors.tint },
+  selectedCategory: {
+    backgroundColor: "rgba(234,243,178,0.64)",
+    borderColor: "rgba(61,86,143,0.38)",
+  },
   resultsHeading: {
     flexDirection: "row",
     justifyContent: "space-between",

@@ -4,10 +4,67 @@ import importedRestaurants from "./importedRestaurants.json" with { type: "json"
 
 export type Category =
   "All" | "Coffee" | "Pizza" | "Bakery" | "Ramen" | "Restaurant";
+export const restaurantTypes = [
+  "Fast Food/QSR",
+  "Bakery",
+  "Dine-in",
+  "Fine Dining",
+  "Cafe",
+  "Beverage",
+  "Bar & Lounge",
+  "Food Truck/Stand",
+] as const;
+export const foodSpecialties = [
+  "Sushi",
+  "Healthy",
+  "Bubble Tea",
+  "Wings",
+  "Sandwiches",
+  "Soup",
+  "Poke",
+  "Burgers",
+  "BBQ",
+  "Salads",
+] as const;
+export const cuisines = [
+  "Chinese",
+  "Korean",
+  "Japanese",
+  "Vietnamese",
+  "Thai",
+  "South Asian",
+  "Levant",
+  "Greek",
+  "Persian",
+  "French",
+  "Italian",
+  "Latin",
+  "Caribbean",
+  "American",
+  "Other",
+] as const;
+export const cuisineRegions: Record<(typeof cuisines)[number], string> = {
+  Chinese: "China, Taiwan, Tibet, Hong Kong",
+  Korean: "North Korea, South Korea",
+  Japanese: "Japan",
+  Vietnamese: "Vietnam",
+  Thai: "Thailand",
+  "South Asian": "North/South India, Pakistan, Bangladesh, Nepal, Sri Lanka",
+  Levant: "Turkey, Jordan, Syria, Lebanon, Israel, Palestine",
+  Greek: "",
+  Persian: "Iran, Iraq, Afghanistan",
+  French: "",
+  Italian: "",
+  Latin: "Mexico, Puerto Rico, Argentina, Chile, Brazil, Colombia, Costa Rica",
+  Caribbean: "Jamaica, Cuba, Haiti, Dominican Republic, Trinidad",
+  American: "",
+  Other: "",
+};
 export type Place = {
   id: string;
   name: string;
   category: Exclude<Category, "All">;
+  type?: string;
   neighborhood: string;
   address: string;
   coordinate: [number, number];

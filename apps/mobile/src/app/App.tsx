@@ -11,6 +11,7 @@ import {
   FlatList,
   Keyboard,
   Linking,
+  Image,
   Modal,
   Platform,
   Pressable,
@@ -288,9 +289,12 @@ function FoodMap() {
           >
             <View style={styles.headingRow}>
               <View>
-                <Text accessibilityRole="header" style={styles.wordmark}>
-                  Cibo
-                </Text>
+                <Image
+                  accessibilityLabel="Cibo"
+                  source={require("../../../../assets/cibo.png")}
+                  resizeMode="contain"
+                  style={styles.wordmark}
+                />
                 <Text style={styles.eyebrow}>GOOD FOOD. GREAT FINDS.</Text>
               </View>
               <View style={styles.brand}>
@@ -712,17 +716,8 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   wordmark: {
-    fontFamily: Platform.select({
-      ios: "Baskerville",
-      android: "serif",
-      web: "Georgia, 'Times New Roman', serif",
-    }),
-    fontSize: 58,
-    lineHeight: 68,
-    fontStyle: "italic",
-    fontWeight: "600",
-    letterSpacing: -3,
-    color: colors.ink,
+    width: 132,
+    height: 62,
   },
   brand: {
     width: 46,
@@ -742,7 +737,7 @@ const styles = StyleSheet.create({
     minHeight: 52,
     backgroundColor: colors.white,
     borderRadius: 18,
-    boxShadow: "0 3px 18px #364C8410",
+    boxShadow: "0 3px 18px #3D568F10",
     gap: 10,
   },
   input: { flex: 1, color: colors.ink, fontSize: 14, paddingVertical: 15 },
@@ -793,7 +788,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.white,
     backgroundColor: colors.paper,
-    boxShadow: "0 3px 8px #364C8433",
+    boxShadow: "0 3px 8px #3D568F33",
   },
   selectedMarker: { borderColor: colors.accent, width: 66, height: 70 },
   markerImage: { width: "100%", height: "100%", borderRadius: 11 },
@@ -847,7 +842,7 @@ const styles = StyleSheet.create({
     padding: 18,
     borderRadius: 24,
     backgroundColor: colors.paper,
-    boxShadow: "0 4px 24px #364C8412",
+    boxShadow: "0 4px 24px #3D568F12",
   },
   browseIcon: {
     width: 44,
@@ -873,7 +868,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.paper,
     borderWidth: 1,
     borderColor: colors.border,
-    boxShadow: "0 4px 20px #364C8412",
+    boxShadow: "0 4px 20px #3D568F12",
   },
   navItem: {
     flexDirection: "column",

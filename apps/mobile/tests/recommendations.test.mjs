@@ -68,7 +68,6 @@ test("a local rating updates a count-weighted community average and survives sto
   const rating = buildRecommendations(data, stored.ratings).get("real-place");
   assert.equal(rating.averageRating, 4.1);
   assert.equal(rating.reviewCount, 10);
-  assert.equal(rating.sampleReviewCount, 0);
   const edited = updateCollection(stored, {
     type: "rate",
     placeId: "real-place",
@@ -97,12 +96,14 @@ test("a local rating updates a count-weighted community average and survives sto
   );
 });
 
-test("sample votes are labeled and never turned into ratings for imported restaurants", () => {
+test("imported restaurants have no seeded ratings", () => {
   const ratings = buildRecommendations(places, {});
-  assert.match(recommendationLabel(ratings.get("ramen")), /sample ratings/);
-  const imported = places.find((place) => place.id.startsWith("csv-"));
-  assert.equal(ratings.get(imported.id).reviewCount, 0);
-  assert.equal(ratings.get(imported.id).suggested, false);
+  for (const place of places) {
+    assert.ok(place.id.startsWith("csv-"));
+    assert.equal(ratings.get(place.id).reviewCount, 0);
+    assert.equal(ratings.get(place.id).suggested, false);
+    assert.equal(recommendationLabel(ratings.get(place.id)), "Not rated yet");
+  }
 });
 
 test("rating an unrated restaurant promotes it; downgrading or clearing removes photo eligibility", () => {

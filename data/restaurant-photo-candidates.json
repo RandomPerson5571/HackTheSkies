@@ -1,0 +1,29 @@
+[
+  {
+    "restaurantId": "csv-89ec64d6b8aaeace",
+    "name": "El Catrin Destileria",
+    "provider": "wikimedia",
+    "fileTitle": "File:El Catrin Mexican Restaurant - Toronto (25414365307).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:El_Catrin_Mexican_Restaurant_-_Toronto_(25414365307).jpg",
+    "status": "integrated",
+    "notes": "Verified Commons API description, coordinates, author, and license; see mobile restaurantPhotos.json."
+  },
+  {
+    "restaurantId": "csv-3a14b2c6a68751f0",
+    "name": "Canoe",
+    "provider": "wikimedia",
+    "fileTitle": "File:Canoe Restaurant, Toronto (14113432476).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Canoe_Restaurant,_Toronto_(14113432476).jpg",
+    "status": "integrated",
+    "notes": "Verified Commons API description, coordinates, author, and license; see mobile restaurantPhotos.json."
+  },
+  {
+    "restaurantId": "csv-108ebb2afac24955",
+    "name": "The Rex Hotel Jazz & Blues Bar",
+    "provider": "wikimedia",
+    "fileTitle": "File:The Rex Hotel Jazz and Blues Bar Toronto, August 15 2026.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_Rex_Hotel_Jazz_and_Blues_Bar_Toronto,_August_15_2026.jpg",
+    "status": "integrated",
+    "notes": "Verified Commons API description, coordinates, author, and license; see mobile restaurantPhotos.json."
+  }
+]

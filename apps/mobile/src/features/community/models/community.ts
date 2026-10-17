@@ -1,27 +1,29 @@
 import type { Place } from "../../restaurants/data/places";
 
 // Fictional profiles for the local prototype; no requests are sent to real people.
-export const sampleFriends = [
+type SampleVisit = {
+  placeId: string;
+  rating: number;
+  note: string;
+  when: string;
+};
+export type SampleFriend = {
+  id: string;
+  name: string;
+  handle: string;
+  initials: string;
+  bio: string;
+  visits: SampleVisit[];
+};
+
+export const sampleFriends: SampleFriend[] = [
   {
     id: "maya",
     name: "Maya Chen",
     handle: "@mayatastes",
     initials: "MC",
     bio: "Always room for ramen.",
-    visits: [
-      {
-        placeId: "ramen",
-        rating: 5,
-        note: "The kind of broth you think about all week.",
-        when: "Yesterday",
-      },
-      {
-        placeId: "bakery",
-        rating: 4,
-        note: "Get here early for the pastries.",
-        when: "This week",
-      },
-    ],
+    visits: [],
   },
   {
     id: "alex",
@@ -29,20 +31,7 @@ export const sampleFriends = [
     handle: "@alexaftercoffee",
     initials: "AR",
     bio: "Coffee first. Everything else later.",
-    visits: [
-      {
-        placeId: "espresso",
-        rating: 5,
-        note: "Found my new neighborhood coffee spot.",
-        when: "Yesterday",
-      },
-      {
-        placeId: "pizza",
-        rating: 4,
-        note: "One more slice is always the right call.",
-        when: "This week",
-      },
-    ],
+    visits: [],
   },
   {
     id: "sam",
@@ -50,20 +39,7 @@ export const sampleFriends = [
     handle: "@crumbtrail",
     initials: "SP",
     bio: "Following the scent of fresh bread.",
-    visits: [
-      {
-        placeId: "bread",
-        rating: 5,
-        note: "A loaf worth crossing town for.",
-        when: "Today",
-      },
-      {
-        placeId: "coffee",
-        rating: 4,
-        note: "A perfect slow morning.",
-        when: "This week",
-      },
-    ],
+    visits: [],
   },
 ];
 

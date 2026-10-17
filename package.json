@@ -2,19 +2,25 @@
   "name": "HackTheSkies",
   "private": true,
   "scripts": {
+    "db:setup": "node --env-file=.env.local scripts/setup-supabase.mjs",
+    "db:verify": "node --env-file=.env.local --env-file=apps/mobile/.env.local scripts/verify-supabase.mjs",
     "catalog:import": "node --env-file-if-exists=.env.local scripts/import-food-catalog.mjs",
     "test:catalog": "node --test scripts/tests/foodCatalog.test.mjs",
     "build": "turbo run build",
-    "dev": "turbo run dev",
-    "dev:web": "pnpm --filter web dev",
+    "dev": "pnpm --filter mobile dev",
+    "dev:web": "pnpm --filter mobile web",
     "dev:mobile": "pnpm --filter mobile dev",
     "ios": "pnpm --filter mobile ios",
     "android": "pnpm --filter mobile android",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "check-types": "turbo run check-types",
+    "dev:server": "pnpm --filter mobile dev:server",
+    "start": "pnpm --filter mobile start:server",
+    "test": "pnpm --filter mobile test"
   },
   "devDependencies": {
+    "postgres": "^3.4.9",
     "prettier": "3.9.6",
     "turbo": "^2.11.8",
     "typescript": "7.0.2"

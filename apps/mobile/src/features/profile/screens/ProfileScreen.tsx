@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -8,16 +8,18 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { categories, places, type Category } from "../../restaurants/data/places";
+import { categories, type Category } from "../../restaurants/data/places";
 
 import { colors } from "../../../theme/index";
+
+import { useBackend } from "../../../lib/BackendProvider";
+import type { Profile } from "../models/profile";
+export type { Profile } from "../models/profile";
 
 const foodTypes = categories.filter(
   (item): item is Exclude<Category, "All"> => item !== "All",
 );
 const diets = ["No preference", "Vegetarian", "Vegan", "Pescatarian"] as const;
-type Diet = (typeof diets)[number];
-export type Profile = { name: string; neighborhood: string; diet: Diet };
 
 type Point = { x: number; y: number };
 function Line({
@@ -116,15 +118,22 @@ export function ProfileScreen({
   onSave,
   topInset,
   bottomInset,
+  storageError,
 }: {
   saved: string[];
   profile: Profile;
   onSave: (profile: Profile) => void;
   topInset: number;
   bottomInset: number;
+  storageError: string;
 }) {
+  const { places } = useBackend();
   const [draft, setDraft] = useState(profile);
   const [message, setMessage] = useState("");
+  const edited = useRef(false);
+  useEffect(() => {
+    if (!edited.current) setDraft(profile);
+  }, [profile]);
   const savedPlaces = places.filter((place) => saved.includes(place.id));
   const counts = foodTypes.map(
     (type) => savedPlaces.filter((place) => place.category === type).length,
@@ -133,6 +142,7 @@ export function ProfileScreen({
   const neighborhoods = new Set(savedPlaces.map((place) => place.neighborhood))
     .size;
   function update(change: Partial<Profile>) {
+    edited.current = true;
     setDraft((current) => ({ ...current, ...change }));
     setMessage("");
   }
@@ -147,8 +157,9 @@ export function ProfileScreen({
       neighborhood: draft.neighborhood.trim(),
     };
     setDraft(next);
+    edited.current = false;
     onSave(next);
-    setMessage("Profile updated for this session.");
+    setMessage("Settings saved.");
   }
   return (
     <ScrollView
@@ -164,6 +175,11 @@ export function ProfileScreen({
       <Text accessibilityRole="header" style={styles.title}>
         Your profile.
       </Text>
+      {storageError ? (
+        <Text accessibilityRole="alert" style={styles.hint}>
+          {storageError}
+        </Text>
+      ) : null}
       <View style={styles.identity}>
         <View style={styles.avatar}>
           <Text style={styles.initial}>
@@ -313,7 +329,7 @@ export function ProfileScreen({
           </Text>
         ) : null}
         <Text style={styles.copy}>
-          Profile settings stay here for your current session.
+          Your settings are saved privately, with no account needed.
         </Text>
       </View>
     </ScrollView>

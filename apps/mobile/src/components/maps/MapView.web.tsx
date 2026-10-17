@@ -348,7 +348,9 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       if (suggested) {
         const image = document.createElement("img");
         image.src = place.image;
+        image.onerror = () => image.remove();
         image.alt = "";
+        if (place.photo) image.title = `${place.photo.kind === "illustration" ? `Food illustration: ${place.photo.dishName}; not photographed at this restaurant. ` : ""}${place.photo.photographer || "Source website"} · ${place.photo.licenseName || "Rights not specified"} (credits in restaurant details)`;
         image.width = 58;
         image.height = 58;
         image.decoding = "async";

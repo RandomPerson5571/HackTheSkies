@@ -1,4 +1,10 @@
-import { useMemo, useState, type Dispatch, type ComponentProps } from "react";
+import {
+  useMemo,
+  useRef,
+  useState,
+  type Dispatch,
+  type ComponentProps,
+} from "react";
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -13,17 +19,25 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { categories, places, type Category, type Place } from "../data/places";
+import { categories, type Category, type Place } from "../data/places";
 import {
   buildRecommendations,
   recommendationLabel,
 } from "../models/recommendations";
+import { RestaurantPhotoCredit } from "../components/RestaurantPhotoCredit";
 import { RestaurantPhoto } from "../components/RestaurantPhoto";
+import {
+  browseRestaurants,
+  surpriseCuisine,
+  type RestaurantSort,
+} from "../models/restaurantBrowse";
 import { colors } from "../../../theme/index";
 import type {
   CollectionAction,
   RestaurantCollection,
 } from "../models/restaurantCollection";
+
+import { useBackend } from "../../../lib/BackendProvider";
 
 type Props = {
   collection: RestaurantCollection;
@@ -31,7 +45,7 @@ type Props = {
   storageError: string;
   onShowMap: (place: Place) => void;
 };
-type Filter = "discover" | "want" | "visited" | `list:${string}`;
+type Filter = "discover" | "saved" | "want" | "visited" | `list:${string}`;
 
 function Icon({
   name,
@@ -51,10 +65,27 @@ export function RestaurantsScreen({
   storageError,
   onShowMap,
 }: Props) {
+  const { places } = useBackend();
   const insets = useSafeAreaInsets();
+  const list = useRef<FlatList<Place>>(null);
+  const [cuisine, setCuisine] = useState("All");
+  const [sort, setSort] = useState<RestaurantSort>("discovery");
+  const cuisineOptions = useMemo(
+    () => [
+      "All",
+      ...Array.from(
+        new Set(
+          places
+            .map((place) => place.cuisine)
+            .filter((value): value is string => Boolean(value)),
+        ),
+      ).sort(),
+    ],
+    [places],
+  );
   const recommendations = useMemo(
     () => buildRecommendations(places, collection.ratings),
-    [collection.ratings],
+    [places, collection.ratings],
   );
   const [filter, setFilter] = useState<Filter>("discover");
   const [query, setQuery] = useState("");
@@ -82,6 +113,12 @@ export function RestaurantsScreen({
       icon: "compass-outline",
     },
     {
+      id: "saved",
+      label: "Saved",
+      count: collection.saved.length,
+      icon: "bookmark-outline",
+    },
+    {
       id: "want",
       label: "Want to try",
       count: wantCount,
@@ -100,28 +137,22 @@ export function RestaurantsScreen({
       icon: "list-outline" as const,
     })),
   ];
-  const visible = places
-    .filter((place) => {
-      const matchesList =
-        filter === "discover" ||
-        (filter === "want" &&
-          collection.saved.includes(place.id) &&
-          !collection.visited.includes(place.id)) ||
-        (filter === "visited" && collection.visited.includes(place.id)) ||
-        activeList?.placeIds.includes(place.id);
-      return (
-        matchesList &&
-        (category === "All" || place.category === category) &&
-        `${place.name} ${place.category} ${place.cuisine ?? ""} ${place.neighborhood} ${place.address}`
-          .toLowerCase()
-          .includes(query.trim().toLowerCase())
-      );
-    })
-    .sort(
-      (a, b) =>
-        (recommendations.get(b.id)?.score ?? 0) -
-        (recommendations.get(a.id)?.score ?? 0),
-    );
+  const inCollection = places.filter(
+    (place) =>
+      filter === "discover" ||
+      (filter === "saved" && collection.saved.includes(place.id)) ||
+      (filter === "want" &&
+        collection.saved.includes(place.id) &&
+        !collection.visited.includes(place.id)) ||
+      (filter === "visited" && collection.visited.includes(place.id)) ||
+      Boolean(activeList?.placeIds.includes(place.id)),
+  );
+  const visible = browseRestaurants(
+    inCollection,
+    { query, category, cuisine, sort },
+    recommendations,
+  );
+  const hasFilters = Boolean(query || category !== "All" || cuisine !== "All");
 
   function createList() {
     const name = listName.trim();
@@ -146,6 +177,7 @@ export function RestaurantsScreen({
     setFilter(`list:${id}`);
     setQuery("");
     setCategory("All");
+    setCuisine("All");
     setCreating(false);
     setListName("");
     setFormError("");
@@ -154,7 +186,11 @@ export function RestaurantsScreen({
   return (
     <View style={[styles.screen, { paddingTop: insets.top + 16 }]}>
       <FlatList
+        ref={list}
         data={visible}
+        initialNumToRender={6}
+        maxToRenderPerBatch={6}
+        windowSize={5}
         keyExtractor={(place) => place.id}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
@@ -180,8 +216,8 @@ export function RestaurantsScreen({
               </View>
             </View>
             <Text style={styles.intro}>
-              Suggested places favor great ratings (60%) and fewer reviews
-              (40%). Rate a place from its map card.
+              Sample community reviews power suggestions: great ratings (60%)
+              and fewer reviews (40%). Rate a place from its map card.
             </Text>
             <View style={styles.summary}>
               <View style={styles.flex}>
@@ -233,7 +269,12 @@ export function RestaurantsScreen({
                   accessibilityRole="tab"
                   accessibilityState={{ selected: filter === option.id }}
                   accessibilityLabel={`${option.label}, ${option.count} places`}
-                  onPress={() => setFilter(option.id)}
+                  onPress={() => {
+                    setFilter(option.id);
+                    setQuery("");
+                    setCategory("All");
+                    setCuisine("All");
+                  }}
                   style={({ pressed }) => [
                     styles.listChip,
                     filter === option.id && styles.activeChip,
@@ -307,47 +348,122 @@ export function RestaurantsScreen({
                 </Pressable>
               ))}
             </ScrollView>
+            <Text style={styles.small}>Cuisine</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.chips}
+              keyboardShouldPersistTaps="handled"
+            >
+              {cuisineOptions.map((item) => (
+                <Pressable
+                  key={item}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: cuisine === item }}
+                  accessibilityLabel={
+                    item === "All" ? "All cuisines" : `${item} cuisine`
+                  }
+                  onPress={() => setCuisine(item)}
+                  style={({ pressed }) => [
+                    styles.category,
+                    cuisine === item && styles.selectedCategory,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.small,
+                      cuisine === item && styles.actionText,
+                    ]}
+                  >
+                    {item === "All" ? "All cuisines" : item}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+            <View style={[styles.sectionRow, { flexWrap: "wrap" }]}>
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                {(["discovery", "name"] as const).map((item) => (
+                  <Pressable
+                    key={item}
+                    accessibilityRole="button"
+                    accessibilityLabel={
+                      item === "name"
+                        ? "Sort restaurants A to Z"
+                        : "Sort by discovery"
+                    }
+                    accessibilityState={{ selected: sort === item }}
+                    onPress={() => setSort(item)}
+                    style={({ pressed }) => [
+                      styles.category,
+                      sort === item && styles.selectedCategory,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <Text
+                      style={[styles.small, sort === item && styles.actionText]}
+                    >
+                      {item === "name" ? "A–Z" : "Discovery"}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Surprise me with another cuisine"
+                onPress={() => {
+                  setCuisine(surpriseCuisine(cuisineOptions, cuisine));
+                  setQuery("");
+                  setCategory("All");
+                  setFilter("discover");
+                  list.current?.scrollToOffset({ offset: 0, animated: false });
+                }}
+                style={({ pressed }) => [
+                  styles.textButton,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Icon name="shuffle-outline" />
+                <Text style={styles.actionText}>Surprise me</Text>
+              </Pressable>
+            </View>
             <View style={styles.resultsHeading}>
               <Text accessibilityRole="header" style={styles.sectionTitle}>
                 {filter === "discover"
                   ? "Good food, close by"
-                  : filter === "want"
-                    ? "On your must-try list"
-                    : filter === "visited"
-                      ? "Places you’ve been"
-                      : activeList?.name}
+                  : filter === "saved"
+                    ? "Your saved places"
+                    : filter === "want"
+                      ? "On your must-try list"
+                      : filter === "visited"
+                        ? "Places you’ve been"
+                        : activeList?.name}
               </Text>
               <Text style={styles.small}>
                 {visible.length} {visible.length === 1 ? "spot" : "spots"}
               </Text>
             </View>
-            <Text style={styles.caption}>
-              Toronto · Fictional sample places
-            </Text>
+            <Text style={styles.caption}>Toronto · Restaurant listings</Text>
           </View>
         }
         ListEmptyComponent={
           <View style={styles.empty}>
             <View style={styles.brand}>
               <Icon
-                name={
-                  query || category !== "All"
-                    ? "search-outline"
-                    : "bookmark-outline"
-                }
+                name={hasFilters ? "search-outline" : "bookmark-outline"}
                 size={26}
                 color={colors.accent}
               />
             </View>
             <Text style={styles.sectionTitle}>
-              {query || category !== "All"
+              {hasFilters
                 ? "No matches this time"
                 : filter === "visited"
                   ? "Good meals to remember"
                   : "Your next favorite goes here"}
             </Text>
             <Text style={styles.emptyCopy}>
-              {query || category !== "All"
+              {hasFilters
                 ? "Try another food or neighborhood, or clear your filters."
                 : filter === "visited"
                   ? "Mark a restaurant as visited to keep track of where you’ve eaten."
@@ -358,7 +474,8 @@ export function RestaurantsScreen({
               onPress={() => {
                 setQuery("");
                 setCategory("All");
-                if (!query && category === "All") setFilter("discover");
+                setCuisine("All");
+                if (!hasFilters) setFilter("discover");
               }}
               style={({ pressed }) => [
                 styles.primaryButton,
@@ -366,9 +483,7 @@ export function RestaurantsScreen({
               ]}
             >
               <Text style={styles.primaryText}>
-                {query || category !== "All"
-                  ? "Clear filters"
-                  : "Discover restaurants"}
+                {hasFilters ? "Clear filters" : "Discover restaurants"}
               </Text>
             </Pressable>
           </View>
@@ -388,6 +503,7 @@ export function RestaurantsScreen({
                 ]}
               >
                 <RestaurantPhoto
+                  showAll
                   place={item}
                   recommendation={recommendations.get(item.id)}
                   style={styles.photo}
@@ -405,6 +521,7 @@ export function RestaurantsScreen({
                 <Icon name="chevron-forward" size={18} color={colors.muted} />
               </Pressable>
               <Text style={styles.note}>{item.note}</Text>
+              <RestaurantPhotoCredit place={item} />
               <View style={styles.cardActions}>
                 <Pressable
                   accessibilityRole="button"

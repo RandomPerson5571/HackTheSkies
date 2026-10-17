@@ -33,6 +33,14 @@
           "photosPermission": "Allow Cibo to choose food photos for your Food Dex.",
           "microphonePermission": false
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Cibo to photograph food for your Food Dex.",
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": false
+        }
       ]
     ]
   }

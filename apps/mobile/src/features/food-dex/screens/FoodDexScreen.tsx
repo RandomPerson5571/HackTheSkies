@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  FlatList,
   Image,
   KeyboardAvoidingView,
   Modal,
@@ -29,7 +30,7 @@ import {
 import { CatalogPhoto } from "../components/CatalogPhoto";
 import { PhotoCredit } from "../components/PhotoCredit";
 import { catalogPhoto } from "../services/catalogPhotos";
-import { recognizeFood } from "../services/foodScanner";
+import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
 import { useFoodDex } from "../hooks/useFoodDex";
 import { colors } from "../../../theme/index";
 
@@ -82,19 +83,36 @@ function Button({
   );
 }
 
-export function FoodDexScreen() {
+export type FoodCapture = {
+  recognition?: FoodRecognition | null;
+  id: number;
+  photo: ImagePicker.ImagePickerAsset | null;
+  error: string;
+};
+
+export function FoodDexScreen({
+  capture = null,
+  onOpenCamera,
+}: {
+  capture?: FoodCapture | null;
+  onOpenCamera?: () => void;
+}) {
   const insets = useSafeAreaInsets();
   const { entries, error: storageError, discover, remove } = useFoodDex();
   const [cuisine, setCuisine] = useState<Cuisine | null>(null);
   const [filter, setFilter] = useState<"all" | "collected">("all");
   const [query, setQuery] = useState("");
-  const [scanOpen, setScanOpen] = useState(false);
-  const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset | null>(null);
-  const [name, setName] = useState("");
-  const [scanCuisine, setScanCuisine] = useState<Cuisine>("Other");
+  const [scanOpen, setScanOpen] = useState(Boolean(capture));
+  const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset | null>(
+    capture?.photo ?? null,
+  );
+  const [name, setName] = useState(capture?.recognition?.name ?? "");
+  const [scanCuisine, setScanCuisine] = useState<Cuisine>(
+    capture?.recognition?.cuisine ?? "Other",
+  );
   const [busy, setBusy] = useState(false);
   const [picking, setPicking] = useState(false);
-  const [scanError, setScanError] = useState("");
+  const [scanError, setScanError] = useState(capture?.error ?? "");
   const [notice, setNotice] = useState("");
   const [detail, setDetail] = useState<FoodEntry | null>(null);
   const request = useRef<AbortController | null>(null);
@@ -124,7 +142,7 @@ export function FoodDexScreen() {
     setNotice("");
     setScanOpen(true);
   }
-  async function pickPhoto(camera: boolean) {
+  async function pickPhoto() {
     if (pickerActive.current) return;
     pickerActive.current = true;
     setPicking(true);
@@ -133,16 +151,6 @@ export function FoodDexScreen() {
     request.current?.abort();
     setBusy(false);
     try {
-      if (camera) {
-        const permission = await ImagePicker.requestCameraPermissionsAsync();
-        if (!permission.granted) {
-          if (session.current === currentSession)
-            setScanError(
-              "Camera access is off. Enable it in device settings, choose a photo, or add the dish by hand.",
-            );
-          return;
-        }
-      }
       const options: ImagePicker.ImagePickerOptions = {
         mediaTypes: ["images"],
         base64: true,
@@ -150,9 +158,7 @@ export function FoodDexScreen() {
         allowsEditing: true,
         aspect: [1, 1],
       };
-      const result = camera
-        ? await ImagePicker.launchCameraAsync(options)
-        : await ImagePicker.launchImageLibraryAsync(options);
+      const result = await ImagePicker.launchImageLibraryAsync(options);
       if (
         currentSession !== session.current ||
         result.canceled ||
@@ -475,6 +481,7 @@ export function FoodDexScreen() {
                     </Pressable>
                   </View>
                   <CatalogPhoto
+                    eager
                     source={
                       detail.photo
                         ? { uri: detail.photo }
@@ -557,7 +564,10 @@ export function FoodDexScreen() {
                     icon="camera-outline"
                     secondary
                     disabled={busy || picking}
-                    onPress={() => void pickPhoto(true)}
+                    onPress={() => {
+                      closeScan();
+                      onOpenCamera?.();
+                    }}
                   />
                 </View>
                 <View style={s.flex}>
@@ -566,7 +576,7 @@ export function FoodDexScreen() {
                     icon="images-outline"
                     secondary
                     disabled={busy || picking}
-                    onPress={() => void pickPhoto(false)}
+                    onPress={() => void pickPhoto()}
                   />
                 </View>
               </View>
@@ -574,8 +584,7 @@ export function FoodDexScreen() {
                 <>
                   <Text style={s.meta}>
                     Analyze photo sends this image to our recognition service,
-                    powered by OpenAI. You can also enter the dish yourself
-                    below.
+                    powered by Groq. You can also enter the dish yourself below.
                   </Text>
                   <Button
                     title={busy ? "Identifying your food…" : "Analyze photo"}
@@ -667,68 +676,77 @@ export function FoodDexScreen() {
                 <Icon name="scan-outline" />
               </Pressable>
             </View>
-            <ScrollView
+            <FlatList
               contentContainerStyle={[
                 s.detailContent,
                 { paddingBottom: insets.bottom + 24 },
               ]}
               keyboardShouldPersistTaps="handled"
-            >
-              {cuisine && (
-                <>
-                  <CatalogPhoto
-                    source={catalogPhoto(cuisineCovers[cuisine])}
-                    style={s.banner}
-                    label={
-                      cuisineCovers[cuisine]
-                        ? `${cuisine}: ${cuisineCovers[cuisine].name}`
-                        : "Other cuisines"
-                    }
-                  />
-                  <PhotoCredit dish={cuisineCovers[cuisine]} />
-                </>
-              )}
-              <Text style={s.title}>A taste of {cuisine}.</Text>
-              {cuisine && cuisineRegions[cuisine].length > 0 && (
-                <Text style={s.copy}>
-                  {cuisineRegions[cuisine].join(" · ")}
-                </Text>
-              )}
-              <Text style={s.copy}>
-                {collectionForCuisine.length} collected · {targets.length}{" "}
-                dishes to explore
-              </Text>
-              <View style={s.search}>
-                <Icon name="search-outline" size={19} />
-                <TextInput
-                  accessibilityLabel="Search dishes"
-                  placeholder="Find a dish…"
-                  placeholderTextColor={colors.muted}
-                  value={query}
-                  onChangeText={setQuery}
-                  style={s.input}
-                />
-              </View>
-              <View style={s.row}>
-                {(["all", "collected"] as const).map((item) => (
-                  <Pressable
-                    key={item}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: filter === item }}
-                    onPress={() => setFilter(item)}
-                    style={({ pressed }) => [
-                      s.chip,
-                      filter === item && s.chipActive,
-                      pressed && s.dim,
-                    ]}
-                  >
-                    <Text style={[s.chipText, filter === item && s.white]}>
-                      {item === "all" ? "All dishes" : "Collected"}
+              data={rows}
+              keyExtractor={(dish) => dish.id}
+              initialNumToRender={6}
+              maxToRenderPerBatch={6}
+              windowSize={5}
+              ListHeaderComponent={
+                <View style={s.collectionHeader}>
+                  {cuisine && (
+                    <>
+                      <CatalogPhoto
+                        eager
+                        source={catalogPhoto(cuisineCovers[cuisine])}
+                        style={s.banner}
+                        label={
+                          cuisineCovers[cuisine]
+                            ? `${cuisine}: ${cuisineCovers[cuisine].name}`
+                            : "Other cuisines"
+                        }
+                      />
+                      <PhotoCredit dish={cuisineCovers[cuisine]} />
+                    </>
+                  )}
+                  <Text style={s.title}>A taste of {cuisine}.</Text>
+                  {cuisine && cuisineRegions[cuisine].length > 0 && (
+                    <Text style={s.copy}>
+                      {cuisineRegions[cuisine].join(" · ")}
                     </Text>
-                  </Pressable>
-                ))}
-              </View>
-              {rows.map((dish, index) => (
+                  )}
+                  <Text style={s.copy}>
+                    {collectionForCuisine.length} collected · {targets.length}{" "}
+                    dishes to explore
+                  </Text>
+                  <View style={s.search}>
+                    <Icon name="search-outline" size={19} />
+                    <TextInput
+                      accessibilityLabel="Search dishes"
+                      placeholder="Find a dish…"
+                      placeholderTextColor={colors.muted}
+                      value={query}
+                      onChangeText={setQuery}
+                      style={s.input}
+                    />
+                  </View>
+                  <View style={s.row}>
+                    {(["all", "collected"] as const).map((item) => (
+                      <Pressable
+                        key={item}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: filter === item }}
+                        onPress={() => setFilter(item)}
+                        style={({ pressed }) => [
+                          s.chip,
+                          filter === item && s.chipActive,
+                          pressed && s.dim,
+                        ]}
+                      >
+                        <Text style={[s.chipText, filter === item && s.white]}>
+                          {item === "all" ? "All dishes" : "Collected"}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
+              }
+              renderItem={({ item: dish, index }) => (
                 <View key={dish.id} style={s.dishGroup}>
                   <Pressable
                     accessibilityRole="button"
@@ -766,8 +784,8 @@ export function FoodDexScreen() {
                     <PhotoCredit dish={dish.catalogDish} />
                   )}
                 </View>
-              ))}
-              {rows.length === 0 && (
+              )}
+              ListEmptyComponent={
                 <View style={s.empty}>
                   <Text style={s.cardTitle}>
                     {query ? "No dishes found" : "A new adventure awaits"}
@@ -778,13 +796,15 @@ export function FoodDexScreen() {
                       : "Scan or add your first food from this cuisine."}
                   </Text>
                 </View>
-              )}
-              <Button
-                title="Add a discovery"
-                icon="add-outline"
-                onPress={() => openScan()}
-              />
-            </ScrollView>
+              }
+              ListFooterComponent={
+                <Button
+                  title="Add a discovery"
+                  icon="add-outline"
+                  onPress={() => openScan()}
+                />
+              }
+            />
           </View>
         )}
       </Modal>
@@ -981,6 +1001,7 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  collectionHeader: { gap: 16 },
   detailContent: {
     padding: 20,
     gap: 16,

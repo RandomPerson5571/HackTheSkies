@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { useGuestDocument } from "../../../hooks/useGuestDocument";
 import { File, Paths } from "expo-file-system";
 import { Platform } from "react-native";
 import {
@@ -30,38 +31,29 @@ function load() {
 }
 
 export function useFoodDex() {
-  const [state, setState] = useState(load);
-  const current = useRef(state.entries);
-  const readFailed = useRef(Boolean(state.error));
-
-  function persist(entries: FoodEntry[], photoError = "") {
-    let error = photoError;
-    if (readFailed.current)
-      error =
-        "Your Food Dex couldn’t be loaded. New discoveries will stay in this session.";
-    else {
-      try {
-        if (Platform.OS === "web")
-          localStorage.setItem("food-dex", JSON.stringify(entries));
-        else {
-          const next = new File(Paths.document, "food-dex-next.json");
-          next.write(JSON.stringify(entries));
-          next.moveSync(new File(Paths.document, "food-dex.json"), {
-            overwrite: true,
-          });
-        }
-      } catch {
-        error =
-          "Couldn’t save your Food Dex on this device. Your discoveries are available for this session.";
-      }
-    }
-    current.current = entries;
-    setState({ entries, error });
-  }
+  const [photoWarning, setPhotoWarning] = useState("");
+  const {
+    value: entries,
+    update,
+    error,
+  } = useGuestDocument(
+    "foodDex",
+    () => load().entries,
+    (value) => parseFoodDex(JSON.stringify(value)),
+    {
+      // Images stay on this device; only discovery metadata goes to Postgres.
+      serialize: (entries) => entries.map((entry) => ({ ...entry, photo: "" })),
+      merge: (remote, local) =>
+        remote.map((entry) => ({
+          ...entry,
+          photo: local.find((item) => item.id === entry.id)?.photo ?? "",
+        })),
+    },
+  );
 
   function discover(name: string, cuisine: Cuisine, uri: string) {
     if (
-      current.current.some(
+      entries.some(
         (entry) =>
           foodKey(entry.name, entry.cuisine) === foodKey(name, cuisine),
       )
@@ -82,21 +74,22 @@ export function useFoodDex() {
           "Your discovery was added, but its photo couldn’t be saved.";
       }
     }
-    const entries = addFood(current.current, {
+    const next = addFood(entries, {
       id,
       name,
       cuisine,
       photo,
       discoveredAt: new Date().toISOString(),
     });
-    persist(entries, photoError);
+    update(next);
+    setPhotoWarning(photoError);
     return true;
   }
 
   function remove(id: string) {
     // Leave photo cleanup to a later sweep so a failed journal write cannot break a saved entry.
-    persist(current.current.filter((entry) => entry.id !== id));
+    update((previous) => previous.filter((entry) => entry.id !== id));
   }
 
-  return { ...state, discover, remove };
+  return { entries, error: error || photoWarning, discover, remove };
 }

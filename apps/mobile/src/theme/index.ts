@@ -10,3 +10,12 @@ export const colors = {
   blue: "#95B1EE",
   scrim: "#364C8466",
 };
+
+// Camera overlays stay legible over both light and dark live images.
+export const cameraColors = {
+  background: "#090C12",
+  surface: "#121925EB",
+  foreground: "#FFFFFF",
+  muted: "#D5DCE8",
+  border: "#FFFFFF66",
+};

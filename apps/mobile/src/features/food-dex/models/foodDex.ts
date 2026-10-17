@@ -22,6 +22,22 @@ export type FoodEntry = {
 export type Dish = CatalogDish;
 export const dishes: Dish[] = catalogDishes;
 
+export function dishNumber(dish: Pick<Dish, "id">) {
+  const index = dishes.findIndex((item) => item.id === dish.id);
+  return index < 0 ? null : index + 1;
+}
+
+export function findDishByNumber(value: unknown) {
+  const raw = typeof value === "number" ? String(value) : value;
+  if (typeof raw !== "string") return undefined;
+  const match = raw.trim().match(/^#?0*(\d+)$/);
+  if (!match) return undefined;
+  const number = Number(match[1]);
+  return Number.isSafeInteger(number) && number > 0
+    ? dishes[number - 1]
+    : undefined;
+}
+
 const coverIds: Partial<Record<Cuisine, string>> = {
   Chinese: "dumplings",
   Korean: "bibimbap",

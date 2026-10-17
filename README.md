@@ -34,7 +34,7 @@ or date night). Lists and bookmarks stay in sync and persist between launches. S
 fictional sample places around Toronto are included; search filters this bundled
 sample data, not a live restaurant service. Photos are loaded from Unsplash.
 
-The Favorites tab opens your personal ranking, Friends, and Badges pages:
+The Favorites tab opens your personal ranking, Friends, and Rewards pages:
 
 - Rate spots from one to five stars and reorder your ranking with the up/down
   buttons. Rating a place saves it and marks it visited. Clearing a rating keeps
@@ -44,6 +44,14 @@ The Favorites tab opens your personal ranking, Friends, and Badges pages:
   requests, or live social activity.
 - Earn Japanese, bakery, coffee, and pizza badges by visiting distinct spots.
   Progress comes from the shared Visited collection, so repeat taps cannot inflate it.
+- Earn points: 10 for each different spot visited, plus 50 for your first spot in a
+  new region. Regions are drawn areas of the sample city
+  (see `apps/mobile/src/features/rewards/models/rewards.ts`); places outside them
+  fall into roughly 2 km grid cells. Restaurant cards show what a visit would earn.
+- Complete monthly challenges for bonus points, Strava-style: visit 3 spots, eat in
+  2 regions, discover a new region, and a featured food type that rotates each month.
+  Challenges use the date each place was marked visited and reset on the 1st.
+  Visits saved before dates were tracked keep their points but don't count toward challenges.
 
 Ratings, ranking, and sample friend selections persist with the restaurant journal.
 Older saved-list files load without losing existing bookmarks or visits.

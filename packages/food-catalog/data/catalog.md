@@ -1,6 +1,6 @@
 # Food catalog
 
-256 dishes from the available provider catalog and curated starters. Photos are stored locally with source and license credits. Image matches await review.
+286 dishes from the available provider catalog and curated starters. Photos are stored locally with source and license credits. Image matches await review.
 
 ## Chinese
 
@@ -255,6 +255,86 @@ South Korea
 North Korea
 
 [wjlee4284 / Wikimedia Commons / CC BY 2.5](https://commons.wikimedia.org/wiki/File:Naengmyeon_(cold_noodles).jpg) · [CC BY 2.5](https://creativecommons.org/licenses/by/2.5)
+
+### Tteokbokki
+
+![Tteokbokki](images/tteokbokki.jpg)
+
+South Korea
+
+[Popo le Chien / Wikimedia Commons / CC0](https://commons.wikimedia.org/wiki/File:Tteokbokki.JPG) · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)
+
+### Japchae
+
+![Japchae](images/japchae.jpg)
+
+South Korea
+
+[korea.net / Wikimedia Commons / CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Polish_Korean_Cuisine_and_Culture_Exchanges_Gradmother%E2%80%99s_Recipes_05.jpg) · [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0)
+
+### Kimbap
+
+![Kimbap](images/kimbap.jpg)
+
+South Korea
+
+[changupn / Wikimedia Commons / CC0](https://commons.wikimedia.org/wiki/File:Gimbap_(pixabay).jpg) · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)
+
+### Samgyeopsal
+
+![Samgyeopsal](images/samgyeopsal.jpg)
+
+South Korea
+
+[jinsoo jang / Wikimedia Commons / CC0](https://commons.wikimedia.org/wiki/File:Samgyeopsal-gui.jpg) · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)
+
+### Sundubu-jjigae
+
+![Sundubu-jjigae](images/sundubu-jjigae.jpg)
+
+South Korea
+
+[행복한 초록개구리 / Wikimedia Commons / CC BY 4.0](https://commons.wikimedia.org/wiki/File:Sundubu-jjigae.jpg) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0)
+
+### Galbi
+
+![Galbi](images/galbi.jpg)
+
+South Korea
+
+[ayustety (a flickr user) / Wikimedia Commons / CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Korean.food-Galbi-03.jpg) · [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0)
+
+### Pajeon
+
+![Pajeon](images/haemul-pajeon.jpg)
+
+South Korea
+
+[by Tales of an LA Addict (Abby) at Flickr / Wikimedia Commons / CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Korean_pancake-Pajeon-05.jpg) · [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0)
+
+### Samgyetang
+
+![Samgyetang](images/samgyetang.jpg)
+
+South Korea
+
+[wizdata / Wikimedia Commons / CC0](https://commons.wikimedia.org/wiki/File:Samgye-tang_2.jpg) · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)
+
+### Hotteok
+
+![Hotteok](images/hotteok.jpg)
+
+South Korea
+
+[Korea.net / Korean Culture and Information Service / Wikimedia Commons / CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Hotteok.jpg) · [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0)
+
+### Patbingsu
+
+![Patbingsu](images/patbingsu.jpg)
+
+South Korea
+
+[국립국어원 / Wikimedia Commons / CC BY-SA 2.0 kr](https://commons.wikimedia.org/wiki/File:Patbingsu.jpg) · [CC BY-SA 2.0 kr](https://creativecommons.org/licenses/by-sa/2.0/kr/deed.en)
 
 ## Japanese
 
@@ -1192,6 +1272,86 @@ France
 
 [David Monniaux / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Crepes_dsc07085.jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
 
+### Beef bourguignon
+
+![Beef bourguignon](images/beef-bourguignon.jpg)
+
+France
+
+[Slayschips / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Beef_bourguignon_NYT.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Bouillabaisse
+
+![Bouillabaisse](images/bouillabaisse.jpg)
+
+France
+
+[Slastic / Wikimedia Commons / CC BY 3.0](https://commons.wikimedia.org/wiki/File:Bullabessa.jpg) · [CC BY 3.0](https://creativecommons.org/licenses/by/3.0)
+
+### Quiche Lorraine
+
+![Quiche Lorraine](images/quiche-lorraine.jpg)
+
+France
+
+[Donna Alvita / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Quiche_de_Lorraine.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Croque monsieur
+
+![Croque monsieur](images/croque-monsieur.jpg)
+
+France
+
+[Michael Brewer / Wikimedia Commons / CC BY-SA 2.5](https://commons.wikimedia.org/wiki/File:Croque_monsieur.jpg) · [CC BY-SA 2.5](https://creativecommons.org/licenses/by-sa/2.5)
+
+### Crème brûlée
+
+![Crème brûlée](images/creme-brulee.jpg)
+
+France
+
+[Takeaway / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:2014_0531_Cr%C3%A8me_br%C3%BBl%C3%A9e_Doi_Mae_Salong_(cropped).jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### French onion soup
+
+![French onion soup](images/french-onion-soup.jpg)
+
+France
+
+[Ludovic Péron / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Soupe_%C3%A0_l%27oignon.jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Cassoulet
+
+![Cassoulet](images/cassoulet.jpg)
+
+France
+
+[BrokenSphere / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Bowl_of_cassoulet.JPG) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Macarons
+
+![Macarons](images/macarons.jpg)
+
+France
+
+[Benoît Prieur / Wikimedia Commons / CC0](https://commons.wikimedia.org/wiki/File:Des_macarons_de_chez_Bouillet_(mars_2023).jpg) · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)
+
+### Duck confit
+
+![Duck confit](images/duck-confit.jpg)
+
+France
+
+[Roboppy at English Wikipedia / Wikimedia Commons / Public domain](https://commons.wikimedia.org/wiki/File:Confitdecanard.jpg) · [Public domain](https://creativecommons.org/publicdomain/mark/1.0/)
+
+### Tarte Tatin
+
+![Tarte Tatin](images/tarte-tatin.jpg)
+
+France
+
+[Djenghisz / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Franse_tarte_tatin.jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
 ## Italian
 
 ### Pizza
@@ -1707,4 +1867,84 @@ United States
 United States
 
 [Shisma / Wikimedia Commons / CC BY 4.0](https://commons.wikimedia.org/wiki/File:Apple_pie_14.jpg) · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0)
+
+### Clam chowder
+
+![Clam chowder](images/clam-chowder.jpg)
+
+United States
+
+[Jon Sullivan The original uploader was Y6y6y6 at English Wikipedia . / Wikimedia Commons / Public domain](https://commons.wikimedia.org/wiki/File:Quail_07_bg_041506.jpg) · [Public domain](https://creativecommons.org/publicdomain/mark/1.0/)
+
+### Lobster roll
+
+![Lobster roll](images/lobster-roll.png)
+
+United States
+
+[Maguy23 / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Lobster_Roll.png) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Pulled pork sandwich
+
+![Pulled pork sandwich](images/pulled-pork-sandwich.jpg)
+
+United States
+
+[jeffreyw / Wikimedia Commons / CC BY 2.0](https://commons.wikimedia.org/wiki/File:Mmm..._home_made_bbq_sauce_(5778277654).jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
+
+### Gumbo
+
+![Gumbo](images/gumbo.jpg)
+
+United States
+
+[Amadscientist / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Gumbo.JPG) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Jambalaya
+
+![Jambalaya](images/jambalaya.jpg)
+
+United States
+
+[Amadscientist / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Homemade_Jambalaya.JPG) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Philly cheesesteak
+
+![Philly cheesesteak](images/philly-cheesesteak.jpg)
+
+United States
+
+[http://upload.wikimedia.org/wikipedia/en/f/f1/PatsCheesesteak.jpg / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:PatsCheesesteak.jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/)
+
+### Biscuits and gravy
+
+![Biscuits and gravy](images/biscuits-and-gravy.jpg)
+
+United States
+
+[No machine-readable author provided. Kaszeta assumed (based on copyright claims). / Wikimedia Commons / Public domain](https://commons.wikimedia.org/wiki/File:Biscuits-and-gravy.jpg) · [Public domain](https://creativecommons.org/publicdomain/mark/1.0/)
+
+### Cornbread
+
+![Cornbread](images/cornbread.jpg)
+
+United States
+
+[Zankopedia / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Skillet_cornbread_(cropped).jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Shrimp and grits
+
+![Shrimp and grits](images/shrimp-and-grits.jpg)
+
+United States
+
+[Jason Riedy / Wikimedia Commons / CC BY 2.0](https://commons.wikimedia.org/wiki/File:Shrimp_and_grits_at_the_Green_Goddess.jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
+
+### Key lime pie
+
+![Key lime pie](images/key-lime-pie.jpg)
+
+United States
+
+[Louiemantia / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Slice_of_Key_Lime_Pie.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
 

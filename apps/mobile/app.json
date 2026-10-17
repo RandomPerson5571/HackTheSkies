@@ -16,11 +16,15 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.hacktheskies"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["@rnmapbox/maps", "expo-dev-client"]
+    "plugins": [
+      "@rnmapbox/maps",
+      "expo-dev-client"
+    ]
   }
 }

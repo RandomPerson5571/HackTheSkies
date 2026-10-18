@@ -374,6 +374,7 @@
     ],
     "Caribbean": [],
     "American": [],
+    "Drinks": [],
     "Other": []
   },
   "emptyAreas": [
@@ -421,6 +422,7 @@
     "Latin": 16,
     "Caribbean": 32,
     "American": 14,
+    "Drinks": 30,
     "Other": 0
   },
   "missingImages": [],

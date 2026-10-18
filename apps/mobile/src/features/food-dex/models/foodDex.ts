@@ -53,6 +53,7 @@ const coverIds: Partial<Record<Cuisine, string>> = {
   Latin: "tacos",
   Caribbean: "jerk-chicken",
   American: "barbecue-ribs",
+  Drinks: "thai-iced-tea",
 };
 
 export const cuisineCovers = Object.fromEntries(

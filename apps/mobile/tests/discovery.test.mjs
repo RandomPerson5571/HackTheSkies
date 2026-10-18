@@ -64,7 +64,9 @@ test("atlas lights known cuisine anchors once and clears them after removal", ()
   assert.deepEqual(exploredCuisines([]), []);
   assert.deepEqual(
     Object.keys(cuisineAnchors).sort(),
-    cuisines.filter((cuisine) => cuisine !== "Other").sort(),
+    cuisines
+      .filter((cuisine) => cuisine !== "Other" && cuisine !== "Drinks")
+      .sort(),
   );
 });
 

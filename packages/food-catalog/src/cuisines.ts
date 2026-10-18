@@ -14,6 +14,7 @@ export const cuisines = [
   "Latin",
   "Caribbean",
   "American",
+  "Drinks",
   "Other",
 ] as const;
 
@@ -49,6 +50,8 @@ export const cuisineRegions: Record<Cuisine, readonly string[]> = {
   ],
   Caribbean: ["Jamaica", "Cuba", "Haiti", "Dominican Republic", "Trinidad"],
   American: ["United States"],
+  // Drinks span many regions; each drink lists its own.
+  Drinks: [],
   Other: [],
 };
 
@@ -91,6 +94,7 @@ export const mealDbAreas: Record<Cuisine, readonly string[]> = {
   ],
   Caribbean: ["Jamaican", "Cuban", "Haitian", "Dominican", "Trinidadian"],
   American: ["American"],
+  Drinks: [],
   Other: [],
 };
 

@@ -1,6 +1,6 @@
 # Food catalog
 
-286 dishes from the available provider catalog and curated starters. Photos are stored locally with source and license credits. Image matches await review.
+316 dishes from the available provider catalog and curated starters. Photos are stored locally with source and license credits. Image matches await review.
 
 ## Chinese
 
@@ -1947,4 +1947,246 @@ United States
 United States
 
 [Louiemantia / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Slice_of_Key_Lime_Pie.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+## Drinks
+
+### Matcha latte
+
+![Matcha latte](images/matcha-latte.jpg)
+
+Japan
+
+[John Beans / Wikimedia Commons / CC BY 2.0](https://commons.wikimedia.org/wiki/File:Matcha_tea_art.jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
+
+### Sake
+
+![Sake](images/sake.jpg)
+
+Japan
+
+[Intforce / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Overflowing_sake_glass_in_masu.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Bubble tea
+
+![Bubble tea](images/bubble-tea.jpg)
+
+Taiwan
+
+[sam651030 from Pixabay / Wikimedia Commons / CC0](https://commons.wikimedia.org/wiki/File:A_bubble_tea_with_tapioca_pearls,_July_2018.jpg) · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)
+
+### Oolong tea
+
+![Oolong tea](images/oolong-tea.jpg)
+
+China · Taiwan
+
+[Crisco 1492 / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Oolong_tea_being_poured,_Holiday_Restaurant,_Semarang,_2014-06-19.jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Soju
+
+![Soju](images/soju.jpg)
+
+South Korea
+
+[/Repository/2022/11/29/thiet-ke-chua-co-ten-17.png / Wikimedia Commons / CC BY 2.0](https://commons.wikimedia.org/wiki/File:Soju.jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
+
+### Sikhye
+
+![Sikhye](images/sikhye.jpg)
+
+South Korea
+
+[by gliuoo / Wikimedia Commons / CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Korean_rice_punch-Sikhye-01A.jpg) · [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0)
+
+### Vietnamese iced coffee
+
+![Vietnamese iced coffee](images/vietnamese-iced-coffee.jpg)
+
+Vietnam
+
+[Mike Verdone / Wikimedia Commons / Public domain](https://commons.wikimedia.org/wiki/File:Viet-coffee.jpg) · [Public domain](https://creativecommons.org/publicdomain/mark/1.0/)
+
+### Thai iced tea
+
+![Thai iced tea](images/thai-iced-tea.jpg)
+
+Thailand
+
+[Takeaway / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Cha_yen.JPG) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Masala chai
+
+![Masala chai](images/masala-chai.jpg)
+
+North India · South India
+
+[Dadhichbittu007 / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Chai_In_Sakora.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Mango lassi
+
+![Mango lassi](images/mango-lassi.jpg)
+
+North India · Pakistan
+
+[JIP / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Mango_lassi_at_Everest_Dine_in_November_2022.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Turkish coffee
+
+![Turkish coffee](images/turkish-coffee.jpg)
+
+Turkey
+
+[Eaeeae / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:T%C3%BCrk_Kahvesi_-_Bakir_Cezve.jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Ayran
+
+![Ayran](images/ayran.jpg)
+
+Turkey · Syria · Lebanon
+
+[Mavigogun / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Fresh_ayran.jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Frappé
+
+![Frappé](images/greek-frappe.jpg)
+
+Greece
+
+[Wimmiden / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Greek_frapp%C3%A9.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Doogh
+
+![Doogh](images/doogh.jpg)
+
+Iran · Afghanistan
+
+[Schekinov Alexey Victorovich / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:%D0%A2%D0%90%D0%9D_(%D0%BD%D0%B0%D0%BF%D0%B8%D1%82%D0%BE%D0%BA).jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Café au lait
+
+![Café au lait](images/cafe-au-lait.jpg)
+
+France
+
+[Tim Boyd from Brooklyn / Wikimedia Commons / CC BY 2.0](https://commons.wikimedia.org/wiki/File:Caf%C3%A9_au_lait.jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
+
+### Champagne
+
+![Champagne](images/champagne.jpg)
+
+France
+
+[bgvjpe / Wikimedia Commons / CC BY 2.0](https://commons.wikimedia.org/wiki/File:Glass_of_champagne.jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
+
+### Espresso
+
+![Espresso](images/espresso.jpg)
+
+Italy
+
+[Lemone / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Tazzina_di_caff%C3%A8_a_Ventimiglia.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Aperol spritz
+
+![Aperol spritz](images/aperol-spritz.jpg)
+
+Italy
+
+[JIP / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Aperol_Spritz_aboard_Viking_Mariella.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Horchata
+
+![Horchata](images/horchata.jpg)
+
+Mexico
+
+[Photocapy / Wikimedia Commons / CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Horchata_de_chufa_2.jpg) · [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0)
+
+### Yerba mate
+
+![Yerba mate](images/yerba-mate.jpg)
+
+Argentina · Brazil
+
+[Siarhei Besarab / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Traditional_mate_set_calabash_gourd_with_La_Merced_yerba_mate.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Caipirinha
+
+![Caipirinha](images/caipirinha.jpg)
+
+Brazil
+
+[rawpixel.com / Wikimedia Commons / CC0](https://commons.wikimedia.org/wiki/File:Caipirinha_with_lime.jpg) · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)
+
+### Piña colada
+
+![Piña colada](images/pina-colada.jpg)
+
+Puerto Rico
+
+[User Barmix on de.wikipedia / Wikimedia Commons / Public domain](https://commons.wikimedia.org/wiki/File:Pi%C3%B1a_Colada.jpg) · [Public domain](https://creativecommons.org/publicdomain/mark/1.0/)
+
+### Mojito
+
+![Mojito](images/mojito.jpg)
+
+Cuba
+
+[Daniel Lobo / Wikimedia Commons / CC0](https://commons.wikimedia.org/wiki/File:Mojito_-_Versailles_Restaurant,_Little_Havana,_Miami,_Florida.jpg) · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)
+
+### Sorrel
+
+![Sorrel](images/sorrel.jpg)
+
+Jamaica · Trinidad
+
+[stu\_spivack / Wikimedia Commons / CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Homemade_sorrel_drink.jpg) · [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0)
+
+### Milkshake
+
+![Milkshake](images/milkshake.jpg)
+
+United States
+
+[Visitor7 / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Chocolate_Milkshake_(Rudford%27s_Restaurant).jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+
+### Lemonade
+
+![Lemonade](images/lemonade.jpg)
+
+United States
+
+[HarshLight / Wikimedia Commons / CC BY 2.0](https://commons.wikimedia.org/wiki/File:Lemonade_-_27682817724.jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
+
+### Moroccan mint tea
+
+![Moroccan mint tea](images/moroccan-mint-tea.jpg)
+
+Morocco
+
+[Adam Harangozó / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Mint_tea,_Marrakesh.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Sangria
+
+![Sangria](images/sangria.jpg)
+
+Spain
+
+[PierreSelim / Wikimedia Commons / CC BY 3.0](https://commons.wikimedia.org/wiki/File:A_glass_of_sangria_and_bread.jpg) · [CC BY 3.0](https://creativecommons.org/licenses/by/3.0)
+
+### Rooibos tea
+
+![Rooibos tea](images/rooibos-tea.jpg)
+
+South Africa
+
+[JIP / Wikimedia Commons / CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Rooibos_tea_at_Plagen_Beach.jpg) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
+
+### Bissap
+
+![Bissap](images/bissap.jpg)
+
+Senegal
+
+[Jen Arrr / Wikimedia Commons / CC BY-SA 2.0](https://commons.wikimedia.org/wiki/File:Bissap_%26_Ginger_Juice_(7558541174).jpg) · [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0)
 

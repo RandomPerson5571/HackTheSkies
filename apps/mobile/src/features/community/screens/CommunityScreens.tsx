@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ComponentProps,
@@ -8,12 +9,14 @@ import {
   type ReactNode,
 } from "react";
 import {
+  Animated,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -42,17 +45,46 @@ const Navigation = createContext<{
   setSection: (section: Section) => void;
 } | null>(null);
 
+const sections: Section[] = ["favorites", "friends", "badges"];
+
 export function CommunityScreen(props: Props) {
+  const { width } = useWindowDimensions();
   const [section, setSection] = useState<Section>("favorites");
+  const index = sections.indexOf(section);
+  const [offset] = useState(() => new Animated.Value(index));
+  useEffect(() => {
+    Animated.timing(offset, {
+      toValue: index,
+      duration: 260,
+      useNativeDriver: true,
+    }).start();
+  }, [index, offset]);
+  const translateX = offset.interpolate({
+    inputRange: [0, 1, 2],
+    outputRange: [0, -width, -2 * width],
+  });
   return (
     <Navigation.Provider value={{ section, setSection }}>
-      {section === "favorites" ? (
-        <FavoritesScreen {...props} />
-      ) : section === "friends" ? (
-        <FriendsScreen {...props} />
-      ) : (
-        <AchievementsScreen {...props} />
-      )}
+      <View style={{ flex: 1, overflow: "hidden" }}>
+        <Animated.View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            width: width * sections.length,
+            transform: [{ translateX }],
+          }}
+        >
+          <View style={{ width }}>
+            <FavoritesScreen {...props} />
+          </View>
+          <View style={{ width }}>
+            <FriendsScreen {...props} />
+          </View>
+          <View style={{ width }}>
+            <AchievementsScreen {...props} />
+          </View>
+        </Animated.View>
+      </View>
     </Navigation.Provider>
   );
 }
@@ -200,22 +232,35 @@ export function FavoritesScreen({
 
   function ratingCard(place: Place, rank?: number) {
     const rating = collection.ratings[place.id] ?? 0;
+    const isRanked = rank !== undefined;
     return (
-      <View key={place.id} style={s.card}>
+      <View key={place.id} style={fs.card}>
         <View style={s.row}>
-          {rank !== undefined && <Text style={s.rank}>#{rank + 1}</Text>}
+          {isRanked && (
+            <View style={fs.rankBadge}>
+              <Text style={fs.rankText}>#{rank + 1}</Text>
+            </View>
+          )}
           <RestaurantPhoto
             place={place}
             recommendation={recommendations.get(place.id)}
-            style={s.photo}
+            style={fs.photo}
           />
           <View style={s.flex}>
             <Text style={s.eyebrow}>{place.category.toUpperCase()}</Text>
             <Text style={s.name}>{place.name}</Text>
             <Text style={s.small}>{place.neighborhood}</Text>
           </View>
+          {isRanked ? (
+            <View style={fs.ratingPill}>
+              <Icon name={rating ? "star" : "star-outline"} size={15} />
+              <Text style={fs.ratingPillText}>
+                {rating ? `${rating}/5` : "Unrated"}
+              </Text>
+            </View>
+          ) : null}
         </View>
-        <View style={s.stars}>
+        <View style={fs.stars}>
           {[1, 2, 3, 4, 5].map((value) => (
             <Pressable
               key={value}
@@ -225,21 +270,21 @@ export function FavoritesScreen({
               onPress={() =>
                 dispatch({ type: "rate", placeId: place.id, rating: value })
               }
-              style={({ pressed }) => [s.star, pressed && s.dim]}
+              style={({ pressed }) => [fs.star, pressed && s.dim]}
             >
               <Icon
                 name={value <= rating ? "star" : "star-outline"}
-                size={27}
+                size={24}
               />
             </Pressable>
           ))}
           <Text style={s.small}>{rating ? `${rating}/5` : "Unrated"}</Text>
         </View>
         <View style={s.actions}>
-          {rank !== undefined && (
+          {isRanked && (
             <>
               <Action
-                label="Move up"
+                label="Up"
                 icon="arrow-up"
                 disabled={rank === 0}
                 onPress={() =>
@@ -247,7 +292,7 @@ export function FavoritesScreen({
                 }
               />
               <Action
-                label="Move down"
+                label="Down"
                 icon="arrow-down"
                 disabled={rank === ranked.length - 1}
                 onPress={() =>
@@ -255,7 +300,7 @@ export function FavoritesScreen({
                 }
               />
               <Action
-                label="Clear rating"
+                label="Clear"
                 onPress={() =>
                   dispatch({ type: "rate", placeId: place.id, rating: 0 })
                 }
@@ -263,7 +308,7 @@ export function FavoritesScreen({
             </>
           )}
           <Action
-            label="View on map"
+            label="Map"
             icon="map-outline"
             onPress={() => onShowMap(place)}
           />
@@ -279,12 +324,17 @@ export function FavoritesScreen({
       icon="heart-outline"
       error={storageError}
     >
-      <View style={s.hero}>
-        <Icon name="podium-outline" size={34} />
+      <View style={fs.hero}>
+        <View style={fs.heroIcon}>
+          <Icon name="podium-outline" size={28} />
+        </View>
         <View style={s.flex}>
-          <Text style={s.heroNumber}>{ranked.length} rated spots</Text>
-          <Text style={s.small}>
-            A personal leaderboard, one bite at a time.
+          <Text style={fs.heroNumber}>{ranked.length} ranked</Text>
+          <Text style={s.small}>Your personal leaderboard.</Text>
+        </View>
+        <View style={fs.heroBadge}>
+          <Text style={fs.heroBadgeText}>
+            {ranked.length ? "Top spot" : "Start"}
           </Text>
         </View>
       </View>
@@ -814,4 +864,81 @@ const s = StyleSheet.create({
     backgroundColor: colors.tint,
   },
   fill: { height: "100%", borderRadius: 4, backgroundColor: colors.accent },
+});
+
+const fs = StyleSheet.create({
+  card: {
+    borderRadius: 22,
+    backgroundColor: colors.white,
+    borderColor: colors.border,
+    borderWidth: 1,
+    padding: 14,
+    gap: 12,
+  },
+  rankBadge: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: colors.tint,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rankText: { fontSize: 15, fontWeight: "700", color: colors.accent },
+  photo: {
+    width: 56,
+    height: 62,
+    borderRadius: 12,
+    backgroundColor: colors.tint,
+  },
+  ratingPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: colors.tint,
+  },
+  ratingPillText: { fontSize: 12, fontWeight: "700", color: colors.accent },
+  stars: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 2,
+  },
+  star: {
+    minWidth: 40,
+    minHeight: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  hero: {
+    backgroundColor: colors.tint,
+    borderRadius: 22,
+    padding: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+  },
+  heroIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 18,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroNumber: {
+    fontSize: 22,
+    fontWeight: "600",
+    color: colors.accent,
+    marginBottom: 3,
+  },
+  heroBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: colors.white,
+  },
+  heroBadgeText: { fontSize: 12, fontWeight: "700", color: colors.accent },
 });

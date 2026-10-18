@@ -8,112 +8,61 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { categories, type Category } from "../../restaurants/data/places";
 
 import { colors } from "../../../theme/index";
-
-import { useBackend } from "../../../lib/BackendProvider";
+import { playSound, hapticSuccess, hapticLight } from "../../../lib/sensory";
 import type { Profile } from "../models/profile";
 export type { Profile } from "../models/profile";
 
-const foodTypes = categories.filter(
-  (item): item is Exclude<Category, "All"> => item !== "All",
-);
+import { useFoodDex } from "../../food-dex/hooks/useFoodDex";
+import {
+  cuisines,
+  dishes,
+  type Cuisine,
+} from "../../food-dex/models/foodDex";
+import { useGamification } from "../../gamification/hooks/useGamification";
+import {
+  BADGES,
+  xpToNextLevel,
+} from "../../gamification/models/gamification";
+
 const diets = ["No preference", "Vegetarian", "Vegan", "Pescatarian"] as const;
 
-type Point = { x: number; y: number };
-function Line({
-  from,
-  to,
-  color = colors.border,
-  width = 1,
-}: {
-  from: Point;
-  to: Point;
-  color?: string;
-  width?: number;
-}) {
-  const length = Math.hypot(to.x - from.x, to.y - from.y);
-  if (!length) return null;
+const trainerTitles = [
+  { minLevel: 20, title: "Master Explorer" },
+  { minLevel: 15, title: "Cuisine Connoisseur" },
+  { minLevel: 10, title: "Seasoned Taster" },
+  { minLevel: 5, title: "Adventurous Eater" },
+  { minLevel: 1, title: "Food Explorer" },
+];
+
+function trainerTitle(level: number) {
   return (
-    <View
-      style={{
-        position: "absolute",
-        left: (from.x + to.x - length) / 2,
-        top: (from.y + to.y - width) / 2,
-        width: length,
-        height: width,
-        backgroundColor: color,
-        transform: [
-          { rotate: `${Math.atan2(to.y - from.y, to.x - from.x)}rad` },
-        ],
-      }}
-    />
+    trainerTitles.find((entry) => level >= entry.minLevel)?.title ??
+    "Food Explorer"
   );
 }
 
-function FoodRadar({ counts, total }: { counts: number[]; total: number }) {
-  const directions = [
-    { x: 0, y: -1 },
-    { x: 1, y: 0 },
-    { x: 0, y: 1 },
-    { x: -1, y: 0 },
-  ];
-  const points = directions.map((direction, index) => ({
-    x: 140 + direction.x * 84 * (total ? counts[index]! / total : 0),
-    y: 126 + direction.y * 84 * (total ? counts[index]! / total : 0),
-  }));
-  return (
-    <View
-      accessible
-      accessibilityLabel={`Food type radar chart. Percentage of saved places: ${foodTypes.map((type, index) => `${type} ${total ? Math.round((counts[index]! / total) * 100) : 0} percent`).join(", ")}. Scale zero to one hundred percent.`}
-      style={styles.chart}
-    >
-      {[0.25, 0.5, 0.75, 1].map((scale) => (
-        <View
-          key={scale}
-          style={[
-            styles.radarRing,
-            {
-              width: 84 * Math.SQRT2 * scale,
-              height: 84 * Math.SQRT2 * scale,
-              left: 140 - 42 * Math.SQRT2 * scale,
-              top: 126 - 42 * Math.SQRT2 * scale,
-            },
-          ]}
-        />
-      ))}
-      <Line from={{ x: 140, y: 42 }} to={{ x: 140, y: 210 }} />
-      <Line from={{ x: 56, y: 126 }} to={{ x: 224, y: 126 }} />
-      {points.map((point, index) => (
-        <Line
-          key={index}
-          from={point}
-          to={points[(index + 1) % points.length]!}
-          color={colors.accent}
-          width={2}
-        />
-      ))}
-      {points.map((point, index) => (
-        <View
-          key={index}
-          style={[styles.chartDot, { left: point.x - 4, top: point.y - 4 }]}
-        />
-      ))}
-      <Text style={[styles.axisLabel, { top: 10, left: 100 }]}>Coffee</Text>
-      <Text style={[styles.axisLabel, { top: 118, right: -2, width: 48 }]}>
-        Pizza
-      </Text>
-      <Text style={[styles.axisLabel, { bottom: 7, left: 100 }]}>Bakery</Text>
-      <Text style={[styles.axisLabel, { top: 118, left: -2, width: 48 }]}>
-        Ramen
-      </Text>
-    </View>
-  );
-}
+// Approximate positions for the stylized cuisine map (percentages).
+const cuisineMapPosition: Record<Cuisine, { x: number; y: number }> = {
+  American: { x: 18, y: 34 },
+  Latin: { x: 24, y: 58 },
+  Caribbean: { x: 28, y: 46 },
+  French: { x: 46, y: 26 },
+  Italian: { x: 50, y: 34 },
+  Greek: { x: 54, y: 38 },
+  Levant: { x: 58, y: 30 },
+  Persian: { x: 62, y: 36 },
+  "South Asian": { x: 68, y: 42 },
+  Thai: { x: 76, y: 44 },
+  Vietnamese: { x: 78, y: 40 },
+  Chinese: { x: 78, y: 26 },
+  Korean: { x: 82, y: 28 },
+  Japanese: { x: 86, y: 30 },
+  Other: { x: 50, y: 52 },
+};
 
 export function ProfileScreen({
-  saved,
   profile,
   onSave,
   topInset,
@@ -127,20 +76,43 @@ export function ProfileScreen({
   bottomInset: number;
   storageError: string;
 }) {
-  const { places } = useBackend();
+  const { entries } = useFoodDex();
+  const { state: game } = useGamification();
+
   const [draft, setDraft] = useState(profile);
   const [message, setMessage] = useState("");
   const edited = useRef(false);
   useEffect(() => {
     if (!edited.current) setDraft(profile);
   }, [profile]);
-  const savedPlaces = places.filter((place) => saved.includes(place.id));
-  const counts = foodTypes.map(
-    (type) => savedPlaces.filter((place) => place.category === type).length,
-  );
-  const typesSaved = counts.filter(Boolean).length;
-  const neighborhoods = new Set(savedPlaces.map((place) => place.neighborhood))
-    .size;
+
+  const foodsCount = entries.length;
+  const cuisinesCount = new Set(entries.map((entry) => entry.cuisine)).size;
+  const streak = game.streak;
+  const level = game.level;
+  const title = trainerTitle(level);
+  const xp = xpToNextLevel(game.xp);
+  const xpPercent = Math.round((xp.current / xp.needed) * 100);
+
+  const earnedBadgeIds = new Set(game.badges);
+  const featuredBadges = [
+    ...BADGES.filter((badge) => earnedBadgeIds.has(badge.id)),
+    ...BADGES.filter((badge) => !earnedBadgeIds.has(badge.id)),
+  ].slice(0, 4);
+
+  const cuisineStats = cuisines
+    .map((cuisine) => ({
+      cuisine,
+      done: entries.filter((entry) => entry.cuisine === cuisine).length,
+      total: dishes.filter((dish) => dish.cuisine === cuisine).length,
+    }))
+    .sort((a, b) => b.done - a.done || a.cuisine.localeCompare(b.cuisine));
+  const shownCuisines = cuisineStats.filter((item) => item.done > 0);
+  const cuisineRows =
+    shownCuisines.length > 0 ? shownCuisines.slice(0, 6) : cuisineStats.slice(0, 3);
+
+  const recent = entries.slice(0, 6);
+
   function update(change: Partial<Profile>) {
     edited.current = true;
     setDraft((current) => ({ ...current, ...change }));
@@ -160,7 +132,10 @@ export function ProfileScreen({
     edited.current = false;
     onSave(next);
     setMessage("Settings saved.");
+    void playSound("success");
+    hapticSuccess();
   }
+
   return (
     <ScrollView
       style={styles.screen}
@@ -171,38 +146,39 @@ export function ProfileScreen({
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
     >
-      <Text style={styles.eyebrow}>YOUR OWN LITTLE FOOD WORLD</Text>
-      <Text accessibilityRole="header" style={styles.title}>
-        Your profile.
-      </Text>
-      {storageError ? (
-        <Text accessibilityRole="alert" style={styles.hint}>
-          {storageError}
-        </Text>
-      ) : null}
-      <View style={styles.identity}>
-        <View style={styles.avatar}>
-          <Text style={styles.initial}>
-            {profile.name.trim().charAt(0).toUpperCase()}
-          </Text>
+      <View style={styles.trainerCard}>
+        <View style={styles.trainerTop}>
+          <View style={styles.avatar}>
+            <Text style={styles.initial}>
+              {profile.name.trim().charAt(0).toUpperCase()}
+            </Text>
+          </View>
+          <View style={styles.flex}>
+            <Text style={styles.name}>{profile.name}</Text>
+            <Text style={styles.handle}>@{profile.name.replace(/\s+/g, "").toLowerCase() || "foodexplorer"}</Text>
+            <Text style={styles.titleLine}>
+              Level {level} · {title}
+            </Text>
+          </View>
         </View>
-        <View style={styles.flex}>
-          <Text style={styles.name}>{profile.name}</Text>
-          <Text style={styles.copy}>
-            {profile.neighborhood || "Pick a neighborhood below"}
-          </Text>
-          <Text style={styles.tag}>
-            {profile.diet === "No preference"
-              ? "Open to every craving"
-              : profile.diet}
-          </Text>
+        <View style={styles.xpBlock}>
+          <View style={styles.xpRow}>
+            <Text style={styles.xpText}>
+              {xp.current.toLocaleString()} / {xp.needed.toLocaleString()} XP
+            </Text>
+            <Text style={styles.xpPercent}>{xpPercent}%</Text>
+          </View>
+          <View style={styles.xpTrack}>
+            <View style={[styles.xpFill, { width: `${xpPercent}%` }]} />
+          </View>
         </View>
       </View>
+
       <View style={styles.stats}>
         {[
-          { value: savedPlaces.length, label: "Saved spots" },
-          { value: typesSaved, label: "Food types" },
-          { value: neighborhoods, label: "Neighborhoods" },
+          { value: foodsCount, label: "Foods" },
+          { value: cuisinesCount, label: "Cuisines" },
+          { value: streak, label: "Day Streak" },
         ].map((stat) => (
           <View key={stat.label} style={styles.stat}>
             <Text style={styles.statValue}>{stat.value}</Text>
@@ -210,54 +186,151 @@ export function ProfileScreen({
           </View>
         ))}
       </View>
+
       <View style={styles.card}>
         <View style={styles.heading}>
-          <Ionicons
-            name="analytics-outline"
-            color={colors.accent}
-            size={21}
-            accessible={false}
-          />
+          <Ionicons name="ribbon-outline" color={colors.accent} size={21} accessible={false} />
           <Text accessibilityRole="header" style={styles.sectionTitle}>
-            Your taste, mapped out
+            Featured Badges
+          </Text>
+          <Text style={styles.link}>View all →</Text>
+        </View>
+        <View style={styles.badgeRow}>
+          {featuredBadges.map((badge) => {
+            const earned = earnedBadgeIds.has(badge.id);
+            return (
+              <View
+                key={badge.id}
+                style={[styles.badge, !earned && styles.badgeLocked]}
+              >
+                <Ionicons
+                  name={badge.icon as any}
+                  size={26}
+                  color={earned ? colors.accent : colors.muted}
+                  accessible={false}
+                />
+                <Text
+                  style={[styles.badgeName, !earned && styles.badgeNameLocked]}
+                  numberOfLines={1}
+                >
+                  {badge.name}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+      </View>
+
+      <View style={styles.card}>
+        <View style={styles.heading}>
+          <Ionicons name="globe-outline" color={colors.accent} size={21} accessible={false} />
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            Cuisine Completion
+          </Text>
+          <Text style={styles.link}>Pokédex →</Text>
+        </View>
+        <View style={styles.cuisineRows}>
+          {cuisineRows.map((row) => {
+            const percent = row.total
+              ? Math.round((row.done / row.total) * 100)
+              : 0;
+            return (
+              <View key={row.cuisine} style={styles.cuisineRow}>
+                <Ionicons name="flag-outline" size={22} color={colors.accent} accessible={false} />
+                <View style={styles.flex}>
+                  <View style={styles.cuisineLabelRow}>
+                    <Text style={styles.cuisineName}>{row.cuisine}</Text>
+                    <Text style={styles.cuisineCount}>
+                      {row.done}/{row.total}
+                    </Text>
+                  </View>
+                  <View style={styles.progressTrack}>
+                    <View
+                      style={[styles.progressFill, { width: `${percent}%` }]}
+                    />
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      </View>
+
+      <View style={styles.card}>
+        <View style={styles.heading}>
+          <Ionicons name="map-outline" color={colors.accent} size={21} accessible={false} />
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            Cuisine Map
           </Text>
         </View>
         <Text style={styles.copy}>
-          The food types you bookmark, as a share of your saved spots.
+          Where the cuisines you’ve discovered come from.
         </Text>
-        <FoodRadar counts={counts} total={savedPlaces.length} />
-        <Text style={styles.scale}>Each ring = 25% · Outer ring = 100%</Text>
-        <View style={styles.breakdown}>
-          {foodTypes.map((type, index) => (
-            <View key={type} style={styles.breakdownRow}>
-              <Text style={styles.label}>{type}</Text>
-              <Text style={styles.copy}>
-                {counts[index]} saved ·{" "}
-                {savedPlaces.length
-                  ? Math.round((counts[index]! / savedPlaces.length) * 100)
-                  : 0}
-                %
-              </Text>
-            </View>
-          ))}
+        <View style={styles.mapBox}>
+          {cuisines.map((cuisine) => {
+            const discovered = entries.some(
+              (entry) => entry.cuisine === cuisine,
+            );
+            const pos = cuisineMapPosition[cuisine];
+            return (
+              <View
+                key={cuisine}
+                style={[
+                  styles.mapPin,
+                  {
+                    left: `${pos.x}%`,
+                    top: `${pos.y}%`,
+                  },
+                  discovered ? styles.mapPinActive : styles.mapPinIdle,
+                ]}
+              >
+                <Ionicons name="flag" size={14} color={colors.accent} accessible={false} />
+              </View>
+            );
+          })}
         </View>
-        {!savedPlaces.length && (
-          <Text style={styles.hint}>
-            Your taste story starts with a save. Bookmark a spot in Explore to
-            bring this chart to life.
-          </Text>
-        )}
       </View>
+
       <View style={styles.card}>
         <View style={styles.heading}>
-          <Ionicons
-            name="options-outline"
-            color={colors.accent}
-            size={21}
-            accessible={false}
-          />
+          <Ionicons name="time-outline" color={colors.accent} size={21} accessible={false} />
           <Text accessibilityRole="header" style={styles.sectionTitle}>
-            Make yourself at home
+            Recent Discoveries
+          </Text>
+          <Text style={styles.link}>See all →</Text>
+        </View>
+        {recent.length === 0 ? (
+          <Text style={styles.hint}>
+            Discover your first dish in the Food Dex to fill this shelf.
+          </Text>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.recentRow}
+          >
+            {recent.map((entry) => (
+              <View key={entry.id} style={styles.recentCard}>
+                <Ionicons name="flag-outline" size={28} color={colors.accent} accessible={false} />
+                <Text style={styles.recentName} numberOfLines={1}>
+                  {entry.name}
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
+        )}
+      </View>
+
+      {storageError ? (
+        <Text accessibilityRole="alert" style={styles.hint}>
+          {storageError}
+        </Text>
+      ) : null}
+      <View style={styles.card}>
+        <View style={styles.heading}>
+          <Ionicons name="options-outline" color={colors.accent} size={21} accessible={false} />
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            Trainer Settings
           </Text>
         </View>
         <Text style={styles.label}>Display name</Text>
@@ -289,7 +362,11 @@ export function ProfileScreen({
               key={diet}
               accessibilityRole="radio"
               accessibilityState={{ checked: draft.diet === diet }}
-              onPress={() => update({ diet })}
+              onPress={() => {
+                update({ diet });
+                void playSound("tap");
+                hapticLight();
+              }}
               style={({ pressed }) => [
                 styles.choice,
                 draft.diet === diet && styles.choiceSelected,
@@ -307,30 +384,19 @@ export function ProfileScreen({
             </Pressable>
           ))}
         </View>
-        <Text style={styles.copy}>
-          A note for your profile. Places aren’t filtered by dietary preference.
-        </Text>
         <Pressable
           accessibilityRole="button"
           onPress={save}
           style={({ pressed }) => [styles.save, pressed && styles.pressed]}
         >
           <Text style={styles.saveText}>Save settings</Text>
-          <Ionicons
-            name="checkmark"
-            color={colors.white}
-            size={19}
-            accessible={false}
-          />
+          <Ionicons name="checkmark" color={colors.white} size={19} accessible={false} />
         </Pressable>
         {message ? (
           <Text accessibilityRole="alert" style={styles.hint}>
             {message}
           </Text>
         ) : null}
-        <Text style={styles.copy}>
-          Your settings are saved privately, with no account needed.
-        </Text>
       </View>
     </ScrollView>
   );
@@ -346,46 +412,48 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   flex: { flex: 1, gap: 4 },
-  eyebrow: {
-    color: colors.muted,
-    fontSize: 10,
-    letterSpacing: 1.2,
-    fontWeight: "700",
-  },
-  title: {
-    color: colors.ink,
-    fontSize: 32,
-    fontWeight: "700",
-    letterSpacing: -1,
-    marginTop: -10,
-  },
-  identity: {
-    flexDirection: "row",
-    alignItems: "center",
+  trainerCard: {
+    borderRadius: 28,
+    padding: 20,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
     gap: 16,
-    paddingVertical: 8,
+    boxShadow: "0 6px 24px #3D568F12",
   },
+  trainerTop: { flexDirection: "row", alignItems: "center", gap: 16 },
   avatar: {
-    width: 70,
-    height: 70,
+    width: 72,
+    height: 72,
     borderRadius: 24,
     backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
   },
-  initial: { color: colors.accent, fontSize: 30, fontWeight: "600" },
+  initial: { color: colors.accent, fontSize: 30, fontWeight: "700" },
   name: { color: colors.ink, fontSize: 23, fontWeight: "700" },
-  copy: { color: colors.muted, fontSize: 12, lineHeight: 19 },
-  tag: { color: colors.accent, fontSize: 12, fontWeight: "600", marginTop: 3 },
+  handle: { color: colors.muted, fontSize: 12, fontWeight: "600" },
+  titleLine: { color: colors.accent, fontSize: 13, fontWeight: "700", marginTop: 2 },
+  xpBlock: { gap: 8 },
+  xpRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  xpText: { color: colors.ink, fontSize: 13, fontWeight: "600" },
+  xpPercent: { color: colors.muted, fontSize: 12, fontWeight: "700" },
+  xpTrack: {
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.tint,
+    overflow: "hidden",
+  },
+  xpFill: { height: "100%", borderRadius: 5, backgroundColor: colors.accent },
   stats: {
     flexDirection: "row",
     backgroundColor: colors.tint,
     borderRadius: 22,
-    paddingVertical: 20,
+    paddingVertical: 18,
   },
-  stat: { flex: 1, alignItems: "center", gap: 5 },
+  stat: { flex: 1, alignItems: "center", gap: 4 },
   statValue: { color: colors.accent, fontSize: 26, fontWeight: "700" },
-  statLabel: { color: colors.muted, fontSize: 10 },
+  statLabel: { color: colors.muted, fontSize: 10, fontWeight: "600" },
   card: {
     borderRadius: 24,
     padding: 18,
@@ -396,42 +464,81 @@ const styles = StyleSheet.create({
   },
   heading: { flexDirection: "row", gap: 9, alignItems: "center" },
   sectionTitle: { color: colors.ink, fontSize: 17, fontWeight: "600", flex: 1 },
-  chart: { width: 280, height: 252, alignSelf: "center" },
-  radarRing: {
-    position: "absolute",
-    borderWidth: 1,
-    borderColor: colors.border,
-    transform: [{ rotate: "45deg" }],
+  link: { color: colors.accent, fontSize: 12, fontWeight: "700" },
+  copy: { color: colors.muted, fontSize: 12, lineHeight: 19 },
+  hint: { color: colors.accent, fontSize: 12, lineHeight: 19 },
+  badgeRow: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+  badge: {
+    width: "47%",
+    borderRadius: 18,
+    padding: 12,
+    backgroundColor: colors.tint,
+    alignItems: "center",
+    gap: 6,
   },
-  chartDot: {
-    position: "absolute",
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.accent,
-  },
-  axisLabel: {
-    position: "absolute",
-    width: 80,
-    textAlign: "center",
-    fontSize: 12,
-    fontWeight: "600",
-    color: colors.ink,
-  },
-  scale: { color: colors.muted, fontSize: 10, textAlign: "center" },
-  breakdown: {
-    gap: 10,
-    borderTopWidth: 1,
-    borderColor: colors.border,
-    paddingTop: 14,
-  },
-  breakdownRow: {
+  badgeLocked: { opacity: 0.45 },
+  badgeEmoji: { fontSize: 26 },
+  badgeName: { color: colors.ink, fontSize: 12, fontWeight: "700" },
+  badgeNameLocked: { color: colors.muted },
+  cuisineRows: { gap: 12 },
+  cuisineRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  cuisineFlag: { fontSize: 22 },
+  cuisineLabelRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    gap: 8,
+    marginBottom: 4,
   },
+  cuisineName: { color: colors.ink, fontSize: 13, fontWeight: "600" },
+  cuisineCount: { color: colors.muted, fontSize: 12, fontWeight: "600" },
+  progressTrack: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.tint,
+    overflow: "hidden",
+  },
+  progressFill: { height: "100%", borderRadius: 3, backgroundColor: colors.accent },
+  mapBox: {
+    height: 170,
+    borderRadius: 18,
+    backgroundColor: "#EAF3FF",
+    borderWidth: 1,
+    borderColor: colors.border,
+    position: "relative",
+    overflow: "hidden",
+  },
+  mapPin: {
+    position: "absolute",
+    width: 26,
+    height: 26,
+    marginLeft: -13,
+    marginTop: -13,
+    borderRadius: 13,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+  },
+  mapPinActive: {
+    backgroundColor: colors.white,
+    borderColor: colors.accent,
+  },
+  mapPinIdle: {
+    backgroundColor: "#F2F2F2",
+    borderColor: colors.border,
+    opacity: 0.5,
+  },
+  mapPinEmoji: { fontSize: 14 },
+  recentRow: { gap: 10, paddingVertical: 2 },
+  recentCard: {
+    width: 92,
+    borderRadius: 16,
+    padding: 10,
+    backgroundColor: colors.tint,
+    alignItems: "center",
+    gap: 6,
+  },
+  recentEmoji: { fontSize: 28 },
+  recentName: { color: colors.ink, fontSize: 11, fontWeight: "600" },
   label: { color: colors.ink, fontSize: 13, fontWeight: "600" },
-  hint: { color: colors.accent, fontSize: 12, lineHeight: 19 },
   input: {
     backgroundColor: colors.paper,
     color: colors.ink,

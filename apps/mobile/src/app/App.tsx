@@ -8,6 +8,8 @@ import {
 } from "react";
 import {
   ActivityIndicator,
+  Alert,
+  Animated,
   FlatList,
   Keyboard,
   Linking,
@@ -26,6 +28,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { migrateWebBookmarks } from "../lib/migrateWebBookmarks";
 import { places as bundledPlaces } from "../features/restaurants/data/places";
 import { StatusBar } from "expo-status-bar";
+import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { FoodCameraScreen } from "../features/food-dex/screens/FoodCameraScreen";
 import MapView, { type MapCamera } from "../components/maps";
@@ -34,7 +37,6 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import {
-  categories,
   cuisines,
   foodSpecialties,
   restaurantTypes,
@@ -112,16 +114,6 @@ function Icon({
 
 function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const { places, error: backendError } = useBackend();
-  const cuisineCategories = [
-    "All",
-    ...Array.from(
-      new Set(
-        places
-          .map((place) => place.cuisine)
-          .filter((cuisine): cuisine is string => Boolean(cuisine)),
-      ),
-    ).sort(),
-  ];
   const insets = useSafeAreaInsets();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const camera = useRef<MapCamera>(null);
@@ -156,7 +148,16 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     | "dex"
     | "camera"
   >("explore");
+  const [screenSlide] = useState(() => new Animated.Value(0));
   const cameraReturnTab = useRef<Exclude<typeof tab, "camera">>("explore");
+  useEffect(() => {
+    screenSlide.setValue(windowWidth || 0);
+    Animated.timing(screenSlide, {
+      toValue: 0,
+      duration: 220,
+      useNativeDriver: true,
+    }).start();
+  }, [tab, windowWidth, screenSlide]);
   const {
     value: profile,
     update: setProfile,
@@ -173,6 +174,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [recommenderVisible, setRecommenderVisible] = useState(false);
   const [foodCapture, setFoodCapture] = useState<FoodCapture | null>(null);
   const [listVisible, setListVisible] = useState(false);
+  const [plusMenuOpen, setPlusMenuOpen] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
   const [linkError, setLinkError] = useState(false);
@@ -196,6 +198,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           .includes(normalizedQuery),
     );
   }, [
+    places,
     category,
     deferredQuery,
     savedFilter,
@@ -248,6 +251,33 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     setFoodCapture(null);
     setSelected(null);
     setListVisible(false);
+  }
+  async function uploadPhoto() {
+    setPlusMenuOpen(false);
+    Keyboard.dismiss();
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        base64: true,
+        quality: 0.5,
+        allowsEditing: true,
+        aspect: [1, 1],
+      });
+      if (result.canceled || !result.assets[0]) return;
+      setFoodCapture({
+        id: Date.now(),
+        photo: result.assets[0],
+        error: "",
+        recognition: null,
+      });
+      setTab("dex");
+    } catch {
+      Alert.alert("Upload failed", "Couldn’t open your photo library.");
+    }
+  }
+  function writeBlog() {
+    setPlusMenuOpen(false);
+    Alert.alert("Write a blog", "Blog editor coming soon.");
   }
   function resetMap() {
     setSelected(null);
@@ -311,6 +341,10 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   return (
     <View style={styles.screen}>
       <StatusBar style={tab === "camera" ? "light" : "dark"} />
+      <Animated.View
+        key={tab}
+        style={{ flex: 1, transform: [{ translateX: screenSlide }] }}
+      >
       {tab === "camera" ? (
         <FoodCameraScreen
           onClose={() => setTab(cameraReturnTab.current)}
@@ -696,7 +730,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   ) : openFilter === "cuisine" ? (
                     [
                       "Any cuisine",
-                      ...cuisines.filter((value) => value !== "Bakery"),
+                      ...cuisines,
                     ].map((value) => (
                       <Pressable
                         key={value}
@@ -925,6 +959,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           </View>
         </>
       )}
+      </Animated.View>
       {tab !== "camera" && (
         <View
           style={[
@@ -945,13 +980,13 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   accessibilityRole="button"
                   accessibilityLabel="Take a food photo"
                   accessibilityHint="Opens the camera to photograph food for your Food Dex"
-                  onPress={openFoodCamera}
+                  onPress={() => setPlusMenuOpen(true)}
                   style={({ pressed }) => [
                     styles.cameraButton,
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Icon name="camera" size={28} color={colors.white} />
+                  <Icon name="add" size={28} color={colors.white} />
                 </Pressable>
               </View>
             ) : (
@@ -1110,6 +1145,40 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               />
             )}
           </View>
+        </View>
+      </Modal>
+      <Modal
+        visible={plusMenuOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPlusMenuOpen(false)}
+      >
+        <Pressable
+          style={styles.plusMenuScrim}
+          onPress={() => setPlusMenuOpen(false)}
+        />
+        <View style={styles.plusMenu}>
+          <Pressable
+            style={styles.plusMenuItem}
+            onPress={() => {
+              setPlusMenuOpen(false);
+              openFoodCamera();
+            }}
+          >
+            <Icon name="camera-outline" size={20} color={colors.ink} />
+            <Text style={styles.plusMenuText}>Take photo</Text>
+          </Pressable>
+          <Pressable
+            style={styles.plusMenuItem}
+            onPress={() => void uploadPhoto()}
+          >
+            <Icon name="image-outline" size={20} color={colors.ink} />
+            <Text style={styles.plusMenuText}>Upload photo</Text>
+          </Pressable>
+          <Pressable style={styles.plusMenuItem} onPress={writeBlog}>
+            <Icon name="create-outline" size={20} color={colors.ink} />
+            <Text style={styles.plusMenuText}>Write a blog</Text>
+          </Pressable>
         </View>
       </Modal>
     </View>
@@ -1555,5 +1624,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingVertical: 36,
     textAlign: "center",
+  },
+  plusMenuScrim: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  plusMenu: {
+    position: "absolute",
+    bottom: 110,
+    alignSelf: "center",
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    paddingVertical: 6,
+    minWidth: 200,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  plusMenuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  plusMenuText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.ink,
   },
 });

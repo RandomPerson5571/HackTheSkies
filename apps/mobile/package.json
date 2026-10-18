@@ -15,9 +15,11 @@
     "@tensorflow/tfjs-converter": "^4.22.0",
     "@tensorflow/tfjs-core": "^4.22.0",
     "expo": "~57.0.30",
+    "expo-av": "^16.0.8",
     "expo-camera": "~57.0.6",
     "expo-dev-client": "^57.0.20",
     "expo-file-system": "~57.0.7",
+    "expo-haptics": "^58.0.7",
     "expo-image": "~57.0.5",
     "expo-image-manipulator": "~57.0.21",
     "expo-image-picker": "~57.0.20",
@@ -32,10 +34,10 @@
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
+    "@types/node": "26.4.1",
     "@types/react": "~19.2.2",
     "eslint": "10.9.1",
-    "typescript": "~6.0.3",
-    "@types/node": "26.4.1"
+    "typescript": "~6.0.3"
   },
   "scripts": {
     "start": "node scripts/dev.mjs",

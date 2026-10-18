@@ -1,4 +1,5 @@
-import { Image, StyleSheet } from "react-native";
+import { Image } from "expo-image";
+import { StyleSheet } from "react-native";
 
 import { ciboLogoSource } from "./ciboLogoSource";
 
@@ -8,7 +9,7 @@ export function CiboLogo() {
       accessibilityRole="image"
       accessibilityLabel="Cibo"
       source={ciboLogoSource}
-      resizeMode="contain"
+      contentFit="contain"
       style={styles.logo}
     />
   );

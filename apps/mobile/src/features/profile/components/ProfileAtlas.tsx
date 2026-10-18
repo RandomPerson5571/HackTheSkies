@@ -13,10 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../../theme";
-import {
-  atlasCuisines,
-  cuisineMastery,
-} from "../../food-dex/models/discovery";
+import { atlasCuisines, cuisineMastery } from "../../food-dex/models/discovery";
 import {
   cuisineCovers,
   cuisineRegions,
@@ -60,7 +57,9 @@ export function ProfileAtlas({
     rows[0]!;
   const svg = useMemo(
     () => ({
-      uri: `data:image/svg+xml;utf8,${encodeURIComponent(atlasSvg(entries, selectedCountry, selected))}`,
+      uri: `data:image/svg+xml;base64,${btoa(atlasSvg(entries, selectedCountry, selected))}`,
+      width: 720,
+      height: 390,
     }),
     [entries, selectedCountry, selected],
   );

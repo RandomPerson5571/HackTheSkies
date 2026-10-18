@@ -379,7 +379,6 @@ export function QuestsScreen({
         <Ionicons name="earth-outline" size={24} color={c.ink} />
         <Text style={s.panelTitle}>Your Cibo Passport</Text>
       </View>
-      <Text style={s.copy}>Small discoveries. A world of flavour.</Text>
       <View style={s.passportStats}>
         <View>
           <Text style={s.statNumber}>
@@ -473,15 +472,6 @@ export function QuestsScreen({
             <Text style={s.xpPillText}>{totalXp} XP</Text>
           </View>
         </View>
-        <View style={s.intro}>
-          <Text style={s.eyebrow}>FOLLOW YOUR APPETITE</Text>
-          <Text accessibilityRole="header" style={s.heading}>
-            A world of flavour.{"\n"}One little quest at a time.
-          </Text>
-          <Text style={s.copy}>
-            Learn a little. Discover a dish. Find your next favourite.
-          </Text>
-        </View>
         {error ? (
           <View accessibilityLiveRegion="polite" style={s.error}>
             <Text style={s.copy}>{error}</Text>
@@ -541,12 +531,12 @@ export function QuestsScreen({
         </ScrollView>
         <View style={s.tabs}>
           <Tab
-            label="The journey"
+            label="Journey"
             active={tab === "journey"}
             onPress={() => setTab("journey")}
           />
           <Tab
-            label="Bonus quests"
+            label="Quests"
             active={tab === "bonus"}
             onPress={() => setTab("bonus")}
           />
@@ -1234,19 +1224,11 @@ const s = StyleSheet.create({
     gap: 6,
   },
   xpPillText: { color: c.ink, fontWeight: "800", fontSize: 13 },
-  intro: { gap: 12, marginTop: 12 },
   eyebrow: {
     color: c.muted,
     fontSize: 10,
     letterSpacing: 1.5,
     fontWeight: "800",
-  },
-  heading: {
-    color: c.navy,
-    fontSize: 36,
-    fontWeight: "800",
-    lineHeight: 43,
-    letterSpacing: -1.5,
   },
   copy: { color: c.muted, fontSize: 14, lineHeight: 22 },
   small: { color: c.muted, fontSize: 12, lineHeight: 19 },

@@ -122,22 +122,24 @@ test("map photos increase with zoom while staying viewport-only and prioritizing
   const data = Array.from({ length: 10 }, (_, i) =>
     restaurant(`place-${i}`, 4.8, i + 1),
   );
-  data.push(...Array.from({ length: 20 }, (_, i) => restaurant(`unrated-${i}`)));
+  data.push(
+    ...Array.from({ length: 20 }, (_, i) => restaurant(`unrated-${i}`)),
+  );
   data.push(restaurant("offscreen", 5, 1), restaurant("selected-unrated"));
   const visible = new Set(data.slice(0, 20).map((place) => place.id));
   const ratings = buildRecommendations(data, {});
   const markers = getMapMarkerPlaces(data, visible, ratings);
-  assert.equal(markers.length, recommendationPolicy.overviewPhotoPins);
+  assert.equal(markers.length, 20);
   assert.equal(markers[0].id, "place-0");
-  assert.ok(
-    markers.every(
-      (place) => visible.has(place.id) && ratings.get(place.id).suggested,
-    ),
-  );
+  assert.ok(markers.every((place) => visible.has(place.id)));
   const zoomed = getMapMarkerPlaces(data, visible, ratings, undefined, 13);
   assert.equal(zoomed.length, 20);
-  assert.ok(zoomed.slice(0, 10).every((place) => ratings.get(place.id).suggested));
-  assert.ok(zoomed.slice(10).every((place) => !ratings.get(place.id).suggested));
+  assert.ok(
+    zoomed.slice(0, 10).every((place) => ratings.get(place.id).suggested),
+  );
+  assert.ok(
+    zoomed.slice(10).every((place) => !ratings.get(place.id).suggested),
+  );
   const selected = getMapMarkerPlaces(
     data,
     visible,
@@ -145,7 +147,7 @@ test("map photos increase with zoom while staying viewport-only and prioritizing
     "selected-unrated",
   );
   assert.equal(selected[0].id, "selected-unrated");
-  assert.equal(selected.length, recommendationPolicy.overviewPhotoPins);
+  assert.equal(selected.length, 21);
   assert.equal(ratings.get(selected[0].id).suggested, false);
   const selectedPhoto = getMapMarkerPlaces(data, visible, ratings, "place-0");
   assert.equal(

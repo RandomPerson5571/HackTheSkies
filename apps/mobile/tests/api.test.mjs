@@ -10,7 +10,6 @@ test("one Worker origin resolves all APIs while explicit endpoint overrides stil
   process.env.EXPO_PUBLIC_API_URL = "https://cibo-api.example.workers.dev/";
   for (const name of [
     "food-scan",
-    "menu-scan",
     "food-recommendations",
     "quest-personalization",
   ])

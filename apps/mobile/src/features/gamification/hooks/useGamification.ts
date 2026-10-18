@@ -1,7 +1,8 @@
-import { playFeedback } from "../../../lib/sensory";
+import type { Award } from "../components/AwardPopup";
 import { useCallback, useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
+  BADGES,
   applyDiscovery,
   applyRating,
   applySave,
@@ -15,6 +16,7 @@ const KEY = "cibo.gamification";
 
 export function useGamification() {
   const [state, setState] = useState<GamificationState>(createInitialState);
+  const [awards, setAwards] = useState<Award[]>([]);
   const [ready, setReady] = useState(false);
   const stateRef = useRef(state);
   useEffect(() => {
@@ -26,7 +28,9 @@ export function useGamification() {
     (async () => {
       try {
         const raw = await AsyncStorage.getItem(KEY);
-        const parsed = raw ? parseGamification(JSON.parse(raw)) : createInitialState();
+        const parsed = raw
+          ? parseGamification(JSON.parse(raw))
+          : createInitialState();
         if (!cancelled) setState(parsed);
       } catch {
         // ignore
@@ -39,12 +43,25 @@ export function useGamification() {
     };
   }, []);
 
-  const persist = useCallback((next: GamificationState) => {
+  const persist = useCallback((next: GamificationState, celebrate = true) => {
     const previous = stateRef.current;
-    if (next.level > previous.level) {
-      void playFeedback("levelup");
-    } else if (next.badges.some((badge) => !previous.badges.includes(badge))) {
-      void playFeedback("badge");
+    if (celebrate) {
+      const unlocked: Award[] = next.badges
+        .filter((id) => !previous.badges.includes(id))
+        .map((id) => ({
+          id: `${next.xp}-${id}`,
+          kind: "badge",
+          title: BADGES.find((badge) => badge.id === id)!.name,
+          subtitle: BADGES.find((badge) => badge.id === id)!.description,
+        }));
+      if (next.level > previous.level)
+        unlocked.push({
+          id: `${next.xp}-level`,
+          kind: "level",
+          title: `Level ${next.level}`,
+          subtitle: "Your next chapter starts here.",
+        });
+      if (unlocked.length) setAwards((queue) => [...queue, ...unlocked]);
     }
     stateRef.current = next;
     setState(next);
@@ -53,8 +70,11 @@ export function useGamification() {
 
   const onDiscovery = useCallback(
     (cuisineCount: number) => {
-      const { state: next, unlocked } = applyDiscovery(stateRef.current, cuisineCount);
-      persist(next);
+      const { state: next, unlocked } = applyDiscovery(
+        stateRef.current,
+        cuisineCount,
+      );
+      persist(next, false);
       return unlocked;
     },
     [persist],
@@ -72,7 +92,17 @@ export function useGamification() {
     return unlocked;
   }, [persist]);
 
-  return { state, ready, onDiscovery, onSave, onRating };
+  return {
+    state,
+    ready,
+    onDiscovery,
+    onSave,
+    onRating,
+    awards,
+    enqueueAwards: (newAwards: Award[]) =>
+      setAwards((queue) => [...queue, ...newAwards]),
+    dismissAward: () => setAwards((queue) => queue.slice(1)),
+  };
 }
 
 export type { BadgeId };

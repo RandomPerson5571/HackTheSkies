@@ -184,7 +184,8 @@ export function DiscoveryCard({
         </View>
         <CatalogPhoto
           eager
-          source={entry.photo ? { uri: entry.photo } : catalogPhoto(dish)}
+          source={catalogPhoto(dish)}
+          fallbackSource={entry.photo ? { uri: entry.photo } : undefined}
           label={entry.name}
           style={s.photo}
         />
@@ -284,6 +285,7 @@ export function DiscoveryCard({
                   })
                   .toUpperCase()}
               </Text>
+              {entry.location ? <Text style={s.small}>{entry.location}</Text> : null}
               <Text style={s.tierNote}>
                 Card tiers are for collecting. Every cuisine is worth exploring.
               </Text>

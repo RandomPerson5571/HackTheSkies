@@ -12,18 +12,24 @@ import { LazyImage } from "../../../components/images/LazyImage";
 
 export function CatalogPhoto({
   source,
+  fallbackSource,
   label,
   style,
   eager = false,
 }: {
   source: ImageSourcePropType | undefined;
+  fallbackSource?: ImageSourcePropType;
   label: string;
   style: StyleProp<ImageStyle>;
   eager?: boolean;
 }) {
-  const [failedSource, setFailedSource] = useState<string | null>(null);
-  const sourceKey = JSON.stringify(source);
-  if (!source || failedSource === sourceKey)
+  const [failedSources, setFailedSources] = useState<string[]>([]);
+  const candidates = [source, fallbackSource];
+  const activeSource = candidates.find(
+    (candidate) => candidate && !failedSources.includes(JSON.stringify(candidate)),
+  );
+  const sourceKey = JSON.stringify(activeSource);
+  if (!activeSource)
     return (
       <View
         style={[style, s.placeholder]}
@@ -40,12 +46,17 @@ export function CatalogPhoto({
     );
   return (
     <LazyImage
+      key={sourceKey}
       eager={eager}
-      source={source}
+      source={activeSource}
       style={style}
       accessibilityLabel={label}
       resizeMode="cover"
-      onError={() => setFailedSource(sourceKey)}
+      onError={() =>
+        setFailedSources((previous) =>
+          previous.includes(sourceKey) ? previous : [...previous, sourceKey],
+        )
+      }
     />
   );
 }

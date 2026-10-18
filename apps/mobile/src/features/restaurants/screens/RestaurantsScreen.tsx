@@ -8,6 +8,7 @@ import {
   useState,
   useEffect,
   type Dispatch,
+  type ReactNode,
   type ComponentProps,
 } from "react";
 import {
@@ -17,7 +18,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   TextInput,
   View,
@@ -25,7 +25,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { categories, type Category, type Place } from "../data/places";
+import { type Category, type Place } from "../data/places";
 import {
   buildRecommendations,
   recommendationBadge,
@@ -45,6 +45,11 @@ import { useBackend } from "../../../lib/BackendProvider";
 import { useReducedMotion } from "../../food-dex/hooks/useReducedMotion";
 
 type Props = {
+  searchQuery?: string;
+  onSearchQueryChange?: (value: string) => void;
+  onClearBrowseFilters?: () => void;
+  filteredPlaces?: Place[];
+  browseFilters?: ReactNode;
   collection: RestaurantCollection;
   dispatch: Dispatch<CollectionAction>;
   storageError: string;
@@ -84,17 +89,24 @@ export function RestaurantsScreen({
   storageError,
   onShowMap,
   onOpenMap,
-  onOpenSaved,
+  searchQuery,
+  onSearchQueryChange,
+  onClearBrowseFilters,
+  filteredPlaces,
+  browseFilters,
   onOpenDex,
   onOpenCommunity,
   mode = "discover",
 }: Props) {
-  const { places } = useBackend();
+  const { places: allPlaces } = useBackend();
+  const places = filteredPlaces ?? allPlaces;
   const reducedMotion = useReducedMotion();
   const insets = useSafeAreaInsets();
   const list = useRef<FlatList<Place>>(null);
   const [collectionTab, setCollectionTab] = useState("saved");
-  const [query, setQuery] = useState("");
+  const [localQuery, setLocalQuery] = useState("");
+  const query = searchQuery ?? localQuery;
+  const setQuery = onSearchQueryChange ?? setLocalQuery;
   const [searchFocused, setSearchFocused] = useState(false);
   const [category, setCategory] = useState<Category>("All");
   const [cuisine, setCuisine] = useState("All");
@@ -105,29 +117,14 @@ export function RestaurantsScreen({
   const [formError, setFormError] = useState("");
   const [managing, setManaging] = useState<Place | null>(null);
   const [actionPlace, setActionPlace] = useState<Place | null>(null);
-  const [filterSheetVisible, setFilterSheetVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [lastRandomId, setLastRandomId] = useState<string | null>(null);
   useMenuSound(creating);
   useMenuSound(managing !== null);
   useMenuSound(actionPlace !== null);
-  useMenuSound(filterSheetVisible);
   useMenuSound(infoVisible);
 
-  const cuisineOptions = useMemo(
-    () => [
-      "All",
-      ...Array.from(
-        new Set(
-          places
-            .map((place) => place.cuisine)
-            .filter((value): value is string => Boolean(value)),
-        ),
-      ).sort(),
-    ],
-    [places],
-  );
   const recommendations = useMemo(
     () => buildRecommendations(places, collection.ratings),
     [places, collection.ratings],
@@ -199,18 +196,13 @@ export function RestaurantsScreen({
   );
 
   function resetFilters() {
+    onClearBrowseFilters?.();
     setQuery("");
     setCategory("All");
     setCuisine("All");
     setHiddenGemsOnly(false);
     setSort("discovery");
   }
-
-  const filterCount =
-    Number(category !== "All") +
-    Number(cuisine !== "All") +
-    Number(hiddenGemsOnly) +
-    Number(sort !== "discovery");
 
   function createList() {
     const name = listName.trim();
@@ -265,19 +257,6 @@ export function RestaurantsScreen({
               {mode === "journal" ? "Your food journal" : "Toronto, ON"}
             </Text>
           </View>
-          {onOpenSaved && (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Open saved places"
-              onPress={onOpenSaved}
-              style={({ pressed }) => [
-                styles.iconButton,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Icon name="bookmark-outline" />
-            </Pressable>
-          )}
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Explain restaurant recommendations"
@@ -288,18 +267,6 @@ export function RestaurantsScreen({
             ]}
           >
             <Icon name="information-circle-outline" color={colors.muted} />
-          </Pressable>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`Open sort and filters${filterCount ? `, ${filterCount} active` : ""}`}
-            onPress={() => setFilterSheetVisible(true)}
-            style={({ pressed }) => [
-              styles.iconButton,
-              pressed && styles.pressed,
-            ]}
-          >
-            <Icon name="options-outline" color={colors.accent} />
-            {filterCount > 0 && <View style={styles.filterDot} />}
           </Pressable>
         </View>
         <View style={[styles.search, searchFocused && styles.searchActive]}>
@@ -378,62 +345,9 @@ export function RestaurantsScreen({
             </Pressable>
           </ScrollView>
         ) : (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.chips}
-            keyboardShouldPersistTaps="handled"
-          >
-            <Pressable
-              accessibilityRole="button"
-              accessibilityState={{
-                selected: sort === "discovery" && !hiddenGemsOnly,
-              }}
-              onPress={() => {
-                setSort("discovery");
-                setHiddenGemsOnly(false);
-              }}
-              style={({ pressed }) => [
-                styles.chip,
-                sort === "discovery" && !hiddenGemsOnly && styles.selectedChip,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Icon name="sparkles-outline" size={16} color={colors.accent} />
-              <Text style={styles.chipText}>For you</Text>
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityState={{ selected: hiddenGemsOnly }}
-              onPress={() => setHiddenGemsOnly((value) => !value)}
-              style={({ pressed }) => [
-                styles.chip,
-                hiddenGemsOnly && styles.selectedChip,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Icon name="diamond-outline" size={16} color={colors.accent} />
-              <Text style={styles.chipText}>Hidden gems</Text>
-            </Pressable>
-            {categories.map((item) => (
-              <Pressable
-                key={item}
-                accessibilityRole="button"
-                accessibilityState={{ selected: category === item }}
-                onPress={() => setCategory(item)}
-                style={({ pressed }) => [
-                  styles.chip,
-                  category === item && styles.selectedChip,
-                  pressed && styles.pressed,
-                ]}
-              >
-                <Text style={styles.chipText}>
-                  {item === "All" ? "All food" : item}
-                </Text>
-              </Pressable>
-            ))}
-          </ScrollView>
+          browseFilters
         )}
+
         {storageError ? (
           <Text accessibilityRole="alert" style={styles.notice}>
             {storageError}
@@ -594,7 +508,6 @@ export function RestaurantsScreen({
           </View>
         }
         renderItem={({ item }) => {
-          const saved = collection.saved.includes(item.id);
           const rec = recommendations.get(item.id);
           return (
             <View style={styles.card}>
@@ -641,178 +554,10 @@ export function RestaurantsScreen({
                   </Text>
                 </View>
               </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={
-                  saved
-                    ? `Remove ${item.name} from saved restaurants`
-                    : `Save ${item.name}`
-                }
-                accessibilityState={{ selected: saved }}
-                onPress={() => dispatch({ type: "save", placeId: item.id })}
-                style={({ pressed }) => [
-                  styles.bookmarkButton,
-                  saved && styles.bookmarkSaved,
-                  pressed && styles.pressed,
-                ]}
-              >
-                <Icon
-                  name={saved ? "bookmark" : "bookmark-outline"}
-                  size={18}
-                  color={saved ? colors.white : colors.accent}
-                />
-              </Pressable>
             </View>
           );
         }}
       />
-
-      <Modal
-        visible={filterSheetVisible}
-        transparent
-        animationType={reducedMotion === false ? "slide" : "none"}
-        onRequestClose={() => setFilterSheetVisible(false)}
-      >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.modal}
-        >
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close filters"
-            style={styles.scrim}
-            onPress={() => setFilterSheetVisible(false)}
-          />
-          <View
-            accessibilityViewIsModal
-            style={[
-              styles.sheet,
-              { paddingBottom: insets.bottom + 24, maxHeight: "85%" },
-            ]}
-          >
-            <SheetDragHandle onDismiss={() => setFilterSheetVisible(false)} />
-            <View style={styles.sectionRow}>
-              <Text
-                accessibilityRole="header"
-                style={[styles.sectionTitle, styles.flex]}
-              >
-                Sort & filter
-              </Text>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Close filters"
-                onPress={() => setFilterSheetVisible(false)}
-                style={styles.iconButton}
-              >
-                <Icon name="close" />
-              </Pressable>
-            </View>
-            <ScrollView
-              style={styles.filterScroll}
-              contentContainerStyle={styles.filterContent}
-            >
-              <Text style={styles.small}>Sort</Text>
-              <View style={styles.optionRow}>
-                {(["discovery", "name"] as const).map((item) => (
-                  <Pressable
-                    key={item}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: sort === item }}
-                    onPress={() => setSort(item)}
-                    style={({ pressed }) => [
-                      styles.optionChip,
-                      sort === item && styles.selectedChip,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Text style={styles.chipText}>
-                      {item === "name" ? "A–Z" : "For you"}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-              <Text style={styles.small}>Category</Text>
-              <View style={styles.optionRow}>
-                {categories.map((item) => (
-                  <Pressable
-                    key={item}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: category === item }}
-                    onPress={() => setCategory(item)}
-                    style={({ pressed }) => [
-                      styles.optionChip,
-                      category === item && styles.selectedChip,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Text style={styles.chipText}>
-                      {item === "All" ? "All food" : item}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-              <Text style={styles.small}>Cuisine</Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.chips}
-                keyboardShouldPersistTaps="handled"
-              >
-                {cuisineOptions.map((item) => (
-                  <Pressable
-                    key={item}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: cuisine === item }}
-                    onPress={() => setCuisine(item)}
-                    style={({ pressed }) => [
-                      styles.chip,
-                      cuisine === item && styles.selectedChip,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Text style={styles.chipText}>
-                      {item === "All" ? "All cuisines" : item}
-                    </Text>
-                  </Pressable>
-                ))}
-              </ScrollView>
-              <View style={styles.toggleRow}>
-                <Text style={styles.toggleLabel}>Hidden gems only</Text>
-                <Switch
-                  accessibilityLabel="Hidden gems only"
-                  value={hiddenGemsOnly}
-                  onValueChange={setHiddenGemsOnly}
-                  trackColor={{ true: colors.accent, false: colors.border }}
-                  thumbColor={colors.white}
-                />
-              </View>
-            </ScrollView>
-            <View style={styles.sectionRow}>
-              <Pressable
-                accessibilityRole="button"
-                onPress={resetFilters}
-                style={styles.iconButton}
-              >
-                <Text style={styles.chipText}>Reset all</Text>
-              </Pressable>
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => setFilterSheetVisible(false)}
-                style={({ pressed }) => [
-                  styles.primaryButton,
-                  styles.flex,
-                  pressed && styles.pressed,
-                ]}
-              >
-                <Text style={styles.primaryText}>
-                  Show {visible.length}{" "}
-                  {visible.length === 1 ? "spot" : "spots"}
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
 
       <Modal
         visible={infoVisible}

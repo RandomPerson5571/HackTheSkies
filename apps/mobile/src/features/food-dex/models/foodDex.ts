@@ -19,6 +19,7 @@ export type FoodEntry = {
   photo: string;
   discoveredAt: string;
   review?: string;
+  location?: string;
 };
 export type Dish = CatalogDish;
 export const dishes: Dish[] = catalogDishes;
@@ -103,7 +104,8 @@ export function parseFoodDex(raw: string): FoodEntry[] {
     typeof entry.photo !== "string" ||
     typeof entry.discoveredAt !== "string" ||
     Number.isNaN(Date.parse(entry.discoveredAt)) ||
-    (entry.review !== undefined && typeof entry.review !== "string")
+    (entry.review !== undefined && typeof entry.review !== "string") ||
+    (entry.location !== undefined && typeof entry.location !== "string")
   )
       throw new Error("Invalid food entry");
     if (

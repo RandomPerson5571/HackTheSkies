@@ -6,10 +6,10 @@ export const recommendationPolicy = {
   popularityCeiling: 10_000,
   minimumRating: 4,
   minimumScore: 75,
-  overviewPhotoPins: 8,
-  maxPhotoPins: 32,
-  photoPinZoomThreshold: 11,
-  photoPinsPerZoomLevel: 4,
+  overviewPhotoPins: 16,
+  maxPhotoPins: 48,
+  photoPinZoomThreshold: 9,
+  photoPinsPerZoomLevel: 6,
 } as const;
 
 export type Recommendation = {
@@ -147,8 +147,7 @@ export function getMapMarkerPlaces(
           .sort(
             (a, b) =>
               (ratings.get(b.id)?.score ?? 0) -
-                (ratings.get(a.id)?.score ?? 0) ||
-              a.id.localeCompare(b.id),
+                (ratings.get(a.id)?.score ?? 0) || a.id.localeCompare(b.id),
           )
       : [];
   const zoomLevels = Math.floor(
@@ -159,8 +158,8 @@ export function getMapMarkerPlaces(
     recommendationPolicy.overviewPhotoPins +
       zoomLevels * recommendationPolicy.photoPinsPerZoomLevel,
   );
-  return (selected ? [selected, ...suggested] : suggested).slice(
-    0,
-    pinLimit,
-  ).concat(additional).slice(0, pinLimit);
+  return (selected ? [selected, ...suggested] : suggested)
+    .slice(0, pinLimit)
+    .concat(additional)
+    .slice(0, pinLimit);
 }

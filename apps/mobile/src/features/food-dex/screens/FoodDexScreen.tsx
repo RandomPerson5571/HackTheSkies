@@ -117,12 +117,16 @@ export function FoodDexScreen({
   onOpenQuests,
   onOpenJournal,
   onDiscover,
+  gameXp = 0,
+  visited = [],
 }: {
   dex: ReturnType<typeof useFoodDex>;
   capture?: FoodCapture | null;
   onOpenCamera?: () => void;
   onOpenQuests?: () => void;
   onOpenJournal?: () => void;
+  gameXp?: number;
+  visited?: string[];
   onDiscover?: (cuisine: Cuisine) => void;
 }) {
   const insets = useSafeAreaInsets();
@@ -136,6 +140,7 @@ export function FoodDexScreen({
     capture?.photo ?? null,
   );
   const [name, setName] = useState(capture?.recognition?.name ?? "");
+  const [location, setLocation] = useState("");
   const [review, setReview] = useState("");
   const [scanCuisine, setScanCuisine] = useState<Cuisine>(
     capture?.recognition?.cuisine ?? "Other",
@@ -180,6 +185,7 @@ export function FoodDexScreen({
     setBusy(false);
     releaseTempPhoto(photo);
     setReview("");
+    setLocation("");
     setScanOpen(false);
   }
   function openScan(dishName = "", dishCuisine: Cuisine = cuisine ?? "Other") {
@@ -188,6 +194,7 @@ export function FoodDexScreen({
     setPhoto(null);
     setName(dishName);
     setReview("");
+    setLocation("");
     setScanCuisine(dishCuisine);
     setScanError("");
     setNotice("");
@@ -242,6 +249,7 @@ export function FoodDexScreen({
       setPhoto(picked);
       setName("");
       setReview("");
+    setLocation("");
       setScanCuisine(cuisine ?? "Other");
     } catch {
       if (currentSession === session.current)
@@ -294,7 +302,8 @@ export function FoodDexScreen({
       Platform.OS === "web" && photo?.base64
         ? `data:image/jpeg;base64,${photo.base64}`
         : (photo?.uri ?? "");
-    if (!discover(name.trim(), scanCuisine, photoUri, review.trim())) {
+    const savedEntry = discover(name.trim(), scanCuisine, photoUri, review.trim(), location.trim());
+    if (!savedEntry) {
       setScanError(
         `${name.trim()} is already in your ${scanCuisine} collection.`,
       );
@@ -302,14 +311,7 @@ export function FoodDexScreen({
     }
     onDiscover?.(scanCuisine);
     setMoment({
-      entry: {
-        id: `reveal-${Date.now()}`,
-        name: name.trim(),
-        cuisine: scanCuisine,
-        photo: photoUri,
-        discoveredAt: new Date().toISOString(),
-        review: review.trim().slice(0, 480) || undefined,
-      },
+      entry: savedEntry,
       before: entries,
     });
     const newCuisine = !entries.some((entry) => entry.cuisine === scanCuisine);
@@ -603,13 +605,8 @@ export function FoodDexScreen({
                   style={({ pressed }) => [s.discovery, pressed && s.dim]}
                 >
                   <CatalogPhoto
-                    source={
-                      entry.photo
-                        ? { uri: entry.photo }
-                        : catalogPhoto(
-                            findCatalogDish(entry.name, entry.cuisine),
-                          )
-                    }
+                    source={catalogPhoto(findCatalogDish(entry.name, entry.cuisine))}
+                    fallbackSource={entry.photo ? { uri: entry.photo } : undefined}
                     style={s.thumbnail}
                     label={entry.name}
                   />
@@ -653,6 +650,8 @@ export function FoodDexScreen({
         {moment ? (
           <DiscoveryReveal
             moment={moment}
+            gameXp={gameXp}
+            visited={visited}
             entries={entries}
             onClose={() => setMoment(null)}
             onAtlas={() => {
@@ -840,6 +839,17 @@ export function FoodDexScreen({
                   </Pressable>
                 ))}
               </View>
+              <Text style={s.label}>WHERE</Text>
+              <TextInput
+                accessibilityLabel="Restaurant or home kitchen"
+                placeholder="Restaurant or home kitchen (optional)"
+                placeholderTextColor={colors.muted}
+                value={location}
+                onChangeText={setLocation}
+                maxLength={120}
+                editable={!busy}
+                style={s.field}
+              />
               <Text style={s.label}>YOUR REVIEW</Text>
               <TextInput
                 accessibilityLabel="Written food review"
@@ -1037,10 +1047,9 @@ export function FoodDexScreen({
                     style={({ pressed }) => [s.dishTile, pressed && s.dim]}
                   >
                     <CatalogPhoto
-                      source={
-                        dish.entry?.photo
-                          ? { uri: dish.entry.photo }
-                          : catalogPhoto(dish.catalogDish)
+                      source={catalogPhoto(dish.catalogDish)}
+                      fallbackSource={
+                        dish.entry?.photo ? { uri: dish.entry.photo } : undefined
                       }
                       style={s.dishTilePhoto}
                       label={dish.name}
@@ -1082,10 +1091,9 @@ export function FoodDexScreen({
                       style={({ pressed }) => [s.dish, pressed && s.dim]}
                     >
                       <CatalogPhoto
-                        source={
-                          dish.entry?.photo
-                            ? { uri: dish.entry.photo }
-                            : catalogPhoto(dish.catalogDish)
+                        source={catalogPhoto(dish.catalogDish)}
+                        fallbackSource={
+                          dish.entry?.photo ? { uri: dish.entry.photo } : undefined
                         }
                         style={s.dishPhoto}
                         label={dish.name}

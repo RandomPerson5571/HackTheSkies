@@ -1,3 +1,4 @@
+import { playerProgress } from "../../gamification/models/playerProgress";
 import { useMenuSound } from "../../../hooks/useMenuSound";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { SheetDragHandle } from "../../../components/SheetDragHandle";
@@ -28,7 +29,6 @@ import {
   type Customization,
 } from "../models/customization";
 import { useQuests } from "../../quests/hooks/useQuests";
-import { pathCuisines, pathProgress } from "../../quests/models/quests";
 import {
   BADGES,
   evaluateBadges,
@@ -102,6 +102,7 @@ export function ProfileScreen({
   bottomInset,
   storageError,
   saved = [],
+  visited = [],
   onOpenQuests,
   onOpenSettings,
   onOpenDex,
@@ -109,6 +110,7 @@ export function ProfileScreen({
   onOpenSaved,
 }: {
   saved?: string[];
+  visited?: string[];
   profile: Profile;
   onSave: (profile: Profile) => void;
   onUploadAvatar?: () => void;
@@ -136,13 +138,7 @@ export function ProfileScreen({
   const foodsCount = entries.length;
   const cuisinesCount = new Set(entries.map((entry) => entry.cuisine)).size;
   const streak = game.streak;
-  const questXp =
-    quests.bonusXp +
-    pathCuisines.reduce(
-      (sum, cuisine) => sum + pathProgress(quests, cuisine).xp,
-      0,
-    );
-  const totalXp = Math.max(0, game.xp) + questXp;
+  const { totalXp } = playerProgress(game.xp, quests, entries, visited);
   const xp = xpToNextLevel(totalXp);
   const xpPercent = Math.round((xp.current / xp.needed) * 100);
 

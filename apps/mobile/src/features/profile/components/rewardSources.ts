@@ -1,0 +1,68 @@
+import type { BadgeId } from "../../gamification/models/gamification";
+import type { RankId } from "../models/customization";
+
+export const trophies = {
+  "first-bite": require("../../../../assets/rewards/trophy-first-bite.svg"),
+  "cuisine-explorer": require("../../../../assets/rewards/trophy-cuisine-explorer.svg"),
+  "world-taster": require("../../../../assets/rewards/trophy-world-taster.svg"),
+  collector: require("../../../../assets/rewards/trophy-collector.svg"),
+  foodie: require("../../../../assets/rewards/trophy-foodie.svg"),
+  gourmet: require("../../../../assets/rewards/trophy-gourmet.svg"),
+  rater: require("../../../../assets/rewards/trophy-rater.svg"),
+  critic: require("../../../../assets/rewards/trophy-critic.svg"),
+  saver: require("../../../../assets/rewards/trophy-saver.svg"),
+  wanderer: require("../../../../assets/rewards/trophy-wanderer.svg"),
+  "streak-3": require("../../../../assets/rewards/trophy-streak-3.svg"),
+  "streak-7": require("../../../../assets/rewards/trophy-streak-7.svg"),
+  "passport-pro": require("../../../../assets/rewards/trophy-passport-pro.svg"),
+  "menu-maestro": require("../../../../assets/rewards/trophy-menu-maestro.svg"),
+  "century-supper": require("../../../../assets/rewards/trophy-century-supper.svg"),
+  curator: require("../../../../assets/rewards/trophy-curator.svg"),
+  "pin-collector": require("../../../../assets/rewards/trophy-pin-collector.svg"),
+  "peoples-palate": require("../../../../assets/rewards/trophy-peoples-palate.svg"),
+  "two-week-taster": require("../../../../assets/rewards/trophy-two-week-taster.svg"),
+  "xp-legend": require("../../../../assets/rewards/trophy-xp-legend.svg"),
+  japanese: require("../../../../assets/rewards/trophy-japanese.svg"),
+  bakery: require("../../../../assets/rewards/trophy-bakery.svg"),
+  coffee: require("../../../../assets/rewards/trophy-coffee.svg"),
+  pizza: require("../../../../assets/rewards/trophy-pizza.svg"),
+  korean: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  chinese: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  thai: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  south_asian: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  italian: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  latin: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  french: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  caribbean: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  greek: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  restaurant_regular: require("../../../../assets/rewards/trophy-cuisine.svg"),
+} satisfies Record<
+  | BadgeId
+  | "japanese"
+  | "bakery"
+  | "coffee"
+  | "pizza"
+  | "korean"
+  | "chinese"
+  | "thai"
+  | "south_asian"
+  | "italian"
+  | "latin"
+  | "french"
+  | "caribbean"
+  | "greek"
+  | "restaurant_regular",
+  number
+>;
+
+export const frames: Record<RankId, number> = {
+  sprout: require("../../../../assets/rewards/frame-sprout.svg"),
+  "sous-chef": require("../../../../assets/rewards/frame-sous-chef.svg"),
+  artisan: require("../../../../assets/rewards/frame-artisan.svg"),
+  connoisseur: require("../../../../assets/rewards/frame-connoisseur.svg"),
+  master: require("../../../../assets/rewards/frame-master.svg"),
+  legend: require("../../../../assets/rewards/frame-legend.svg"),
+  royal: require("../../../../assets/rewards/frame-royal.svg"),
+  celestial: require("../../../../assets/rewards/frame-celestial.svg"),
+  mythic: require("../../../../assets/rewards/frame-mythic.svg"),
+};

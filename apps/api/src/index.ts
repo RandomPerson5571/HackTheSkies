@@ -1,6 +1,5 @@
 import * as foodScan from "./routes/food-scan.ts";
 import * as foodRecommendations from "./routes/food-recommendations.ts";
-import * as menuScan from "./routes/menu-scan.ts";
 import * as questPersonalization from "./routes/quest-personalization.ts";
 import type { ApiEnvironment } from "./environment.ts";
 
@@ -16,7 +15,6 @@ const routes: Record<
   }
 > = {
   "/api/food-scan": foodScan,
-  "/api/menu-scan": menuScan,
   "/api/food-recommendations": foodRecommendations,
   "/api/quest-personalization": questPersonalization,
 };

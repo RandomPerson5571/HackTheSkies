@@ -1,7 +1,7 @@
 # Cibo · HackTheSkies
 
 `apps/mobile` is the Expo application for iOS, Android and browsers.
-`apps/api` is the separate Cloudflare Workers API for food recognition, menu scans,
+`apps/api` is the separate Cloudflare Workers API for food recognition,
 restaurant recommendations and quest personalization.
 
 ## Start developing

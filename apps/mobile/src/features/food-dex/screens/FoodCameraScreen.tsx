@@ -33,18 +33,12 @@ import { foodKey } from "../models/foodDex";
 export function FoodCameraScreen({
   onCapture,
   onClose,
-  initialMode = "food",
-  onMenuCapture,
-  onMenuExplore,
 }: {
   onCapture: (capture: FoodCapture) => void;
   onClose: () => void;
-  initialMode?: "food" | "menu";
-  onMenuCapture: (photo: CameraCapturedPicture) => void;
-  onMenuExplore: () => void;
 }) {
   const insets = useSafeAreaInsets();
-  const [mode, setMode] = useState(initialMode);
+
   const camera = useRef<FoodCameraHandle>(null);
   const mounted = useRef(true);
   const capturing = useRef(false);
@@ -179,7 +173,7 @@ export function FoodCameraScreen({
       });
       const image = await resizeScanImage(
         raw,
-        mode === "menu" ? 1800 : 1024,
+        1024,
         true,
       );
       if (!mounted.current || current !== generation.current) {
@@ -188,7 +182,6 @@ export function FoodCameraScreen({
       }
       const captured: CameraCapturedPicture = { ...image, format: "jpg" };
       setPhoto(captured);
-      if (mode === "menu") return;
       void identify(captured);
     } catch {
       if (mounted.current)
@@ -244,7 +237,7 @@ export function FoodCameraScreen({
         return;
       const image = await resizeScanImage(
         asset,
-        mode === "menu" ? 1800 : 1024,
+        1024,
         true,
       );
       if (!mounted.current || current !== generation.current) {
@@ -253,7 +246,7 @@ export function FoodCameraScreen({
       }
       const captured: CameraCapturedPicture = { ...image, format: "jpg" };
       setPhoto(captured);
-      if (mode === "food") void identify(captured);
+      void identify(captured);
     } catch {
       if (mounted.current && current === generation.current)
         setError("Couldn’t open that photo. Try another image.");
@@ -298,9 +291,7 @@ export function FoodCameraScreen({
             style={StyleSheet.absoluteFill}
             resizeMode="cover"
             accessibilityLabel={
-              mode === "menu"
-                ? "Your captured menu photo"
-                : "Your captured food photo"
+              "Your captured food photo"
             }
           />
         ) : permission?.granted && active ? (
@@ -334,9 +325,7 @@ export function FoodCameraScreen({
                 : "Getting your camera ready…"}
             </Text>
             <Text style={s.panelCopy}>
-              {mode === "menu"
-                ? "Allow camera access to scan a menu right here in Cibo."
-                : "Allow camera access to photograph food right here in Cibo."}
+              Allow camera access to photograph food right here in Cibo.
             </Text>
             {!permission ? (
               <ActivityIndicator color={colors.accent} />
@@ -361,11 +350,6 @@ export function FoodCameraScreen({
             )}
           </View>
         )}
-        {mode === "menu" && !photo && permission?.granted && (
-          <View pointerEvents="none" style={s.menuGuide}>
-            <Text style={s.menuHint}>Keep the full menu in the frame</Text>
-          </View>
-        )}
       </View>
       <View
         pointerEvents="box-none"
@@ -379,37 +363,6 @@ export function FoodCameraScreen({
         >
           {icon("close-outline")}
         </Pressable>
-        <View
-          accessibilityRole="tablist"
-          accessibilityLabel="Scan mode"
-          style={s.modeSelector}
-        >
-          {(["food", "menu"] as const).map((value) => (
-            <Pressable
-              key={value}
-              accessibilityRole="tab"
-              accessibilityLabel={
-                value === "food" ? "Food detector" : "Menu Lens"
-              }
-              accessibilityState={{ selected: mode === value, disabled: busy }}
-              disabled={busy}
-              onPress={() => {
-                if (mode === value) return;
-                retake();
-                setMode(value);
-              }}
-              style={({ pressed }) => [
-                s.modeOption,
-                mode === value && s.selected,
-                pressed && s.pressed,
-              ]}
-            >
-              <Text style={s.secondaryText}>
-                {value === "food" ? "Food" : "Menu"}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={
@@ -437,14 +390,10 @@ export function FoodCameraScreen({
           ]}
         >
           <Text style={s.panelTitle}>
-            {mode === "menu"
-              ? "Explore with Menu Lens"
-              : "Capture a food discovery"}
+            "Capture a food discovery"
           </Text>
           <Text style={s.panelCopy}>
-            {mode === "menu"
-              ? "Frame the full menu with readable dish names, take a photo, then scan it to explore dishes, discoveries, and dietary details. Captured menus are sent to our AI service."
-              : "Frame your dish, take a photo, then review the suggestion before saving it. Only the photo you take or select is uploaded to identify your meal. Review the result before adding it to your collection."}
+            "Frame your dish, take a photo, then review the suggestion before saving it. Only the photo you take or select is uploaded to identify your meal. Review the result before adding it to your collection."
           </Text>
         </ScrollView>
       )}
@@ -467,17 +416,7 @@ export function FoodCameraScreen({
             </Text>
           </Pressable>
         )}
-        {mode === "menu" && !photo && (
-          <Pressable
-            accessibilityRole="button"
-            onPress={onMenuExplore}
-            disabled={busy}
-            style={({ pressed }) => [s.secondary, pressed && s.pressed]}
-          >
-            {icon("image-outline", 20)}
-            <Text style={s.secondaryText}>Upload or try a sample menu</Text>
-          </Pressable>
-        )}
+
         {!!error && (
           <View accessibilityLiveRegion="polite" style={s.errorRow}>
             <Text style={s.error}>{error}</Text>
@@ -502,16 +441,14 @@ export function FoodCameraScreen({
                 <ActivityIndicator color={cameraColors.foreground} />
               )}
               <Text accessibilityLiveRegion="polite" style={s.panelTitle}>
-                {mode === "menu"
-                  ? "Ready to scan your menu"
-                  : identifying
-                    ? "Identifying your dish…"
-                    : recognition
-                      ? resultLabel
-                      : "Review your photo"}
+                {identifying
+                  ? "Identifying your dish…"
+                  : recognition
+                    ? resultLabel
+                    : "Review your photo"}
               </Text>
             </View>
-            {mode === "food" && !identifying && !recognition && (
+            {!identifying && !recognition && (
               <Pressable
                 accessibilityRole="button"
                 onPress={() => void identify(photo)}
@@ -537,37 +474,29 @@ export function FoodCameraScreen({
               accessibilityRole="button"
               disabled={identifying || busy}
               accessibilityState={{ disabled: identifying || busy }}
-              onPress={() => {
-                if (mode === "menu") {
-                  onMenuCapture(photo);
-                  return;
-                }
-                onCapture({
-                  id: Date.now(),
-                  error: "",
-                  recognition,
-                  photo: {
-                    uri: photo.uri,
-                    width: photo.width,
-                    height: photo.height,
-                    base64: photo.base64,
-                    mimeType: "image/jpeg",
-                    type: "image",
-                  },
-                });
-              }}
+               onPress={() => {
+                 onCapture({
+                   id: Date.now(),
+                   error: "",
+                   recognition,
+                   photo: {
+                     uri: photo.uri,
+                     width: photo.width,
+                     height: photo.height,
+                     base64: photo.base64,
+                     mimeType: "image/jpeg",
+                     type: "image",
+                   },
+                 });
+               }}
               style={({ pressed }) => [
                 s.primary,
                 (pressed || identifying || busy) && s.pressed,
               ]}
             >
-              <Text style={s.primaryText}>
-                {mode === "menu"
-                  ? "Scan menu"
-                  : identifying
-                    ? "Identifying…"
-                    : "Use photo"}
-              </Text>
+               <Text style={s.primaryText}>
+                 {identifying ? "Identifying…" : "Use photo"}
+               </Text>
               <Ionicons
                 name="arrow-forward"
                 size={20}
@@ -603,7 +532,7 @@ export function FoodCameraScreen({
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={
-                mode === "menu" ? "Take menu photo" : "Take food photo"
+                "Take food photo"
               }
               accessibilityState={{ disabled: !ready || busy, busy }}
               disabled={!ready || busy}

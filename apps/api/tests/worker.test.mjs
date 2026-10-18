@@ -8,7 +8,6 @@ afterEach(() => {
 });
 const paths = [
   "food-scan",
-  "menu-scan",
   "food-recommendations",
   "quest-personalization",
 ];

@@ -4,7 +4,6 @@ This workspace owns every server endpoint. The Expo app is a separate client.
 Routes retain their existing request and response formats:
 
 - `POST /api/food-scan`: base64 JPEG/PNG → dish, cuisine and verified catalog ID.
-- `POST /api/menu-scan`: menu photo → dishes, text positions and catalog matches.
 - `POST /api/food-recommendations`: preferences → known restaurant IDs and reasons.
 - `POST /api/quest-personalization`: preferences → a curated quest assignment.
 - `GET /health`: health check. API routes also support CORS preflight.

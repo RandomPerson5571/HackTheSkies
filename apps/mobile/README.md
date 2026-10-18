@@ -102,20 +102,6 @@ Native Mapbox still requires a development build. After dependency changes run
 `pnpm --filter mobile exec expo prebuild --platform ios`, then `pnpm ios` and
 select your simulator. The removed ML Kit pods no longer exclude simulator ARM64.
 
-### Cibo Lens
-
-Open **+ → Lens** to photograph or upload a restaurant menu. The photo-first scanner
-uses Groq vision to read up to 24 dishes and normalized text boxes, then verifies
-catalog candidates in a second, batched request. Tap an anchored marker or a list
-row for a catalog photo, origin, description, cuisine discovery count, and collection
-action. A scan does not automatically collect dishes; **I tried this** adds one to
-the existing Food Dex. The sample menu works without a server and cannot add demo
-entries to the collection.
-
-The Worker’s `GROQ_API_KEY` and app’s `EXPO_PUBLIC_API_URL` configuration are reused.
-Optionally set `EXPO_PUBLIC_MENU_SCAN_URL` to a separate endpoint and
-`GROQ_MENU_SCAN_MODEL` on the server to a vision-capable model (default:
-`qwen/qwen3.8-27b`). Restart Expo after changing public environment variables.
 For local development, physical devices need the computer's LAN address; deployed HTTPS Workers work on any network.
 
 Dietary flags use the profile's Vegetarian, Vegan, or Pescatarian preference.

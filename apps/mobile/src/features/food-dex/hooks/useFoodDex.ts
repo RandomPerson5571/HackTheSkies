@@ -56,6 +56,7 @@ export function useFoodDex() {
     cuisine: Cuisine,
     uri: string,
     review = "",
+    location = "",
   ) {
     if (
       entries.some(
@@ -86,11 +87,12 @@ export function useFoodDex() {
       photo,
       discoveredAt: new Date().toISOString(),
     };
+    if (location.trim()) entry.location = location.trim().slice(0, 120);
     if (review.trim()) entry.review = review.trim().slice(0, 480);
     const next = addFood(entries, entry);
     update(next);
     setPhotoWarning(photoError);
-    return true;
+    return entry;
   }
 
   function remove(id: string) {

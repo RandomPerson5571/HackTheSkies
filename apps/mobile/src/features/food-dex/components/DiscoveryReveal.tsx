@@ -1,3 +1,9 @@
+import { useState } from "react";
+import {
+  AwardPopup,
+  type Award,
+} from "../../gamification/components/AwardPopup";
+import { discoveryAwards } from "../../gamification/models/discoveryAwards";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -6,21 +12,42 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DiscoveryCard } from "./DiscoveryCard";
 import { CollectionProgress } from "./CollectionProgress";
 import { collectionProgress, cuisineAnchors } from "../models/discovery";
+import {
+  advancedCollectionQuests,
+  collectionQuestProgress,
+} from "../../quests/models/collectionQuests";
 import type { FoodEntry } from "../models/foodDex";
 import { discoveryColors as c } from "../../../theme";
 
 export type DiscoveryMoment = { entry: FoodEntry; before: FoodEntry[] };
 export function DiscoveryReveal({
   moment,
+  gameXp = 0,
+  visited = [],
   entries,
   onClose,
   onAtlas,
 }: {
   moment: DiscoveryMoment;
+  gameXp?: number;
+  visited?: string[];
   entries: FoodEntry[];
   onClose: () => void;
   onAtlas: () => void;
 }) {
+  const [awards] = useState<Award[]>(() => {
+    const after = entries.some((item) => item.id === moment.entry.id)
+      ? entries
+      : [moment.entry, ...entries];
+    return discoveryAwards(
+      moment.before,
+      after,
+      moment.entry.id,
+      gameXp,
+      visited,
+    );
+  });
+  const [awardIndex, setAwardIndex] = useState(0);
   const insets = useSafeAreaInsets();
   const { entry, before } = moment;
   const firstCuisine = !before.some((item) => item.cuisine === entry.cuisine);
@@ -28,6 +55,11 @@ export function DiscoveryReveal({
   const previous = collectionProgress(before, entry.cuisine);
   return (
     <View accessibilityViewIsModal style={s.screen}>
+      <AwardPopup
+        award={awards[awardIndex]}
+        remaining={awards.length - awardIndex - 1}
+        onContinue={() => setAwardIndex((index) => index + 1)}
+      />
       <ScrollView
         contentContainerStyle={[
           s.content,
@@ -36,7 +68,7 @@ export function DiscoveryReveal({
       >
         <SheetDragHandle onDismiss={onClose} />
         <View style={s.heading}>
-          <Text style={s.eyebrow}>A FIRST BITE. FOREVER YOURS.</Text>
+          <Text style={s.eyebrow}>FOOD DEX</Text>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Close discovery reveal"
@@ -52,10 +84,36 @@ export function DiscoveryReveal({
           </Pressable>
         </View>
         <View accessibilityLiveRegion="polite" style={s.intro}>
-          <Text style={s.title}>Discovery unlocked.</Text>
-          <Text style={s.copy}>{entry.name} has joined your Food Dex.</Text>
+          <Text style={s.title}>{entry.name} collected!</Text>
         </View>
         <DiscoveryCard key={entry.id} entry={entry} entrance />
+        {advancedCollectionQuests(before, entries).map((quest) => {
+          const p = collectionQuestProgress(quest, entries);
+          return (
+            <View
+              key={quest.id}
+              style={s.newRegion}
+              accessibilityLiveRegion="polite"
+            >
+              <Ionicons
+                name={p.complete ? "ribbon" : "checkmark-circle-outline"}
+                size={24}
+                color={c.glow}
+                accessible={false}
+              />
+              <View style={s.flex}>
+                <Text style={s.progressTitle}>
+                  {quest.title} · {p.count}/{quest.target}
+                </Text>
+                <Text style={s.copy}>
+                  {p.complete
+                    ? `${quest.reward} · +${quest.xp} XP`
+                    : `${quest.target - p.count} left to collect`}
+                </Text>
+              </View>
+            </View>
+          );
+        })}
         <View style={s.progress}>
           <View style={s.progressHeading}>
             <Text style={s.progressTitle}>{entry.cuisine} collection</Text>
@@ -71,10 +129,6 @@ export function DiscoveryReveal({
             color={c.glow}
             trackColor={c.line}
           />
-          <Text style={s.copy}>
-            {entries.length} {entries.length === 1 ? "dish" : "dishes"} in your
-            story. One more reason to be curious.
-          </Text>
         </View>
         {firstCuisine && cuisineAnchors[entry.cuisine] && (
           <View style={s.newRegion}>

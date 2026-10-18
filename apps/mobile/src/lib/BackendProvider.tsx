@@ -196,8 +196,6 @@ export function BackendProvider({ children }: { children: ReactNode }) {
       mapQueryKey.current = queryKey;
       const request = ++mapRequest.current;
       setMapNeedsZoom(zoom < 12);
-      setMapPlaces([]);
-      setMapCount(null);
       const inBounds = (place: Place) => {
         const [longitude, latitude] = place.coordinate;
         return (
@@ -207,42 +205,51 @@ export function BackendProvider({ children }: { children: ReactNode }) {
           latitude <= north
         );
       };
-      const countLocally = () => bundledPlaces.filter(inBounds).length;
+      const localPlaces = bundledPlaces.filter(inBounds);
+      // Keep already loaded details and fill new areas immediately from the catalog.
+      setMapPlaces((previous) =>
+        zoom < 12
+          ? []
+          : [
+              ...new Map(
+                [...localPlaces, ...previous.filter(inBounds)].map((place) => [
+                  place.id,
+                  place,
+                ]),
+              ).values(),
+            ].slice(0, 400),
+      );
+      setMapCount(localPlaces.length);
 
-      if (zoom < 12) {
+      // Counting must never delay restaurant pins or discard a successful list.
+      const loadCount = async () => {
         try {
-          const { data, error } = await supabase!.rpc(
+          if (!supabase) return;
+          const { data, error } = await supabase.rpc(
             "cibo_count_restaurants_in_bounds",
             { p_west: west, p_south: south, p_east: east, p_north: north },
           );
           if (error) throw error;
           const count = Number(data);
-          if (request === mapRequest.current)
-            setMapCount(Number.isFinite(count) ? count : countLocally());
+          if (request === mapRequest.current && Number.isFinite(count))
+            setMapCount(count);
         } catch {
-          if (request === mapRequest.current) setMapCount(countLocally());
+          // The local count remains available when the network is unavailable.
         }
-        return;
-      }
+      };
+      void loadCount();
+      if (zoom < 12) return;
 
       try {
-        const [countResult, placesResult] = await Promise.all([
-          supabase!.rpc("cibo_count_restaurants_in_bounds", {
-            p_west: west,
-            p_south: south,
-            p_east: east,
-            p_north: north,
-          }),
-          supabase!.rpc("cibo_restaurants_in_bounds", {
-            p_west: west,
-            p_south: south,
-            p_east: east,
-            p_north: north,
-            p_limit: 400,
-          }),
-        ]);
-        if (countResult.error || placesResult.error)
-          throw countResult.error ?? placesResult.error;
+        if (!supabase) throw new Error("Missing Supabase configuration");
+        const placesResult = await supabase.rpc("cibo_restaurants_in_bounds", {
+          p_west: west,
+          p_south: south,
+          p_east: east,
+          p_north: north,
+          p_limit: 400,
+        });
+        if (placesResult.error) throw placesResult.error;
         const rows = Array.isArray(placesResult.data) ? placesResult.data : [];
         const loaded = rows.flatMap((row) => {
           const place =
@@ -260,15 +267,11 @@ export function BackendProvider({ children }: { children: ReactNode }) {
         });
         if (request === mapRequest.current) {
           setMapPlaces(loaded);
-          const count = Number(countResult.data);
-          setMapCount(Number.isFinite(count) ? count : loaded.length);
         }
       } catch {
-        const loaded = bundledPlaces.filter(inBounds).slice(0, 400);
-        if (request === mapRequest.current) {
-          setMapPlaces(loaded);
-          setMapCount(countLocally());
-        }
+        // Allow a subsequent idle event to retry this viewport after a failure.
+        // Keep the immediately available pins instead of blanking the map.
+        if (request === mapRequest.current) mapQueryKey.current = "";
       }
     },
     [],

@@ -71,7 +71,7 @@ export function useFoodDex() {
     if (uri && Platform.OS !== "web") {
       try {
         const destination = new File(Paths.document, `food-${id}.jpg`);
-        new File(uri).copy(destination);
+        new File(uri).copySync(destination);
         photo = destination.uri;
       } catch {
         // Keep the entry durable even if the temporary photo cannot be copied.

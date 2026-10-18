@@ -41,9 +41,7 @@ import {
 import { CulinaryAtlas } from "../components/CulinaryAtlas";
 import { CollectionProgress } from "../components/CollectionProgress";
 import {
-  collectionProgress,
   cardTier,
-  nextDiscoveryMilestone,
   cuisineMastery,
   cuisineMasteryTarget,
 } from "../models/discovery";
@@ -114,8 +112,6 @@ export function FoodDexScreen({
   capture = null,
   onOpenCamera,
   dex,
-  onOpenJournal,
-  onOpenQuests,
   onDiscover,
   gameXp = 0,
   visited = [],
@@ -123,8 +119,6 @@ export function FoodDexScreen({
   dex: ReturnType<typeof useFoodDex>;
   capture?: FoodCapture | null;
   onOpenCamera?: () => void;
-  onOpenJournal?: () => void;
-  onOpenQuests?: () => void;
   gameXp?: number;
   visited?: string[];
   onDiscover?: (cuisine: Cuisine) => void;
@@ -320,7 +314,6 @@ export function FoodDexScreen({
   }
 
   const cuisinesExplored = new Set(entries.map((entry) => entry.cuisine)).size;
-  const progress = collectionProgress(entries);
   const collectionForCuisine = entries.filter(
     (entry) => entry.cuisine === cuisine,
   );
@@ -378,22 +371,6 @@ export function FoodDexScreen({
             <Text style={s.copy}>A little curiosity. A world of flavor.</Text>
           </View>
         </View>
-        {onOpenQuests && (
-          <Button
-            title="Continue my cuisine quests"
-            icon="flag-outline"
-            onPress={onOpenQuests}
-            secondary
-          />
-        )}
-        {onOpenJournal && (
-          <Button
-            title="Restaurant journal"
-            icon="restaurant-outline"
-            onPress={onOpenJournal}
-            secondary
-          />
-        )}
         <View style={s.viewTabs}>
           {(["collection", "atlas"] as const).map((item) => (
             <Pressable
@@ -439,59 +416,6 @@ export function FoodDexScreen({
           />
         ) : (
           <>
-            <View style={s.collectionCard}>
-              <View style={s.row}>
-                <View style={s.flex}>
-                  <Text style={s.heroEyebrow}>YOUR COLLECTION</Text>
-                  <Text style={s.heroTitle}>
-                    {entries.length === 0
-                      ? "Every bite is a first."
-                      : `${entries.length} ${entries.length === 1 ? "discovery" : "discoveries"}`}
-                  </Text>
-                </View>
-                <View style={s.brand}>
-                  <Icon
-                    name="sparkles-outline"
-                    color={colors.white}
-                    size={22}
-                  />
-                </View>
-              </View>
-              <Text style={s.heroCopy}>
-                {entries.length === 0
-                  ? "Scan something delicious to start your collection."
-                  : `${cuisinesExplored} ${cuisinesExplored === 1 ? "cuisine" : "cuisines"} explored. What will you try next?`}
-              </Text>
-              <View style={s.milestoneRow}>
-                <View style={s.flex}>
-                  <Text style={s.milestoneLabel}>
-                    Next reward: {nextDiscoveryMilestone(entries.length).label}
-                  </Text>
-                  <Text style={s.milestoneCount}>
-                    {nextDiscoveryMilestone(entries.length).current} /{" "}
-                    {nextDiscoveryMilestone(entries.length).target}
-                  </Text>
-                </View>
-              </View>
-              <CollectionProgress
-                value={nextDiscoveryMilestone(entries.length).fraction}
-                color={colors.tint}
-                trackColor={colors.border}
-              />
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => openScan()}
-                style={({ pressed }) => [s.heroButton, pressed && s.dim]}
-              >
-                <Icon name="scan-outline" />
-                <Text style={s.heroButtonText}>Discover a new dish</Text>
-                <Icon name="arrow-forward" size={18} />
-              </Pressable>
-              <Text style={s.meta}>
-                Catalog dishes: {progress.collected} / {progress.total} ·{" "}
-                {cuisinesExplored} cuisines explored
-              </Text>
-            </View>
             {notice ? (
               <View accessibilityLiveRegion="polite" style={s.notice}>
                 <Icon name="checkmark-circle-outline" />
@@ -604,8 +528,8 @@ export function FoodDexScreen({
                   style={({ pressed }) => [s.discovery, pressed && s.dim]}
                 >
                   <CatalogPhoto
-                    source={catalogPhoto(findCatalogDish(entry.name, entry.cuisine))}
-                    fallbackSource={entry.photo ? { uri: entry.photo } : undefined}
+                    source={entry.photo ? { uri: entry.photo } : catalogPhoto(findCatalogDish(entry.name, entry.cuisine))}
+                    fallbackSource={catalogPhoto(findCatalogDish(entry.name, entry.cuisine))}
                     style={s.thumbnail}
                     label={entry.name}
                   />

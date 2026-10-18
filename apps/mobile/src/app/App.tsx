@@ -20,6 +20,7 @@ import {
   Animated,
   Easing,
   FlatList,
+  Image,
   Keyboard,
   Linking,
   Modal,
@@ -165,6 +166,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     mapCount,
     mapNeedsZoom,
     loadMapViewport,
+    friends,
     error: backendError,
   } = useBackend();
   const insets = useSafeAreaInsets();
@@ -432,6 +434,16 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     selected && visible.some((place) => place.id === selected.id)
       ? selected
       : null;
+  const activeFriendReviews = useMemo(() => {
+    if (!active) return [];
+    const result: { friend: (typeof friends)[number]; visit: (typeof friends)[number]["visits"][number] }[] = [];
+    for (const friend of friends ?? []) {
+      for (const visit of friend.visits ?? []) {
+        if (visit.placeId === active.id) result.push({ friend, visit });
+      }
+    }
+    return result;
+  }, [active, friends]);
   useEffect(() => {
     if (!active) return;
     cardDragY.setValue(0);
@@ -1120,8 +1132,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             dex={foodDex}
             gameXp={gamification.state.xp}
             visited={collection.visited}
-            onOpenQuests={() => setTab("challenges")}
-            onOpenJournal={() => setTab("journal")}
             capture={foodCapture}
             onOpenCamera={openFoodCamera}
             onDiscover={(cuisine) => {
@@ -1146,7 +1156,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setTab("explore");
               setCategory("All");
               setQuery("");
-              choose(place);
+              requestAnimationFrame(() => choose(place));
             }}
           />
         ) : tab === "saved" ? (
@@ -1166,7 +1176,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setFoodTypeFilter([]);
               setCuisineFilter([]);
               setPriceFilter(null);
-              choose(place);
+              requestAnimationFrame(() => choose(place));
             }}
           />
         ) : tab === "profile" ? (
@@ -1225,7 +1235,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setTab("explore");
               setCategory("All");
               setQuery("");
-              choose(place);
+              requestAnimationFrame(() => choose(place));
             }}
           />
         ) : tab === "challenges" ? (
@@ -1267,6 +1277,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 onError={onMapError}
                 renderPlaceMarker={renderPlaceMarker}
                 recommendations={recommendations}
+                friends={friends}
               />
             ) : (
               <View style={styles.emptyMap}>
@@ -1469,6 +1480,43 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       {recommendationLabel(recommendations.get(active.id))} ·
                       Sample community reviews
                     </Text>
+                    {activeFriendReviews.length > 0 && (
+                      <View style={{ gap: 8, marginTop: 4 }}>
+                        <Text style={styles.small}>Friends' reviews</Text>
+                        {activeFriendReviews.map(({ friend, visit }) => {
+                          const avatarUri =
+                            friend.avatarUri ||
+                            friend.profilePictureUri ||
+                            friend.profilePicture ||
+                            friend.avatarUrl ||
+                            friend.photoUrl ||
+                            friend.imageUrl ||
+                            friend.imageUri;
+                          return (
+                            <View key={`${friend.id}-${visit.when}`} style={{ flexDirection: "row", gap: 8, alignItems: "flex-start" }}>
+                              {avatarUri ? (
+                                <Image
+                                  source={{ uri: avatarUri }}
+                                  style={{ width: 28, height: 28, borderRadius: 14 }}
+                                />
+                              ) : (
+                                <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: colors.tint, alignItems: "center", justifyContent: "center" }}>
+                                  <Text style={{ fontSize: 10, fontWeight: "700", color: colors.accent }}>
+                                    {friend.initials}
+                                  </Text>
+                                </View>
+                              )}
+                              <View style={{ flex: 1, gap: 2 }}>
+                                <Text style={{ fontSize: 12, fontWeight: "600", color: colors.ink }}>
+                                  {friend.name} · {visit.rating}/5
+                                </Text>
+                                <Text style={styles.small}>{visit.note || visit.comment}</Text>
+                              </View>
+                            </View>
+                          );
+                        })}
+                      </View>
+                    )}
                     <View style={styles.ratingRow}>
                       <Text style={styles.small}>Your rating</Text>
                       {[1, 2, 3, 4, 5].map((value) => (
@@ -1737,7 +1785,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             setTab("explore");
             setCategory("All");
             setQuery("");
-            choose(place);
+            requestAnimationFrame(() => choose(place));
           }}
         />
       )}
@@ -2324,8 +2372,7 @@ const styles = StyleSheet.create({
   navItems: { flex: 1, flexDirection: "row" },
   navActive: { backgroundColor: "rgba(234,243,178,0.66)" },
   placeCard: {
-    ...webGlassBlur,
-    backgroundColor: "rgba(255,253,245,0.72)",
+    backgroundColor: colors.paper,
     borderRadius: 24,
     padding: 16,
     gap: 12,

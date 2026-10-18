@@ -8,6 +8,7 @@ import {
 import { AppState } from "react-native";
 import {
   places as bundledPlaces,
+  isValidCoordinate,
   type Place,
 } from "../features/restaurants/data/places";
 import {
@@ -67,10 +68,12 @@ export function BackendProvider({ children }: { children: ReactNode }) {
             },
           ]),
         );
-        const places = restaurants.data.map((row) => ({
-          ...(row.data as Place),
-          ratingSummary: summaries.get(row.id),
-        }));
+        const places = restaurants.data
+          .map((row) => ({
+            ...(row.data as Place),
+            ratingSummary: summaries.get(row.id),
+          }))
+          .filter((place) => isValidCoordinate(place.coordinate));
         const friends: SampleFriend[] = (reviewers.data ?? []).map((row) => ({
           id: row.id,
           name: row.name,

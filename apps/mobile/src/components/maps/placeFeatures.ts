@@ -1,4 +1,7 @@
-import type { Place } from "../../features/restaurants/data/places";
+import {
+  isValidCoordinate,
+  type Place,
+} from "../../features/restaurants/data/places";
 
 export const clusterRadius = 50;
 export const clusterMaxZoom = 14;
@@ -13,11 +16,14 @@ export type PlaceFeatures = GeoJSON.FeatureCollection<
 export function createPlaceFeatures(places: readonly Place[]): PlaceFeatures {
   return {
     type: "FeatureCollection",
-    features: places.map((place) => ({
-      type: "Feature",
-      id: place.id,
-      geometry: { type: "Point", coordinates: place.coordinate },
-      properties: { placeId: place.id, name: place.name },
-    })),
+    // MapboxGL rejects coordinate arrays that are not finite numbers.
+    features: places
+      .filter((place) => isValidCoordinate(place.coordinate))
+      .map((place) => ({
+        type: "Feature",
+        id: place.id,
+        geometry: { type: "Point", coordinates: place.coordinate },
+        properties: { placeId: place.id, name: place.name },
+      })),
   };
 }

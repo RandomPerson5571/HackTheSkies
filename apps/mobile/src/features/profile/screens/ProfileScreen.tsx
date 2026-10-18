@@ -6,14 +6,8 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ProfileAtlas } from "../components/ProfileAtlas";
 
-import {
-  colors,
-  frostedGlass,
-  frostedGlassSelected,
-  frostedGlassTint,
-} from "../../../theme/index";
-
-import { useBackend } from "../../../lib/BackendProvider";
+import { colors } from "../../../theme/index";
+import { playFeedback } from "../../../lib/sensory";
 import type { Profile } from "../models/profile";
 export type { Profile } from "../models/profile";
 
@@ -731,36 +725,32 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  avatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 24,
-    ...frostedGlassTint,
-    backgroundColor: "rgba(234,243,178,0.14)",
-    alignItems: "center",
-    justifyContent: "center",
+  xpText: { color: colors.ink, fontSize: 13, fontWeight: "600" },
+  xpPercent: { color: colors.muted, fontSize: 12, fontWeight: "700" },
+  xpTrack: {
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.tint,
+    overflow: "hidden",
   },
-  initial: { color: colors.accent, fontSize: 30, fontWeight: "600" },
-  name: { color: colors.ink, fontSize: 23, fontWeight: "700" },
-  copy: { color: colors.muted, fontSize: 12, lineHeight: 19 },
-  tag: { color: colors.accent, fontSize: 12, fontWeight: "600", marginTop: 3 },
-  stats: {
-    ...frostedGlassTint,
+  xpFill: { height: "100%", borderRadius: 5, backgroundColor: colors.accent },
+  statsRow: {
     flexDirection: "row",
-    backgroundColor: "rgba(234,243,178,0.14)",
-    borderRadius: 22,
-    paddingVertical: 20,
+    backgroundColor: colors.tint,
+    borderRadius: 18,
+    paddingVertical: 12,
   },
-  stat: { flex: 1, alignItems: "center", gap: 5 },
-  statValue: { color: colors.accent, fontSize: 26, fontWeight: "700" },
-  statLabel: { color: colors.muted, fontSize: 10 },
-  card: {
-    ...frostedGlass,
+  stat: { flex: 1, alignItems: "center", gap: 2 },
+  statValue: { color: colors.accent, fontSize: 22, fontWeight: "700" },
+  statLabel: { color: colors.muted, fontSize: 10, fontWeight: "600" },
+  adventureCard: {
     borderRadius: 24,
     padding: 18,
-    backgroundColor: "rgba(255,253,245,0.07)",
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
+    borderColor: colors.border,
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
     alignItems: "center",
     boxShadow: "0 4px 20px #3D568F10",
@@ -807,9 +797,30 @@ const styles = StyleSheet.create({
   link: { color: colors.accent, fontSize: 12, fontWeight: "700" },
   copy: { color: colors.muted, fontSize: 12, lineHeight: 19 },
   hint: { color: colors.accent, fontSize: 12, lineHeight: 19 },
-  input: {
-    ...frostedGlass,
-    backgroundColor: "rgba(255,253,245,0.07)",
+  passportRow: { gap: 12, paddingVertical: 2 },
+  passportCard: {
+    width: 150,
+    borderRadius: 20,
+    padding: 12,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: 10,
+  },
+  passportCardLocked: { opacity: 0.6, backgroundColor: colors.tint },
+  passportCardTop: { flexDirection: "row", alignItems: "center", gap: 8 },
+  passportPhoto: { width: 40, height: 40, borderRadius: 12 },
+  lockedCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: colors.paper,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  passportCuisine: {
     color: colors.ink,
     fontSize: 13,
     fontWeight: "700",
@@ -866,19 +877,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
   },
-  choices: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  choice: {
-    ...frostedGlass,
+  recentRow: { gap: 12, paddingVertical: 2 },
+  recentCard: {
+    width: 132,
+    borderRadius: 18,
+    padding: 10,
+    backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
     gap: 6,
   },
-  choiceSelected: frostedGlassSelected,
-  choiceText: { color: colors.ink, fontSize: 12, fontWeight: "600" },
-  choiceTextSelected: { color: colors.ink },
-  save: {
-    backgroundColor: colors.accent,
-    borderRadius: 14,
+  recentPhoto: { width: "100%", height: 110, borderRadius: 14 },
+  recentName: { color: colors.ink, fontSize: 12, fontWeight: "700" },
+  recentCuisine: { color: colors.muted, fontSize: 10, fontWeight: "600" },
+  featuredTrophy: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    padding: 10,
+    borderRadius: 16,
+    backgroundColor: colors.tint,
+  },
+  featuredName: { color: colors.ink, fontSize: 13, fontWeight: "700" },
+  customizeButton: {
     minHeight: 48,
     borderWidth: 1,
     borderColor: colors.border,

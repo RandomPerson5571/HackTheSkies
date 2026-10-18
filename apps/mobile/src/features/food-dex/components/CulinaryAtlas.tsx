@@ -1,14 +1,11 @@
-import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import {
-  Animated,
-  Easing,
-  PanResponder,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+  cancelAnimation,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import {
   cuisineCovers,
@@ -22,222 +19,288 @@ import {
   cuisineAnchors,
   cuisineConnections,
   exploredCuisines,
-  project,
   type Coordinate,
 } from "../models/discovery";
-import { landDots } from "../data/globeLand";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { CatalogPhoto } from "./CatalogPhoto";
 import { catalogPhoto } from "../services/catalogPhotos";
 import { CollectionProgress } from "./CollectionProgress";
+import { AtlasGlobe, StarField, type RouteDotSpec } from "./AtlasGlobe";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { colors, discoveryColors as c } from "../../../theme";
 
-const SIZE = 276;
-const grid: Coordinate[] = [];
-for (let lat = -60; lat <= 60; lat += 30)
-  for (let lon = -180; lon < 180; lon += 8) grid.push([lon, lat]);
-for (let lon = -180; lon < 180; lon += 30)
-  for (let lat = -80; lat <= 80; lat += 8) grid.push([lon, lat]);
+type Motion =
+  | {
+      mode: "glide";
+      from: number;
+      to: number;
+      startedAt: number;
+      duration: number;
+    }
+  | { mode: "coast"; value: number; velocity: number; lastAt: number };
+
+const COAST_STOP_VELOCITY = 12;
+
+function shortestDelta(target: number, from: number) {
+  return (((target - from) % 360) + 540) % 360 - 180;
+}
 
 export function CulinaryAtlas({
   entries,
   focusCuisine,
+  focusNonce = 0,
   onExplore,
 }: {
   entries: FoodEntry[];
   focusCuisine?: Cuisine | null;
+  focusNonce?: number;
   onExplore: (cuisine: Cuisine) => void;
 }) {
+  const reduced = useReducedMotion();
+  const { width } = useWindowDimensions();
+  const size = Math.min(320, Math.max(216, Math.round(width - 112)));
+
   const initial =
     focusCuisine && cuisineAnchors[focusCuisine]
       ? focusCuisine
       : (exploredCuisines(entries)[0] ?? "Japanese");
   const [selected, setSelected] = useState<Cuisine>(initial);
-  const [rotation, setRotation] = useState(cuisineAnchors[initial]?.[0] ?? 100);
-  const rotationRef = useRef(rotation);
-  const dragStart = useRef(rotation);
-  const reduced = useReducedMotion();
-  const [routeAnimation] = useState(() => new Animated.Value(0));
-  const connections = useMemo(() => cuisineConnections(selected), [selected]);
-  const explored = exploredCuisines(entries);
-  const unlocked = explored.includes(selected);
-  const progress = collectionProgress(entries, selected);
-  const collected = entries.filter(
-    (entry) => entry.cuisine === selected,
-  ).length;
-  const [pan] = useState(
-    // PanResponder stores these handlers; refs are only read during gestures.
-    // eslint-disable-next-line react-hooks/refs
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (_, gesture) =>
-          Math.abs(gesture.dx) > 8 &&
-          Math.abs(gesture.dx) > Math.abs(gesture.dy),
-        onPanResponderGrant: () => {
-          dragStart.current = rotationRef.current;
-        },
-        onPanResponderMove: (_, gesture) => {
-          const next = dragStart.current - gesture.dx * 0.55;
-          rotationRef.current = next;
-          setRotation(next);
-        },
-      }),
-  );
+
+  // The globe poses live in one shared value driven from the UI thread; the
+  // rAF animator keeps a JS mirror so gestures and glides hand over cleanly.
+  const rotation = useSharedValue(cuisineAnchors[initial]?.[0] ?? 100);
+  const estimateRef = useRef(rotation.value);
+  const motionRef = useRef<Motion | null>(null);
+  const frameRef = useRef<number | null>(null);
+  const reducedRef = useRef(false);
+  reducedRef.current = reduced === true;
+
+  const reveal = useSharedValue(0);
+  const litMask = useSharedValue(0);
+
   useEffect(() => {
-    if (reduced === null) return;
-    routeAnimation.setValue(reduced ? 1 : 0);
-    if (reduced) return;
-    const animation = Animated.timing(routeAnimation, {
-      toValue: 1,
-      duration: 1050,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
+    reducedRef.current = reduced === true;
+  }, [reduced]);
+
+  function stopMotion() {
+    if (frameRef.current !== null) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+    motionRef.current = null;
+  }
+
+  function tick() {
+    const motion = motionRef.current;
+    if (!motion) {
+      frameRef.current = null;
+      return;
+    }
+    const now = performance.now();
+    let value: number;
+    let settled: boolean;
+    if (motion.mode === "glide") {
+      const progress = Math.min(1, (now - motion.startedAt) / motion.duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      value = motion.from + (motion.to - motion.from) * eased;
+      settled = progress >= 1;
+    } else {
+      const dt = Math.min(48, Math.max(1, now - motion.lastAt));
+      motion.lastAt = now;
+      motion.velocity *= Math.pow(0.92, dt / 16.7);
+      value = motion.value + (motion.velocity * dt) / 1000;
+      motion.value = value;
+      settled = Math.abs(motion.velocity) < COAST_STOP_VELOCITY;
+    }
+    rotation.value = value;
+    estimateRef.current = value;
+    frameRef.current = settled ? null : requestAnimationFrame(tick);
+    if (settled) motionRef.current = null;
+  }
+
+  function beginMotion(motion: Motion) {
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    motionRef.current = motion;
+    frameRef.current = requestAnimationFrame(tick);
+  }
+
+  function drive(value: number) {
+    stopMotion();
+    rotation.value = value;
+    estimateRef.current = value;
+  }
+
+  function spinBy(delta: number) {
+    const target = estimateRef.current + delta;
+    if (reducedRef.current) {
+      drive(target);
+      return;
+    }
+    beginMotion({
+      mode: "glide",
+      from: estimateRef.current,
+      to: target,
+      startedAt: performance.now(),
+      duration: Math.min(720, 320 + Math.abs(delta) * 3),
     });
-    animation.start();
-    return () => animation.stop();
-  }, [selected, reduced, routeAnimation]);
+  }
 
   function select(cuisine: Cuisine) {
     setSelected(cuisine);
-    const next = cuisineAnchors[cuisine]?.[0] ?? rotationRef.current;
-    rotationRef.current = next;
-    setRotation(next);
-  }
-  function rotate(delta: number) {
-    rotationRef.current += delta;
-    setRotation(rotationRef.current);
-  }
-  const from = cuisineAnchors[selected]!;
-  const routes = connections.flatMap((connection) => {
-    const to = cuisineAnchors[connection.cuisine]!;
-    // Interpolate across the shortest longitude span, lifting the route northward.
-    const delta = ((to[0] - from[0] + 540) % 360) - 180;
-    return Array.from({ length: 20 }, (_, i) => {
-      const t = i / 19;
-      const point = project(
-        [
-          from[0] + delta * t,
-          from[1] + (to[1] - from[1]) * t + Math.sin(t * Math.PI) * 12,
-        ],
-        rotation,
-      );
-      return { ...point, key: `${connection.cuisine}-${i}`, t };
+    const anchor = cuisineAnchors[cuisine];
+    if (!anchor) {
+      stopMotion();
+      return;
+    }
+    const delta = shortestDelta(anchor[0], estimateRef.current);
+    const target = estimateRef.current + delta;
+    if (reducedRef.current || Math.abs(delta) < 0.2) {
+      drive(target);
+      return;
+    }
+    beginMotion({
+      mode: "glide",
+      from: estimateRef.current,
+      to: target,
+      startedAt: performance.now(),
+      duration: Math.min(1000, 340 + Math.abs(delta) * 2.3),
     });
-  });
+  }
+
+  useEffect(() => stopMotion, []);
+
+  // A linked focus (e.g. tapping a cuisine on a quest card) rotates without
+  // remounting the whole globe. The nonce re-triggers even for the same cuisine.
+  // Selecting is deferred a tick so no state updates run synchronously here.
+  useEffect(() => {
+    if (!focusCuisine || focusNonce === 0) return;
+    const timer = setTimeout(() => select(focusCuisine), 0);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusCuisine, focusNonce]);
+
+  const explored = useMemo(() => exploredCuisines(entries), [entries]);
+  const exploredSet = useMemo(() => new Set(explored), [explored]);
+  const connections = useMemo(() => cuisineConnections(selected), [selected]);
+  const progress = useMemo(
+    () => collectionProgress(entries, selected),
+    [entries, selected],
+  );
+  const collected = useMemo(
+    () => entries.filter((entry) => entry.cuisine === selected).length,
+    [entries, selected],
+  );
+  const unlocked = exploredSet.has(selected);
+
+  useEffect(() => {
+    litMask.value = atlasCuisines.reduce((mask, cuisine, index) => {
+      return exploredSet.has(cuisine) ? mask | (1 << index) : mask;
+    }, 0);
+  }, [exploredSet, litMask]);
+
+  useEffect(() => {
+    if (reduced === true) {
+      reveal.value = 1;
+      return;
+    }
+    reveal.value = 0;
+    reveal.value = withDelay(
+      140,
+      withTiming(1, { duration: 1500 }),
+    );
+    return () => cancelAnimation(reveal);
+  }, [selected, reduced, reveal]);
+
+  const routeSpecs = useMemo(() => {
+    const from = cuisineAnchors[selected];
+    if (!from) return [];
+    const total = connections.length * 20;
+    const specs: RouteDotSpec[] = [];
+    let order = 0;
+    for (const connection of connections) {
+      const to = cuisineAnchors[connection.cuisine] as Coordinate | undefined;
+      if (!to) continue;
+      const delta = shortestDelta(to[0], from[0]);
+      for (let i = 0; i < 20; i++) {
+        const t = i / 19;
+        specs.push({
+          key: `${connection.cuisine}-${i}`,
+          lon: from[0] + delta * t,
+          lat:
+            from[1] + (to[1] - from[1]) * t + Math.sin(t * Math.PI) * 12,
+          order: order / Math.max(1, total - 1),
+        });
+        order++;
+      }
+    }
+    return specs;
+  }, [connections, selected]);
+
+  function handleDragStart() {
+    stopMotion();
+    return estimateRef.current;
+  }
+  function handleDragMove(value: number) {
+    rotation.value = value;
+    estimateRef.current = value;
+  }
+  function handleDragRelease(velocity: number) {
+    if (reducedRef.current || Math.abs(velocity) < 24) return;
+    beginMotion({
+      mode: "coast",
+      value: estimateRef.current,
+      velocity,
+      lastAt: performance.now(),
+    });
+  }
+
   return (
     <View style={s.container}>
       <View style={s.sky}>
+        <StarField reduced={reduced === true} />
+        <View pointerEvents="none" style={s.auraSun}>
+          <View style={s.auraSunCore} />
+        </View>
+        <View pointerEvents="none" style={s.auraEmber} />
         <View style={s.heading}>
           <View style={s.flex}>
             <Text style={s.eyebrow}>THE LIVING CULINARY ATLAS</Text>
             <Text style={s.title}>A world of first bites.</Text>
           </View>
-          <Ionicons
-            name="planet-outline"
-            size={28}
-            color={c.glow}
-            accessible={false}
-          />
+          <View style={s.planetBadge}>
+            <Ionicons
+              name="planet-outline"
+              size={24}
+              color={c.glow}
+              accessible={false}
+            />
+          </View>
         </View>
         <Text style={s.copy}>
           Every cuisine you discover leaves a little light on the map.
         </Text>
         <View style={s.globeRow}>
-          <View
-            {...pan.panHandlers}
-            style={s.globe}
-            accessibilityLabel="Illustrated culinary globe. Use the region buttons below to explore."
-            accessibilityRole="image"
-          >
-            <View
-              pointerEvents="none"
-              accessible={false}
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-              style={StyleSheet.absoluteFill}
-            >
-              {grid.map((coordinate, i) => {
-                const p = project(coordinate, rotation);
-                return p.visible ? (
-                  <View
-                    key={`grid-${i}`}
-                    style={[s.gridDot, { left: p.x, top: p.y }]}
-                  />
-                ) : null;
-              })}
-              {landDots.map((coordinate, i) => {
-                const p = project(coordinate, rotation);
-                return p.visible ? (
-                  <View
-                    key={`land-${i}`}
-                    style={[
-                      s.landDot,
-                      { left: p.x - 1.5, top: p.y - 1.5 },
-                      explored.some((cuisine) => {
-                        const anchor = cuisineAnchors[cuisine]!;
-                        const dx =
-                          (((coordinate[0] - anchor[0] + 540) % 360) - 180) *
-                          Math.cos((anchor[1] * Math.PI) / 180);
-                        return dx * dx + (coordinate[1] - anchor[1]) ** 2 < 150;
-                      }) && s.litLandDot,
-                    ]}
-                  />
-                ) : null;
-              })}
-              {routes.map((point) =>
-                point.visible ? (
-                  <Animated.View
-                    key={point.key}
-                    style={[
-                      s.routeDot,
-                      {
-                        left: point.x,
-                        top: point.y,
-                        opacity: routeAnimation.interpolate({
-                          inputRange: [
-                            Math.max(0, point.t - 0.1),
-                            Math.min(1, point.t + 0.1),
-                          ],
-                          outputRange: [0, 0.8],
-                          extrapolate: "clamp",
-                        }),
-                      },
-                    ]}
-                  />
-                ) : null,
-              )}
-              {atlasCuisines.map((cuisine) => {
-                const p = project(cuisineAnchors[cuisine]!, rotation);
-                if (!p.visible) return null;
-                const lit = explored.includes(cuisine);
-                return (
-                  <View
-                    key={cuisine}
-                    style={[
-                      s.pinHalo,
-                      { left: p.x - 9, top: p.y - 9 },
-                      lit && s.litHalo,
-                      cuisine === selected && s.selectedHalo,
-                    ]}
-                  >
-                    <View
-                      style={[
-                        s.pin,
-                        lit && s.litPin,
-                        cuisine === selected && s.selectedPin,
-                      ]}
-                    />
-                  </View>
-                );
-              })}
-            </View>
-          </View>
+          <AtlasGlobe
+            size={size}
+            rotation={rotation}
+            reveal={reveal}
+            litMask={litMask}
+            routeSpecs={routeSpecs}
+            routesLive={routeSpecs.length > 0}
+            explored={exploredSet}
+            selected={selected}
+            reduced={reduced === true}
+            onSelectCuisine={select}
+            onDragStart={handleDragStart}
+            onDragMove={handleDragMove}
+            onDragRelease={handleDragRelease}
+          />
         </View>
         <View style={s.globeControls}>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Rotate globe west"
-            onPress={() => rotate(-40)}
+            onPress={() => spinBy(-40)}
             style={({ pressed }) => [s.rotateButton, pressed && s.dim]}
           >
             <Ionicons
@@ -251,7 +314,7 @@ export function CulinaryAtlas({
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Rotate globe east"
-            onPress={() => rotate(40)}
+            onPress={() => spinBy(40)}
             style={({ pressed }) => [s.rotateButton, pressed && s.dim]}
           >
             <Ionicons
@@ -288,7 +351,7 @@ export function CulinaryAtlas({
           <Pressable
             key={cuisine}
             accessibilityRole="button"
-            accessibilityLabel={`${cuisine}, ${explored.includes(cuisine) ? "discovered" : "undiscovered"}`}
+            accessibilityLabel={`${cuisine}, ${exploredSet.has(cuisine) ? "discovered" : "undiscovered"}`}
             accessibilityState={{ selected: selected === cuisine }}
             onPress={() => select(cuisine)}
             style={({ pressed }) => [
@@ -297,7 +360,7 @@ export function CulinaryAtlas({
               pressed && s.dim,
             ]}
           >
-            {explored.includes(cuisine) && (
+            {exploredSet.has(cuisine) && (
               <Ionicons
                 name="checkmark-circle"
                 size={14}
@@ -396,6 +459,7 @@ export function CulinaryAtlas({
     </View>
   );
 }
+
 const s = StyleSheet.create({
   container: { gap: 16 },
   flex: { flex: 1 },
@@ -407,7 +471,47 @@ const s = StyleSheet.create({
     overflow: "hidden",
     gap: 14,
   },
+  auraSun: {
+    position: "absolute",
+    top: 20,
+    right: -70,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  auraSunCore: {
+    width: 132,
+    height: 132,
+    borderRadius: 66,
+    backgroundColor: "#263E5C90",
+  },
+  auraEmber: {
+    position: "absolute",
+    bottom: -56,
+    left: -54,
+    width: 170,
+    height: 170,
+    borderRadius: 85,
+    backgroundColor: "#F4DB914D",
+    opacity: 0.18,
+  },
   heading: { flexDirection: "row", gap: 12, alignItems: "center" },
+  planetBadge: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: c.line,
+    backgroundColor: "#213554",
+    shadowColor: c.land,
+    shadowOpacity: 0.28,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 0 },
+  },
   eyebrow: {
     color: c.glow,
     fontSize: 9,
@@ -423,53 +527,6 @@ const s = StyleSheet.create({
   },
   copy: { color: c.muted, fontSize: 13, lineHeight: 21, maxWidth: 340 },
   globeRow: { alignItems: "center", marginVertical: 4 },
-  globe: {
-    width: SIZE,
-    height: SIZE,
-    borderRadius: SIZE / 2,
-    borderWidth: 1,
-    borderColor: c.line,
-    backgroundColor: c.ocean,
-    overflow: "hidden",
-  },
-  gridDot: {
-    position: "absolute",
-    width: 1,
-    height: 1,
-    backgroundColor: c.line,
-  },
-  landDot: {
-    position: "absolute",
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: c.land,
-  },
-  litLandDot: { backgroundColor: c.glow, width: 4, height: 4 },
-  routeDot: {
-    position: "absolute",
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: c.gold,
-  },
-  pinHalo: {
-    position: "absolute",
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  litHalo: { backgroundColor: "#EAF3B226" },
-  selectedHalo: {
-    borderWidth: 1,
-    borderColor: c.gold,
-    backgroundColor: "#F4DB9133",
-  },
-  pin: { width: 5, height: 5, borderRadius: 3, backgroundColor: c.land },
-  litPin: { backgroundColor: c.glow, width: 7, height: 7, borderRadius: 4 },
-  selectedPin: { backgroundColor: c.gold },
   globeControls: {
     flexDirection: "row",
     justifyContent: "center",
@@ -482,6 +539,7 @@ const s = StyleSheet.create({
     borderRadius: 22,
     borderWidth: 1,
     borderColor: c.line,
+    backgroundColor: "#FFFEFB0A",
     alignItems: "center",
     justifyContent: "center",
   },

@@ -126,4 +126,20 @@ export const categories: Category[] = [
   "Ramen",
   "Restaurant",
 ];
-export const mapCenter = [-79.48, 43.67];
+export const mapCenter: [number, number] = [-79.48, 43.67];
+
+// The [longitude, latitude] pair the map SDKs require.
+export function isValidCoordinate(
+  coordinate: unknown,
+): coordinate is [number, number] {
+  return (
+    Array.isArray(coordinate) &&
+    coordinate.length === 2 &&
+    Number.isFinite(coordinate[0]) &&
+    Number.isFinite(coordinate[1])
+  );
+}
+
+export function placeCenter(place: Place | undefined): [number, number] {
+  return isValidCoordinate(place?.coordinate) ? place.coordinate : mapCenter;
+}

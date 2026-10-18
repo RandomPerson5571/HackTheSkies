@@ -91,17 +91,12 @@ export function badgeProgress(
 }
 
 export function calculatePoints(visited: string[], places: Place[]) {
-  const visitedIds = new Set(visited);
   const validPlaceIds = new Set(places.map((place) => place.id));
-  const visitCount = [...visitedIds].filter((id) =>
+  const visitCount = [...new Set(visited)].filter((id) =>
     validPlaceIds.has(id),
   ).length;
   const earnedBadgeCount = cuisineBadges.filter(
     (badge) => badgeProgress(badge.category, visited, places) >= badge.goal,
   ).length;
-
-  return (
-    visitCount * pointPolicy.perVisit +
-    earnedBadgeCount * pointPolicy.perBadge
-  );
+  return visitCount * pointPolicy.perVisit + earnedBadgeCount * pointPolicy.perBadge;
 }

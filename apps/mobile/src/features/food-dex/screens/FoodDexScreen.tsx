@@ -262,8 +262,7 @@ export function FoodDexScreen({
       },
       before: entries,
     });
-    const newCuisine = !entries.some((entry) => entry.cuisine === scanCuisine);
-    void playFeedback(newCuisine ? "sparkle" : "discover");
+    void playFeedback("openBook");
     setNotice("");
     closeScan();
   }

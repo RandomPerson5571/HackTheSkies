@@ -55,7 +55,7 @@ export function SettingsScreen({
     edited.current = false;
     onSave(next);
     setMessage("Settings saved.");
-    void playFeedback("success");
+    void playFeedback("bell");
   }
 
   return (
@@ -119,7 +119,7 @@ export function SettingsScreen({
               accessibilityState={{ checked: draft.diet === diet }}
               onPress={() => {
                 update({ diet });
-                void playFeedback("tap");
+                void playFeedback("click");
               }}
               style={({ pressed }) => [
                 styles.choice,

@@ -63,6 +63,7 @@ export function QuestsScreen({
   const { state, ready, error, update, retry } = useQuests();
   const [bonusId, setBonusId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+
   useMenuSound(bonusId !== null);
 
   const reduced = useReducedMotion();
@@ -223,7 +224,8 @@ export function QuestsScreen({
                           ? "Start a new adventure"
                           : "Join this adventure"
                       }
-                      onPress={() =>
+                      onPress={() => {
+                        void playFeedback("interfaceClick");
                         update((previous) => ({
                           ...previous,
                           bonus: {
@@ -234,8 +236,8 @@ export function QuestsScreen({
                               claimed: false,
                             },
                           },
-                        }))
-                      }
+                        }));
+                      }}
                     />
                   </>
                 ) : run.claimed ? (
@@ -285,7 +287,7 @@ export function QuestsScreen({
                         title={`Claim ${bonus.points} XP`}
                         onPress={() => {
                           update((previous) => claimBonus(previous, bonus.id));
-                          void playFeedback("chest");
+                          void playFeedback("bell");
                         }}
                       />
                     ) : (

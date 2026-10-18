@@ -11,6 +11,7 @@ import {
   type ComponentProps,
 } from "react";
 import {
+  Animated,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -21,6 +22,7 @@ import {
   Text,
   TextInput,
   View,
+  useWindowDimensions,
   type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -97,6 +99,7 @@ export function RestaurantsScreen({
   mode = "discover",
   diet,
 }: Props) {
+  const { height: windowHeight } = useWindowDimensions();
   const { places } = useBackend();
   const reducedMotion = useReducedMotion();
   const insets = useSafeAreaInsets();
@@ -114,6 +117,10 @@ export function RestaurantsScreen({
   const [managing, setManaging] = useState<Place | null>(null);
   const [actionPlace, setActionPlace] = useState<Place | null>(null);
   const [filterSheetVisible, setFilterSheetVisible] = useState(false);
+  const filterScrimOpacity = useRef(new Animated.Value(0)).current;
+  const filterSheetTranslateY = useRef(new Animated.Value(windowHeight)).current;
+  const actionScrimOpacity = useRef(new Animated.Value(0)).current;
+  const actionSheetTranslateY = useRef(new Animated.Value(windowHeight)).current;
   const [infoVisible, setInfoVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [lastRandomId, setLastRandomId] = useState<string | null>(null);
@@ -121,6 +128,53 @@ export function RestaurantsScreen({
   useMenuSound(managing !== null);
   useMenuSound(actionPlace !== null);
   useMenuSound(filterSheetVisible);
+
+  useEffect(() => {
+    if (filterSheetVisible && reducedMotion === false) {
+      filterScrimOpacity.setValue(0);
+      filterSheetTranslateY.setValue(windowHeight);
+      Animated.parallel([
+        Animated.timing(filterScrimOpacity, {
+          toValue: 1,
+          duration: 240,
+          useNativeDriver: true,
+        }),
+        Animated.spring(filterSheetTranslateY, {
+          toValue: 0,
+          damping: 28,
+          stiffness: 260,
+          mass: 0.9,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      filterScrimOpacity.setValue(filterSheetVisible ? 1 : 0);
+      filterSheetTranslateY.setValue(0);
+    }
+  }, [filterSheetVisible, filterScrimOpacity, filterSheetTranslateY, reducedMotion, windowHeight]);
+  useEffect(() => {
+    if (actionPlace && reducedMotion === false) {
+      actionScrimOpacity.setValue(0);
+      actionSheetTranslateY.setValue(windowHeight);
+      Animated.parallel([
+        Animated.timing(actionScrimOpacity, {
+          toValue: 1,
+          duration: 240,
+          useNativeDriver: true,
+        }),
+        Animated.spring(actionSheetTranslateY, {
+          toValue: 0,
+          damping: 28,
+          stiffness: 260,
+          mass: 0.9,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      actionScrimOpacity.setValue(actionPlace ? 1 : 0);
+      actionSheetTranslateY.setValue(0);
+    }
+  }, [actionPlace, actionScrimOpacity, actionSheetTranslateY, reducedMotion, windowHeight]);
   useMenuSound(infoVisible);
 
   const cuisineOptions = useMemo(
@@ -672,23 +726,29 @@ export function RestaurantsScreen({
       <Modal
         visible={filterSheetVisible}
         transparent
-        animationType={reducedMotion === false ? "slide" : "none"}
+        animationType="none"
         onRequestClose={() => setFilterSheetVisible(false)}
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.modal}
         >
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close filters"
-            style={styles.scrim}
-            onPress={() => setFilterSheetVisible(false)}
-          />
+          <Animated.View
+            pointerEvents="box-none"
+            style={[styles.scrim, { opacity: filterScrimOpacity }]}
+          >
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Close filters"
+              style={StyleSheet.absoluteFill}
+              onPress={() => setFilterSheetVisible(false)}
+            />
+          </Animated.View>
           <View
             accessibilityViewIsModal
             style={[
               styles.sheet,
+              { transform: [{ translateY: filterSheetTranslateY }] },
               { paddingBottom: insets.bottom + 24, maxHeight: "85%" },
             ]}
           >
@@ -872,16 +932,22 @@ export function RestaurantsScreen({
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.modal}
         >
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close actions"
-            style={styles.scrim}
-            onPress={() => setActionPlace(null)}
-          />
-          <View
+          <Animated.View
+            pointerEvents="box-none"
+            style={[styles.scrim, { opacity: actionScrimOpacity }]}
+          >
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Close actions"
+              style={StyleSheet.absoluteFill}
+              onPress={() => setActionPlace(null)}
+            />
+          </Animated.View>
+          <Animated.View
             accessibilityViewIsModal
             style={[
               styles.sheet,
+              { transform: [{ translateY: actionSheetTranslateY }] },
               { paddingBottom: insets.bottom + 24, maxHeight: "80%" },
             ]}
           >
@@ -1044,7 +1110,7 @@ export function RestaurantsScreen({
                 </Pressable>
               </ScrollView>
             ) : null}
-          </View>
+          </Animated.View>
         </KeyboardAvoidingView>
       </Modal>
 

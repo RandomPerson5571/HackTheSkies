@@ -10,7 +10,14 @@ const articleTitles = {
   "Kottu roti": "Kottu",
 };
 // Specific source file confirmed against its description when dish-name search is ambiguous.
-const fileOverrides = { "la-bandera": "File:BanderaDominicana01.jpg" };
+// Plated photos replace studio cut-outs on white for these dishes.
+const fileOverrides = {
+  "la-bandera": "File:BanderaDominicana01.jpg",
+  croissant:
+    "File:Coffee, croissants, and jam on a plate with cookies on a table during breakfast time in a cozy setting.jpg",
+  cheeseburger: "File:Cheeseburger and steak fries at Rentier-Burger.jpg",
+  jambalaya: "File:Jambalaya on plate.jpg",
+};
 
 const headers = {
   "User-Agent":

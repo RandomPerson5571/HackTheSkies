@@ -451,7 +451,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   }, []);
 
   const choose = useCallback((place: Place) => {
-    void playFeedback("select");
+    void playFeedback("click");
     Keyboard.dismiss();
     setSelected(place);
     setMapListMode(false);
@@ -511,7 +511,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     setMapReady(false);
   }, []);
   function toggleSave(place: Place) {
-    void playFeedback(saved.includes(place.id) ? "remove" : "save");
     dispatch({ type: "save", placeId: place.id });
   }
   function openFoodCamera(mode: "food" | "menu" = "food") {
@@ -1523,7 +1522,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       onPress={() => {
                         setCameraMenuOpen(false);
                         if (!navigationSelected(item.id)) {
-                          void playFeedback("select");
+                          void playFeedback("click");
                         }
                         setTab(item.id);
                         setFoodCapture(null);

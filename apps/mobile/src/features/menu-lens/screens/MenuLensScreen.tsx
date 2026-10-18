@@ -158,7 +158,7 @@ export function MenuLensScreen({
     setPhoto(null);
   }
   async function analyze(image: Photo, version: number) {
-    void playFeedback("scan");
+    void playFeedback("alert");
     const controller = new AbortController();
     request.current = controller;
     const timeout = setTimeout(() => controller.abort(), 45_000);
@@ -171,7 +171,7 @@ export function MenuLensScreen({
       if (version === generation.current) {
         setResults(dishes);
         setScanned(true);
-        void playFeedback("success");
+        void playFeedback("bell");
       }
     } catch (cause) {
       if (version === generation.current)

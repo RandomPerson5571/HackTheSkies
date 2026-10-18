@@ -5,75 +5,31 @@ import {
 } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import { AppState, Platform } from "react-native";
-import {
-  playGameFeedback,
-  prepareGameFeedback,
-  stopGameFeedback,
-  type GameFeedbackName,
-} from "./gameFeedback";
 
 export type SoundName =
-  | "menuOpen"
-  | "menuClose"
-  | "select"
-  | "reward"
-  | "chest"
-  | "sparkle"
-  | "save"
-  | "remove"
   | "click"
-  | "success"
-  | "discover"
-  | "levelup"
-  | "scan"
+  | "interfaceClick"
+  | "openBook"
+  | "alert"
+  | "bell"
   | "error"
-  | "badge"
-  | "tap";
+  | "badge";
 
 const soundFiles: Record<SoundName, number> = {
-  menuOpen: require("../../assets/sfx/kenney/open_001.wav"),
-  menuClose: require("../../assets/sfx/kenney/close_001.wav"),
-  select: require("../../assets/sfx/kenney/select_001.wav"),
-  reward: require("../../assets/sfx/reward.wav"),
-  chest: require("../../assets/sfx/chest.wav"),
-  sparkle: require("../../assets/sfx/sparkle.wav"),
-  save: require("../../assets/sfx/kenney/confirmation_001.wav"),
-  remove: require("../../assets/sfx/kenney/back_001.wav"),
   click: require("../../assets/sfx/kenney/click_001.wav"),
-  success: require("../../assets/sfx/kenney/confirmation_002.wav"),
-  discover: require("../../assets/sfx/discover.wav"),
-  levelup: require("../../assets/sfx/levelup.wav"),
-  scan: require("../../assets/sfx/kenney/question_001.wav"),
-  error: require("../../assets/sfx/kenney/error_001.wav"),
-  badge: require("../../assets/sfx/badge.wav"),
-  tap: require("../../assets/sfx/kenney/tick_001.wav"),
+  interfaceClick: require("../../../../assets/interfaceclick.mp3"),
+  openBook: require("../../../../assets/openbook.mp3"),
+  alert: require("../../../../assets/alert.mp3"),
+  bell: require("../../../../assets/alert.mp3"),
+  error: require("../../../../assets/error.mp3"),
+  badge: require("../../../../assets/badge.mp3"),
 };
 
 const cache = new Map<SoundName, AudioPlayer>();
 const lastPlayed = new Map<SoundName, number>();
 const requests = new Map<SoundName, number>();
 let soundRequests = 0;
-let rewardUntil = 0;
-let activeRewardRank = 0;
 let playbackEpoch = 0;
-const rewardDurations: Partial<Record<SoundName, number>> = {
-  reward: 640,
-  chest: 760,
-  sparkle: 430,
-  badge: 490,
-  levelup: 730,
-  discover: 530,
-  success: 540,
-};
-const rewardRanks: Partial<Record<SoundName, number>> = {
-  success: 1,
-  discover: 2,
-  sparkle: 2,
-  reward: 3,
-  chest: 3,
-  badge: 4,
-  levelup: 5,
-};
 
 // Existing handlers can supply a more specific cue without getting a second click.
 export function withButtonFeedback(
@@ -91,12 +47,9 @@ AppState.addEventListener("change", (state) => {
     return;
   }
   playbackEpoch += 1;
-  stopGameFeedback();
   for (const player of cache.values()) player.remove();
   cache.clear();
   lastPlayed.clear();
-  rewardUntil = 0;
-  activeRewardRank = 0;
 });
 
 export async function playFeedback(name: SoundName) {
@@ -104,42 +57,22 @@ export async function playFeedback(name: SoundName) {
   try {
     if (AppState.currentState && AppState.currentState !== "active") return;
     const now = Date.now();
-    const rewardDuration = rewardDurations[name];
-    const rank = rewardRanks[name] ?? 0;
-    // Let celebrations finish; avoid stacking clicks when nested controls fire.
-    if (now < rewardUntil && rank < activeRewardRank) return;
     if (now - (lastPlayed.get(name) ?? -Infinity) < 60) return;
     lastPlayed.set(name, now);
-    if (rewardDuration) {
-      // A level-up or badge replaces the smaller reward instead of layering it.
-      playbackEpoch += 1;
-      stopGameFeedback();
-      for (const player of cache.values()) player.pause();
-      rewardUntil = now + rewardDuration;
-      activeRewardRank = rank;
-    }
-    if (isGameFeedback(name)) {
-      const duration = playGameFeedback(name);
-      if (duration !== false) {
-        if (rewardDuration) rewardUntil = now + duration;
-        return;
-      }
-      if (name === "scan") hapticMedium();
-      else hapticSuccess();
-    } else {
-      switch (name) {
-        case "select":
-          hapticSelection();
-          break;
-        case "success":
-          hapticSuccess();
-          break;
-        case "error":
-          hapticError();
-          break;
-        default:
-          hapticLight();
-      }
+    switch (name) {
+      case "bell":
+      case "badge":
+      case "openBook":
+        hapticSuccess();
+        break;
+      case "error":
+        hapticError();
+        break;
+      case "alert":
+        hapticMedium();
+        break;
+      default:
+        hapticLight();
     }
     const request = (requests.get(name) ?? 0) + 1;
     const epoch = playbackEpoch;
@@ -156,11 +89,7 @@ export async function playFeedback(name: SoundName) {
       playbackEpoch !== epoch
     )
       return;
-    player.volume = rewardDuration
-      ? 0.4
-      : name === "click" || name === "select"
-        ? 0.18
-        : 0.28;
+    player.volume = name === "click" ? 0.18 : 0.35;
     player.play();
   } catch {
     // Ignore audio failures; visuals/haptics still work.
@@ -169,7 +98,6 @@ export async function playFeedback(name: SoundName) {
 
 /** Prepare native players after mounting; web playback starts in a user gesture. */
 export function prepareFeedback() {
-  prepareGameFeedback();
   void setAudioModeAsync({
     playsInSilentMode: false,
     shouldPlayInBackground: false,
@@ -184,18 +112,6 @@ export function prepareFeedback() {
       // Retry lazily on interaction if preloading is unavailable.
     }
   }
-}
-
-function isGameFeedback(name: SoundName): name is GameFeedbackName {
-  return [
-    "reward",
-    "chest",
-    "sparkle",
-    "badge",
-    "levelup",
-    "discover",
-    "scan",
-  ].includes(name);
 }
 
 function runHaptic(

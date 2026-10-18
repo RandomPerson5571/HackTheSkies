@@ -7,6 +7,6 @@ export function useMenuSound(open: boolean) {
   useEffect(() => {
     if (previous.current === open) return;
     previous.current = open;
-    void playFeedback(open ? "menuOpen" : "menuClose");
+    if (open) void playFeedback("click");
   }, [open]);
 }

@@ -139,3 +139,56 @@ so server-only code and credentials aren't bundled into the client.
 Run `pnpm build` then `pnpm start` from the repository root to serve the browser
 build and APIs on one origin. Server environment lives in `.env.server.local`,
 using `.env.server.example` as a template. App environment lives in `.env.local`.
+
+### Cibo Lens
+
+Open **+ → Lens** to photograph or upload a restaurant menu. The photo-first scanner
+uses Groq vision to read up to 24 dishes and normalized text boxes, then verifies
+catalog candidates in a second, batched request. Tap an anchored marker or a list
+row for a catalog photo, origin, description, cuisine discovery count, and collection
+action. A scan does not automatically collect dishes; **I tried this** adds one to
+the existing Food Dex. The sample menu works without a server and cannot add demo
+entries to the collection.
+
+The existing `GROQ_API_KEY` and `EXPO_PUBLIC_FOOD_SCAN_URL` configuration is reused.
+Optionally set `EXPO_PUBLIC_MENU_SCAN_URL` to a separate endpoint and
+`GROQ_MENU_SCAN_MODEL` on the server to a vision-capable model (default:
+`qwen/qwen3.8-27b`). Restart Expo after changing public environment variables.
+Physical devices need the computer's LAN address, not localhost.
+
+Dietary flags use the profile's Vegetarian, Vegan, or Pescatarian preference.
+They indicate possible ingredients, never allergy safety. A rare find means an
+uncollected dish from a cuisine with fewer than two discoveries. Unknown matches
+remain readable discoveries without a canonical badge or fabricated catalog photo.
+
+This first release analyzes a single compressed capture, not video frames. Boxes
+are model estimates anchored to the frozen image, with a list alternative for
+missing or imprecise positions. Live tracking, on-device ML Kit OCR, embeddings,
+and Skia rendering are not part of this photo-first implementation. The camera
+uses the existing Expo dependency; no new native modules are required.
+
+### Cibo Quests
+
+Open the flag on Explore, or **Continue my cuisine quests** in Food Dex. Japanese,
+Italian, and Korean each have four chapters of five quests. Quests include dish
+quizzes, Food Dex discovery (camera or manual entry), learning cards, mystery
+questions, exploration, chests, and three-question chapter finales. Discovery and
+exploration always offer an at-home route with the same XP. Learning cards and
+chapter stamps belong to the quest passport; they do not fabricate Food Dex entries.
+
+Each cuisine keeps its own XP and level (200 XP per level). Quest progress, the
+selected cuisine, personalized assignments, and bonus check-ins save locally under
+`cibo.quests.v1`. Quest progress does not currently sync to Supabase. The original
+12 restaurant challenges remain available as optional bonus adventures. Visits are
+explicitly self-reported, each restaurant counts once per adventure, and rewards
+can be claimed once. Weekly/monthly periods run for 7/30 days from joining.
+
+`POST /api/quest-personalization` uses the existing server-side `GROQ_API_KEY` and
+`GROQ_RECOMMENDATION_MODEL` setting. Optionally set `EXPO_PUBLIC_QUEST_URL`; otherwise
+it uses the food scan server's origin. The AI selects only curated catalog dish IDs
+and known restaurant IDs, prefers dishes missing from Food Dex, and uses the
+profile's diet and neighbourhood plus the chosen at-home/exploration preference.
+Dietary preferences enforce learning objectives without requiring a purchase or
+meal. Menus, dietary suitability, restaurant availability, and prices are not
+verified by the picker. An unavailable AI service leaves the full curated journey
+playable. A personalized quest awards 60 XP once per cuisine.

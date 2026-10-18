@@ -15,6 +15,7 @@
       ],
       "env": [
         "GROQ_API_KEY",
+        "GROQ_MENU_SCAN_MODEL",
         "GROQ_FOOD_SCAN_MODEL"
       ]
     },
@@ -33,6 +34,7 @@
       "persistent": true,
       "env": [
         "GROQ_API_KEY",
+        "GROQ_MENU_SCAN_MODEL",
         "GROQ_FOOD_SCAN_MODEL",
         "GROQ_RECOMMENDATION_MODEL",
         "API_PORT",

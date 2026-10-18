@@ -73,6 +73,7 @@ export function NfcScanScreen({
       return;
     }
     if (Platform.OS === "web") return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void startScan();
     return () => activeScan.current?.abort();
   }, [attempt, startScan, visible]);

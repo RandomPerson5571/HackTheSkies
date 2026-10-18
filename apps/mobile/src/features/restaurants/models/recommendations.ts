@@ -93,7 +93,20 @@ export function recommendationLabel(
   rating: Recommendation | undefined,
 ): string {
   if (!rating || rating.averageRating === null) return "Not rated yet";
-  return `${rating.suggested ? "Suggested · " : ""}${rating.averageRating.toFixed(1)}/5 · ${rating.reviewCount} ${rating.reviewCount === 1 ? "rating" : "ratings"} · Score ${Math.round(rating.score)}/100`;
+  return `${rating.averageRating.toFixed(1)}/5 · ${rating.reviewCount} ${rating.reviewCount === 1 ? "rating" : "ratings"}`;
+}
+
+export function recommendationBadge(
+  rating: Recommendation | undefined,
+): string {
+  if (!rating || rating.averageRating === null) return "Not rated yet";
+  if (rating.suggested) {
+    if (rating.reviewCount <= 25) return "Hidden gem";
+    if (rating.averageRating >= 4.5) return "Highly rated";
+    return "Worth exploring";
+  }
+  if (rating.averageRating >= 4.5) return "Highly rated";
+  return "Worth exploring";
 }
 
 // Only unclustered points in the viewport receive photos; selection stays visible

@@ -1,16 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { useState } from "react";
+import { CiboLogo } from "../../../components/CiboLogo";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { ProfileAtlas } from "../components/ProfileAtlas";
 
 import { colors } from "../../../theme/index";
-import { playSound, hapticSuccess, hapticLight } from "../../../lib/sensory";
+import { playSound, hapticLight } from "../../../lib/sensory";
 import type { Profile } from "../models/profile";
 export type { Profile } from "../models/profile";
 
@@ -18,87 +13,147 @@ import { useFoodDex } from "../../food-dex/hooks/useFoodDex";
 import {
   cuisines,
   dishes,
-  type Cuisine,
+  cuisineCovers,
+  findCatalogDish,
 } from "../../food-dex/models/foodDex";
-import { useGamification } from "../../gamification/hooks/useGamification";
+import { CatalogPhoto } from "../../food-dex/components/CatalogPhoto";
+import { catalogPhoto } from "../../food-dex/services/catalogPhotos";
+import { DecoratedAvatar, TrophyArt } from "../components/RewardArt";
+import { ProfileWardrobe } from "../components/ProfileWardrobe";
+import {
+  resolveCustomization,
+  type Customization,
+} from "../models/customization";
+import { useQuests } from "../../quests/hooks/useQuests";
+import { pathCuisines, pathProgress } from "../../quests/models/quests";
 import {
   BADGES,
   xpToNextLevel,
+  type BadgeId,
+  type GamificationState,
 } from "../../gamification/models/gamification";
 
-const diets = ["No preference", "Vegetarian", "Vegan", "Pescatarian"] as const;
-
-const trainerTitles = [
-  { minLevel: 20, title: "Master Explorer" },
-  { minLevel: 15, title: "Cuisine Connoisseur" },
-  { minLevel: 10, title: "Seasoned Taster" },
-  { minLevel: 5, title: "Adventurous Eater" },
-  { minLevel: 1, title: "Food Explorer" },
-];
-
-function trainerTitle(level: number) {
-  return (
-    trainerTitles.find((entry) => level >= entry.minLevel)?.title ??
-    "Food Explorer"
-  );
-}
-
-// Approximate positions for the stylized cuisine map (percentages).
-const cuisineMapPosition: Record<Cuisine, { x: number; y: number }> = {
-  American: { x: 18, y: 34 },
-  Latin: { x: 24, y: 58 },
-  Caribbean: { x: 28, y: 46 },
-  French: { x: 46, y: 26 },
-  Italian: { x: 50, y: 34 },
-  Greek: { x: 54, y: 38 },
-  Levant: { x: 58, y: 30 },
-  Persian: { x: 62, y: 36 },
-  "South Asian": { x: 68, y: 42 },
-  Thai: { x: 76, y: 44 },
-  Vietnamese: { x: 78, y: 40 },
-  Chinese: { x: 78, y: 26 },
-  Korean: { x: 82, y: 28 },
-  Japanese: { x: 86, y: 30 },
-  Other: { x: 50, y: 52 },
+const badgeProgress = (
+  badge: { id: BadgeId },
+  entriesCount: number,
+  cuisinesCount: number,
+  savedCount: number,
+  streak: number,
+  ratings: number,
+): { current: number; target: number } => {
+  switch (badge.id) {
+    case "first-bite":
+      return { current: entriesCount, target: 1 };
+    case "cuisine-explorer":
+      return { current: cuisinesCount, target: 5 };
+    case "world-taster":
+      return { current: cuisinesCount, target: 14 };
+    case "collector":
+      return { current: entriesCount, target: 10 };
+    case "foodie":
+      return { current: entriesCount, target: 25 };
+    case "gourmet":
+      return { current: entriesCount, target: 50 };
+    case "rater":
+      return { current: ratings, target: 5 };
+    case "critic":
+      return { current: ratings, target: 25 };
+    case "saver":
+      return { current: savedCount, target: 5 };
+    case "wanderer":
+      return { current: savedCount, target: 25 };
+    case "streak-3":
+      return { current: streak, target: 3 };
+    case "streak-7":
+      return { current: streak, target: 7 };
+    default:
+      return { current: 0, target: 1 };
+  }
 };
 
 export function ProfileScreen({
   profile,
   onSave,
+  game,
+  ratingsCount = 0,
   topInset,
   bottomInset,
   storageError,
+  saved = [],
+  onOpenQuests,
+  onOpenSettings,
+  onOpenDex,
+  onOpenAtlas: _onOpenAtlas,
+  onOpenSaved,
 }: {
-  saved: string[];
+  saved?: string[];
   profile: Profile;
   onSave: (profile: Profile) => void;
+  game: GamificationState;
+  ratingsCount?: number;
   topInset: number;
   bottomInset: number;
   storageError: string;
+  onOpenQuests?: () => void;
+  onOpenSettings?: () => void;
+  onOpenDex?: () => void;
+  onOpenAtlas?: () => void;
+  onOpenSaved?: () => void;
 }) {
   const { entries } = useFoodDex();
-  const { state: game } = useGamification();
-
-  const [draft, setDraft] = useState(profile);
-  const [message, setMessage] = useState("");
-  const edited = useRef(false);
-  useEffect(() => {
-    if (!edited.current) setDraft(profile);
-  }, [profile]);
+  const { state: quests, error: questError } = useQuests();
+  const [customizing, setCustomizing] = useState(false);
+  const [showAllBadges, setShowAllBadges] = useState(false);
 
   const foodsCount = entries.length;
   const cuisinesCount = new Set(entries.map((entry) => entry.cuisine)).size;
   const streak = game.streak;
-  const level = game.level;
-  const title = trainerTitle(level);
-  const xp = xpToNextLevel(game.xp);
+  const questXp =
+    quests.bonusXp +
+    pathCuisines.reduce(
+      (sum, cuisine) => sum + pathProgress(quests, cuisine).xp,
+      0,
+    );
+  const totalXp = Math.max(0, game.xp) + questXp;
+  const xp = xpToNextLevel(totalXp);
   const xpPercent = Math.round((xp.current / xp.needed) * 100);
 
-  const earnedBadgeIds = new Set(game.badges);
+  const earnedBadgeIds = new Set<BadgeId>(game.badges);
+  if (foodsCount >= 1) earnedBadgeIds.add("first-bite");
+  if (cuisinesCount >= 5) earnedBadgeIds.add("cuisine-explorer");
+  if (cuisinesCount >= 14) earnedBadgeIds.add("world-taster");
+  if (foodsCount >= 10) earnedBadgeIds.add("collector");
+  if (foodsCount >= 25) earnedBadgeIds.add("foodie");
+  if (foodsCount >= 50) earnedBadgeIds.add("gourmet");
+  if (saved.length >= 5) earnedBadgeIds.add("saver");
+  if (saved.length >= 25) earnedBadgeIds.add("wanderer");
+  if (streak >= 3) earnedBadgeIds.add("streak-3");
+  if (streak >= 7) earnedBadgeIds.add("streak-7");
+  if (ratingsCount >= 5) earnedBadgeIds.add("rater");
+  if (ratingsCount >= 25) earnedBadgeIds.add("critic");
+
+  const appearance = resolveCustomization(
+    profile.customization,
+    totalXp,
+    earnedBadgeIds,
+  );
+  const { level, rank, nextRank } = appearance;
+  const featuredBadge = BADGES.find(
+    (badge) => badge.id === appearance.featuredBadge,
+  );
+  const changeCustomization = (change: Partial<Customization>) => {
+    onSave({
+      ...profile,
+      customization: { ...appearance.selected, ...change },
+    });
+    void playSound("tap");
+    hapticLight();
+  };
+
   const featuredBadges = [
-    ...BADGES.filter((badge) => earnedBadgeIds.has(badge.id)),
-    ...BADGES.filter((badge) => !earnedBadgeIds.has(badge.id)),
-  ].slice(0, 4);
+    ...BADGES.filter((badge) => earnedBadgeIds.has(badge.id as BadgeId)),
+    ...BADGES.filter((badge) => !earnedBadgeIds.has(badge.id as BadgeId)),
+  ].slice(0, showAllBadges ? BADGES.length : 4);
 
   const cuisineStats = cuisines
     .map((cuisine) => ({
@@ -107,60 +162,96 @@ export function ProfileScreen({
       total: dishes.filter((dish) => dish.cuisine === cuisine).length,
     }))
     .sort((a, b) => b.done - a.done || a.cuisine.localeCompare(b.cuisine));
-  const shownCuisines = cuisineStats.filter((item) => item.done > 0);
-  const cuisineRows =
-    shownCuisines.length > 0 ? shownCuisines.slice(0, 6) : cuisineStats.slice(0, 3);
+  const shownCuisines =
+    cuisineStats.filter((item) => item.done > 0).length > 0
+      ? cuisineStats.filter((item) => item.done > 0).slice(0, 6)
+      : cuisineStats.slice(0, 4);
 
-  const recent = entries.slice(0, 6);
+  const recent = entries.slice(0, 8);
 
-  function update(change: Partial<Profile>) {
-    edited.current = true;
-    setDraft((current) => ({ ...current, ...change }));
-    setMessage("");
-  }
-  function save() {
-    if (!draft.name.trim()) {
-      setMessage("Please enter a display name.");
-      return;
-    }
-    const next = {
-      ...draft,
-      name: draft.name.trim(),
-      neighborhood: draft.neighborhood.trim(),
-    };
-    setDraft(next);
-    edited.current = false;
-    onSave(next);
-    setMessage("Settings saved.");
-    void playSound("success");
-    hapticSuccess();
-  }
+  const handleOpenQuests = () => {
+    void playSound("tap");
+    hapticLight();
+    onOpenQuests?.();
+  };
+  const handleOpenSettings = () => {
+    void playSound("tap");
+    hapticLight();
+    onOpenSettings?.();
+  };
+  const handleOpenDex = () => {
+    void playSound("tap");
+    hapticLight();
+    onOpenDex?.();
+  };
 
   return (
     <ScrollView
       style={styles.screen}
       contentContainerStyle={[
         styles.content,
-        { paddingTop: topInset + 24, paddingBottom: bottomInset + 112 },
+        { paddingTop: topInset + 16, paddingBottom: bottomInset + 112 },
       ]}
       keyboardShouldPersistTaps="handled"
-      keyboardDismissMode="on-drag"
     >
-      <View style={styles.trainerCard}>
-        <View style={styles.trainerTop}>
-          <View style={styles.avatar}>
-            <Text style={styles.initial}>
-              {profile.name.trim().charAt(0).toUpperCase()}
-            </Text>
+      <View style={styles.passportHeader}>
+        <View style={styles.headerTopRow}>
+          <CiboLogo />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open settings"
+            onPress={handleOpenSettings}
+            style={({ pressed }) => [
+              styles.gearButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons name="settings-outline" color={colors.ink} size={20} />
+          </Pressable>
+        </View>
+
+        <View>
+          <Text style={styles.eyebrow}>MY PASSPORT</Text>
+          <Text style={styles.passportTitle}>Culinary Passport</Text>
+        </View>
+        <View style={styles.identityRow}>
+          <View style={styles.avatarFrame}>
+            <DecoratedAvatar
+              name={profile.name}
+              frame={appearance.frame}
+              palette={appearance.palette}
+            />
+            <View style={styles.levelPill}>
+              <Text style={styles.levelPillText}>Lv {level}</Text>
+            </View>
           </View>
-          <View style={styles.flex}>
+          <View style={styles.identityText}>
             <Text style={styles.name}>{profile.name}</Text>
-            <Text style={styles.handle}>@{profile.name.replace(/\s+/g, "").toLowerCase() || "foodexplorer"}</Text>
+            <Text style={styles.handle}>
+              @
+              {profile.name.replace(/\s+/g, "").toLowerCase() || "foodexplorer"}
+            </Text>
             <Text style={styles.titleLine}>
-              Level {level} · {title}
+              Level {level} · {rank.name}
             </Text>
           </View>
         </View>
+        {featuredBadge && (
+          <View style={styles.featuredTrophy}>
+            <TrophyArt id={featuredBadge.id} size={48} />
+            <View style={styles.flex}>
+              <Text style={styles.eyebrow}>FEATURED TROPHY</Text>
+              <Text style={styles.featuredName}>{featuredBadge.name}</Text>
+            </View>
+            <Ionicons
+              name="checkmark-circle"
+              size={18}
+              color={colors.ink}
+              accessible={false}
+            />
+          </View>
+        )}
+
         <View style={styles.xpBlock}>
           <View style={styles.xpRow}>
             <Text style={styles.xpText}>
@@ -168,236 +259,391 @@ export function ProfileScreen({
             </Text>
             <Text style={styles.xpPercent}>{xpPercent}%</Text>
           </View>
-          <View style={styles.xpTrack}>
+          <View
+            accessibilityRole="progressbar"
+            accessibilityLabel="XP to next level"
+            aria-valuemin={0}
+            aria-valuemax={xp.needed}
+            aria-valuenow={xp.current}
+            accessibilityValue={{ min: 0, max: xp.needed, now: xp.current }}
+            style={styles.xpTrack}
+          >
             <View style={[styles.xpFill, { width: `${xpPercent}%` }]} />
           </View>
-        </View>
-      </View>
-
-      <View style={styles.stats}>
-        {[
-          { value: foodsCount, label: "Foods" },
-          { value: cuisinesCount, label: "Cuisines" },
-          { value: streak, label: "Day Streak" },
-        ].map((stat) => (
-          <View key={stat.label} style={styles.stat}>
-            <Text style={styles.statValue}>{stat.value}</Text>
-            <Text style={styles.statLabel}>{stat.label}</Text>
-          </View>
-        ))}
-      </View>
-
-      <View style={styles.card}>
-        <View style={styles.heading}>
-          <Ionicons name="ribbon-outline" color={colors.accent} size={21} accessible={false} />
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
-            Featured Badges
+          <Text style={styles.copy}>
+            {totalXp.toLocaleString()} total XP ·{" "}
+            {nextRank
+              ? `${((nextRank.level - 1) * 200 - totalXp).toLocaleString()} XP to ${nextRank.name}`
+              : "Highest rank unlocked"}
           </Text>
-          <Text style={styles.link}>View all →</Text>
         </View>
-        <View style={styles.badgeRow}>
-          {featuredBadges.map((badge) => {
-            const earned = earnedBadgeIds.has(badge.id);
+
+        <View style={styles.statsRow}>
+          {[
+            { value: foodsCount, label: "Foods" },
+            { value: cuisinesCount, label: "Cuisines" },
+            { value: streak, label: "Streak" },
+          ].map((stat) => (
+            <View key={stat.label} style={styles.stat}>
+              <Text style={styles.statValue}>{stat.value}</Text>
+              <Text style={styles.statLabel}>{stat.label}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Customize your passport"
+        aria-expanded={customizing}
+        accessibilityState={{ expanded: customizing }}
+        onPress={() => {
+          setCustomizing(!customizing);
+          hapticLight();
+        }}
+        style={({ pressed }) => [
+          styles.customizeButton,
+          pressed && styles.pressed,
+        ]}
+      >
+        <Ionicons
+          name="color-palette-outline"
+          color={colors.ink}
+          size={20}
+          accessible={false}
+        />
+        <Text style={styles.customizeText}>
+          {customizing ? "Close customization" : "Customize passport"}
+        </Text>
+        <Ionicons
+          name={customizing ? "chevron-up" : "chevron-down"}
+          color={colors.ink}
+          size={18}
+          accessible={false}
+        />
+      </Pressable>
+      {customizing && (
+        <ProfileWardrobe
+          name={profile.name}
+          selected={appearance.selected}
+          level={level}
+          earned={earnedBadgeIds}
+          onChange={changeCustomization}
+        />
+      )}
+      {questError ? (
+        <Text accessibilityRole="alert" style={styles.hint}>
+          {questError}
+        </Text>
+      ) : null}
+
+      {onOpenSaved && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Open Saved Places, ${saved.length} restaurants`}
+          onPress={onOpenSaved}
+          style={({ pressed }) => [
+            styles.adventureCard,
+            pressed && styles.pressed,
+          ]}
+        >
+          <View style={styles.adventureIcon}>
+            <Ionicons
+              accessible={false}
+              name="bookmark-outline"
+              color={colors.white}
+              size={24}
+            />
+          </View>
+          <View style={styles.flex}>
+            <Text style={styles.adventureTitle}>Your Saved Places</Text>
+            <Text style={styles.adventureCopy}>
+              {saved.length} restaurants · Your wishlist & collections
+            </Text>
+          </View>
+          <Ionicons
+            accessible={false}
+            name="chevron-forward"
+            color={colors.ink}
+            size={20}
+          />
+        </Pressable>
+      )}
+
+      <View style={styles.adventureCard}>
+        <View style={styles.adventureIcon}>
+          <Ionicons name="compass" color={colors.white} size={26} />
+        </View>
+        <View style={styles.flex}>
+          <Text style={styles.eyebrowDark}>YOUR NEXT ADVENTURE</Text>
+          <Text style={styles.adventureTitle}>
+            Your culinary journey starts here
+          </Text>
+          <Text style={styles.adventureCopy}>
+            Choose a cuisine and unlock your first food quest.
+          </Text>
+        </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Explore quests"
+          onPress={handleOpenQuests}
+          style={({ pressed }) => [
+            styles.adventureButton,
+            pressed && styles.pressed,
+          ]}
+        >
+          <Text style={styles.adventureButtonText}>Explore quests</Text>
+          <Ionicons name="arrow-forward" color={colors.white} size={16} />
+        </Pressable>
+      </View>
+
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            Cuisine Passport
+          </Text>
+          <Pressable onPress={handleOpenDex}>
+            <Text style={styles.link}>See all →</Text>
+          </Pressable>
+        </View>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.passportRow}
+        >
+          {shownCuisines.map((row) => {
+            const percent = row.total
+              ? Math.round((row.done / row.total) * 100)
+              : 0;
+            const cover = cuisineCovers[row.cuisine];
+            const discovered = row.done > 0;
             return (
               <View
-                key={badge.id}
-                style={[styles.badge, !earned && styles.badgeLocked]}
+                key={row.cuisine}
+                style={[
+                  styles.passportCard,
+                  !discovered && styles.passportCardLocked,
+                ]}
               >
-                <Ionicons
-                  name={badge.icon as any}
-                  size={26}
-                  color={earned ? colors.accent : colors.muted}
-                  accessible={false}
-                />
-                <Text
-                  style={[styles.badgeName, !earned && styles.badgeNameLocked]}
-                  numberOfLines={1}
-                >
-                  {badge.name}
+                <View style={styles.passportCardTop}>
+                  {discovered && cover ? (
+                    <CatalogPhoto
+                      source={catalogPhoto(cover)}
+                      label={row.cuisine}
+                      style={styles.passportPhoto}
+                    />
+                  ) : (
+                    <View style={styles.lockedCircle}>
+                      <Ionicons
+                        name="lock-closed"
+                        color={colors.muted}
+                        size={18}
+                      />
+                    </View>
+                  )}
+                  <Text
+                    style={[
+                      styles.passportCuisine,
+                      !discovered && styles.passportCuisineLocked,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {row.cuisine}
+                  </Text>
+                </View>
+                <View style={styles.passportProgress}>
+                  <View style={styles.progressTrack}>
+                    <View
+                      style={[
+                        styles.progressFill,
+                        { width: `${percent}%` },
+                        !discovered && styles.progressFillLocked,
+                      ]}
+                    />
+                  </View>
+                  <Text style={styles.passportCount}>
+                    {row.done}/{row.total}
+                  </Text>
+                </View>
+                <Text style={styles.passportStatus}>
+                  {discovered ? "Collected" : "Locked"}
                 </Text>
               </View>
             );
           })}
-        </View>
-      </View>
-
-      <View style={styles.card}>
-        <View style={styles.heading}>
-          <Ionicons name="globe-outline" color={colors.accent} size={21} accessible={false} />
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
-            Cuisine Completion
-          </Text>
-          <Text style={styles.link}>Pokédex →</Text>
-        </View>
-        <View style={styles.cuisineRows}>
-          {cuisineRows.map((row) => {
-            const percent = row.total
-              ? Math.round((row.done / row.total) * 100)
-              : 0;
-            return (
-              <View key={row.cuisine} style={styles.cuisineRow}>
-                <Ionicons name="flag-outline" size={22} color={colors.accent} accessible={false} />
-                <View style={styles.flex}>
-                  <View style={styles.cuisineLabelRow}>
-                    <Text style={styles.cuisineName}>{row.cuisine}</Text>
-                    <Text style={styles.cuisineCount}>
-                      {row.done}/{row.total}
+          {shownCuisines.length === 0
+            ? cuisines.slice(0, 4).map((cuisine) => (
+                <View
+                  key={cuisine}
+                  style={[styles.passportCard, styles.passportCardLocked]}
+                >
+                  <View style={styles.passportCardTop}>
+                    <View style={styles.lockedCircle}>
+                      <Ionicons
+                        name="lock-closed"
+                        color={colors.muted}
+                        size={18}
+                      />
+                    </View>
+                    <Text
+                      style={[
+                        styles.passportCuisine,
+                        styles.passportCuisineLocked,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {cuisine}
                     </Text>
                   </View>
-                  <View style={styles.progressTrack}>
-                    <View
-                      style={[styles.progressFill, { width: `${percent}%` }]}
-                    />
+                  <View style={styles.passportProgress}>
+                    <View style={styles.progressTrack}>
+                      <View
+                        style={[
+                          styles.progressFill,
+                          styles.progressFillLocked,
+                          { width: "0%" },
+                        ]}
+                      />
+                    </View>
+                    <Text style={styles.passportCount}>
+                      0/{dishes.filter((d) => d.cuisine === cuisine).length}
+                    </Text>
                   </View>
+                  <Text style={styles.passportStatus}>Locked</Text>
                 </View>
-              </View>
-            );
-          })}
-        </View>
+              ))
+            : null}
+        </ScrollView>
       </View>
 
-      <View style={styles.card}>
-        <View style={styles.heading}>
-          <Ionicons name="map-outline" color={colors.accent} size={21} accessible={false} />
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
           <Text accessibilityRole="header" style={styles.sectionTitle}>
-            Cuisine Map
+            Trophy Cabinet
           </Text>
+          <Pressable
+            accessibilityRole="button"
+            aria-expanded={showAllBadges}
+            accessibilityState={{ expanded: showAllBadges }}
+            onPress={() => setShowAllBadges(!showAllBadges)}
+            style={styles.sectionAction}
+          >
+            <Text style={styles.link}>
+              {showAllBadges ? "Show less" : "View all"}
+            </Text>
+          </Pressable>
         </View>
         <Text style={styles.copy}>
-          Where the cuisines you’ve discovered come from.
+          {earnedBadgeIds.size} of {BADGES.length} trophies earned · A reward
+          for every kind of appetite.
         </Text>
-        <View style={styles.mapBox}>
-          {cuisines.map((cuisine) => {
-            const discovered = entries.some(
-              (entry) => entry.cuisine === cuisine,
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.badgeRow}
+        >
+          {featuredBadges.map((badge) => {
+            const earned = earnedBadgeIds.has(badge.id);
+            const progress = badgeProgress(
+              badge,
+              foodsCount,
+              cuisinesCount,
+              saved.length,
+              streak,
+              Math.max(ratingsCount, game.ratings),
             );
-            const pos = cuisineMapPosition[cuisine];
+            const pinned = featuredBadge?.id === badge.id;
             return (
-              <View
-                key={cuisine}
-                style={[
-                  styles.mapPin,
-                  {
-                    left: `${pos.x}%`,
-                    top: `${pos.y}%`,
-                  },
-                  discovered ? styles.mapPinActive : styles.mapPinIdle,
+              <Pressable
+                key={badge.id}
+                accessibilityRole="button"
+                disabled={!earned}
+                accessibilityLabel={`${badge.name}. ${badge.description} ${earned ? (pinned ? "Featured trophy" : "Earned. Tap to feature on your profile") : `Locked. ${Math.min(progress.current, progress.target)} of ${progress.target}`}`}
+                aria-pressed={pinned}
+                accessibilityState={{ disabled: !earned, selected: pinned }}
+                onPress={() => changeCustomization({ featuredBadge: badge.id })}
+                style={({ pressed }) => [
+                  styles.badge,
+                  !earned && styles.badgeLocked,
+                  pinned && styles.badgePinned,
+                  pressed && styles.pressed,
                 ]}
               >
-                <Ionicons name="flag" size={14} color={colors.accent} accessible={false} />
-              </View>
+                <TrophyArt id={badge.id} size={88} locked={!earned} />
+                <Text style={styles.badgeName}>{badge.name}</Text>
+                <Text style={styles.badgeDescription}>{badge.description}</Text>
+                <Text
+                  style={earned ? styles.badgeEarned : styles.badgeProgress}
+                >
+                  {earned
+                    ? pinned
+                      ? "Featured"
+                      : "Earned · Tap to feature"
+                    : `Locked · ${Math.min(progress.current, progress.target)}/${progress.target}`}
+                </Text>
+              </Pressable>
             );
           })}
-        </View>
+        </ScrollView>
       </View>
 
-      <View style={styles.card}>
-        <View style={styles.heading}>
-          <Ionicons name="time-outline" color={colors.accent} size={21} accessible={false} />
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
           <Text accessibilityRole="header" style={styles.sectionTitle}>
             Recent Discoveries
           </Text>
-          <Text style={styles.link}>See all →</Text>
+          <Pressable onPress={handleOpenDex}>
+            <Text style={styles.link}>See all →</Text>
+          </Pressable>
         </View>
         {recent.length === 0 ? (
-          <Text style={styles.hint}>
-            Discover your first dish in the Food Dex to fill this shelf.
-          </Text>
+          <View style={styles.emptyDiscoveries}>
+            <Ionicons name="camera-outline" color={colors.muted} size={28} />
+            <Text style={styles.hint}>
+              Discover your first dish to fill this gallery.
+            </Text>
+          </View>
         ) : (
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.recentRow}
           >
-            {recent.map((entry) => (
-              <View key={entry.id} style={styles.recentCard}>
-                <Ionicons name="flag-outline" size={28} color={colors.accent} accessible={false} />
-                <Text style={styles.recentName} numberOfLines={1}>
-                  {entry.name}
-                </Text>
-              </View>
-            ))}
+            {recent.map((entry) => {
+              const dish = findCatalogDish(entry.name, entry.cuisine);
+              return (
+                <View key={entry.id} style={styles.recentCard}>
+                  <CatalogPhoto
+                    source={
+                      entry.photo ? { uri: entry.photo } : catalogPhoto(dish)
+                    }
+                    label={entry.name}
+                    style={styles.recentPhoto}
+                  />
+                  <Text style={styles.recentName} numberOfLines={1}>
+                    {entry.name}
+                  </Text>
+                  <Text style={styles.recentCuisine} numberOfLines={1}>
+                    {entry.cuisine}
+                  </Text>
+                </View>
+              );
+            })}
           </ScrollView>
         )}
       </View>
+
+      <ProfileAtlas
+        entries={entries}
+        onOpenDex={onOpenDex}
+        onOpenQuests={onOpenQuests}
+      />
 
       {storageError ? (
         <Text accessibilityRole="alert" style={styles.hint}>
           {storageError}
         </Text>
       ) : null}
-      <View style={styles.card}>
-        <View style={styles.heading}>
-          <Ionicons name="options-outline" color={colors.accent} size={21} accessible={false} />
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
-            Trainer Settings
-          </Text>
-        </View>
-        <Text style={styles.label}>Display name</Text>
-        <TextInput
-          accessibilityLabel="Display name"
-          style={styles.input}
-          value={draft.name}
-          onChangeText={(name) => update({ name })}
-          maxLength={50}
-          autoComplete="name"
-          placeholderTextColor={colors.muted}
-          returnKeyType="done"
-        />
-        <Text style={styles.label}>Home neighborhood</Text>
-        <TextInput
-          accessibilityLabel="Home neighborhood"
-          style={styles.input}
-          value={draft.neighborhood}
-          onChangeText={(neighborhood) => update({ neighborhood })}
-          maxLength={80}
-          placeholder="e.g. Kensington Market"
-          placeholderTextColor={colors.muted}
-          returnKeyType="done"
-        />
-        <Text style={styles.label}>Dietary preference</Text>
-        <View style={styles.choices}>
-          {diets.map((diet) => (
-            <Pressable
-              key={diet}
-              accessibilityRole="radio"
-              accessibilityState={{ checked: draft.diet === diet }}
-              onPress={() => {
-                update({ diet });
-                void playSound("tap");
-                hapticLight();
-              }}
-              style={({ pressed }) => [
-                styles.choice,
-                draft.diet === diet && styles.choiceSelected,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.choiceText,
-                  draft.diet === diet && styles.choiceTextSelected,
-                ]}
-              >
-                {diet}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          onPress={save}
-          style={({ pressed }) => [styles.save, pressed && styles.pressed]}
-        >
-          <Text style={styles.saveText}>Save settings</Text>
-          <Ionicons name="checkmark" color={colors.white} size={19} accessible={false} />
-        </Pressable>
-        {message ? (
-          <Text accessibilityRole="alert" style={styles.hint}>
-            {message}
-          </Text>
-        ) : null}
-      </View>
     </ScrollView>
   );
 }
@@ -412,7 +658,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   flex: { flex: 1, gap: 4 },
-  trainerCard: {
+  passportHeader: {
     borderRadius: 28,
     padding: 20,
     backgroundColor: colors.white,
@@ -421,21 +667,64 @@ const styles = StyleSheet.create({
     gap: 16,
     boxShadow: "0 6px 24px #3D568F12",
   },
-  trainerTop: { flexDirection: "row", alignItems: "center", gap: 16 },
-  avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 24,
+  headerTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  eyebrow: {
+    color: colors.muted,
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 1.4,
+  },
+  eyebrowDark: {
+    color: colors.muted,
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 1.4,
+  },
+  passportTitle: {
+    color: colors.ink,
+    fontSize: 24,
+    fontWeight: "700",
+    marginTop: 2,
+  },
+  gearButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 20,
     backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
   },
-  initial: { color: colors.accent, fontSize: 30, fontWeight: "700" },
-  name: { color: colors.ink, fontSize: 23, fontWeight: "700" },
+  identityRow: { flexDirection: "row", alignItems: "center", gap: 16 },
+  avatarFrame: { position: "relative" },
+  levelPill: {
+    position: "absolute",
+    bottom: -1,
+    right: 0,
+    backgroundColor: colors.accent,
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  levelPillText: { color: colors.white, fontSize: 10, fontWeight: "700" },
+  identityText: { flex: 1, gap: 2 },
+  name: { color: colors.ink, fontSize: 22, fontWeight: "700" },
   handle: { color: colors.muted, fontSize: 12, fontWeight: "600" },
-  titleLine: { color: colors.accent, fontSize: 13, fontWeight: "700", marginTop: 2 },
+  titleLine: {
+    color: colors.accent,
+    fontSize: 13,
+    fontWeight: "700",
+    marginTop: 2,
+  },
   xpBlock: { gap: 8 },
-  xpRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  xpRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   xpText: { color: colors.ink, fontSize: 13, fontWeight: "600" },
   xpPercent: { color: colors.muted, fontSize: 12, fontWeight: "700" },
   xpTrack: {
@@ -445,135 +734,193 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   xpFill: { height: "100%", borderRadius: 5, backgroundColor: colors.accent },
-  stats: {
+  statsRow: {
     flexDirection: "row",
     backgroundColor: colors.tint,
-    borderRadius: 22,
-    paddingVertical: 18,
+    borderRadius: 18,
+    paddingVertical: 12,
   },
-  stat: { flex: 1, alignItems: "center", gap: 4 },
-  statValue: { color: colors.accent, fontSize: 26, fontWeight: "700" },
+  stat: { flex: 1, alignItems: "center", gap: 2 },
+  statValue: { color: colors.accent, fontSize: 22, fontWeight: "700" },
   statLabel: { color: colors.muted, fontSize: 10, fontWeight: "600" },
-  card: {
+  adventureCard: {
     borderRadius: 24,
     padding: 18,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
+    alignItems: "center",
+    boxShadow: "0 4px 20px #3D568F10",
   },
-  heading: { flexDirection: "row", gap: 9, alignItems: "center" },
-  sectionTitle: { color: colors.ink, fontSize: 17, fontWeight: "600", flex: 1 },
+  adventureIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: colors.accent,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  adventureTitle: {
+    color: colors.ink,
+    fontSize: 16,
+    fontWeight: "700",
+    marginTop: 2,
+  },
+  adventureCopy: {
+    color: colors.muted,
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 2,
+  },
+  adventureButton: {
+    width: "100%",
+    marginTop: 4,
+    backgroundColor: colors.accent,
+    borderRadius: 14,
+    minHeight: 46,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+  },
+  adventureButtonText: { color: colors.white, fontSize: 14, fontWeight: "600" },
+  section: { gap: 10 },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  sectionTitle: { color: colors.ink, fontSize: 17, fontWeight: "700", flex: 1 },
   link: { color: colors.accent, fontSize: 12, fontWeight: "700" },
   copy: { color: colors.muted, fontSize: 12, lineHeight: 19 },
   hint: { color: colors.accent, fontSize: 12, lineHeight: 19 },
-  badgeRow: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-  badge: {
-    width: "47%",
-    borderRadius: 18,
+  passportRow: { gap: 12, paddingVertical: 2 },
+  passportCard: {
+    width: 150,
+    borderRadius: 20,
     padding: 12,
-    backgroundColor: colors.tint,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: 10,
+  },
+  passportCardLocked: { opacity: 0.6, backgroundColor: colors.tint },
+  passportCardTop: { flexDirection: "row", alignItems: "center", gap: 8 },
+  passportPhoto: { width: 40, height: 40, borderRadius: 12 },
+  lockedCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: colors.paper,
     alignItems: "center",
-    gap: 6,
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  badgeLocked: { opacity: 0.45 },
-  badgeEmoji: { fontSize: 26 },
-  badgeName: { color: colors.ink, fontSize: 12, fontWeight: "700" },
-  badgeNameLocked: { color: colors.muted },
-  cuisineRows: { gap: 12 },
-  cuisineRow: { flexDirection: "row", alignItems: "center", gap: 10 },
-  cuisineFlag: { fontSize: 22 },
-  cuisineLabelRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 4,
+  passportCuisine: {
+    color: colors.ink,
+    fontSize: 13,
+    fontWeight: "700",
+    flex: 1,
   },
-  cuisineName: { color: colors.ink, fontSize: 13, fontWeight: "600" },
-  cuisineCount: { color: colors.muted, fontSize: 12, fontWeight: "600" },
+  passportCuisineLocked: { color: colors.muted },
+  passportProgress: { gap: 4 },
   progressTrack: {
     height: 6,
     borderRadius: 3,
     backgroundColor: colors.tint,
     overflow: "hidden",
   },
-  progressFill: { height: "100%", borderRadius: 3, backgroundColor: colors.accent },
-  mapBox: {
-    height: 170,
-    borderRadius: 18,
-    backgroundColor: "#EAF3FF",
+  progressFill: {
+    height: "100%",
+    borderRadius: 3,
+    backgroundColor: colors.accent,
+  },
+  progressFillLocked: { backgroundColor: colors.border },
+  passportCount: { color: colors.muted, fontSize: 11, fontWeight: "600" },
+  passportStatus: { color: colors.muted, fontSize: 11, fontWeight: "700" },
+  badgeRow: { gap: 12, paddingVertical: 2 },
+  badge: {
+    width: 160,
+    borderRadius: 20,
+    padding: 12,
+    backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
-    position: "relative",
-    overflow: "hidden",
-  },
-  mapPin: {
-    position: "absolute",
-    width: 26,
-    height: 26,
-    marginLeft: -13,
-    marginTop: -13,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-  },
-  mapPinActive: {
-    backgroundColor: colors.white,
-    borderColor: colors.accent,
-  },
-  mapPinIdle: {
-    backgroundColor: "#F2F2F2",
-    borderColor: colors.border,
-    opacity: 0.5,
-  },
-  mapPinEmoji: { fontSize: 14 },
-  recentRow: { gap: 10, paddingVertical: 2 },
-  recentCard: {
-    width: 92,
-    borderRadius: 16,
-    padding: 10,
-    backgroundColor: colors.tint,
     alignItems: "center",
     gap: 6,
   },
-  recentEmoji: { fontSize: 28 },
-  recentName: { color: colors.ink, fontSize: 11, fontWeight: "600" },
-  label: { color: colors.ink, fontSize: 13, fontWeight: "600" },
-  input: {
-    backgroundColor: colors.paper,
+  badgeLocked: { backgroundColor: colors.paper },
+  badgePinned: { borderColor: colors.ink, backgroundColor: colors.tint },
+  badgeDescription: {
+    color: colors.muted,
+    fontSize: 11,
+    lineHeight: 16,
+    textAlign: "center",
+    minHeight: 32,
+  },
+  badgeName: {
     color: colors.ink,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 13,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
-    fontSize: 14,
-    minHeight: 48,
+    fontSize: 12,
+    fontWeight: "700",
+    textAlign: "center",
   },
-  choices: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  choice: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 24,
-    paddingHorizontal: 14,
-    minHeight: 48,
-    justifyContent: "center",
-  },
-  choiceSelected: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-  },
-  choiceText: { color: colors.ink, fontSize: 12, fontWeight: "600" },
-  choiceTextSelected: { color: colors.white },
-  save: {
-    backgroundColor: colors.accent,
-    borderRadius: 14,
-    minHeight: 48,
-    flexDirection: "row",
-    justifyContent: "center",
+  badgeProgress: { color: colors.muted, fontSize: 11, fontWeight: "700" },
+  badgeEarned: { color: colors.accent, fontSize: 11, fontWeight: "700" },
+  emptyDiscoveries: {
+    borderRadius: 20,
+    padding: 24,
+    backgroundColor: colors.tint,
     alignItems: "center",
     gap: 8,
   },
-  saveText: { color: colors.white, fontSize: 14, fontWeight: "600" },
+  recentRow: { gap: 12, paddingVertical: 2 },
+  recentCard: {
+    width: 132,
+    borderRadius: 18,
+    padding: 10,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    gap: 6,
+  },
+  recentPhoto: { width: "100%", height: 110, borderRadius: 14 },
+  recentName: { color: colors.ink, fontSize: 12, fontWeight: "700" },
+  recentCuisine: { color: colors.muted, fontSize: 10, fontWeight: "600" },
+  featuredTrophy: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    padding: 10,
+    borderRadius: 16,
+    backgroundColor: colors.tint,
+  },
+  featuredName: { color: colors.ink, fontSize: 13, fontWeight: "700" },
+  customizeButton: {
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    gap: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.tint,
+  },
+  customizeText: {
+    flex: 1,
+    color: colors.ink,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  sectionAction: {
+    minHeight: 48,
+    minWidth: 64,
+    alignItems: "flex-end",
+    justifyContent: "center",
+  },
   pressed: { opacity: 0.65 },
 });

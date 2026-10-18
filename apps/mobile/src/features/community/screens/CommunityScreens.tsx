@@ -1,3 +1,5 @@
+import { TrophyArt } from "../../profile/components/RewardArt";
+import { CiboLogo } from "../../../components/CiboLogo";
 import {
   createContext,
   useContext,
@@ -155,10 +157,16 @@ function Page({
       style={s.screen}
       contentContainerStyle={[
         s.content,
-        { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 115 },
+        { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 115 },
       ]}
       keyboardShouldPersistTaps="handled"
     >
+      <View style={s.brandHeader}>
+        <CiboLogo />
+        <View style={s.brand}>
+          <Icon name={icon} size={26} />
+        </View>
+      </View>
       <View style={s.heading}>
         <View style={s.flex}>
           <Text style={s.eyebrow}>{eyebrow}</Text>
@@ -166,33 +174,40 @@ function Page({
             {title}
           </Text>
         </View>
-        <View style={s.brand}>
-          <Icon name={icon} size={26} />
-        </View>
+        <Text style={s.intro}>{intro}</Text>
       </View>
-      <Text style={s.intro}>{intro}</Text>
       {navigation && (
-        <View style={s.actions}>
+        <View accessibilityRole="tablist" style={s.tabs}>
           {(["favorites", "friends", "badges"] as const).map((section) => (
-            <Action
+            <Pressable
               key={section}
-              label={
-                section === "favorites"
+              accessibilityRole="tab"
+              accessibilityState={{ selected: navigation.section === section }}
+              onPress={() => navigation.setSection(section)}
+              style={({ pressed }) => [
+                s.tab,
+                navigation.section === section && s.selectedTab,
+                pressed && s.dim,
+              ]}
+            >
+              <Icon
+                name={
+                  section === "favorites"
+                    ? "heart-outline"
+                    : section === "friends"
+                      ? "people-outline"
+                      : "ribbon-outline"
+                }
+                size={18}
+              />
+              <Text style={s.tabText}>
+                {section === "favorites"
                   ? "Favorites"
                   : section === "friends"
                     ? "Friends"
-                    : "Badges"
-              }
-              icon={
-                section === "favorites"
-                  ? "heart-outline"
-                  : section === "friends"
-                    ? "people-outline"
-                    : "ribbon-outline"
-              }
-              selected={navigation.section === section}
-              onPress={() => navigation.setSection(section)}
-            />
+                    : "Badges"}
+              </Text>
+            </Pressable>
           ))}
         </View>
       )}
@@ -218,6 +233,7 @@ export function FavoritesScreen({
     [places, collection.ratings],
   );
   const [query, setQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const ranked = collection.favorites.flatMap((id) => {
     const place = places.find((item) => item.id === id);
     return place ? [place] : [];
@@ -328,14 +344,9 @@ export function FavoritesScreen({
         <View style={fs.heroIcon}>
           <Icon name="podium-outline" size={28} />
         </View>
-        <View style={s.flex}>
+        <View style={fs.heroCopy}>
           <Text style={fs.heroNumber}>{ranked.length} ranked</Text>
           <Text style={s.small}>Your personal leaderboard.</Text>
-        </View>
-        <View style={fs.heroBadge}>
-          <Text style={fs.heroBadgeText}>
-            {ranked.length ? "Top spot" : "Start"}
-          </Text>
         </View>
       </View>
       <Text accessibilityRole="header" style={s.section}>
@@ -364,7 +375,9 @@ export function FavoritesScreen({
         placeholderTextColor={colors.muted}
         value={query}
         onChangeText={setQuery}
-        style={s.input}
+        onFocus={() => setSearchFocused(true)}
+        onBlur={() => setSearchFocused(false)}
+        style={[s.input, searchFocused && s.searchActive]}
       />
       {unrated.map((place) => ratingCard(place))}
       {!unrated.length && (
@@ -391,6 +404,7 @@ export function FriendsScreen({
   );
   const [mode, setMode] = useState<"activity" | "find">("activity");
   const [query, setQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const [filter, setFilter] = useState<string | null>(null);
   const friends = sampleFriends.filter((friend) =>
     collection.friendIds.includes(friend.id),
@@ -431,15 +445,18 @@ export function FriendsScreen({
       </View>
       {mode === "find" ? (
         <>
-          <TextInput
-            accessibilityLabel="Search sample friends by name or handle"
-            placeholder="Search a name or handle…"
-            placeholderTextColor={colors.muted}
-            value={query}
-            onChangeText={setQuery}
-            style={s.input}
-            autoCapitalize="none"
-          />
+           <TextInput
+             accessibilityLabel="Search sample friends by name or handle"
+             placeholder="Search a name or handle…"
+             placeholderTextColor={colors.muted}
+             value={query}
+             onChangeText={setQuery}
+             onFocus={() => setSearchFocused(true)}
+             onBlur={() => setSearchFocused(false)}
+             style={[s.input, searchFocused && s.searchActive]}
+             autoCapitalize="none"
+           />
+
           <Text accessibilityRole="header" style={s.section}>
             Find your food people
           </Text>
@@ -603,7 +620,7 @@ export function AchievementsScreen({
       error={storageError}
     >
       <View style={s.hero}>
-        <Icon name="trophy-outline" size={38} />
+        <TrophyArt id="gourmet" size={64} />
         <View style={s.flex}>
           <Text style={s.heroNumber}>
             {earned} of {badges.length} badges earned
@@ -643,9 +660,7 @@ export function AchievementsScreen({
         return (
           <View key={badge.id} style={[s.card, unlocked && s.earnedCard]}>
             <View style={s.row}>
-              <View style={s.badge}>
-                <Icon name={badge.icon} size={32} />
-              </View>
+              <TrophyArt id={badge.id} size={80} locked={!unlocked} />
               <View style={s.flex}>
                 <Text style={s.eyebrow}>
                   {unlocked ? "EARNED" : "IN PROGRESS"}
@@ -720,10 +735,16 @@ const s = StyleSheet.create({
     maxWidth: 720,
     alignSelf: "center",
     paddingHorizontal: 20,
-    gap: 16,
+    gap: 20,
   },
-  flex: { flex: 1 },
-  heading: { flexDirection: "row", alignItems: "center", gap: 12 },
+  flex: { flex: 1, minWidth: 0 },
+  brandHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  heading: { gap: 10 },
   eyebrow: {
     fontSize: 10,
     fontWeight: "700",
@@ -731,17 +752,18 @@ const s = StyleSheet.create({
     color: colors.muted,
   },
   title: {
-    fontSize: 31,
+    fontSize: 30,
+    lineHeight: 36,
     fontWeight: "700",
     letterSpacing: -1,
     color: colors.ink,
     marginTop: 5,
   },
-  intro: { fontSize: 14, lineHeight: 22, color: colors.muted },
+  intro: { fontSize: 14, lineHeight: 22, color: colors.muted, maxWidth: 520 },
   brand: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 16,
     backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
@@ -797,6 +819,33 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  tabs: {
+    flexDirection: "row",
+    gap: 8,
+    padding: 4,
+    borderRadius: 18,
+    backgroundColor: colors.border,
+  },
+  tab: {
+    flex: 1,
+    minWidth: 0,
+    minHeight: 44,
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRadius: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+  selectedTab: { backgroundColor: colors.tint },
+  tabText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.ink,
+    flexShrink: 1,
+    textAlign: "center",
+  },
   actions: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   button: {
     minHeight: 48,
@@ -828,6 +877,10 @@ const s = StyleSheet.create({
     fontSize: 14,
     color: colors.ink,
     backgroundColor: colors.white,
+  },
+  searchActive: {
+    borderColor: colors.accent,
+    backgroundColor: colors.tint,
   },
   notice: {
     borderRadius: 14,
@@ -934,11 +987,5 @@ const fs = StyleSheet.create({
     color: colors.accent,
     marginBottom: 3,
   },
-  heroBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 999,
-    backgroundColor: colors.white,
-  },
-  heroBadgeText: { fontSize: 12, fontWeight: "700", color: colors.accent },
+  heroCopy: { flex: 1, minWidth: 0, gap: 4 },
 });

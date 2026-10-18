@@ -34,11 +34,18 @@ import { foodKey } from "../models/foodDex";
 export function FoodCameraScreen({
   onCapture,
   onClose,
+  initialMode = "food",
+  onMenuCapture,
+  onMenuExplore,
 }: {
   onCapture: (capture: FoodCapture) => void;
   onClose: () => void;
+  initialMode?: "food" | "menu";
+  onMenuCapture: (photo: CameraCapturedPicture) => void;
+  onMenuExplore: () => void;
 }) {
   const insets = useSafeAreaInsets();
+  const [mode, setMode] = useState(initialMode);
   const camera = useRef<FoodCameraHandle>(null);
   const mounted = useRef(true);
   const capturing = useRef(false);
@@ -63,7 +70,7 @@ export function FoodCameraScreen({
   const { entries } = useFoodDex();
   const live = useLiveFoodDetection(
     camera,
-    ready && active && !photo,
+    ready && active && !photo && mode === "food",
     `${facing}-${attempt}`,
   );
   const boxes = photo ? capturedTracks : live.tracks;
@@ -177,13 +184,18 @@ export function FoodCameraScreen({
         quality: 0.7,
         base64: false,
       });
-      const image = await resizeScanImage(raw, 1024, true);
+      const image = await resizeScanImage(
+        raw,
+        mode === "menu" ? 1800 : 1024,
+        true,
+      );
       if (!mounted.current || current !== generation.current) {
         deleteScanImage(image.uri);
         return;
       }
       const captured: CameraCapturedPicture = { ...image, format: "jpg" };
       setPhoto(captured);
+      if (mode === "menu") return;
       let tracks: FoodTrack[] = [];
       // Re-detect the captured image so the frozen box and upload crop match it.
       try {
@@ -255,7 +267,11 @@ export function FoodCameraScreen({
             source={{ uri: photo.uri }}
             style={StyleSheet.absoluteFill}
             resizeMode="cover"
-            accessibilityLabel="Your captured food photo"
+            accessibilityLabel={
+              mode === "menu"
+                ? "Your captured menu photo"
+                : "Your captured food photo"
+            }
           />
         ) : permission?.granted && active ? (
           <FoodCameraView
@@ -288,7 +304,9 @@ export function FoodCameraScreen({
                 : "Getting your camera ready…"}
             </Text>
             <Text style={s.panelCopy}>
-              Allow camera access to photograph food right here in Cibo.
+              {mode === "menu"
+                ? "Allow camera access to scan a menu right here in Cibo."
+                : "Allow camera access to photograph food right here in Cibo."}
             </Text>
             {!permission ? (
               <ActivityIndicator color={colors.accent} />
@@ -313,28 +331,34 @@ export function FoodCameraScreen({
             )}
           </View>
         )}
-        {boxes.map((box) => (
-          <FoodBoundingBox
-            key={box.id}
-            box={box.box}
-            frame={photo ?? live.frame}
-            preview={preview}
-            mirrored={!photo && (live.frame.mirrored ?? facing === "front")}
-            label={
-              photo && box.id === selectedBox?.id
-                ? resultLabel
-                : "Food detected"
-            }
-            selected={box.id === selectedBox?.id}
-            onSelect={() => {
-              if (identifying || box.id === selectedBox?.id) return;
-              setSelectedId(box.id);
-              if (photo) {
-                setRecognition(null);
+        {mode === "menu" && !photo && permission?.granted && (
+          <View pointerEvents="none" style={s.menuGuide}>
+            <Text style={s.menuHint}>Keep the full menu in the frame</Text>
+          </View>
+        )}
+        {mode === "food" &&
+          boxes.map((box) => (
+            <FoodBoundingBox
+              key={box.id}
+              box={box.box}
+              frame={photo ?? live.frame}
+              preview={preview}
+              mirrored={!photo && (live.frame.mirrored ?? facing === "front")}
+              label={
+                photo && box.id === selectedBox?.id
+                  ? resultLabel
+                  : "Food detected"
               }
-            }}
-          />
-        ))}
+              selected={box.id === selectedBox?.id}
+              onSelect={() => {
+                if (identifying || box.id === selectedBox?.id) return;
+                setSelectedId(box.id);
+                if (photo) {
+                  setRecognition(null);
+                }
+              }}
+            />
+          ))}
       </View>
       <View
         pointerEvents="box-none"
@@ -348,6 +372,37 @@ export function FoodCameraScreen({
         >
           {icon("close-outline")}
         </Pressable>
+        <View
+          accessibilityRole="tablist"
+          accessibilityLabel="Scan mode"
+          style={s.modeSelector}
+        >
+          {(["food", "menu"] as const).map((value) => (
+            <Pressable
+              key={value}
+              accessibilityRole="tab"
+              accessibilityLabel={
+                value === "food" ? "Food detector" : "Menu Lens"
+              }
+              accessibilityState={{ selected: mode === value, disabled: busy }}
+              disabled={busy}
+              onPress={() => {
+                if (mode === value) return;
+                retake();
+                setMode(value);
+              }}
+              style={({ pressed }) => [
+                s.modeOption,
+                mode === value && s.selected,
+                pressed && s.pressed,
+              ]}
+            >
+              <Text style={s.secondaryText}>
+                {value === "food" ? "Food" : "Menu"}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={
@@ -374,13 +429,18 @@ export function FoodCameraScreen({
             },
           ]}
         >
-          <Text style={s.panelTitle}>Capture a food discovery</Text>
-          <Text style={s.panelCopy}>
-            Frame your dish, take a photo, then review the suggestion before
-            saving it. Photos are sent to Groq to identify your meal. Live
-            detection stays on your device.
+          <Text style={s.panelTitle}>
+            {mode === "menu"
+              ? "Explore with Menu Lens"
+              : "Capture a food discovery"}
           </Text>
-          {!photo &&
+          <Text style={s.panelCopy}>
+            {mode === "menu"
+              ? "Frame the full menu with readable dish names, take a photo, then scan it to explore dishes, discoveries, and dietary details. Captured menus are sent to our AI service."
+              : "Frame your dish, take a photo, then review the suggestion before saving it. Photos are sent to Groq to identify your meal. Live detection stays on your device."}
+          </Text>
+          {mode === "food" &&
+            !photo &&
             ready &&
             live.status.startsWith("Live detection unavailable") && (
               <>
@@ -401,6 +461,17 @@ export function FoodCameraScreen({
         </ScrollView>
       )}
       <View style={[s.overlay, { bottom: insets.bottom + 24 }]}>
+        {mode === "menu" && !photo && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={onMenuExplore}
+            disabled={busy}
+            style={({ pressed }) => [s.secondary, pressed && s.pressed]}
+          >
+            {icon("image-outline", 20)}
+            <Text style={s.secondaryText}>Upload or try a sample menu</Text>
+          </Pressable>
+        )}
         {!!error && (
           <View accessibilityLiveRegion="polite" style={s.errorRow}>
             <Text style={s.error}>{error}</Text>
@@ -425,14 +496,16 @@ export function FoodCameraScreen({
                 <ActivityIndicator color={cameraColors.foreground} />
               )}
               <Text accessibilityLiveRegion="polite" style={s.panelTitle}>
-                {identifying
-                  ? "Identifying your dish…"
-                  : recognition
-                    ? resultLabel
-                    : "Review your photo"}
+                {mode === "menu"
+                  ? "Ready to scan your menu"
+                  : identifying
+                    ? "Identifying your dish…"
+                    : recognition
+                      ? resultLabel
+                      : "Review your photo"}
               </Text>
             </View>
-            {!identifying && !recognition && (
+            {mode === "food" && !identifying && !recognition && (
               <Pressable
                 accessibilityRole="button"
                 onPress={() => void identify(photo, selectedBox)}
@@ -458,7 +531,11 @@ export function FoodCameraScreen({
               accessibilityRole="button"
               disabled={identifying || busy}
               accessibilityState={{ disabled: identifying || busy }}
-              onPress={() =>
+              onPress={() => {
+                if (mode === "menu") {
+                  onMenuCapture(photo);
+                  return;
+                }
                 onCapture({
                   id: Date.now(),
                   error: "",
@@ -471,15 +548,19 @@ export function FoodCameraScreen({
                     mimeType: "image/jpeg",
                     type: "image",
                   },
-                })
-              }
+                });
+              }}
               style={({ pressed }) => [
                 s.primary,
                 (pressed || identifying || busy) && s.pressed,
               ]}
             >
               <Text style={s.primaryText}>
-                {identifying ? "Identifying…" : "Use photo"}
+                {mode === "menu"
+                  ? "Scan menu"
+                  : identifying
+                    ? "Identifying…"
+                    : "Use photo"}
               </Text>
               <Ionicons
                 name="arrow-forward"
@@ -515,7 +596,9 @@ export function FoodCameraScreen({
             )}
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Take food photo"
+              accessibilityLabel={
+                mode === "menu" ? "Take menu photo" : "Take food photo"
+              }
               accessibilityState={{ disabled: !ready || busy, busy }}
               disabled={!ready || busy}
               onPress={() => void snap()}
@@ -567,6 +650,43 @@ const s = StyleSheet.create({
     right: 16,
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  modeSelector: {
+    flexDirection: "row",
+    backgroundColor: cameraColors.surface,
+    borderRadius: 24,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: cameraColors.border,
+  },
+  modeOption: {
+    minWidth: 64,
+    minHeight: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 22,
+    paddingHorizontal: 12,
+  },
+  menuGuide: {
+    position: "absolute",
+    top: "24%",
+    bottom: "30%",
+    left: "10%",
+    right: "10%",
+    borderWidth: 1,
+    borderColor: cameraColors.foreground,
+    borderRadius: 16,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    padding: 12,
+  },
+  menuHint: {
+    color: cameraColors.foreground,
+    backgroundColor: cameraColors.surface,
+    borderRadius: 12,
+    padding: 10,
+    fontSize: 13,
+    textAlign: "center",
   },
   overlay: {
     position: "absolute",

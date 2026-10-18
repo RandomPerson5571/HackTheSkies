@@ -4,12 +4,17 @@ import { fileURLToPath } from "node:url";
 import * as foodScan from "./routes/food-scan.ts";
 import * as foodRecommendations from "./routes/food-recommendations.ts";
 
+import * as menuScan from "./routes/menu-scan.ts";
+import * as questPersonalization from "./routes/quest-personalization.ts";
+
 const routes: Record<
   string,
   { POST: (request: Request) => Promise<Response>; OPTIONS: () => Response }
 > = {
   "/api/food-scan": foodScan,
+  "/api/menu-scan": menuScan,
   "/api/food-recommendations": foodRecommendations,
+  "/api/quest-personalization": questPersonalization,
 };
 const defaultRoot = fileURLToPath(new URL("../dist/", import.meta.url));
 const mime: Record<string, string> = {

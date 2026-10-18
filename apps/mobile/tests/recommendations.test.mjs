@@ -9,6 +9,9 @@ import {
 import {
   buildRecommendations,
   getMapMarkerPlaces,
+  rarityLabel,
+  rarityPolicy,
+  rarityScore,
   recommendationLabel,
   recommendationPolicy,
   scoreRestaurant,
@@ -155,4 +158,28 @@ test("map photos increase with zoom while staying viewport-only and prioritizing
     1,
   );
   assert.deepEqual(getMapMarkerPlaces([], visible, ratings, "place-0"), []);
+});
+
+test("rarity weighs rating 60% and nicheness 40%, out of 5", () => {
+  assert.equal(rarityPolicy.ratingWeight, 0.6);
+  assert.equal(rarityPolicy.nicheWeight, 0.4);
+  assert.ok(rarityScore(4.8, 40) > rarityScore(4.8, 2000));
+  assert.ok(rarityScore(4.8, 300) > rarityScore(3.8, 300));
+  assert.equal(rarityScore(5, rarityPolicy.popularityCeiling), 3);
+  assert.ok(rarityScore(5, 1) <= 5 && rarityScore(1, 1_000_000) >= 0);
+  for (const [average, count] of [[NaN, 5], [6, 3], [4.5, 0], [4.5, 1.5]])
+    assert.equal(rarityScore(average, count), null);
+  assert.equal(rarityLabel({ value: 3.2, estimated: false }), "Rarity 3.2/5");
+  assert.equal(rarityLabel(undefined), "Rarity unknown");
+});
+
+test("every imported restaurant has a rarity, estimated when it has under 10 public ratings", () => {
+  for (const place of places) {
+    assert.ok(place.rarity, place.name);
+    assert.ok(place.rarity.value >= 0 && place.rarity.value <= 5, place.name);
+    assert.equal(
+      place.rarity.estimated,
+      (place.ratingCount ?? 0) < rarityPolicy.minimumRatings,
+    );
+  }
 });

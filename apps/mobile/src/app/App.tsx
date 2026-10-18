@@ -76,6 +76,8 @@ import { RestaurantsScreen } from "../features/restaurants/screens/RestaurantsSc
 import { useRestaurantCollection } from "../features/restaurants/hooks/useRestaurantCollection";
 import {
   buildRecommendations,
+  rarityFilterOptions,
+  rarityLabel,
   recommendationLabel,
 } from "../features/restaurants/models/recommendations";
 import { FoodRecommender } from "../features/restaurants/components/FoodRecommender";
@@ -232,6 +234,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     return () => animation.stop();
   }, [filtersExpanded, filtersProgress, reduceMotion]);
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
+  const [rarityFilter, setRarityFilter] = useState<number | null>(null);
   const [query, setQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
   const [selected, setSelected] = useState<Place | null>(null);
@@ -354,6 +357,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         (category === "All" || place.category === category) &&
         (!ratingFilter ||
           (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
+        (!rarityFilter ||
+          (place.rarity?.value ?? 0) >= rarityFilter) &&
         (!restaurantTypeFilter.length ||
           restaurantTypeFilter.includes(place.type ?? place.category)) &&
         (!foodTypeFilter.length ||
@@ -375,6 +380,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     savedFilter,
     collection.ratings,
     ratingFilter,
+    rarityFilter,
     restaurantTypeFilter,
     foodTypeFilter,
     cuisineFilter,
@@ -389,6 +395,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         (category === "All" || place.category === category) &&
         (!ratingFilter ||
           (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
+        (!rarityFilter ||
+          (place.rarity?.value ?? 0) >= rarityFilter) &&
         (!restaurantTypeFilter.length ||
           restaurantTypeFilter.includes(place.type ?? place.category)) &&
         (!foodTypeFilter.length ||
@@ -410,6 +418,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     savedFilter,
     collection.ratings,
     ratingFilter,
+    rarityFilter,
     restaurantTypeFilter,
     foodTypeFilter,
     cuisineFilter,
@@ -426,6 +435,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   );
   const activeFilterCount =
     (ratingFilter ? 1 : 0) +
+    (rarityFilter ? 1 : 0) +
     (restaurantTypeFilter.length ? 1 : 0) +
     (foodTypeFilter.length ? 1 : 0) +
     (cuisineFilter.length ? 1 : 0) +
@@ -672,6 +682,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     if (dimension === "rating") {
       return ratingFilter ? `${ratingFilter}+ stars` : null;
     }
+    if (dimension === "rarity")
+      return rarityFilter ? `${rarityFilter}+ rarity` : null;
     if (dimension === "restaurantType")
       return multiSelectLabel(restaurantTypeFilter);
     if (dimension === "foodType") return multiSelectLabel(foodTypeFilter);
@@ -692,6 +704,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   }
   function clearAllFilters() {
     setRatingFilter(null);
+    setRarityFilter(null);
     setRestaurantTypeFilter([]);
     setFoodTypeFilter([]);
     setCuisineFilter([]);
@@ -1070,9 +1083,34 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   </Pressable>
                 ))
               ) : (
-                <Text style={styles.small}>
-                  Rarity data isn’t available for these listings yet.
-                </Text>
+                ["Any rarity", ...rarityFilterOptions].map((value) => (
+                  <Pressable
+                    key={value}
+                    accessibilityRole="button"
+                    accessibilityLabel={
+                      value === "Any rarity"
+                        ? "Show any rarity"
+                        : `Filter rarity ${value} out of 5 and up`
+                    }
+                    accessibilityState={{
+                      selected:
+                        value === "Any rarity"
+                          ? rarityFilter === null
+                          : rarityFilter === value,
+                    }}
+                    onPress={() => {
+                      setRarityFilter(
+                        value === "Any rarity" ? null : (value as number),
+                      );
+                      closeFilterDropdown();
+                    }}
+                    style={styles.filterDropdownOption}
+                  >
+                    <Text style={styles.filterDropdownOptionText}>
+                      {value === "Any rarity" ? value : `${value}+ out of 5`}
+                    </Text>
+                  </Pressable>
+                ))
               )}
             </ScrollView>
             {(openFilter === "cuisine" ||
@@ -1172,6 +1210,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setCategory("All");
               setQuery("");
               setRatingFilter(null);
+              setRarityFilter(null);
               setRestaurantTypeFilter([]);
               setFoodTypeFilter([]);
               setCuisineFilter([]);
@@ -1479,6 +1518,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     <Text style={styles.small}>
                       {recommendationLabel(recommendations.get(active.id))} ·
                       Sample community reviews
+                    </Text>
+                    <Text style={styles.small}>
+                      {rarityLabel(active.rarity)}
                     </Text>
                     {activeFriendReviews.length > 0 && (
                       <View style={{ gap: 8, marginTop: 4 }}>
@@ -1867,6 +1909,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       </Text>
                       <Text style={styles.small}>
                         {recommendationLabel(recommendations.get(item.id))}
+                      </Text>
+                      <Text style={styles.small}>
+                        {rarityLabel(item.rarity)}
                       </Text>
                     </View>
                     <Icon name="chevron-forward" size={18} />

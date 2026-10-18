@@ -28,7 +28,9 @@
       "countrycode": "CA"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Asian Legend",
@@ -65,7 +67,9 @@
       ]
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 284,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/asian-legend-/"
   },
   {
     "restaurant_name": "August 8 AYCE Dimsum & Sushi",
@@ -102,7 +106,9 @@
       ]
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Banbudian Bistro",
@@ -133,7 +139,9 @@
       "countrycode": "CA"
     },
     "rating": 4.5,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Banh Mi Ba Le",
@@ -164,7 +172,9 @@
       "countrycode": "CA"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Banh Mi Nguyen Huong",
@@ -195,7 +205,9 @@
       "countrycode": "CA"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 263,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/banh-mi-nguyen-huong-/"
   },
   {
     "restaurant_name": "BAO Goubuli",
@@ -226,7 +238,9 @@
       "countrycode": "CA"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Bitter Melon",
@@ -257,7 +271,9 @@
       "countrycode": "CA"
     },
     "rating": 2.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Biwon Korean Restaurant",
@@ -288,7 +304,9 @@
       "countrycode": "CA"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 689,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/biwon-korean-restaurant-/"
   },
   {
     "restaurant_name": "Bun Saigon Vietnamese Restaurant",
@@ -319,7 +337,9 @@
       "countrycode": "CA"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 186,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/bun-saigon-vietnamese-restaurant-/"
   },
   {
     "restaurant_name": "Canteen Restaurant",
@@ -350,7 +370,9 @@
       "countrycode": "CA"
     },
     "rating": 2.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Canton Chilli",
@@ -381,7 +403,9 @@
       "countrycode": "CA"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 219,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/canton-chilli-/"
   },
   {
     "restaurant_name": "Chat Bar",
@@ -412,7 +436,9 @@
       "countrycode": "CA"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 292,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/chat-bar-/"
   },
   {
     "restaurant_name": "Cheng Du Street Food",
@@ -444,7 +470,9 @@
       "countrycode": "CA"
     },
     "rating": 4.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Chine Legendary Hot Pot & Noodles",
@@ -481,7 +509,9 @@
       ]
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Chinese Traditional Buns",
@@ -512,7 +542,9 @@
       "countrycode": "CA"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "ChongQing Chicken Hotpot",
@@ -543,7 +575,9 @@
       "countrycode": "CA"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Crimson Teas",
@@ -580,7 +614,9 @@
       ]
     },
     "rating": 2.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 195,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/crimson-teas-/"
   },
   {
     "restaurant_name": "Dim Sum King",
@@ -611,7 +647,9 @@
       "countrycode": "CA"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 473,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/dim-sum-king-/"
   },
   {
     "restaurant_name": "Dumpling & More",
@@ -648,7 +686,9 @@
       ]
     },
     "rating": 3.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Dumpling House Restaurant",
@@ -679,7 +719,9 @@
       "countrycode": "CA"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 466,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/dumpling-house-restaurant-/"
   },
   {
     "restaurant_name": "Dundas Spring Garden",
@@ -716,7 +758,9 @@
       ]
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Eat Yet Big Rice Bowls",
@@ -747,7 +791,9 @@
       "countrycode": "CA"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Fudao Noodle House",
@@ -784,7 +830,9 @@
       ]
     },
     "rating": 4.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 368,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/fudao-noodle-house-/"
   },
   {
     "restaurant_name": "Good Brother BBQ",
@@ -816,7 +864,9 @@
       "countrycode": "CA"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Grandma Kitchens",
@@ -847,7 +897,9 @@
       "countrycode": "CA"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Han's Stir Fry & BBQ",
@@ -878,7 +930,9 @@
       "countrycode": "CA"
     },
     "rating": 4.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Happy Lamb Hot Pot",
@@ -909,7 +963,9 @@
       "countrycode": "CA"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Hey Noodles",
@@ -946,7 +1002,9 @@
       ]
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 243,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/hey-noodles-/"
   },
   {
     "restaurant_name": "Homemade Ramen",
@@ -977,7 +1035,9 @@
       "countrycode": "CA"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 318,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/homemade-ramen-/"
   },
   {
     "restaurant_name": "Hong Kong Bistro Cafe",
@@ -1009,7 +1069,9 @@
       "countrycode": "CA"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 249,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/hong-kong-bistro-cafe-/"
   },
   {
     "restaurant_name": "Hong Kong Island Bakery",
@@ -1040,7 +1102,9 @@
       "countrycode": "CA"
     },
     "rating": 4.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "House of Gourmet",
@@ -1077,7 +1141,9 @@
       ]
     },
     "rating": 4.1,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 605,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/house-of-gourmet-/"
   },
   {
     "restaurant_name": "Jian Bing Club",
@@ -1108,7 +1174,9 @@
       "countrycode": "CA"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 117,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/jian-bing-club-/"
   },
   {
     "restaurant_name": "Juicy Dumpling",
@@ -1139,7 +1207,9 @@
       "countrycode": "CA"
     },
     "rating": 4.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 681,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/juicy-dumpling-/"
   },
   {
     "restaurant_name": "Kim Vietnamese Restaurant",
@@ -1170,7 +1240,9 @@
       "countrycode": "CA"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 105,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/kim-vietnamese-restaurant-/"
   },
   {
     "restaurant_name": "King's Noodle",
@@ -1207,7 +1279,9 @@
       ]
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "KL Kitchen Seafood Cuisine",
@@ -1238,7 +1312,9 @@
       "countrycode": "CA"
     },
     "rating": 4.1,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Kokumi Mini Hot Pot",
@@ -1275,7 +1351,9 @@
       ]
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Kung Fu Beer Chinese BBQ",
@@ -1312,7 +1390,9 @@
       ]
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Kung Fu Duck",
@@ -1349,7 +1429,9 @@
       ]
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Liuyishou Hotpot",
@@ -1380,7 +1462,9 @@
       "countrycode": "CA"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Magical Taste of China",
@@ -1411,7 +1495,9 @@
       "countrycode": "CA"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Master Pot",
@@ -1442,7 +1528,9 @@
       "countrycode": "CA"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Matsutei Sukiyaki",
@@ -1479,7 +1567,9 @@
       ]
     },
     "rating": 4.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 493,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/matsutei-sukiyaki-/"
   },
   {
     "restaurant_name": "Mix 2 Grill & Hot Pot",
@@ -1511,7 +1601,9 @@
       "countrycode": "CA"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Mother's Dumplings",
@@ -1548,7 +1640,9 @@
       ]
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 503,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/mothers-dumplings-/"
   },
   {
     "restaurant_name": "New Ho King",
@@ -1580,7 +1674,9 @@
       "countrycode": "CA"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 267,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/new-ho-king-/"
   },
   {
     "restaurant_name": "New Hong Fatt BBQ Restaurant",
@@ -1611,7 +1707,9 @@
       "countrycode": "CA"
     },
     "rating": 4.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "New Sky Restaurant",
@@ -1642,7 +1740,9 @@
       "countrycode": "CA"
     },
     "rating": 3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 339,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/new-sky-restaurant-/"
   },
   {
     "restaurant_name": "North-East Chinese Restaurant",
@@ -1679,7 +1779,9 @@
       ]
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Owl of Minerva Korean Restaurant",
@@ -1710,7 +1812,9 @@
       "countrycode": "CA"
     },
     "rating": 3.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Papa Spicy",
@@ -1741,7 +1845,9 @@
       "countrycode": "CA"
     },
     "rating": 3.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pho Hung",
@@ -1772,7 +1878,9 @@
       "countrycode": "CA"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pho Pasteur Vietnamese Cuisine",
@@ -1803,7 +1911,9 @@
       "countrycode": "CA"
     },
     "rating": 4.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pho Xe Lua",
@@ -1834,7 +1944,9 @@
       "countrycode": "CA"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 208,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/pho-xe-lua-/"
   },
   {
     "restaurant_name": "Qin's Garden",
@@ -1871,7 +1983,9 @@
       ]
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Ramen Station",
@@ -1902,7 +2016,9 @@
       "countrycode": "CA"
     },
     "rating": 3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "R&D",
@@ -1939,7 +2055,9 @@
       ]
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Rol San Restaurant",
@@ -1970,7 +2088,9 @@
       "countrycode": "CA"
     },
     "rating": 4.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Rosewood Chinese Cuisine",
@@ -2001,7 +2121,9 @@
       "countrycode": "CA"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Rua De Macau",
@@ -2033,7 +2155,9 @@
       "countrycode": "CA"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sang's Great Seafood",
@@ -2064,7 +2188,9 @@
       "countrycode": "CA"
     },
     "rating": 4.6,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Shi Miao Dao Yunnan Rice Noodle",
@@ -2095,7 +2221,9 @@
       "countrycode": "CA"
     },
     "rating": 3.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sichuan Garden Restaurant",
@@ -2126,7 +2254,9 @@
       "countrycode": "CA"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Simmer Huang",
@@ -2157,7 +2287,9 @@
       "countrycode": "CA"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sky Dragon Chinese Restaurant",
@@ -2188,7 +2320,9 @@
       "countrycode": "CA"
     },
     "rating": 2.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 152,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/sky-dragon-chinese-restaurant-/"
   },
   {
     "restaurant_name": "Spice and Aroma",
@@ -2219,7 +2353,9 @@
       "countrycode": "CA"
     },
     "rating": 4.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Swatow Cantonese Restaurant",
@@ -2256,7 +2392,9 @@
       ]
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Taste of Alley",
@@ -2293,7 +2431,9 @@
       ]
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Taste of China Seafood Restaurant",
@@ -2324,7 +2464,9 @@
       "countrycode": "CA"
     },
     "rating": 4.2,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 270,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/taste-of-china-seafood-restaurant-/"
   },
   {
     "restaurant_name": "Ten Miles BBQ",
@@ -2355,7 +2497,9 @@
       "countrycode": "CA"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Thai Country Kitchen",
@@ -2386,7 +2530,9 @@
       "countrycode": "CA"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 232,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/thai-country-kitchen-/"
   },
   {
     "restaurant_name": "Wok Theory",
@@ -2418,7 +2564,9 @@
       "countrycode": "CA"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 217,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/wok-theory-/"
   },
   {
     "restaurant_name": "Xiao Bian Dan",
@@ -2449,7 +2597,9 @@
       "countrycode": "CA"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Yeah Yeah Thai",
@@ -2479,7 +2629,9 @@
       "housenumber": "382"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Yin Ji Chang Fen",
@@ -2516,7 +2668,9 @@
       ]
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 315,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/yin-ji-chang-fen-/"
   },
   {
     "restaurant_name": "Yummy Yummy Dumplings",
@@ -2553,7 +2707,9 @@
       ]
     },
     "rating": 3.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 515,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/yummy-yummy-dumplings-/"
   },
   {
     "restaurant_name": "Yunshang Rice Noodle House",
@@ -2590,7 +2746,9 @@
       ]
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Zao Bar & Grill",
@@ -2619,7 +2777,9 @@
       "housenumber": "421"
     },
     "rating": 3.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 83,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/zao-bar-and-grill-/"
   },
   {
     "restaurant_name": "1 Kitchen",
@@ -2648,7 +2808,9 @@
       "housenumber": "550"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 562,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/1-kitchen-/"
   },
   {
     "restaurant_name": "Alo",
@@ -2678,7 +2840,9 @@
       "housenumber": "163"
     },
     "rating": 3.9,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 703,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/alo-/"
   },
   {
     "restaurant_name": "Amal",
@@ -2708,7 +2872,9 @@
       "housenumber": "131"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Baro",
@@ -2738,7 +2904,9 @@
       "housenumber": "485"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 958,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/baro-/"
   },
   {
     "restaurant_name": "Byblos Downtown",
@@ -2768,7 +2936,9 @@
       "housenumber": "11"
     },
     "rating": 4,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 1118,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/byblos-downtown-/"
   },
   {
     "restaurant_name": "Bymark",
@@ -2797,7 +2967,9 @@
       "housenumber": "66"
     },
     "rating": 3.7,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 359,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/bymark-/"
   },
   {
     "restaurant_name": "Canoe",
@@ -2826,7 +2998,9 @@
       "housenumber": "66"
     },
     "rating": 4.2,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 769,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/canoe-/"
   },
   {
     "restaurant_name": "Campechano",
@@ -2855,7 +3029,9 @@
       "housenumber": "504"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Chubby's Jamaican Kitchen",
@@ -2884,7 +3060,9 @@
       "housenumber": "104"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1434,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/chubbys-jamaican-kitchen-/"
   },
   {
     "restaurant_name": "Cluny Bistro",
@@ -2913,7 +3091,9 @@
       "housenumber": "35"
     },
     "rating": 3.9,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Don Alfonso 1890",
@@ -2943,7 +3123,9 @@
       "housenumber": "1"
     },
     "rating": 4,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 1188,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/don-alfonso-1890-/"
   },
   {
     "restaurant_name": "Donatello Restaurant",
@@ -2972,7 +3154,9 @@
       "housenumber": "37"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 369,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/donatello-restaurant-/"
   },
   {
     "restaurant_name": "El Catrin Destileria",
@@ -3002,7 +3186,9 @@
       "housenumber": "18"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1437,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/el-catrin-destileria-/"
   },
   {
     "restaurant_name": "GEORGE Restaurant",
@@ -3031,7 +3217,9 @@
       "housenumber": "111C"
     },
     "rating": 3.3,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "KŌST",
@@ -3060,7 +3248,9 @@
       "housenumber": "80"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1655,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/kost-/"
   },
   {
     "restaurant_name": "La Fenice",
@@ -3089,7 +3279,9 @@
       "housenumber": "319"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 271,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/la-fenice-/"
   },
   {
     "restaurant_name": "Leña Restaurante",
@@ -3119,7 +3311,9 @@
       "housenumber": "176"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Luma",
@@ -3149,7 +3343,9 @@
       "housenumber": "350"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 446,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/luma-/"
   },
   {
     "restaurant_name": "Milagro Cantina",
@@ -3178,7 +3374,9 @@
       "housenumber": "5"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Minami Toronto",
@@ -3207,7 +3405,9 @@
       "housenumber": "225"
     },
     "rating": 4.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 980,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/minami-toronto-/"
   },
   {
     "restaurant_name": "PAI",
@@ -3237,7 +3437,9 @@
       "housenumber": "18"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1956,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/pai-/"
   },
   {
     "restaurant_name": "Petros82",
@@ -3266,7 +3468,9 @@
       "housenumber": "299"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Quetzal",
@@ -3296,7 +3500,9 @@
       "housenumber": "419"
     },
     "rating": 3.2,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 916,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/quetzal-/"
   },
   {
     "restaurant_name": "Richmond Station",
@@ -3326,7 +3532,9 @@
       "housenumber": "1"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 692,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/richmond-station-/"
   },
   {
     "restaurant_name": "Restaurant 20 Victoria",
@@ -3356,7 +3564,9 @@
       "housenumber": "20"
     },
     "rating": 3.5,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 218,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/restaurant-20-victoria-/"
   },
   {
     "restaurant_name": "TOCA",
@@ -3386,7 +3596,9 @@
       "housenumber": "181"
     },
     "rating": 3.8,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 531,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/toca-/"
   },
   {
     "restaurant_name": "Abrielle",
@@ -3416,7 +3628,9 @@
       "housenumber": "355"
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 528,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/abrielle-/"
   },
   {
     "restaurant_name": "Alforat",
@@ -3446,7 +3660,9 @@
       "housenumber": "271"
     },
     "rating": 3.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Alpha's Shawarma",
@@ -3476,7 +3692,9 @@
       "housenumber": "245"
     },
     "rating": 4.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "BeLeaf Vietnamese Cuisine",
@@ -3506,7 +3724,9 @@
       "housenumber": "45"
     },
     "rating": 3.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 148,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/beleaf-vietnamese-cuisine-/"
   },
   {
     "restaurant_name": "Konjiki Ramen",
@@ -3535,7 +3755,9 @@
       "housenumber": "41"
     },
     "rating": 3.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Le Gourmand",
@@ -3565,7 +3787,9 @@
       "housenumber": "152"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 419,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/le-gourmand-/"
   },
   {
     "restaurant_name": "Little Sister",
@@ -3595,7 +3819,9 @@
       "housenumber": "102"
     },
     "rating": 4.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Matagali Indian & Thai Cuisine",
@@ -3625,7 +3851,9 @@
       "housenumber": "69"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Mieluna Cafe",
@@ -3655,7 +3883,9 @@
       "housenumber": "483"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Neo Coffee Bar",
@@ -3685,7 +3915,9 @@
       "housenumber": "161"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 529,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/neo-coffee-bar-/"
   },
   {
     "restaurant_name": "Oretta",
@@ -3715,7 +3947,9 @@
       "housenumber": "633"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1318,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/oretta-/"
   },
   {
     "restaurant_name": "Reyna on King",
@@ -3745,7 +3979,9 @@
       "housenumber": "354"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Salad King",
@@ -3774,7 +4010,9 @@
       "housenumber": "340"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 528,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/salad-king-/"
   },
   {
     "restaurant_name": "Sukho Thai",
@@ -3803,7 +4041,9 @@
       "housenumber": "274"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Keg Steakhouse + Bar - Esplanade",
@@ -3833,7 +4073,9 @@
       "housenumber": "26"
     },
     "rating": 3.7,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 1126,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-keg-steakhouse-bar-esplanade-/"
   },
   {
     "restaurant_name": "Dolyang Love&Fire Momo",
@@ -3862,7 +4104,9 @@
       "housenumber": "249"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Jesmin Foods",
@@ -3891,7 +4135,9 @@
       "housenumber": "403"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Cmt8",
@@ -3920,7 +4166,9 @@
       "housenumber": "81"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Seoul Gamjatang Baldwin",
@@ -3950,7 +4198,9 @@
       "housenumber": "3"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Toupie Premium Acai",
@@ -3979,7 +4229,9 @@
       "housenumber": "298"
     },
     "rating": 4.6,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Shree Swami Samartha Vadapav Harborfront",
@@ -4008,7 +4260,9 @@
       "housenumber": "8"
     },
     "rating": 4.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Siempre Breakfast & Lunch Restaurant",
@@ -4037,7 +4291,9 @@
       "housenumber": "330"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Evana Cafe & Lounge",
@@ -4066,7 +4322,9 @@
       "housenumber": "334"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Lhao",
@@ -4095,7 +4353,9 @@
       "housenumber": "39"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Vero Italian Sandwich",
@@ -4125,7 +4385,9 @@
       "housenumber": "477"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Shinji",
@@ -4155,7 +4417,9 @@
       "housenumber": "333"
     },
     "rating": 4.5,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Chai Town",
@@ -4185,7 +4449,9 @@
       "housenumber": "335"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Teow Tem Toh",
@@ -4214,7 +4480,9 @@
       "housenumber": "237"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Cafe Negin",
@@ -4244,7 +4512,9 @@
       "housenumber": "787"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Som Tum Jinda",
@@ -4273,7 +4543,9 @@
       "housenumber": "356"
     },
     "rating": 3.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Merkato Eri-Ethio Cafe & Restaurant",
@@ -4302,7 +4574,9 @@
       "housenumber": "436"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Royal Karahi",
@@ -4331,7 +4605,9 @@
       "housenumber": "348"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Tongdak",
@@ -4361,7 +4637,9 @@
       "housenumber": "50"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Myungrang Hotdog",
@@ -4390,7 +4668,9 @@
       "housenumber": "648"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "And Banh Mi",
@@ -4419,7 +4699,9 @@
       "housenumber": "13"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Chungneon Cupbap Spadina",
@@ -4449,7 +4731,9 @@
       "housenumber": "398"
     },
     "rating": 4.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Chilakillers",
@@ -4478,7 +4762,9 @@
       "housenumber": "181"
     },
     "rating": 2.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sushi Yeon",
@@ -4507,7 +4793,9 @@
       "housenumber": "59"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Frenchy Bar et Brasserie",
@@ -4537,7 +4825,9 @@
       "housenumber": "145"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Chase",
@@ -4567,7 +4857,9 @@
       "housenumber": "10"
     },
     "rating": 3.9,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Alobar Downtown",
@@ -4596,7 +4888,9 @@
       "housenumber": "150"
     },
     "rating": 4,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 362,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/alobar-downtown-/"
   },
   {
     "restaurant_name": "LOUIX LOUIS",
@@ -4626,7 +4920,9 @@
       "housenumber": "325"
     },
     "rating": 4.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1207,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/louix-louis-/"
   },
   {
     "restaurant_name": "JaBistro",
@@ -4656,7 +4952,9 @@
       "housenumber": "222"
     },
     "rating": 3.9,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 588,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/jabistro-/"
   },
   {
     "restaurant_name": "Hy's Steakhouse & Cocktail Bar",
@@ -4686,7 +4984,9 @@
       "housenumber": "365"
     },
     "rating": 4.7,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 1115,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/hys-steakhouse-and-cocktail-bar-/"
   },
   {
     "restaurant_name": "Daphne",
@@ -4715,7 +5015,9 @@
       "housenumber": "67"
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Kimchi Korea House",
@@ -4745,7 +5047,9 @@
       "housenumber": "149"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 366,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/kimchi-korea-house-/"
   },
   {
     "restaurant_name": "Don Don Izakaya",
@@ -4775,7 +5079,9 @@
       "housenumber": "130"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 472,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/don-don-izakaya-/"
   },
   {
     "restaurant_name": "Japango Sushi & Noodle Restaurant",
@@ -4805,7 +5111,9 @@
       "housenumber": "122"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "NAMI Japanese Seafood Restaurant",
@@ -4834,7 +5142,9 @@
       "housenumber": "55"
     },
     "rating": 3.7,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Nom Nom Nom Poutine",
@@ -4864,7 +5174,9 @@
       "housenumber": "707"
     },
     "rating": 3.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Nantana Thai Food & Desserts",
@@ -4894,7 +5206,9 @@
       "housenumber": "707"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "A Szechuan Restaurant",
@@ -4924,7 +5238,9 @@
       "housenumber": "440"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 328,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/a-szechuan-restaurant-/"
   },
   {
     "restaurant_name": "Owl of Minerva",
@@ -4953,7 +5269,9 @@
       "housenumber": "280"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Rebels & Demons",
@@ -4982,7 +5300,9 @@
       "housenumber": "241"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Shi Miao Dao Yunan Rice Noodle",
@@ -5012,7 +5332,9 @@
       "housenumber": "318"
     },
     "rating": 3.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Adega Restaurante",
@@ -5041,7 +5363,9 @@
       "housenumber": "33"
     },
     "rating": 3.6,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 420,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/adega-restaurante-/"
   },
   {
     "restaurant_name": "Ahmetzade Traditionaltaste",
@@ -5071,7 +5395,9 @@
       "housenumber": "330"
     },
     "rating": 4.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Akashiro by Sushi Q",
@@ -5101,7 +5427,9 @@
       "housenumber": "220"
     },
     "rating": 3.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "9 Sips Tea Shoppe",
@@ -5131,7 +5459,9 @@
       "housenumber": "32"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "3 Brewers",
@@ -5161,7 +5491,9 @@
       "housenumber": "275"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "001 Grillz",
@@ -5191,7 +5523,9 @@
       "housenumber": "335"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "A&W Eaton Centre",
@@ -5221,7 +5555,9 @@
       "housenumber": "220"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Jollibee",
@@ -5251,7 +5587,9 @@
       "housenumber": "334"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 490,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/jollibee-/"
   },
   {
     "restaurant_name": "Gyubee Japanese Grill",
@@ -5281,7 +5619,9 @@
       "housenumber": "157"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Hwaro Korean BBQ",
@@ -5310,7 +5650,9 @@
       "housenumber": "332"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "MIA Brunch Bar",
@@ -5340,7 +5682,9 @@
       "housenumber": "21"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Mary Brown's Chicken",
@@ -5370,7 +5714,9 @@
       "housenumber": "10"
     },
     "rating": 4.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Qishr Coffee House",
@@ -5399,7 +5745,9 @@
       "housenumber": "21"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "TRE Viet Heritage Kitchen & Bar",
@@ -5428,7 +5776,9 @@
       "housenumber": "31"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pot Time Hot Pot",
@@ -5458,7 +5808,9 @@
       "housenumber": "45"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Senator Restaurant",
@@ -5488,7 +5840,9 @@
       "housenumber": "249"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Fran's Restaurant",
@@ -5518,7 +5872,9 @@
       "housenumber": "200"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Queen Mother Cafe",
@@ -5548,7 +5904,9 @@
       "housenumber": "208"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 461,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/queen-mother-cafe-/"
   },
   {
     "restaurant_name": "The Rivoli",
@@ -5577,7 +5935,9 @@
       "housenumber": "332"
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Epicure Cafe & Grill",
@@ -5607,7 +5967,9 @@
       "housenumber": "502"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Fressen",
@@ -5637,7 +5999,9 @@
       "housenumber": "478"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Shanghai Cowgirl",
@@ -5667,7 +6031,9 @@
       "housenumber": "538"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Barchef",
@@ -5697,7 +6063,9 @@
       "housenumber": "472"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 767,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/barchef-/"
   },
   {
     "restaurant_name": "Peter Pan Bistro",
@@ -5727,7 +6095,9 @@
       "housenumber": "373"
     },
     "rating": 3.4,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Cafe Crepe",
@@ -5757,7 +6127,9 @@
       "housenumber": "246"
     },
     "rating": 4.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Black Bull Hotel & Tavern",
@@ -5786,7 +6158,9 @@
       "housenumber": "298"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Hot Wings Grill & Rib House",
@@ -5816,7 +6190,9 @@
       "housenumber": "563"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Rex Hotel Jazz & Blues Bar",
@@ -5846,7 +6222,9 @@
       "housenumber": "194"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 287,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-rex-hotel-jazz-and-blues-bar-/"
   },
   {
     "restaurant_name": "Aji Sai Japanese Restaurant",
@@ -5875,7 +6253,9 @@
       "housenumber": "467"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Arepa",
@@ -5905,7 +6285,9 @@
       "housenumber": "490"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "BQM Diner",
@@ -5935,7 +6317,9 @@
       "housenumber": "354"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Falafel Queen",
@@ -5965,7 +6349,9 @@
       "housenumber": "576"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Famous BBQ Express",
@@ -5994,7 +6380,9 @@
       "housenumber": "385"
     },
     "rating": 3.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Ginger",
@@ -6024,7 +6412,9 @@
       "housenumber": "212"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Hosu Bistro",
@@ -6054,7 +6444,9 @@
       "housenumber": "254"
     },
     "rating": 3.3,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "East!",
@@ -6083,7 +6475,9 @@
       "housenumber": "240"
     },
     "rating": 3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Everest",
@@ -6112,7 +6506,9 @@
       "housenumber": "232"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Java House",
@@ -6142,7 +6538,9 @@
       "housenumber": "537"
     },
     "rating": 4.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 263,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/java-house-/"
   },
   {
     "restaurant_name": "Blackbird Baking Co.",
@@ -6172,7 +6570,9 @@
       "housenumber": "95"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 310,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/blackbird-baking-co-/"
   },
   {
     "restaurant_name": "Stack'd Deli Kitchen",
@@ -6202,7 +6602,9 @@
       "housenumber": "95"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Notte Ristorante",
@@ -6230,7 +6632,9 @@
       "housenumber": ""
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Buster's Sea Cove Commerce Court",
@@ -6260,7 +6664,9 @@
       "housenumber": "199"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 119,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/busters-sea-cove-commerce-court-/"
   },
   {
     "restaurant_name": "Assembly Chef's Hall",
@@ -6290,7 +6696,9 @@
       "housenumber": "111"
     },
     "rating": 3.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 537,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/assembly-chefs-hall-/"
   },
   {
     "restaurant_name": "Ramen Isshin Assembly Chef's Hall",
@@ -6320,7 +6728,9 @@
       "housenumber": "111"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Red Eye Diner",
@@ -6350,7 +6760,9 @@
       "housenumber": "111"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sushi Yugen",
@@ -6379,7 +6791,9 @@
       "housenumber": "150"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Jump Restaurant",
@@ -6408,7 +6822,9 @@
       "housenumber": "18"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 399,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/jump-restaurant-/"
   },
   {
     "restaurant_name": "P.J. O'Brien Irish Pub",
@@ -6438,7 +6854,9 @@
       "housenumber": "39"
     },
     "rating": 3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Bardi's Steak House",
@@ -6468,7 +6886,9 @@
       "housenumber": "56"
     },
     "rating": 4.5,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The George Street Diner",
@@ -6498,7 +6918,9 @@
       "housenumber": "129"
     },
     "rating": 3.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 566,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-george-street-diner-/"
   },
   {
     "restaurant_name": "Patrician Grill",
@@ -6527,7 +6949,9 @@
       "housenumber": "219"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Le Petit Dejeuner",
@@ -6557,7 +6981,9 @@
       "housenumber": "191"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Bombay Palace Downtown Toronto",
@@ -6586,7 +7012,9 @@
       "housenumber": "71"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Berkeley Cafe",
@@ -6615,7 +7043,9 @@
       "housenumber": "141"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 180,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/berkeley-cafe-/"
   },
   {
     "restaurant_name": "Mengrai Gourmet Thai",
@@ -6644,7 +7074,9 @@
       "housenumber": "82"
     },
     "rating": 4,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Ueno Market",
@@ -6673,7 +7105,9 @@
       "housenumber": "75"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Il Re",
@@ -6702,7 +7136,9 @@
       "housenumber": "246"
     },
     "rating": 3.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "La Bettola Di Terroni",
@@ -6732,7 +7168,9 @@
       "housenumber": "106"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 635,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/la-bettola-di-terroni-/"
   },
   {
     "restaurant_name": "Terroni Adelaide",
@@ -6761,7 +7199,9 @@
       "housenumber": "57"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "C'est What",
@@ -6791,7 +7231,9 @@
       "housenumber": "67"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 452,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/cest-what-/"
   },
   {
     "restaurant_name": "The Keg Steakhouse + Bar Esplanade",
@@ -6821,7 +7263,9 @@
       "housenumber": "26"
     },
     "rating": 4.1,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 1126,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-keg-steakhouse-bar-esplanade-/"
   },
   {
     "restaurant_name": "Biff's Bistro",
@@ -6850,7 +7294,9 @@
       "housenumber": "4"
     },
     "rating": 3.8,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 715,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/biffs-bistro-/"
   },
   {
     "restaurant_name": "The Sultan's Tent",
@@ -6880,7 +7326,9 @@
       "housenumber": "49"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Hothouse Restaurant",
@@ -6910,7 +7358,9 @@
       "housenumber": "35"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Cluny Bistro & Boulangerie",
@@ -6939,7 +7389,9 @@
       "housenumber": "35"
     },
     "rating": 3.9,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 808,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/cluny-bistro-and-boulangerie-/"
   },
   {
     "restaurant_name": "Madrina Bar y Tapas",
@@ -6968,7 +7420,9 @@
       "housenumber": "2"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 877,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/madrina-bar-y-tapas-/"
   },
   {
     "restaurant_name": "Mill Street Brewpub",
@@ -6998,7 +7452,9 @@
       "housenumber": "21"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "SOMA Chocolatemaker",
@@ -7027,7 +7483,9 @@
       "housenumber": "32"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Gusto 501",
@@ -7056,7 +7514,9 @@
       "housenumber": "501"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 705,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/gusto-501-/"
   },
   {
     "restaurant_name": "Tosca",
@@ -7085,7 +7545,9 @@
       "housenumber": "20"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sukhothai",
@@ -7115,7 +7577,9 @@
       "housenumber": "52"
     },
     "rating": 4.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Keg Mansion",
@@ -7145,7 +7609,9 @@
       "housenumber": "515"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Pilot",
@@ -7175,7 +7641,9 @@
       "housenumber": "22"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 645,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-pilot-/"
   },
   {
     "restaurant_name": "Cibo Wine Bar Yorkville",
@@ -7205,7 +7673,9 @@
       "housenumber": "133"
     },
     "rating": 3.4,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 383,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/cibo-wine-bar-yorkville-/"
   },
   {
     "restaurant_name": "Eataly Toronto",
@@ -7235,7 +7705,9 @@
       "housenumber": "55"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1061,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/eataly-toronto-/"
   },
   {
     "restaurant_name": "Trattoria Nervosa",
@@ -7264,7 +7736,9 @@
       "housenumber": "75"
     },
     "rating": 2.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 859,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/trattoria-nervosa-/"
   },
   {
     "restaurant_name": "Cafe Boulud",
@@ -7294,7 +7768,9 @@
       "housenumber": "60"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sassafraz",
@@ -7324,7 +7800,9 @@
       "housenumber": "100"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 864,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/sassafraz-/"
   },
   {
     "restaurant_name": "Hemingway's Restaurant",
@@ -7353,7 +7831,9 @@
       "housenumber": "142"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 849,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/hemingways-restaurant-/"
   },
   {
     "restaurant_name": "Cactus Club Cafe",
@@ -7383,7 +7863,9 @@
       "housenumber": "77"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Earls Kitchen + Bar",
@@ -7413,7 +7895,9 @@
       "housenumber": "150"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1648,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/earls-kitchen-bar-/"
   },
   {
     "restaurant_name": "Moxies Toronto Downtown",
@@ -7442,7 +7926,9 @@
       "housenumber": "70"
     },
     "rating": 3.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Jack Astor's Bar & Grill",
@@ -7472,7 +7958,9 @@
       "housenumber": "144"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1435,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/jack-astors-bar-and-grill-/"
   },
   {
     "restaurant_name": "Milestones Grill + Bar",
@@ -7502,7 +7990,9 @@
       "housenumber": "100"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Scaddabush Italian Kitchen & Bar",
@@ -7531,7 +8021,9 @@
       "housenumber": "382"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Kinka Izakaya",
@@ -7561,7 +8053,9 @@
       "housenumber": "398"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Katsuya",
@@ -7589,7 +8083,9 @@
       "housenumber": ""
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sushi Shop Eaton Centre",
@@ -7619,7 +8115,9 @@
       "housenumber": "220"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sushi Q Eaton Centre",
@@ -7649,7 +8147,9 @@
       "housenumber": "220"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Miku Toronto",
@@ -7679,7 +8179,9 @@
       "housenumber": "10"
     },
     "rating": 3.2,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 1064,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/miku-toronto-/"
   },
   {
     "restaurant_name": "Pizzeria Libretto University",
@@ -7708,7 +8210,9 @@
       "housenumber": "155"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 651,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/pizzeria-libretto-university-/"
   },
   {
     "restaurant_name": "Khao San Road",
@@ -7737,7 +8241,9 @@
       "housenumber": "11"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 649,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/khao-san-road-/"
   },
   {
     "restaurant_name": "The Ballroom Bowl",
@@ -7766,7 +8272,9 @@
       "housenumber": "145"
     },
     "rating": 4.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "W Burger Bar",
@@ -7796,7 +8304,9 @@
       "housenumber": "10"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 548,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/w-burger-bar-/"
   },
   {
     "restaurant_name": "Pita Pit",
@@ -7824,7 +8334,9 @@
       "housenumber": ""
     },
     "rating": 4.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Osmow's Shawarma",
@@ -7854,7 +8366,9 @@
       "housenumber": "245"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 461,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/osmows-shawarma-/"
   },
   {
     "restaurant_name": "Aloette",
@@ -7884,7 +8398,9 @@
       "housenumber": "163"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Maman Toronto",
@@ -7914,7 +8430,9 @@
       "housenumber": "100"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Dineen Coffee Co.",
@@ -7943,7 +8461,9 @@
       "housenumber": "140"
     },
     "rating": 4.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 428,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/dineen-coffee-co-/"
   },
   {
     "restaurant_name": "Balzac's Coffee Roasters",
@@ -7972,7 +8492,9 @@
       "housenumber": "1"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Starbucks Eaton Centre",
@@ -8002,7 +8524,9 @@
       "housenumber": "220"
     },
     "rating": 3.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Tim Hortons Eaton Centre",
@@ -8032,7 +8556,9 @@
       "housenumber": "220"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Second Cup Cafe",
@@ -8062,7 +8588,9 @@
       "housenumber": "700"
     },
     "rating": 3.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "D Spot Dessert Cafe",
@@ -8092,7 +8620,9 @@
       "housenumber": "607"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Nadege Patisserie",
@@ -8121,7 +8651,9 @@
       "housenumber": "780"
     },
     "rating": 3.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Delysées Luxury Desserts",
@@ -8151,7 +8683,9 @@
       "housenumber": "131"
     },
     "rating": 4.1,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Butter Baker",
@@ -8180,7 +8714,9 @@
       "housenumber": "120"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 399,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/butter-baker-/"
   },
   {
     "restaurant_name": "Uncle Tetsu Japanese Cheesecake",
@@ -8209,7 +8745,9 @@
       "housenumber": "598"
     },
     "rating": 4.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Old Spaghetti Factory",
@@ -8238,7 +8776,9 @@
       "housenumber": "54"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 2662,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-old-spaghetti-factory-/"
   },
   {
     "restaurant_name": "Pasta Mia",
@@ -8267,7 +8807,9 @@
       "housenumber": "15"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Cora Breakfast and Lunch",
@@ -8297,7 +8839,9 @@
       "housenumber": "277"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "OEB Breakfast Co.",
@@ -8326,7 +8870,9 @@
       "housenumber": "330"
     },
     "rating": 4.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Bar Pompette",
@@ -8356,7 +8902,9 @@
       "housenumber": "607"
     },
     "rating": 4.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 132,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/bar-pompette-/"
   },
   {
     "restaurant_name": "Rasa",
@@ -8385,7 +8933,9 @@
       "housenumber": "196"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 745,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/rasa-/"
   },
   {
     "restaurant_name": "Grey Gardens",
@@ -8414,7 +8964,9 @@
       "housenumber": "199"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 346,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/grey-gardens-/"
   },
   {
     "restaurant_name": "Seven Lives Tacos y Mariscos",
@@ -8444,7 +8996,9 @@
       "housenumber": "72"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "El Rey Mezcal Bar",
@@ -8473,7 +9027,9 @@
       "housenumber": "2A"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Wanda's Pie in the Sky",
@@ -8502,7 +9058,9 @@
       "housenumber": "287"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 398,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/wandas-pie-in-the-sky-/"
   },
   {
     "restaurant_name": "Kensington Brewing Company",
@@ -8531,7 +9089,9 @@
       "housenumber": "299"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Patois Toronto",
@@ -8561,7 +9121,9 @@
       "housenumber": "794"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Carbon Bar",
@@ -8591,7 +9153,9 @@
       "housenumber": "99"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 789,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-carbon-bar-/"
   },
   {
     "restaurant_name": "Tacos 101",
@@ -8621,7 +9185,9 @@
       "housenumber": "101"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "TacoTaco",
@@ -8650,7 +9216,9 @@
       "housenumber": "319"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 252,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/tacotaco-/"
   },
   {
     "restaurant_name": "Burrito Boyz",
@@ -8679,7 +9247,9 @@
       "housenumber": "74"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Freshii",
@@ -8708,7 +9278,9 @@
       "housenumber": "110"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pita Lite",
@@ -8738,7 +9310,9 @@
       "housenumber": "100"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Paramount Fine Foods Brookfield Place",
@@ -8768,7 +9342,9 @@
       "housenumber": "181"
     },
     "rating": 4.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Kibo Sushi House",
@@ -8798,7 +9374,9 @@
       "housenumber": "123"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Saku Sushi",
@@ -8828,7 +9406,9 @@
       "housenumber": "478"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 671,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/saku-sushi-/"
   },
   {
     "restaurant_name": "Tora Toronto",
@@ -8858,7 +9438,9 @@
       "housenumber": "77"
     },
     "rating": 3.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Tachi",
@@ -8888,7 +9470,9 @@
       "housenumber": "111"
     },
     "rating": 4.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Kibo Sushi House Commerce Court",
@@ -8918,7 +9502,9 @@
       "housenumber": "199"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Fresh Burger",
@@ -8947,7 +9533,9 @@
       "housenumber": "120"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Five Guys",
@@ -8977,7 +9565,9 @@
       "housenumber": "329"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 434,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/five-guys-/"
   },
   {
     "restaurant_name": "Shake Shack",
@@ -9005,7 +9595,9 @@
       "housenumber": ""
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 178,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/shake-shack-/"
   },
   {
     "restaurant_name": "Chick-fil-A Eaton Centre",
@@ -9035,7 +9627,9 @@
       "housenumber": "220"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Dave's Hot Chicken",
@@ -9065,7 +9659,9 @@
       "housenumber": "336"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Taco Bell Yonge-Dundas",
@@ -9095,7 +9691,9 @@
       "housenumber": "10"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Chipotle Mexican Grill",
@@ -9124,7 +9722,9 @@
       "housenumber": "323"
     },
     "rating": 4.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 336,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/chipotle-mexican-grill-/"
   },
   {
     "restaurant_name": "Hero Certified Burgers",
@@ -9154,7 +9754,9 @@
       "housenumber": "70"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "A&W Queen West",
@@ -9184,7 +9786,9 @@
       "housenumber": "400"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pita Land",
@@ -9214,7 +9818,9 @@
       "housenumber": "10"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pizzaiolo",
@@ -9244,7 +9850,9 @@
       "housenumber": "420"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pizza Pizza Queen West",
@@ -9274,7 +9882,9 @@
       "housenumber": "360"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pizza Nova",
@@ -9303,7 +9913,9 @@
       "housenumber": "550"
     },
     "rating": 3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pizzeria Libretto Ossington",
@@ -9332,7 +9944,9 @@
       "housenumber": "221"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Domino's Pizza Yonge",
@@ -9361,7 +9975,9 @@
       "housenumber": "452"
     },
     "rating": 3.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pizza Hut Yonge-Dundas",
@@ -9391,7 +10007,9 @@
       "housenumber": "10"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Paris Baguette",
@@ -9421,7 +10039,9 @@
       "housenumber": "620"
     },
     "rating": 4.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Bake Code Croissanterie",
@@ -9450,7 +10070,9 @@
       "housenumber": "589"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Jimmy's Coffee",
@@ -9480,7 +10102,9 @@
       "housenumber": "107"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Fahrenheit Coffee",
@@ -9510,7 +10134,9 @@
       "housenumber": "120"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 343,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/fahrenheit-coffee-/"
   },
   {
     "restaurant_name": "The Library Specialty Coffee",
@@ -9539,7 +10165,9 @@
       "housenumber": "281"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 270,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-library-specialty-coffee-/"
   },
   {
     "restaurant_name": "Balzac's Coffee Roasters Market",
@@ -9569,7 +10197,9 @@
       "housenumber": "93"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Mos Mos Coffee",
@@ -9599,7 +10229,9 @@
       "housenumber": "25"
     },
     "rating": 4.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 160,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/mos-mos-coffee-/"
   },
   {
     "restaurant_name": "Cafe Fiorentina",
@@ -9629,7 +10261,9 @@
       "housenumber": "463"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Danish Pastry House",
@@ -9659,7 +10293,9 @@
       "housenumber": "220"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Kettleman's Bagel Co.",
@@ -9687,7 +10323,9 @@
       "housenumber": ""
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Cobs Bread",
@@ -9717,7 +10355,9 @@
       "housenumber": "370"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Nord Lyon",
@@ -9747,7 +10387,9 @@
       "housenumber": "111"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Miller Tavern",
@@ -9776,7 +10418,9 @@
       "housenumber": "31"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Rabbit Hole",
@@ -9806,7 +10450,9 @@
       "housenumber": "21"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 473,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-rabbit-hole-/"
   },
   {
     "restaurant_name": "Woods Restaurant & Bar",
@@ -9836,7 +10482,9 @@
       "housenumber": "45"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 400,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/woods-restaurant-and-bar-/"
   },
   {
     "restaurant_name": "The Butcher Chef",
@@ -9866,7 +10514,9 @@
       "housenumber": "8"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Gusto 101",
@@ -9896,7 +10546,9 @@
       "housenumber": "101"
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1106,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/gusto-101-/"
   },
   {
     "restaurant_name": "Lee Restaurant",
@@ -9925,7 +10577,9 @@
       "housenumber": "601"
     },
     "rating": 3.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "SARA Restaurant",
@@ -9954,7 +10608,9 @@
       "housenumber": "98"
     },
     "rating": 3.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Vela",
@@ -9983,7 +10639,9 @@
       "housenumber": "90"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Maxime's",
@@ -10012,7 +10670,9 @@
       "housenumber": "77"
     },
     "rating": 4.9,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 438,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/maximes-/"
   },
   {
     "restaurant_name": "Aera",
@@ -10040,7 +10700,9 @@
       "housenumber": ""
     },
     "rating": 3.2,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Drom Taberna",
@@ -10070,7 +10732,9 @@
       "housenumber": "458"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 353,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/drom-taberna-/"
   },
   {
     "restaurant_name": "416 Snack Bar",
@@ -10099,7 +10763,9 @@
       "housenumber": "181"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 324,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/416-snack-bar-/"
   },
   {
     "restaurant_name": "KOST",
@@ -10128,7 +10794,9 @@
       "housenumber": "80"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1655,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/kost-/"
   },
   {
     "restaurant_name": "Bar Mordecai",
@@ -10157,7 +10825,9 @@
       "housenumber": "1272"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 214,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/bar-mordecai-/"
   },
   {
     "restaurant_name": "The Wheat Sheaf Tavern",
@@ -10187,7 +10857,9 @@
       "housenumber": "667"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 299,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-wheat-sheaf-tavern-/"
   },
   {
     "restaurant_name": "Weslodge Saloon",
@@ -10217,7 +10889,9 @@
       "housenumber": "480"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Bar Hop Brewco",
@@ -10246,7 +10920,9 @@
       "housenumber": "137"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Pint Public House",
@@ -10275,7 +10951,9 @@
       "housenumber": "277"
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 521,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-pint-public-house-/"
   },
   {
     "restaurant_name": "Mascot Brewery",
@@ -10304,7 +10982,9 @@
       "housenumber": "220"
     },
     "rating": 3.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Steam Whistle Biergarten",
@@ -10334,7 +11014,9 @@
       "housenumber": "255"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Amsterdam Brewhouse",
@@ -10363,7 +11045,9 @@
       "housenumber": "245"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1626,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/amsterdam-brewhouse-/"
   },
   {
     "restaurant_name": "Fionn MacCool's",
@@ -10393,7 +11077,9 @@
       "housenumber": "181"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "St Lawrence Pizza and Pasta",
@@ -10423,7 +11109,9 @@
       "housenumber": "93"
     },
     "rating": 4.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 165,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/st-lawrence-pizza-and-pasta-/"
   },
   {
     "restaurant_name": "Carousel Bakery",
@@ -10453,7 +11141,9 @@
       "housenumber": "93"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 303,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/carousel-bakery-/"
   },
   {
     "restaurant_name": "Buster's Sea Cove Market",
@@ -10483,7 +11173,9 @@
       "housenumber": "93"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Churrasco of St Lawrence",
@@ -10513,7 +11205,9 @@
       "housenumber": "93"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Mustachio Sandwich",
@@ -10543,7 +11237,9 @@
       "housenumber": "93"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Paddington's Pump",
@@ -10573,7 +11269,9 @@
       "housenumber": "93"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 275,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/paddingtons-pump-/"
   },
   {
     "restaurant_name": "St Urbain Bagel",
@@ -10603,7 +11301,9 @@
       "housenumber": "93"
     },
     "rating": 3.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Yianni's Kitchen",
@@ -10633,7 +11333,9 @@
       "housenumber": "93"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 156,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/yiannis-kitchen-/"
   },
   {
     "restaurant_name": "Pumpernickel's",
@@ -10662,7 +11364,9 @@
       "housenumber": "55"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "The Burger's Priest",
@@ -10692,7 +11396,9 @@
       "housenumber": "463"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Craig's Cookies",
@@ -10721,7 +11427,9 @@
       "housenumber": "1450"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Bindia Indian Bistro",
@@ -10751,7 +11459,9 @@
       "housenumber": "16"
     },
     "rating": 4.3,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 354,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/bindia-indian-bistro-/"
   },
   {
     "restaurant_name": "Kothur Indian Cuisine",
@@ -10781,7 +11491,9 @@
       "housenumber": "649"
     },
     "rating": 3.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 427,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/kothur-indian-cuisine-/"
   },
   {
     "restaurant_name": "Indian Biriyani House",
@@ -10811,7 +11523,9 @@
       "housenumber": "181"
     },
     "rating": 3.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 222,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/indian-biriyani-house-/"
   },
   {
     "restaurant_name": "Little India Restaurant",
@@ -10841,7 +11555,9 @@
       "housenumber": "255"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 466,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/little-india-restaurant-/"
   },
   {
     "restaurant_name": "Amaya Express",
@@ -10871,7 +11587,9 @@
       "housenumber": "220"
     },
     "rating": 3.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Gandhi Cuisine",
@@ -10901,7 +11619,9 @@
       "housenumber": "554"
     },
     "rating": 4.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Saffron Spice Kitchen",
@@ -10931,7 +11651,9 @@
       "housenumber": "459"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 162,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/saffron-spice-kitchen-/"
   },
   {
     "restaurant_name": "Exotic Tandoori Restaurant",
@@ -10960,7 +11682,9 @@
       "housenumber": "11"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Butter Chicken Factory",
@@ -10989,7 +11713,9 @@
       "housenumber": "560"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 570,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/butter-chicken-factory-/"
   },
   {
     "restaurant_name": "Aanch Modernist Indian Cuisine",
@@ -11018,7 +11744,9 @@
       "housenumber": "259"
     },
     "rating": 3.6,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Poopathy Mess",
@@ -11047,7 +11775,9 @@
       "housenumber": "585"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Urban Maharajas",
@@ -11076,7 +11806,9 @@
       "housenumber": "22"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Bar Goa",
@@ -11105,7 +11837,9 @@
       "housenumber": "36"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Dil Tak Indian Cuisine and Bar",
@@ -11135,7 +11869,9 @@
       "housenumber": "8"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Kathi Roll Express",
@@ -11165,7 +11901,9 @@
       "housenumber": "692"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Hawa Beirut",
@@ -11194,7 +11932,9 @@
       "housenumber": "466"
     },
     "rating": 3.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Shawarma West - Queen Street",
@@ -11224,7 +11964,9 @@
       "housenumber": "746"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Tahini's Church & Dundas",
@@ -11255,7 +11997,9 @@
       "housenumber": "215"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "M'Zaar Lebanese",
@@ -11284,7 +12028,9 @@
       "housenumber": "668"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Lebanon Express",
@@ -11314,7 +12060,9 @@
       "housenumber": "439"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Daymi",
@@ -11343,7 +12091,9 @@
       "housenumber": "586"
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sultan Ahmet Turkish Cuisine",
@@ -11372,7 +12122,9 @@
       "housenumber": "26"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Turquoise Restaurant",
@@ -11401,7 +12153,9 @@
       "housenumber": "431"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sumaq Iraqi Charcoal Grill - Downtown",
@@ -11430,7 +12184,9 @@
       "housenumber": "467"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Paramount Fine Foods - Yonge & Dundas",
@@ -11460,7 +12216,9 @@
       "housenumber": "253"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Volos Greek Cuisine",
@@ -11489,7 +12247,9 @@
       "housenumber": "133"
     },
     "rating": 3.9,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Estiatorio Milos Toronto",
@@ -11519,7 +12279,9 @@
       "housenumber": "330"
     },
     "rating": 4.3,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 440,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/estiatorio-milos-toronto-/"
   },
   {
     "restaurant_name": "Agora Yorkville",
@@ -11548,7 +12310,9 @@
       "housenumber": "105"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Agora Queen West",
@@ -11578,7 +12342,9 @@
       "housenumber": "921"
     },
     "rating": 3.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Jimmy The Greek - Commerce Court",
@@ -11608,7 +12374,9 @@
       "housenumber": "199"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Jimmy The Greek - First Canadian Place",
@@ -11638,7 +12406,9 @@
       "housenumber": "100"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Mandarin Restaurant",
@@ -11669,7 +12439,9 @@
       "housenumber": "1255"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 3084,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/mandarin-restaurant-/"
   },
   {
     "restaurant_name": "Cha Lau: The Dim Sum Emporium",
@@ -11700,7 +12472,9 @@
       "housenumber": "5096"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 16,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/cha-lau-the-dim-sum-emporium-/"
   },
   {
     "restaurant_name": "Master Cooking House",
@@ -11731,7 +12505,9 @@
       "housenumber": "5555"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 229,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/master-cooking-house-/"
   },
   {
     "restaurant_name": "Golden Stove",
@@ -11762,7 +12538,9 @@
       "housenumber": "2418"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 106,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/golden-stove-/"
   },
   {
     "restaurant_name": "Gourmet Express",
@@ -11793,7 +12571,9 @@
       "housenumber": "1735"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 185,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/gourmet-express-/"
   },
   {
     "restaurant_name": "Koshaa Fine Indian Cuisine",
@@ -11824,7 +12604,9 @@
       "housenumber": "2314"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 701,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/koshaa-fine-indian-cuisine-/"
   },
   {
     "restaurant_name": "Chutneys",
@@ -11855,7 +12637,9 @@
       "housenumber": "3077"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 552,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/chutneys-/"
   },
   {
     "restaurant_name": "Tandoori Time",
@@ -11886,7 +12670,9 @@
       "housenumber": "1727"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 785,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/tandoori-time-/"
   },
   {
     "restaurant_name": "Angara Indian and Hakka Cuisine",
@@ -11917,7 +12703,9 @@
       "housenumber": "5555"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 662,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/angara-indian-and-hakka-cuisine-/"
   },
   {
     "restaurant_name": "Food Mantra",
@@ -11945,7 +12733,9 @@
       "housenumber": ""
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 422,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/food-mantra-/"
   },
   {
     "restaurant_name": "KarachiXpress",
@@ -11975,7 +12765,9 @@
       "housenumber": "133"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 631,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/karachixpress-/"
   },
   {
     "restaurant_name": "Mehfill Indian Cuisine",
@@ -12005,7 +12797,9 @@
       "housenumber": "2687"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 725,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/mehfill-indian-cuisine-/"
   },
   {
     "restaurant_name": "Feast of Dilli",
@@ -12036,7 +12830,9 @@
       "housenumber": "378"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 353,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/feast-of-dilli-/"
   },
   {
     "restaurant_name": "The King's Kurry",
@@ -12066,7 +12862,9 @@
       "housenumber": "3038"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 120,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/the-king-s-kurry-fine-indian-cuisine-/"
   },
   {
     "restaurant_name": "Kothur Indian Cuisine",
@@ -12096,7 +12894,9 @@
       "housenumber": "2403"
     },
     "rating": 3.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 304,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/kothur-indian-cuisine-/"
   },
   {
     "restaurant_name": "Dosa Twist",
@@ -12127,7 +12927,9 @@
       "housenumber": "827"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 273,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/dosa-twist-/"
   },
   {
     "restaurant_name": "Parantha Palace",
@@ -12157,7 +12959,9 @@
       "housenumber": "345"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 382,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/parantha-palace-/"
   },
   {
     "restaurant_name": "Eggholic - Indian Street Food",
@@ -12187,7 +12991,9 @@
       "housenumber": "2687"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 268,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/eggholic-indian-veg-and-egg-street-food-/"
   },
   {
     "restaurant_name": "Curry and Chutney By Gopal's",
@@ -12218,7 +13024,9 @@
       "housenumber": "317"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 125,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/curry-and-chutney-by-gopal-s-/"
   },
   {
     "restaurant_name": "Shelby's Legendary Shawarma",
@@ -12248,7 +13056,9 @@
       "housenumber": "2140"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 562,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/shelbys-shawarma-rexdale-/"
   },
   {
     "restaurant_name": "Kebab 49 - Turkish Restaurant",
@@ -12279,7 +13089,9 @@
       "housenumber": "5308"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 908,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/kebab-49-/"
   },
   {
     "restaurant_name": "Olive Kebab",
@@ -12310,7 +13122,9 @@
       "housenumber": "2836"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 396,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/olive-kebab-restaurant-/"
   },
   {
     "restaurant_name": "Oasis Shawarma and Wings",
@@ -12340,7 +13154,9 @@
       "housenumber": "3308"
     },
     "rating": 3.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 355,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/oasis-shawarma-and-wings-/"
   },
   {
     "restaurant_name": "Shawarma Club",
@@ -12371,7 +13187,9 @@
       "housenumber": "323"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 300,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/shawarma-club-/"
   },
   {
     "restaurant_name": "Three Brothers Restaurant",
@@ -12402,7 +13220,9 @@
       "housenumber": "657"
     },
     "rating": 2.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 227,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/three-brothers-restaurant-/"
   },
   {
     "restaurant_name": "Armenian Bistro",
@@ -12432,7 +13252,9 @@
       "housenumber": "5487"
     },
     "rating": 3.8,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 235,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/armenian-bistro-/"
   },
   {
     "restaurant_name": "Thammada Thai Cuisine",
@@ -12463,7 +13285,9 @@
       "housenumber": "2888"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 337,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/thammada-thai-cuisine-/"
   },
   {
     "restaurant_name": "Nimman Thai Cuisine",
@@ -12494,7 +13318,9 @@
       "housenumber": "2451"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 453,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/nimman-thai-cuisine-/"
   },
   {
     "restaurant_name": "Chiang Mai Thai Kitchen",
@@ -12524,7 +13350,9 @@
       "housenumber": "84"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 593,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/chiang-mai-/"
   },
   {
     "restaurant_name": "Thairoomgrand Etobicoke",
@@ -12555,7 +13383,9 @@
       "housenumber": "5112"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 357,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/thairoomgrand-etobicoke-/"
   },
   {
     "restaurant_name": "Taste Of Thailand Cuisine",
@@ -12586,7 +13416,9 @@
       "housenumber": "5310"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 430,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/taste-of-thailand-cuisine-/"
   },
   {
     "restaurant_name": "BuaThai",
@@ -12616,7 +13448,9 @@
       "housenumber": "743"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 289,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/bua-thai-restaurant-/"
   },
   {
     "restaurant_name": "Insadong Korean Restaurant",
@@ -12647,7 +13481,9 @@
       "housenumber": "4941"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 252,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/insadong-restaurant-/"
   },
   {
     "restaurant_name": "Nobuya",
@@ -12678,7 +13514,9 @@
       "housenumber": "285"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 608,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/nobuya-/"
   },
   {
     "restaurant_name": "KIBO Sushi House - Humber",
@@ -12708,7 +13546,9 @@
       "housenumber": "106"
     },
     "rating": 3.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 402,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/kibo-sushi-house-humber-/"
   },
   {
     "restaurant_name": "Sushi Kaji Restaurant",
@@ -12739,7 +13579,9 @@
       "housenumber": "860"
     },
     "rating": 2.5,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 284,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/sushi-kaji-restaurant-/"
   },
   {
     "restaurant_name": "Sushi Run",
@@ -12770,7 +13612,9 @@
       "housenumber": "3351"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 281,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/sushi-run-/"
   },
   {
     "restaurant_name": "Sushi-Ya Japan",
@@ -12800,7 +13644,9 @@
       "housenumber": "621"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 445,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/sushi-ya-japan-/"
   },
   {
     "restaurant_name": "Momiji Japanese Restaurant",
@@ -12831,7 +13677,9 @@
       "housenumber": "2955"
     },
     "rating": 4.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 335,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/momiji-japanese-restaurant-/"
   },
   {
     "restaurant_name": "Ikkoi Sushi & Ramen Japanese Cuisine",
@@ -12862,7 +13710,9 @@
       "housenumber": "5084"
     },
     "rating": 3.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 279,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/ikkoi-japanese-family-cuisine-/"
   },
   {
     "restaurant_name": "Toji Sushi",
@@ -12893,7 +13743,9 @@
       "housenumber": "5088"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 231,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/toji-sushi-/"
   },
   {
     "restaurant_name": "Shin Ramen and Sushi",
@@ -12924,7 +13776,9 @@
       "housenumber": "3106"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 234,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/shin-ramen-and-sushi-/"
   },
   {
     "restaurant_name": "PHO NGOC YEN 2 Etobicoke",
@@ -12955,7 +13809,9 @@
       "housenumber": "1596"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 394,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/pho-ngoc-yen-2-etobicoke-/"
   },
   {
     "restaurant_name": "Greek Taverna",
@@ -12985,7 +13841,9 @@
       "housenumber": "3080"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 380,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/souvlaki-hut-greek-taverna-/"
   },
   {
     "restaurant_name": "Via Allegro Ristorante",
@@ -13015,7 +13873,9 @@
       "housenumber": "1750"
     },
     "rating": 3.9,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 856,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/via-allegro-/"
   },
   {
     "restaurant_name": "Scaddabush Italian Kitchen & Bar Sherway",
@@ -13045,7 +13905,9 @@
       "housenumber": "1900"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 1023,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/scaddabush-italian-kitchen-and-bar-/"
   },
   {
     "restaurant_name": "FiAMMA Restaurant",
@@ -13076,7 +13938,9 @@
       "housenumber": "5555"
     },
     "rating": 3.7,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 502,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/fiamma-restaurant-/"
   },
   {
     "restaurant_name": "Sorsi e Morsi",
@@ -13107,7 +13971,9 @@
       "housenumber": "4900"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 245,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/sorsi-e-morsi-/"
   },
   {
     "restaurant_name": "ViBo Restaurant",
@@ -13138,7 +14004,9 @@
       "housenumber": "2995"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 534,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/vibo-restaurant-/"
   },
   {
     "restaurant_name": "Mamma Martino's Restaurant",
@@ -13168,7 +14036,9 @@
       "housenumber": "624B"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 564,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/mamma-martino-s-restaurant-/"
   },
   {
     "restaurant_name": "Pulcinella Ristorante",
@@ -13199,7 +14069,9 @@
       "housenumber": "3687"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 299,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/pulcinella-/"
   },
   {
     "restaurant_name": "La Vecchia Restaurant Lakeshore",
@@ -13229,7 +14101,9 @@
       "housenumber": "90"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 742,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/la-vecchia-restaurant-lakeshore-/"
   },
   {
     "restaurant_name": "Buon Giorno Cafe",
@@ -13260,7 +14134,9 @@
       "housenumber": "1134"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 245,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/buon-giorno-caf-/"
   },
   {
     "restaurant_name": "Panettorino Forno Italiano",
@@ -13291,7 +14167,9 @@
       "housenumber": "3797"
     },
     "rating": 3.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 121,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/panettorino-forno-italiano-/"
   },
   {
     "restaurant_name": "Cora",
@@ -13321,7 +14199,9 @@
       "housenumber": "1555"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 417,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/cora-breakfast-and-lunch-/"
   },
   {
     "restaurant_name": "Pür & Simple",
@@ -13351,7 +14231,9 @@
       "housenumber": "181"
     },
     "rating": 3.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 723,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/p-r-and-simple-/"
   },
   {
     "restaurant_name": "Swiss Chalet",
@@ -13381,7 +14263,9 @@
       "housenumber": "642"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 900,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/swiss-chalet-/"
   },
   {
     "restaurant_name": "Harry's Steak House",
@@ -13412,7 +14296,9 @@
       "housenumber": "3277"
     },
     "rating": 4.1,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 195,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/harry-s-steak-house-/"
   },
   {
     "restaurant_name": "Chop Steakhouse & Bar",
@@ -13443,7 +14329,9 @@
       "housenumber": "801"
     },
     "rating": 4.4,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 1657,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/chop-steakhouse-and-bar-/"
   },
   {
     "restaurant_name": "Moxies Dixon Road Restaurant",
@@ -13474,7 +14362,9 @@
       "housenumber": "55"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 990,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/moxies-grill-and-bar-/"
   },
   {
     "restaurant_name": "Lone Star Texas Grill",
@@ -13505,7 +14395,9 @@
       "housenumber": "930"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 664,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/lone-star-texas-grill-/"
   },
   {
     "restaurant_name": "The Cannery Kitchen and Social",
@@ -13536,7 +14428,9 @@
       "housenumber": "33"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 247,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/the-cannery-kitchen-and-social-/"
   },
   {
     "restaurant_name": "Henry VIII Ale House",
@@ -13567,7 +14461,9 @@
       "housenumber": "3078"
     },
     "rating": 3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 229,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/henry-viii-ale-house-/"
   },
   {
     "restaurant_name": "South Shore Bar & Grill",
@@ -13597,7 +14493,9 @@
       "housenumber": "264"
     },
     "rating": 3.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 136,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/south-shore-bar-and-grill-/"
   },
   {
     "restaurant_name": "Toast On Bloor",
@@ -13628,7 +14526,9 @@
       "housenumber": "3317"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 373,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/toast-on-bloor-/"
   },
   {
     "restaurant_name": "Sanremo Bakery",
@@ -13659,7 +14559,9 @@
       "housenumber": "374"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 655,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/sanremo-bakery-/"
   },
   {
     "restaurant_name": "Kettlemans Bagel",
@@ -13688,7 +14590,9 @@
       "housenumber": ""
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 429,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/kettlemans-bagel-/"
   },
   {
     "restaurant_name": "Montesanto Bakery",
@@ -13718,7 +14622,9 @@
       "housenumber": "5"
     },
     "rating": 4.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 155,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/montesanto-bakery-/"
   },
   {
     "restaurant_name": "HV Bakery & Patisserie",
@@ -13749,7 +14655,9 @@
       "housenumber": "709"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 203,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/hadrien-verrier-patisserie-/"
   },
   {
     "restaurant_name": "The Pie Commission",
@@ -13779,7 +14687,9 @@
       "housenumber": "919"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 417,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/the-pie-commission-/"
   },
   {
     "restaurant_name": "The Sydney Grind",
@@ -13810,7 +14720,9 @@
       "housenumber": "2883"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 298,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/the-sydney-grind-/"
   },
   {
     "restaurant_name": "Mik Cafe and Bakery",
@@ -13840,7 +14752,9 @@
       "housenumber": "577"
     },
     "rating": 2.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 210,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/mik-cafe-and-bakery-/"
   },
   {
     "restaurant_name": "Attwell Coffee",
@@ -13870,7 +14784,9 @@
       "housenumber": "272"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 155,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/attwell-coffee-/"
   },
   {
     "restaurant_name": "Suvari Coffee",
@@ -13901,7 +14817,9 @@
       "housenumber": "3378"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 99,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/suvari-coffee-/"
   },
   {
     "restaurant_name": "Terminal 3 Coffee Roasters",
@@ -13932,7 +14850,9 @@
       "housenumber": "3337"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 212,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/terminal-3-coffee-roasters-/"
   },
   {
     "restaurant_name": "Real Fruit Bubble Tea",
@@ -13963,7 +14883,9 @@
       "housenumber": "1530"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 294,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/real-fruit-bubble-tea-/"
   },
   {
     "restaurant_name": "BOBO Tea & Juice - Long Branch",
@@ -13994,7 +14916,9 @@
       "housenumber": "3313"
     },
     "rating": 3.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 46,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/bobo-tea-and-juice-/"
   },
   {
     "restaurant_name": "CoCo Bubble Tea - CF Sherway Gardens",
@@ -14025,7 +14949,9 @@
       "housenumber": "25"
     },
     "rating": 4.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 127,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/coco-fresh-tea-and-juice-3/"
   },
   {
     "restaurant_name": "Latin Dough (Empanadas y Tequenos)",
@@ -14055,7 +14981,9 @@
       "housenumber": "533"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 252,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/latin-dough-empanadas-y-teque-os-/"
   },
   {
     "restaurant_name": "Amanecer Salvadoreno Restaurant",
@@ -14086,7 +15014,9 @@
       "housenumber": "2663"
     },
     "rating": 4.2,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Corazon Agave - Mexican Cuisine",
@@ -14116,7 +15046,9 @@
       "housenumber": "765"
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 387,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/corazon-agave-mexican-cuisine-/"
   },
   {
     "restaurant_name": "Flava Ceen Inc.",
@@ -14146,7 +15078,9 @@
       "housenumber": "106"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 326,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/flava-ceen-/"
   },
   {
     "restaurant_name": "Indar's Roti & Doubles",
@@ -14177,7 +15111,9 @@
       "housenumber": "1152"
     },
     "rating": 4.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 326,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/indars-roti-and-doubles-/"
   },
   {
     "restaurant_name": "B's Sizzling Kitchen",
@@ -14207,7 +15143,9 @@
       "housenumber": "430"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 584,
+    "rating_count_source": "https://www.restaurantji.com/on/mississauga/bs-sizzling-kitchen-/"
   },
   {
     "restaurant_name": "Popeyes Louisiana Kitchen",
@@ -14238,7 +15176,9 @@
       "housenumber": "5306"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 364,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/popeyes-louisiana-kitchen-3/"
   },
   {
     "restaurant_name": "Harvey's",
@@ -14269,7 +15209,9 @@
       "housenumber": "805"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 304,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/harveys-4/"
   },
   {
     "restaurant_name": "RUDY",
@@ -14300,7 +15242,9 @@
       "housenumber": "1466"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 529,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/rudy-/"
   },
   {
     "restaurant_name": "Taco Bell",
@@ -14330,7 +15274,9 @@
       "housenumber": "1610"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 525,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/taco-bell-/"
   },
   {
     "restaurant_name": "Old Mill Toronto Restaurant",
@@ -14361,7 +15307,9 @@
       "housenumber": "21"
     },
     "rating": 4.2,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 970,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/old-mill-toronto-restaurant-/"
   },
   {
     "restaurant_name": "Great Lakes Brewery",
@@ -14392,7 +15340,9 @@
       "housenumber": "30"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 190,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/great-lakes-brewery-/"
   },
   {
     "restaurant_name": "Beertown - Etobicoke",
@@ -14423,7 +15373,9 @@
       "housenumber": "1020"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 488,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/beertown-public-house-etobicoke-/"
   },
   {
     "restaurant_name": "The Galway Arms Irish Pub and Restaurant",
@@ -14454,7 +15406,9 @@
       "housenumber": "838"
     },
     "rating": 4.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 179,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/the-galway-arms-irish-pub-and-restaurant-/"
   },
   {
     "restaurant_name": "Bilal Restaurant Somali Cuisine",
@@ -14484,7 +15438,9 @@
       "housenumber": "321"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Red Rock Restaurant",
@@ -14514,7 +15470,9 @@
       "housenumber": "103"
     },
     "rating": 4.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Asian Buffet",
@@ -14544,7 +15502,9 @@
       "housenumber": "161"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 277,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/asian-buffet-/"
   },
   {
     "restaurant_name": "Hakka Cottage",
@@ -14574,7 +15534,9 @@
       "housenumber": "50A"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Hamdi Restaurant Somali Cuisine",
@@ -14604,7 +15566,9 @@
       "housenumber": "18"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 240,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/hamdi-restaurant-somali-cuisine-/"
   },
   {
     "restaurant_name": "Lola's Kusina",
@@ -14634,7 +15598,9 @@
       "housenumber": "96"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Baghlan Kabob & Bakery",
@@ -14664,7 +15630,9 @@
       "housenumber": "32"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 213,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/baghlan-kabob-and-bakery-/"
   },
   {
     "restaurant_name": "Shanghai Restaurant",
@@ -14694,7 +15662,9 @@
       "housenumber": "106"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Desi Spice - Grand Indian Buffet",
@@ -14724,7 +15694,9 @@
       "housenumber": "25"
     },
     "rating": 4.1,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Golden Asian Cuisine",
@@ -14754,7 +15726,9 @@
       "housenumber": "123"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 207,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/golden-asian-cuisine-/"
   },
   {
     "restaurant_name": "Wally's Grill",
@@ -14784,7 +15758,9 @@
       "housenumber": "123"
     },
     "rating": 4.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 372,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/wallys-grill-/"
   },
   {
     "restaurant_name": "Sweet Mahal",
@@ -14814,7 +15790,9 @@
       "housenumber": "680"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 437,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/sweet-mahal-/"
   },
   {
     "restaurant_name": "Rexdale Sweets & Restaurant",
@@ -14844,7 +15822,9 @@
       "housenumber": "26"
     },
     "rating": 3.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Faley Restaurant",
@@ -14874,7 +15854,9 @@
       "housenumber": "42"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 287,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/faley-restaurant-/"
   },
   {
     "restaurant_name": "Afghan Kebob Cuisine",
@@ -14904,7 +15886,9 @@
       "housenumber": "2298"
     },
     "rating": 4.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 181,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/afghan-kebob-cuisine-/"
   },
   {
     "restaurant_name": "Mushkaki Restaurants Inc",
@@ -14934,7 +15918,9 @@
       "housenumber": "145"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 315,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/mushkaki-restaurants-inc-/"
   },
   {
     "restaurant_name": "Swiss Pick Restaurant",
@@ -14965,7 +15951,9 @@
       "housenumber": "445"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Canosa Bakery",
@@ -14995,7 +15983,9 @@
       "housenumber": "21"
     },
     "rating": 4.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Banh Mi Saigon",
@@ -15026,7 +16016,9 @@
       "housenumber": "2267"
     },
     "rating": 4.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Brazilian Express",
@@ -15057,7 +16049,9 @@
       "housenumber": "500"
     },
     "rating": 3.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Royal Paan",
@@ -15088,7 +16082,9 @@
       "housenumber": "2654"
     },
     "rating": 4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 183,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/royal-paan-/"
   },
   {
     "restaurant_name": "Kashmir Curry & Biryani House",
@@ -15119,7 +16115,9 @@
       "housenumber": "1530"
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 164,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/kashmir-curry-and-biryani-house-/"
   },
   {
     "restaurant_name": "Hamar Weyne Somali Cuisine",
@@ -15149,7 +16147,9 @@
       "housenumber": "296"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Samosa And Sweet Factory",
@@ -15179,7 +16179,9 @@
       "housenumber": "1850"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 425,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/samosa-and-sweet-factory-/"
   },
   {
     "restaurant_name": "Madras Dosa Hut",
@@ -15210,7 +16212,9 @@
       "housenumber": "1123"
     },
     "rating": 3.5,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 331,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/madras-dosa-hut-/"
   },
   {
     "restaurant_name": "Rajdhani Sweets & Restaurant",
@@ -15241,7 +16245,9 @@
       "housenumber": "2658"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 568,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/rajdhani-sweets-and-restaurant-/"
   },
   {
     "restaurant_name": "Brar Sweets & Restaurant",
@@ -15271,7 +16277,9 @@
       "housenumber": "2646"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Best Portuguese Chicken",
@@ -15302,7 +16310,9 @@
       "housenumber": "942"
     },
     "rating": 4.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sushi 2go Catering",
@@ -15333,7 +16343,9 @@
       "housenumber": "976"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "MR.SUB",
@@ -15364,7 +16376,9 @@
       "housenumber": "702"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 139,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/mr-sub-/"
   },
   {
     "restaurant_name": "Dino's Wood Burning Pizza",
@@ -15395,7 +16409,9 @@
       "housenumber": "820"
     },
     "rating": 3.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 336,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/dinos-wood-burning-pizza-/"
   },
   {
     "restaurant_name": "Pazzia Osteria",
@@ -15426,7 +16442,9 @@
       "housenumber": "848"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Izba Restaurant",
@@ -15456,7 +16474,9 @@
       "housenumber": "648"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Posticino Ristorante",
@@ -15486,7 +16506,9 @@
       "housenumber": "755"
     },
     "rating": 4.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Trini Gardens Restaurant",
@@ -15517,7 +16539,9 @@
       "housenumber": "3266"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 159,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/trini-gardens-restaurant-/"
   },
   {
     "restaurant_name": "Rocco's Plum Tomato",
@@ -15548,7 +16572,9 @@
       "housenumber": "164"
     },
     "rating": 4.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 264,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/roccos-plum-tomato-/"
   },
   {
     "restaurant_name": "U-Know Sushi",
@@ -15579,7 +16605,9 @@
       "housenumber": "170"
     },
     "rating": 3.6,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 174,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/u-know-sushi-/"
   },
   {
     "restaurant_name": "Cafe Mimico",
@@ -15609,7 +16637,9 @@
       "housenumber": "264"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Birds & Beans Cafe",
@@ -15640,7 +16670,9 @@
       "housenumber": "2413"
     },
     "rating": 4.4,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Mimico Bagel and Coffee",
@@ -15670,7 +16702,9 @@
       "housenumber": "2391"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 109,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/mimico-bagel-and-coffee-/"
   },
   {
     "restaurant_name": "Gud Daae",
@@ -15701,7 +16735,9 @@
       "housenumber": "2461"
     },
     "rating": 4.2,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Black Goat Cafe",
@@ -15732,7 +16768,9 @@
       "housenumber": "3261"
     },
     "rating": 3.6,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Galata Cafe",
@@ -15763,7 +16801,9 @@
       "housenumber": "5122"
     },
     "rating": 3.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 286,
+    "rating_count_source": "https://www.restaurantji.com/on/toronto/galata-cafe-/"
   },
   {
     "restaurant_name": "Pizzeria Via Napoli",
@@ -15794,7 +16834,9 @@
       "housenumber": "4923"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Thai Jalearn",
@@ -15825,7 +16867,9 @@
       "housenumber": "4911"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 226,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/thai-jalearn-/"
   },
   {
     "restaurant_name": "Fire Wings Bar & Grill",
@@ -15856,7 +16900,9 @@
       "housenumber": "4903"
     },
     "rating": 3.5,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Mai Bistro",
@@ -15887,7 +16933,9 @@
       "housenumber": "4906"
     },
     "rating": 4.3,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": 168,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/mai-bistro-/"
   },
   {
     "restaurant_name": "Espresso Bakery & Deli",
@@ -15918,7 +16966,9 @@
       "housenumber": "4980"
     },
     "rating": 4.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Traditional Korean Bakery",
@@ -15949,7 +16999,9 @@
       "housenumber": "4992"
     },
     "rating": 4.9,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 1,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/traditional-korean-bakery-/"
   },
   {
     "restaurant_name": "John's Fish & Seafood Grill",
@@ -15980,7 +17032,9 @@
       "housenumber": "5090"
     },
     "rating": 4.8,
-    "estimated_price_range": "$30-$60"
+    "estimated_price_range": "$30-$60",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Miss Natalie's Tropical Cuisine",
@@ -16011,7 +17065,9 @@
       "housenumber": "5118"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Hyderabad Spices South Indian Cuisine",
@@ -16042,7 +17098,9 @@
       "housenumber": "3391"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Vintage Thai",
@@ -16073,7 +17131,9 @@
       "housenumber": "3369"
     },
     "rating": 3.7,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 276,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/vintage-thai-/"
   },
   {
     "restaurant_name": "Fit Cake",
@@ -16104,7 +17164,9 @@
       "housenumber": "3367"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Paparikoo Mediterranean Cuisine",
@@ -16135,7 +17197,9 @@
       "housenumber": "1176"
     },
     "rating": 3.8,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 211,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/paparikoo-mediterranean-cuisine-/"
   },
   {
     "restaurant_name": "Elijah's Automatic Flame Broiled",
@@ -16166,7 +17230,9 @@
       "housenumber": "821"
     },
     "rating": 3.8,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Bun-Mi",
@@ -16197,7 +17263,9 @@
       "housenumber": "822"
     },
     "rating": 3.7,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Don Chon",
@@ -16228,7 +17296,9 @@
       "housenumber": "834"
     },
     "rating": 4.3,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "K&B Sushi",
@@ -16259,7 +17329,9 @@
       "housenumber": "1184"
     },
     "rating": 3.9,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "New Flower Drum",
@@ -16290,7 +17362,9 @@
       "housenumber": "2428"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Revolver Pizza Co.",
@@ -16321,7 +17395,9 @@
       "housenumber": "388"
     },
     "rating": 4.3,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": 432,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/revolver-pizza-co-/"
   },
   {
     "restaurant_name": "The Lime Viet & Thai Cuisine",
@@ -16351,7 +17427,9 @@
       "housenumber": "562"
     },
     "rating": 3.4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 341,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/the-lime-viet-and-thai-cuisine-/"
   },
   {
     "restaurant_name": "Viva Sub",
@@ -16381,7 +17459,9 @@
       "housenumber": "1178"
     },
     "rating": 4.1,
-    "estimated_price_range": "$0-$15"
+    "estimated_price_range": "$0-$15",
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Xawaash",
@@ -16411,7 +17491,9 @@
       "housenumber": "130"
     },
     "rating": 4,
-    "estimated_price_range": "$15-$30"
+    "estimated_price_range": "$15-$30",
+    "rating_count": 498,
+    "rating_count_source": "https://www.restaurantji.com/on/etobicoke/xawaash-/"
   },
   {
     "restaurant_name": "Sushi-Q",
@@ -16442,7 +17524,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "4841"
-    }
+    },
+    "rating_count": 73,
+    "rating_count_source": "https://www.restaurantji.com/on/north-york/sushi-q-/"
   },
   {
     "restaurant_name": "Atria Sushi",
@@ -16473,7 +17557,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "2235"
-    }
+    },
+    "rating_count": 45,
+    "rating_count_source": "https://www.restaurantji.com/on/north-york/ichiban-sushi-express-/"
   },
   {
     "restaurant_name": "J&Y Chinese Cuisine",
@@ -16503,7 +17589,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "1108"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Hou Kee Chinese Bistro",
@@ -16533,7 +17621,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "5"
-    }
+    },
+    "rating_count": 146,
+    "rating_count_source": "https://www.restaurantji.com/on/north-york/hou-kee-chinese-bistro-/"
   },
   {
     "restaurant_name": "Tin Tin Congee Chinese Restaurant",
@@ -16564,7 +17654,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "4205"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Sun Star Chinese Cuisine",
@@ -16594,7 +17686,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": ""
-    }
+    },
+    "rating_count": 102,
+    "rating_count_source": "https://www.restaurantji.com/on/north-york/sun-star-chinese-cuisine-/"
   },
   {
     "restaurant_name": "Mandarin Restaurant",
@@ -16625,7 +17719,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "1027"
-    }
+    },
+    "rating_count": 1518,
+    "rating_count_source": "https://www.restaurantji.com/on/north-york/mandarin-restaurant-/"
   },
   {
     "restaurant_name": "Sang-Ji Fried Bao (North York)",
@@ -16656,7 +17752,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "4841"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Perfect Meat Bowl",
@@ -16687,7 +17785,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "5418"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Street Grill",
@@ -16718,7 +17818,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "3555"
-    }
+    },
+    "rating_count": 305,
+    "rating_count_source": "https://www.restaurantji.com/on/north-york/street-grill-/"
   },
   {
     "restaurant_name": "Saravanaa Bhavan",
@@ -16749,7 +17851,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "1571"
-    }
+    },
+    "rating_count": 2570,
+    "rating_count_source": "https://www.restaurantji.com/on/scarborough/saravanaa-bhavan-/"
   },
   {
     "restaurant_name": "Unplugged Cafe & Bar",
@@ -16779,7 +17883,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "4271"
-    }
+    },
+    "rating_count": 352,
+    "rating_count_source": "https://www.restaurantji.com/on/scarborough/unplugged-cafe-and-bar-/"
   },
   {
     "restaurant_name": "Chola Indian Cuisine",
@@ -16809,7 +17915,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "3551"
-    }
+    },
+    "rating_count": 456,
+    "rating_count_source": "https://www.restaurantji.com/on/scarborough/chola-indian-cuisine-/"
   },
   {
     "restaurant_name": "Dosa Kitchen",
@@ -16839,7 +17947,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "3380"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Nian Yi Kuai Zi",
@@ -16869,7 +17979,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "4186"
-    }
+    },
+    "rating_count": 709,
+    "rating_count_source": "https://www.restaurantji.com/on/scarborough/nian-yi-kuai-zi-scarborough-/"
   },
   {
     "restaurant_name": "Koh Lipe Thai Kitchen Scarborough",
@@ -16893,7 +18005,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": ""
-    }
+    },
+    "rating_count": 500,
+    "rating_count_source": "https://www.restaurantji.com/on/scarborough/koh-lipe-thai-kitchen-scarborough-/"
   },
   {
     "restaurant_name": "Nakamori Japanese Restaurant",
@@ -16922,7 +18036,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": ""
-    }
+    },
+    "rating_count": 236,
+    "rating_count_source": "https://www.restaurantji.com/on/scarborough/nakamori-japanese-restaurant-/"
   },
   {
     "restaurant_name": "Darna Middle Eastern Kitchen",
@@ -16952,7 +18068,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "1330"
-    }
+    },
+    "rating_count": 423,
+    "rating_count_source": "https://www.restaurantji.com/on/east-york/darna-middle-eastern-kitchen-/"
   },
   {
     "restaurant_name": "LOCAL Public Eatery Leaside",
@@ -16983,7 +18101,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "180"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Dhillon’s Karahi",
@@ -17013,7 +18133,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "1450"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Olde Yorke Fish & Chips",
@@ -17043,7 +18165,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "96"
-    }
+    },
+    "rating_count": 604,
+    "rating_count_source": "https://www.restaurantji.com/on/east-york/olde-yorke-fish-and-chips-/"
   },
   {
     "restaurant_name": "The Donlands Diner",
@@ -17074,7 +18198,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "417"
-    }
+    },
+    "rating_count": 249,
+    "rating_count_source": "https://www.restaurantji.com/on/east-york/the-donlands-diner-/"
   },
   {
     "restaurant_name": "China Food",
@@ -17104,7 +18230,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "854"
-    }
+    },
+    "rating_count": 112,
+    "rating_count_source": "https://www.restaurantji.com/on/east-york/china-food-/"
   },
   {
     "restaurant_name": "China Work Restaurant",
@@ -17134,7 +18262,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "468"
-    }
+    },
+    "rating_count": 80,
+    "rating_count_source": "https://www.restaurantji.com/on/east-york/china-work-restaurant-/"
   },
   {
     "restaurant_name": "Wok and Grill",
@@ -17164,7 +18294,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "1085"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pho Lady",
@@ -17194,7 +18326,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "220"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Number One Chinese Restaurant",
@@ -17225,7 +18359,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "897"
-    }
+    },
+    "rating_count": 137,
+    "rating_count_source": "https://www.restaurantji.com/on/east-york/number-one-chinese-restaurant-/"
   },
   {
     "restaurant_name": "Sandy’s Restaurant",
@@ -17256,7 +18392,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "2093"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "Pii Nong Thai",
@@ -17287,7 +18425,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "1677"
-    }
+    },
+    "rating_count": null,
+    "rating_count_source": null
   },
   {
     "restaurant_name": "5 Spice Dining",
@@ -17317,7 +18457,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "2826"
-    }
+    },
+    "rating_count": 882,
+    "rating_count_source": "https://www.restaurantji.com/on/scarborough/5-spice-dining-/"
   },
   {
     "restaurant_name": "Wok and Fortune Family Restaurant",
@@ -17348,7 +18490,9 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "2900"
-    }
+    },
+    "rating_count": 198,
+    "rating_count_source": "https://www.restaurantji.com/on/scarborough/wok-and-fortune-family-restaurant-/"
   },
   {
     "restaurant_name": "SumiLicious Smoked Meat & Deli",
@@ -17378,6 +18522,8 @@
       "country": "Canada",
       "country_code": "ca",
       "housenumber": "1200"
-    }
+    },
+    "rating_count": 513,
+    "rating_count_source": "https://www.restaurantji.com/on/scarborough/sumilicious-smoked-meat-and-deli-/"
   }
 ]

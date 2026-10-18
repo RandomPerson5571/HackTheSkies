@@ -12,6 +12,7 @@ import {
   type ComponentProps,
 } from "react";
 import {
+  Animated,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -21,11 +22,16 @@ import {
   Text,
   TextInput,
   View,
+  useWindowDimensions,
   type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { type Category, type Place } from "../data/places";
+import {
+  matchesDietaryPreference,
+  type Category,
+  type Place,
+} from "../data/places";
 import {
   buildRecommendations,
   recommendationBadge,
@@ -40,6 +46,7 @@ import type {
   CollectionAction,
   RestaurantCollection,
 } from "../models/restaurantCollection";
+import type { DietaryPreference } from "../../profile/models/profile";
 
 import { useBackend } from "../../../lib/BackendProvider";
 import { useReducedMotion } from "../../food-dex/hooks/useReducedMotion";
@@ -59,6 +66,7 @@ type Props = {
   onOpenDex?: () => void;
   onOpenCommunity?: () => void;
   mode?: "discover" | "journal";
+  diet: DietaryPreference;
 };
 
 const webGlassBlur = (
@@ -97,7 +105,9 @@ export function RestaurantsScreen({
   onOpenDex,
   onOpenCommunity,
   mode = "discover",
+  diet,
 }: Props) {
+  const { height: windowHeight } = useWindowDimensions();
   const { places: allPlaces } = useBackend();
   const places = filteredPlaces ?? allPlaces;
   const reducedMotion = useReducedMotion();
@@ -117,12 +127,37 @@ export function RestaurantsScreen({
   const [formError, setFormError] = useState("");
   const [managing, setManaging] = useState<Place | null>(null);
   const [actionPlace, setActionPlace] = useState<Place | null>(null);
+  const [actionScrimOpacity] = useState(() => new Animated.Value(0));
+  const [actionSheetTranslateY] = useState(() => new Animated.Value(windowHeight));
   const [infoVisible, setInfoVisible] = useState(false);
   const [page, setPage] = useState(1);
   const [lastRandomId, setLastRandomId] = useState<string | null>(null);
   useMenuSound(creating);
   useMenuSound(managing !== null);
   useMenuSound(actionPlace !== null);
+  useEffect(() => {
+    if (actionPlace && reducedMotion === false) {
+      actionScrimOpacity.setValue(0);
+      actionSheetTranslateY.setValue(windowHeight);
+      Animated.parallel([
+        Animated.timing(actionScrimOpacity, {
+          toValue: 1,
+          duration: 240,
+          useNativeDriver: true,
+        }),
+        Animated.spring(actionSheetTranslateY, {
+          toValue: 0,
+          damping: 28,
+          stiffness: 260,
+          mass: 0.9,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      actionScrimOpacity.setValue(actionPlace ? 1 : 0);
+      actionSheetTranslateY.setValue(0);
+    }
+  }, [actionPlace, actionScrimOpacity, actionSheetTranslateY, reducedMotion, windowHeight]);
   useMenuSound(infoVisible);
 
   const recommendations = useMemo(
@@ -136,6 +171,8 @@ export function RestaurantsScreen({
       recommendations,
     );
     return base.filter((place) => {
+      if (mode === "discover" && !matchesDietaryPreference(place, diet))
+        return false;
       if (
         hiddenGemsOnly &&
         recommendationBadge(recommendations.get(place.id)) !== "Hidden gem"
@@ -165,6 +202,7 @@ export function RestaurantsScreen({
     recommendations,
     hiddenGemsOnly,
     mode,
+    diet,
     collectionTab,
     collection,
   ]);
@@ -176,6 +214,7 @@ export function RestaurantsScreen({
     hiddenGemsOnly,
     collectionTab,
     mode,
+    diet,
   ]);
   const [previousPageResetKey, setPreviousPageResetKey] =
     useState(pageResetKey);
@@ -185,14 +224,16 @@ export function RestaurantsScreen({
   }
   useEffect(() => {
     list.current?.scrollToOffset({ offset: 0, animated: false });
-  }, [query, category, cuisine, sort, hiddenGemsOnly, collectionTab, mode]);
+  }, [query, category, cuisine, sort, hiddenGemsOnly, collectionTab, mode, diet]);
   const pageItems = useMemo(
     () => visible.slice(0, page * PAGE_SIZE),
     [visible, page],
   );
 
   const hasFilters = Boolean(
-    query || category !== "All" || cuisine !== "All" || hiddenGemsOnly,
+    query || category !== "All" || cuisine !== "All" || hiddenGemsOnly ||
+      (mode === "discover" &&
+        (diet === "Halal" || diet === "Kosher" || diet === "Gluten-free")),
   );
 
   function resetFilters() {
@@ -488,7 +529,10 @@ export function RestaurantsScreen({
             </Text>
             <Text style={styles.emptyCopy}>
               {hasFilters
-                ? "Try another food or neighborhood, or clear your filters."
+                ? mode === "discover" &&
+                  (diet === "Halal" || diet === "Kosher" || diet === "Gluten-free")
+                  ? `No restaurants with confirmed ${diet} information match. Try another filter or change your dietary preference in Settings.`
+                  : "Try another food or neighborhood, or clear your filters."
                 : mode === "journal"
                   ? "Bookmark a restaurant in Discover, or add a visited spot to this collection."
                   : "Discover a spot and save it for later."}
@@ -608,23 +652,29 @@ export function RestaurantsScreen({
       <Modal
         visible={!!actionPlace}
         transparent
-        animationType={reducedMotion === false ? "slide" : "none"}
+        animationType="none"
         onRequestClose={() => setActionPlace(null)}
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.modal}
         >
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Close actions"
-            style={styles.scrim}
-            onPress={() => setActionPlace(null)}
-          />
-          <View
+          <Animated.View
+            pointerEvents="box-none"
+            style={[styles.scrim, { opacity: actionScrimOpacity }]}
+          >
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Close actions"
+              style={StyleSheet.absoluteFill}
+              onPress={() => setActionPlace(null)}
+            />
+          </Animated.View>
+          <Animated.View
             accessibilityViewIsModal
             style={[
               styles.sheet,
+              { transform: [{ translateY: actionSheetTranslateY }] },
               { paddingBottom: insets.bottom + 24, maxHeight: "80%" },
             ]}
           >
@@ -756,8 +806,8 @@ export function RestaurantsScreen({
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Icon name="list-outline" color={colors.accent} />
-                  <Text style={styles.actionTextLarge}>Add to list</Text>
+                  <Icon name="albums-outline" color={colors.accent} />
+                  <Text style={styles.actionTextLarge}>Add to collection</Text>
                 </Pressable>
                 <Pressable
                   accessibilityRole="button"
@@ -787,7 +837,7 @@ export function RestaurantsScreen({
                 </Pressable>
               </ScrollView>
             ) : null}
-          </View>
+          </Animated.View>
         </KeyboardAvoidingView>
       </Modal>
 

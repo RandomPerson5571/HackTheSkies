@@ -34,11 +34,9 @@ import {
 export function ProfileAtlas({
   entries,
   onOpenDex,
-  onOpenQuests,
 }: {
   entries: FoodEntry[];
   onOpenDex?: () => void;
-  onOpenQuests?: () => void;
 }) {
   const [selected, setSelected] = useState<Cuisine | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
@@ -272,7 +270,7 @@ export function ProfileAtlas({
                     <Text style={s.subtitle}>
                       {mastery
                         ? `${mastery} cuisine stamp`
-                        : "Your passport stamp awaits"}
+                        : "Your first atlas discovery awaits"}
                     </Text>
                     <Text style={s.copy}>
                       {mastery
@@ -316,31 +314,6 @@ export function ProfileAtlas({
                       name="arrow-forward"
                       size={18}
                       color={colors.white}
-                    />
-                  </Pressable>
-                )}
-                {onOpenQuests && (
-                  <Pressable
-                    accessibilityRole="button"
-                    onPress={() => {
-                      setSelected(null);
-                      onOpenQuests();
-                    }}
-                    style={({ pressed }) => [
-                      s.questButton,
-                      pressed && s.pressed,
-                    ]}
-                  >
-                    <Ionicons
-                      name="compass-outline"
-                      size={20}
-                      color={colors.accent}
-                    />
-                    <Text style={s.chipText}>Find your next Cibo Quest</Text>
-                    <Ionicons
-                      name="chevron-forward"
-                      size={16}
-                      color={colors.accent}
                     />
                   </Pressable>
                 )}
@@ -529,12 +502,5 @@ const s = StyleSheet.create({
     fontWeight: "600",
     color: colors.white,
     flexShrink: 1,
-  },
-  questButton: {
-    minHeight: 48,
-    flexDirection: "row",
-    gap: 8,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

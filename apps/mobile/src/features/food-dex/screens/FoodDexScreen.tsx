@@ -114,8 +114,8 @@ export function FoodDexScreen({
   capture = null,
   onOpenCamera,
   dex,
-  onOpenQuests,
   onOpenJournal,
+  onOpenQuests,
   onDiscover,
   gameXp = 0,
   visited = [],
@@ -123,8 +123,8 @@ export function FoodDexScreen({
   dex: ReturnType<typeof useFoodDex>;
   capture?: FoodCapture | null;
   onOpenCamera?: () => void;
-  onOpenQuests?: () => void;
   onOpenJournal?: () => void;
+  onOpenQuests?: () => void;
   gameXp?: number;
   visited?: string[];
   onDiscover?: (cuisine: Cuisine) => void;
@@ -314,8 +314,7 @@ export function FoodDexScreen({
       entry: savedEntry,
       before: entries,
     });
-    const newCuisine = !entries.some((entry) => entry.cuisine === scanCuisine);
-    void playFeedback(newCuisine ? "sparkle" : "discover");
+    void playFeedback("openBook");
     setNotice("");
     closeScan();
   }
@@ -958,19 +957,6 @@ export function FoodDexScreen({
                         : `Collect ${target.target} dishes to earn your ${target.label}`;
                     })()}
                   </Text>
-                  {onOpenQuests && (
-                    <Pressable
-                      accessibilityRole="button"
-                      onPress={onOpenQuests}
-                      style={({ pressed }) => [s.questButton, pressed && s.dim]}
-                    >
-                      <Icon name="flag-outline" />
-                      <Text style={s.questButtonText}>
-                        Start {cuisine} Food Quest
-                      </Text>
-                      <Icon name="arrow-forward" size={18} />
-                    </Pressable>
-                  )}
                   <View style={[s.search, searchFocused && s.searchActive]}>
                     <Icon name="search-outline" size={19} />
                     <TextInput
@@ -1482,21 +1468,6 @@ const s = StyleSheet.create({
   milestoneCount: {
     color: colors.white,
     fontSize: 13,
-    fontWeight: "700",
-  },
-  questButton: {
-    backgroundColor: colors.paper,
-    borderRadius: 16,
-    minHeight: 48,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    padding: 14,
-  },
-  questButtonText: {
-    flex: 1,
-    color: colors.accent,
-    fontSize: 14,
     fontWeight: "700",
   },
   viewToggle: {

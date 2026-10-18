@@ -1,10 +1,6 @@
 import type { FoodEntry } from "../../food-dex/models/foodDex.ts";
 import { collectionQuestXp } from "../../quests/models/collectionQuests.ts";
-import {
-  pathCuisines,
-  pathProgress,
-  type QuestState,
-} from "../../quests/models/quests.ts";
+import type { QuestState } from "../../quests/models/quests.ts";
 import { rankForXp } from "../../profile/models/customization.ts";
 import { levelForXp, xpToNextLevel } from "./gamification.ts";
 
@@ -15,12 +11,7 @@ export function playerProgress(
   entries: FoodEntry[],
   visited: string[] = [],
 ) {
-  const legacyXp =
-    quests.bonusXp +
-    pathCuisines.reduce(
-      (sum, cuisine) => sum + pathProgress(quests, cuisine).xp,
-      0,
-    );
+  const legacyXp = quests.bonusXp;
   const totalXp =
     Math.max(0, gameXp) + legacyXp + collectionQuestXp(entries, visited);
   return {

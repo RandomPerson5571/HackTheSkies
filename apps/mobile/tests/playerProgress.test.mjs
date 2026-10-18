@@ -3,12 +3,10 @@ import assert from "node:assert/strict";
 import { playerProgress } from "../src/features/gamification/models/playerProgress.ts";
 import {
   initialQuests,
-  completeQuest,
-  questsFor,
 } from "../src/features/quests/models/quests.ts";
 
 test("shared progress includes activity, existing quests and collection rewards", () => {
-  const quests = completeQuest(initialQuests(), questsFor("Japanese")[0]);
+  const quests = { ...initialQuests(), bonusXp: 25 };
   const entries = [
     {
       id: "ramen",

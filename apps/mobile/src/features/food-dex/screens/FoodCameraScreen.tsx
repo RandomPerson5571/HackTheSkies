@@ -127,7 +127,7 @@ export function FoodCameraScreen({
       if (mounted.current && generation.current === current) {
         setRecognition(result);
         if (result) {
-          void playFeedback("success");
+          void playFeedback("bell");
         } else {
           void playFeedback("error");
         }
@@ -159,7 +159,7 @@ export function FoodCameraScreen({
   async function snap() {
     if (!camera.current || !ready || capturing.current) return;
     capturing.current = true;
-    void playFeedback("scan");
+    void playFeedback("interfaceClick");
     setBusy(true);
     setError("");
     const current = generation.current;
@@ -195,7 +195,7 @@ export function FoodCameraScreen({
   async function selectPhoto() {
     if (capturing.current) return;
     capturing.current = true;
-    void playFeedback("scan");
+    void playFeedback("alert");
     setBusy(true);
     setError("");
     const current = generation.current;

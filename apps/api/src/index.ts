@@ -1,6 +1,5 @@
 import * as foodScan from "./routes/food-scan.ts";
 import * as foodRecommendations from "./routes/food-recommendations.ts";
-import * as questPersonalization from "./routes/quest-personalization.ts";
 import type { ApiEnvironment } from "./environment.ts";
 
 const headers = {
@@ -16,7 +15,6 @@ const routes: Record<
 > = {
   "/api/food-scan": foodScan,
   "/api/food-recommendations": foodRecommendations,
-  "/api/quest-personalization": questPersonalization,
 };
 
 export async function handleRequest(

@@ -14,7 +14,7 @@ export const trophies = {
   wanderer: require("../../../../assets/rewards/trophy-wanderer.svg"),
   "streak-3": require("../../../../assets/rewards/trophy-streak-3.svg"),
   "streak-7": require("../../../../assets/rewards/trophy-streak-7.svg"),
-  "passport-pro": require("../../../../assets/rewards/trophy-passport-pro.svg"),
+  "passport-pro": require("../../../../assets/rewards/trophy-world-taster.svg"),
   "menu-maestro": require("../../../../assets/rewards/trophy-menu-maestro.svg"),
   "century-supper": require("../../../../assets/rewards/trophy-century-supper.svg"),
   curator: require("../../../../assets/rewards/trophy-curator.svg"),

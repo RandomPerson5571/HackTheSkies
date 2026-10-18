@@ -1,6 +1,8 @@
 import { catalogDishes } from "../../../../../../packages/food-catalog/data/catalog.ts";
+import { cuisineCovers } from "../../food-dex/models/foodDex.ts";
 import restaurantPhotos from "./restaurantPhotos.json" with { type: "json" };
 import importedRestaurants from "./importedRestaurants.json" with { type: "json" };
+import type { DietaryPreference } from "../../profile/models/profile";
 
 export type Category =
   "All" | "Coffee" | "Pizza" | "Bakery" | "Ramen" | "Restaurant";
@@ -80,9 +82,24 @@ export type Place = {
   rating?: number;
   // Optional aggregate from a future community/provider feed. Missing is unrated.
   ratingSummary?: { averageRating: number; reviewCount: number };
+  /** Compliance must be explicitly confirmed by a reliable venue/provider source. */
+  confirmedDietaryOptions?: ("Halal" | "Kosher" | "Gluten-free")[];
 };
 
+export function matchesDietaryPreference(
+  place: Pick<Place, "confirmedDietaryOptions">,
+  diet: DietaryPreference,
+): boolean {
+  if (diet !== "Halal" && diet !== "Kosher" && diet !== "Gluten-free")
+    return true;
+  return place.confirmedDietaryOptions?.includes(diet) === true;
+}
+
 const photos: Record<string, NonNullable<Place["photo"]>> = restaurantPhotos;
+
+// Venues in these cuisines show the Food Dex cover rather than a random dish,
+// so they don't land on a studio cut-out like the cheeseburger or croissant.
+const coverOnlyCuisines = new Set(["French", "American"]);
 
 // A cuisine illustration is explicitly distinguished from a photo of the venue.
 function photoFor(restaurant: (typeof importedRestaurants)[number]): Place["photo"] {
@@ -90,7 +107,9 @@ function photoFor(restaurant: (typeof importedRestaurants)[number]): Place["phot
   const candidates = catalogDishes.filter((dish) => dish.image && dish.cuisine === restaurant.cuisine);
   const pool = candidates.length ? candidates : catalogDishes.filter((dish) => dish.image);
   const hash = [...restaurant.id].reduce((value, char) => (value * 31 + char.charCodeAt(0)) >>> 0, 0);
-  const dish = pool[hash % pool.length];
+  const dish = coverOnlyCuisines.has(restaurant.cuisine)
+    ? cuisineCovers[restaurant.cuisine as keyof typeof cuisineCovers]
+    : pool[hash % pool.length];
   if (!dish?.image) return undefined;
   return {
     url: dish.image.url,
@@ -111,6 +130,11 @@ export const places: Place[] = importedRestaurants.map((restaurant): Place => ({
   name: restaurant.restaurant_name,
   category: "Restaurant",
   cuisine: restaurant.cuisine,
+  confirmedDietaryOptions: (
+    restaurant as typeof restaurant & {
+      confirmed_dietary_options?: ("Halal" | "Kosher" | "Gluten-free")[];
+    }
+  ).confirmed_dietary_options,
   neighborhood: restaurant.neighbourhood,
   address: `${restaurant.address}, Toronto, ON`,
   coordinate: [restaurant.coordinate[0]!, restaurant.coordinate[1]!],

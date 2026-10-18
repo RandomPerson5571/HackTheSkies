@@ -1533,18 +1533,18 @@ export const catalogDishes: CatalogDish[] = [
       "French"
     ],
     "image": {
-      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2a/Croissant-Petr_Kratochvil.jpg/960px-Croissant-Petr_Kratochvil.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/Coffee%2C_croissants%2C_and_jam_on_a_plate_with_cookies_on_a_table_during_breakfast_time_in_a_cozy_setting.jpg/960px-Coffee%2C_croissants%2C_and_jam_on_a_plate_with_cookies_on_a_table_during_breakfast_time_in_a_cozy_setting.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
       "source": "wikimedia",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Croissant-Petr_Kratochvil.jpg",
-      "photographer": "Petr Kratochvil",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Coffee,_croissants,_and_jam_on_a_plate_with_cookies_on_a_table_during_breakfast_time_in_a_cozy_setting.jpg",
+      "photographer": "Shixart1985",
       "photographerUrl": null,
-      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
-      "licenseName": "CC0",
-      "attribution": "Petr Kratochvil / Wikimedia Commons / CC0",
-      "fileTitle": "File:Croissant-Petr Kratochvil.jpg",
-      "reviewed": false,
-      "matchMethod": "dish-article",
-      "matchTitle": "Croissant",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "licenseName": "CC BY 2.0",
+      "attribution": "Shixart1985 / Wikimedia Commons / CC BY 2.0",
+      "fileTitle": "File:Coffee, croissants, and jam on a plate with cookies on a table during breakfast time in a cozy setting.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Coffee, croissants, and jam on a plate with cookies on a table during breakfast time in a cozy setting.jpg",
       "localPath": "images/croissant.jpg"
     }
   },
@@ -1897,18 +1897,18 @@ export const catalogDishes: CatalogDish[] = [
       "American"
     ],
     "image": {
-      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Cheeseburger.jpg/960px-Cheeseburger.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Cheeseburger_and_steak_fries_at_Rentier-Burger.jpg/960px-Cheeseburger_and_steak_fries_at_Rentier-Burger.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
       "source": "wikimedia",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cheeseburger.jpg",
-      "photographer": "Renee Comet (photographer)",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cheeseburger_and_steak_fries_at_Rentier-Burger.jpg",
+      "photographer": "Benreis",
       "photographerUrl": null,
-      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
-      "licenseName": "Public domain",
-      "attribution": "Renee Comet (photographer) / Wikimedia Commons / Public domain",
-      "fileTitle": "File:Cheeseburger.jpg",
-      "reviewed": false,
-      "matchMethod": "dish-article",
-      "matchTitle": "Cheeseburger",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Benreis / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Cheeseburger and steak fries at Rentier-Burger.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Cheeseburger and steak fries at Rentier-Burger.jpg",
       "localPath": "images/cheeseburger.jpg"
     }
   },
@@ -1994,6 +1994,846 @@ export const catalogDishes: CatalogDish[] = [
       "matchMethod": "dish-article",
       "matchTitle": "Apple pie",
       "localPath": "images/apple-pie.jpg"
+    }
+  },
+  {
+    "id": "tteokbokki",
+    "name": "Tteokbokki",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "Chewy rice cakes simmered in a sweet, spicy gochujang sauce.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Tteokbokki.JPG/960px-Tteokbokki.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tteokbokki.JPG",
+      "photographer": "Popo le Chien",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "licenseName": "CC0",
+      "attribution": "Popo le Chien / Wikimedia Commons / CC0",
+      "fileTitle": "File:Tteokbokki.JPG",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Tteokbokki",
+      "localPath": "images/tteokbokki.jpg"
+    }
+  },
+  {
+    "id": "japchae",
+    "name": "Japchae",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "Sweet potato glass noodles stir-fried with vegetables and sesame.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/Polish_Korean_Cuisine_and_Culture_Exchanges_Gradmother%E2%80%99s_Recipes_05.jpg/960px-Polish_Korean_Cuisine_and_Culture_Exchanges_Gradmother%E2%80%99s_Recipes_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Polish_Korean_Cuisine_and_Culture_Exchanges_Gradmother%E2%80%99s_Recipes_05.jpg",
+      "photographer": "korea.net",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "licenseName": "CC BY-SA 2.0",
+      "attribution": "korea.net / Wikimedia Commons / CC BY-SA 2.0",
+      "fileTitle": "File:Polish Korean Cuisine and Culture Exchanges Gradmother’s Recipes 05.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Japchae",
+      "localPath": "images/japchae.jpg"
+    }
+  },
+  {
+    "id": "kimbap",
+    "name": "Kimbap",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "Seaweed rice rolls packed with vegetables, egg, and pickled radish.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Gimbap_%28pixabay%29.jpg/960px-Gimbap_%28pixabay%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gimbap_(pixabay).jpg",
+      "photographer": "changupn",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "licenseName": "CC0",
+      "attribution": "changupn / Wikimedia Commons / CC0",
+      "fileTitle": "File:Gimbap (pixabay).jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Gimbap",
+      "localPath": "images/kimbap.jpg"
+    }
+  },
+  {
+    "id": "samgyeopsal",
+    "name": "Samgyeopsal",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "Thick pork belly grilled at the table and wrapped in lettuce.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Samgyeopsal-gui.jpg/960px-Samgyeopsal-gui.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Samgyeopsal-gui.jpg",
+      "photographer": "jinsoo jang",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "licenseName": "CC0",
+      "attribution": "jinsoo jang / Wikimedia Commons / CC0",
+      "fileTitle": "File:Samgyeopsal-gui.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Samgyeopsal",
+      "localPath": "images/samgyeopsal.jpg"
+    }
+  },
+  {
+    "id": "sundubu-jjigae",
+    "name": "Sundubu-jjigae",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "A bubbling, spicy stew of silken tofu and seafood.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/02/Sundubu-jjigae.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sundubu-jjigae.jpg",
+      "photographer": "행복한 초록개구리",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "licenseName": "CC BY 4.0",
+      "attribution": "행복한 초록개구리 / Wikimedia Commons / CC BY 4.0",
+      "fileTitle": "File:Sundubu-jjigae.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Sundubu-jjigae",
+      "localPath": "images/sundubu-jjigae.jpg"
+    }
+  },
+  {
+    "id": "galbi",
+    "name": "Galbi",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "Marinated beef short ribs grilled over charcoal.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Korean.food-Galbi-03.jpg/960px-Korean.food-Galbi-03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Korean.food-Galbi-03.jpg",
+      "photographer": "ayustety (a flickr user)",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "licenseName": "CC BY-SA 2.0",
+      "attribution": "ayustety (a flickr user) / Wikimedia Commons / CC BY-SA 2.0",
+      "fileTitle": "File:Korean.food-Galbi-03.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Galbi",
+      "localPath": "images/galbi.jpg"
+    }
+  },
+  {
+    "id": "haemul-pajeon",
+    "name": "Pajeon",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "A crisp scallion pancake, often studded with seafood.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Korean_pancake-Pajeon-05.jpg/960px-Korean_pancake-Pajeon-05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Korean_pancake-Pajeon-05.jpg",
+      "photographer": "by Tales of an LA Addict (Abby) at Flickr",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "licenseName": "CC BY-SA 2.0",
+      "attribution": "by Tales of an LA Addict (Abby) at Flickr / Wikimedia Commons / CC BY-SA 2.0",
+      "fileTitle": "File:Korean pancake-Pajeon-05.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Pajeon",
+      "localPath": "images/haemul-pajeon.jpg"
+    }
+  },
+  {
+    "id": "samgyetang",
+    "name": "Samgyetang",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "Whole young chicken stuffed with rice and ginseng in a clear broth.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/Samgye-tang_2.jpg/960px-Samgye-tang_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Samgye-tang_2.jpg",
+      "photographer": "wizdata",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "licenseName": "CC0",
+      "attribution": "wizdata / Wikimedia Commons / CC0",
+      "fileTitle": "File:Samgye-tang 2.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Samgye-tang",
+      "localPath": "images/samgyetang.jpg"
+    }
+  },
+  {
+    "id": "hotteok",
+    "name": "Hotteok",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "A griddled sweet pancake filled with brown sugar and nuts.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Hotteok.jpg/960px-Hotteok.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hotteok.jpg",
+      "photographer": "Korea.net / Korean Culture and Information Service",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "licenseName": "CC BY-SA 2.0",
+      "attribution": "Korea.net / Korean Culture and Information Service / Wikimedia Commons / CC BY-SA 2.0",
+      "fileTitle": "File:Hotteok.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Hotteok",
+      "localPath": "images/hotteok.jpg"
+    }
+  },
+  {
+    "id": "patbingsu",
+    "name": "Patbingsu",
+    "cuisine": "Korean",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "Shaved ice piled with sweet red beans and toppings.",
+    "source": "curated",
+    "cuisineIds": [
+      "Korean"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Patbingsu.jpg/960px-Patbingsu.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Patbingsu.jpg",
+      "photographer": "국립국어원",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/kr/deed.en",
+      "licenseName": "CC BY-SA 2.0 kr",
+      "attribution": "국립국어원 / Wikimedia Commons / CC BY-SA 2.0 kr",
+      "fileTitle": "File:Patbingsu.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Bingsu",
+      "localPath": "images/patbingsu.jpg"
+    }
+  },
+  {
+    "id": "beef-bourguignon",
+    "name": "Beef bourguignon",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "Beef braised slowly in red wine with mushrooms and pearl onions.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Beef_bourguignon_NYT.jpg/960px-Beef_bourguignon_NYT.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Beef_bourguignon_NYT.jpg",
+      "photographer": "Slayschips",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Slayschips / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Beef bourguignon NYT.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Beef bourguignon",
+      "localPath": "images/beef-bourguignon.jpg"
+    }
+  },
+  {
+    "id": "bouillabaisse",
+    "name": "Bouillabaisse",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "A saffron-scented Provençal fish stew from Marseille.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/24/Bullabessa.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bullabessa.jpg",
+      "photographer": "Slastic",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "licenseName": "CC BY 3.0",
+      "attribution": "Slastic / Wikimedia Commons / CC BY 3.0",
+      "fileTitle": "File:Bullabessa.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Bouillabaisse",
+      "localPath": "images/bouillabaisse.jpg"
+    }
+  },
+  {
+    "id": "quiche-lorraine",
+    "name": "Quiche Lorraine",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "A buttery tart with a silky custard of eggs, cream, and bacon.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Quiche_de_Lorraine.jpg/960px-Quiche_de_Lorraine.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Quiche_de_Lorraine.jpg",
+      "photographer": "Donna Alvita",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Donna Alvita / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Quiche de Lorraine.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Quiche Lorraine",
+      "localPath": "images/quiche-lorraine.jpg"
+    }
+  },
+  {
+    "id": "croque-monsieur",
+    "name": "Croque monsieur",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "A toasted ham and cheese sandwich under golden béchamel.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/Croque_monsieur.jpg/960px-Croque_monsieur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Croque_monsieur.jpg",
+      "photographer": "Michael Brewer",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+      "licenseName": "CC BY-SA 2.5",
+      "attribution": "Michael Brewer / Wikimedia Commons / CC BY-SA 2.5",
+      "fileTitle": "File:Croque monsieur.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Croque monsieur",
+      "localPath": "images/croque-monsieur.jpg"
+    }
+  },
+  {
+    "id": "creme-brulee",
+    "name": "Crème brûlée",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "Vanilla custard beneath a shell of caramelized sugar.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/2014_0531_Cr%C3%A8me_br%C3%BBl%C3%A9e_Doi_Mae_Salong_%28cropped%29.jpg/960px-2014_0531_Cr%C3%A8me_br%C3%BBl%C3%A9e_Doi_Mae_Salong_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:2014_0531_Cr%C3%A8me_br%C3%BBl%C3%A9e_Doi_Mae_Salong_(cropped).jpg",
+      "photographer": "Takeaway",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Takeaway / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:2014 0531 Crème brûlée Doi Mae Salong (cropped).jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Crème brûlée",
+      "localPath": "images/creme-brulee.jpg"
+    }
+  },
+  {
+    "id": "french-onion-soup",
+    "name": "French onion soup",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "Deeply caramelized onion soup topped with bread and melted cheese.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Soupe_%C3%A0_l%27oignon.jpg/960px-Soupe_%C3%A0_l%27oignon.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Soupe_%C3%A0_l%27oignon.jpg",
+      "photographer": "Ludovic Péron",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Ludovic Péron / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Soupe à l'oignon.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "French onion soup",
+      "localPath": "images/french-onion-soup.jpg"
+    }
+  },
+  {
+    "id": "cassoulet",
+    "name": "Cassoulet",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "A slow-baked casserole of white beans, sausage, and duck.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Bowl_of_cassoulet.JPG/960px-Bowl_of_cassoulet.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bowl_of_cassoulet.JPG",
+      "photographer": "BrokenSphere",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "BrokenSphere / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Bowl of cassoulet.JPG",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Cassoulet",
+      "localPath": "images/cassoulet.jpg"
+    }
+  },
+  {
+    "id": "macarons",
+    "name": "Macarons",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "Delicate almond meringue cookies sandwiched with ganache.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Des_macarons_de_chez_Bouillet_%28mars_2023%29.jpg/960px-Des_macarons_de_chez_Bouillet_%28mars_2023%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Des_macarons_de_chez_Bouillet_(mars_2023).jpg",
+      "photographer": "Benoît Prieur",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "licenseName": "CC0",
+      "attribution": "Benoît Prieur / Wikimedia Commons / CC0",
+      "fileTitle": "File:Des macarons de chez Bouillet (mars 2023).jpg",
+      "reviewed": false,
+      "matchMethod": "dish-file-title",
+      "matchTitle": "File:Des macarons de chez Bouillet (mars 2023).jpg",
+      "localPath": "images/macarons.jpg"
+    }
+  },
+  {
+    "id": "duck-confit",
+    "name": "Duck confit",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "Duck legs cured and cooked in their own fat until crisp.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Confitdecanard.jpg/960px-Confitdecanard.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Confitdecanard.jpg",
+      "photographer": "Roboppy at English Wikipedia",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "licenseName": "Public domain",
+      "attribution": "Roboppy at English Wikipedia / Wikimedia Commons / Public domain",
+      "fileTitle": "File:Confitdecanard.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Duck confit",
+      "localPath": "images/duck-confit.jpg"
+    }
+  },
+  {
+    "id": "tarte-tatin",
+    "name": "Tarte Tatin",
+    "cuisine": "French",
+    "regions": [
+      "France"
+    ],
+    "note": "An upside-down tart of buttery caramelized apples.",
+    "source": "curated",
+    "cuisineIds": [
+      "French"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Franse_tarte_tatin.jpg/960px-Franse_tarte_tatin.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Franse_tarte_tatin.jpg",
+      "photographer": "Djenghisz",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Djenghisz / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Franse tarte tatin.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Tarte Tatin",
+      "localPath": "images/tarte-tatin.jpg"
+    }
+  },
+  {
+    "id": "clam-chowder",
+    "name": "Clam chowder",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "A creamy New England soup of clams and potatoes.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Quail_07_bg_041506.jpg/960px-Quail_07_bg_041506.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Quail_07_bg_041506.jpg",
+      "photographer": "Jon Sullivan The original uploader was Y6y6y6 at English Wikipedia .",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "licenseName": "Public domain",
+      "attribution": "Jon Sullivan The original uploader was Y6y6y6 at English Wikipedia . / Wikimedia Commons / Public domain",
+      "fileTitle": "File:Quail 07 bg 041506.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Clam chowder",
+      "localPath": "images/clam-chowder.jpg"
+    }
+  },
+  {
+    "id": "lobster-roll",
+    "name": "Lobster roll",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "Chunks of lobster piled into a buttered, toasted bun.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/63/Lobster_Roll.png/960px-Lobster_Roll.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lobster_Roll.png",
+      "photographer": "Maguy23",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Maguy23 / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Lobster Roll.png",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Lobster roll",
+      "localPath": "images/lobster-roll.png"
+    }
+  },
+  {
+    "id": "pulled-pork-sandwich",
+    "name": "Pulled pork sandwich",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "Smoked pork shoulder, pulled and piled on a soft bun.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Mmm..._home_made_bbq_sauce_%285778277654%29.jpg/960px-Mmm..._home_made_bbq_sauce_%285778277654%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mmm..._home_made_bbq_sauce_(5778277654).jpg",
+      "photographer": "jeffreyw",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "licenseName": "CC BY 2.0",
+      "attribution": "jeffreyw / Wikimedia Commons / CC BY 2.0",
+      "fileTitle": "File:Mmm... home made bbq sauce (5778277654).jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Barbecue sandwich",
+      "localPath": "images/pulled-pork-sandwich.jpg"
+    }
+  },
+  {
+    "id": "gumbo",
+    "name": "Gumbo",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "A Louisiana stew built on a dark roux with sausage and okra.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Gumbo.JPG/960px-Gumbo.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gumbo.JPG",
+      "photographer": "Amadscientist",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Amadscientist / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Gumbo.JPG",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Gumbo",
+      "localPath": "images/gumbo.jpg"
+    }
+  },
+  {
+    "id": "jambalaya",
+    "name": "Jambalaya",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "Louisiana rice cooked with sausage, chicken, and the holy trinity.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Jambalaya_on_plate.jpg/960px-Jambalaya_on_plate.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jambalaya_on_plate.jpg",
+      "photographer": "jeffreyw",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "licenseName": "CC BY 2.0",
+      "attribution": "jeffreyw / Wikimedia Commons / CC BY 2.0",
+      "fileTitle": "File:Jambalaya on plate.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Jambalaya on plate.jpg",
+      "localPath": "images/jambalaya.jpg"
+    }
+  },
+  {
+    "id": "philly-cheesesteak",
+    "name": "Philly cheesesteak",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "Thin-sliced steak and melted cheese in a hoagie roll.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/PatsCheesesteak.jpg/960px-PatsCheesesteak.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:PatsCheesesteak.jpg",
+      "photographer": "http://upload.wikimedia.org/wikipedia/en/f/f1/PatsCheesesteak.jpg",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "http://upload.wikimedia.org/wikipedia/en/f/f1/PatsCheesesteak.jpg / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:PatsCheesesteak.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Cheesesteak",
+      "localPath": "images/philly-cheesesteak.jpg"
+    }
+  },
+  {
+    "id": "biscuits-and-gravy",
+    "name": "Biscuits and gravy",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "Fluffy Southern biscuits smothered in sausage gravy.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Biscuits-and-gravy.jpg/960px-Biscuits-and-gravy.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Biscuits-and-gravy.jpg",
+      "photographer": "No machine-readable author provided. Kaszeta assumed (based on copyright claims).",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "licenseName": "Public domain",
+      "attribution": "No machine-readable author provided. Kaszeta assumed (based on copyright claims). / Wikimedia Commons / Public domain",
+      "fileTitle": "File:Biscuits-and-gravy.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Biscuits and gravy",
+      "localPath": "images/biscuits-and-gravy.jpg"
+    }
+  },
+  {
+    "id": "cornbread",
+    "name": "Cornbread",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "A golden, crumbly quick bread made with cornmeal.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/Skillet_cornbread_%28cropped%29.jpg/960px-Skillet_cornbread_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Skillet_cornbread_(cropped).jpg",
+      "photographer": "Zankopedia",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Zankopedia / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Skillet cornbread (cropped).jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Cornbread",
+      "localPath": "images/cornbread.jpg"
+    }
+  },
+  {
+    "id": "shrimp-and-grits",
+    "name": "Shrimp and grits",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "Creamy stone-ground grits topped with sautéed shrimp.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Shrimp_and_grits_at_the_Green_Goddess.jpg/960px-Shrimp_and_grits_at_the_Green_Goddess.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Shrimp_and_grits_at_the_Green_Goddess.jpg",
+      "photographer": "Jason Riedy",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "licenseName": "CC BY 2.0",
+      "attribution": "Jason Riedy / Wikimedia Commons / CC BY 2.0",
+      "fileTitle": "File:Shrimp and grits at the Green Goddess.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Shrimp and grits",
+      "localPath": "images/shrimp-and-grits.jpg"
+    }
+  },
+  {
+    "id": "key-lime-pie",
+    "name": "Key lime pie",
+    "cuisine": "American",
+    "regions": [
+      "United States"
+    ],
+    "note": "A tart lime custard pie on a graham cracker crust.",
+    "source": "curated",
+    "cuisineIds": [
+      "American"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Slice_of_Key_Lime_Pie.jpg/960px-Slice_of_Key_Lime_Pie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Slice_of_Key_Lime_Pie.jpg",
+      "photographer": "Louiemantia",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Louiemantia / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Slice of Key Lime Pie.jpg",
+      "reviewed": false,
+      "matchMethod": "dish-article",
+      "matchTitle": "Key lime pie",
+      "localPath": "images/key-lime-pie.jpg"
     }
   },
   {

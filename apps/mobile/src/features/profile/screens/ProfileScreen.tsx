@@ -14,12 +14,7 @@ import type { Profile } from "../models/profile";
 export type { Profile } from "../models/profile";
 
 import { useFoodDex } from "../../food-dex/hooks/useFoodDex";
-import {
-  cuisines,
-  dishes,
-  cuisineCovers,
-  findCatalogDish,
-} from "../../food-dex/models/foodDex";
+import { findCatalogDish } from "../../food-dex/models/foodDex";
 import { CatalogPhoto } from "../../food-dex/components/CatalogPhoto";
 import { catalogPhoto } from "../../food-dex/services/catalogPhotos";
 import { DecoratedAvatar, TrophyArt } from "../components/RewardArt";
@@ -103,11 +98,8 @@ export function ProfileScreen({
   storageError,
   saved = [],
   visited = [],
-  onOpenQuests,
   onOpenSettings,
   onOpenDex,
-  onOpenAtlas: _onOpenAtlas,
-  onOpenSaved,
 }: {
   saved?: string[];
   visited?: string[];
@@ -119,11 +111,8 @@ export function ProfileScreen({
   topInset: number;
   bottomInset: number;
   storageError: string;
-  onOpenQuests?: () => void;
   onOpenSettings?: () => void;
   onOpenDex?: () => void;
-  onOpenAtlas?: () => void;
-  onOpenSaved?: () => void;
 }) {
   const { entries } = useFoodDex();
   const { state: quests, error: questError } = useQuests();
@@ -173,7 +162,7 @@ export function ProfileScreen({
       ...profile,
       customization: { ...appearance.selected, ...change },
     });
-    void playFeedback("tap");
+    void playFeedback("click");
   };
 
   const featuredBadges = [
@@ -224,30 +213,14 @@ export function ProfileScreen({
     );
   };
 
-  const cuisineStats = cuisines
-    .map((cuisine) => ({
-      cuisine,
-      done: entries.filter((entry) => entry.cuisine === cuisine).length,
-      total: dishes.filter((dish) => dish.cuisine === cuisine).length,
-    }))
-    .sort((a, b) => b.done - a.done || a.cuisine.localeCompare(b.cuisine));
-  const shownCuisines =
-    cuisineStats.filter((item) => item.done > 0).length > 0
-      ? cuisineStats.filter((item) => item.done > 0).slice(0, 6)
-      : cuisineStats.slice(0, 4);
-
   const recent = entries.slice(0, 8);
 
-  const handleOpenQuests = () => {
-    void playFeedback("tap");
-    onOpenQuests?.();
-  };
   const handleOpenSettings = () => {
-    void playFeedback("tap");
+    void playFeedback("click");
     onOpenSettings?.();
   };
   const handleOpenDex = () => {
-    void playFeedback("tap");
+    void playFeedback("click");
     onOpenDex?.();
   };
 
@@ -261,7 +234,7 @@ export function ProfileScreen({
       ]}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={styles.passportHeader}>
+      <View style={styles.profileHeader}>
         <View style={styles.headerTopRow}>
           <CiboLogo />
           <Pressable
@@ -278,8 +251,8 @@ export function ProfileScreen({
         </View>
 
         <View>
-          <Text style={styles.eyebrow}>MY PASSPORT</Text>
-          <Text style={styles.passportTitle}>Culinary Passport</Text>
+          <Text style={styles.eyebrow}>MY PROFILE</Text>
+          <Text style={styles.profileTitle}>Your Profile</Text>
         </View>
         <View style={styles.identityRow}>
           <View style={styles.avatarFrame}>
@@ -376,7 +349,7 @@ export function ProfileScreen({
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Customize your passport"
+        accessibilityLabel="Customize your profile"
         aria-expanded={customizing}
         accessibilityState={{ expanded: customizing }}
         onPress={() => {
@@ -394,7 +367,7 @@ export function ProfileScreen({
           accessible={false}
         />
         <Text style={styles.customizeText}>
-          {customizing ? "Close customization" : "Customize passport"}
+          {customizing ? "Close customization" : "Customize profile"}
         </Text>
         <Ionicons
           name={customizing ? "chevron-up" : "chevron-down"}
@@ -417,185 +390,6 @@ export function ProfileScreen({
           {questError}
         </Text>
       ) : null}
-
-      {onOpenSaved && (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Open Saved Places, ${saved.length} restaurants`}
-          onPress={onOpenSaved}
-          style={({ pressed }) => [
-            styles.adventureCard,
-            pressed && styles.pressed,
-          ]}
-        >
-          <View style={styles.adventureIcon}>
-            <Ionicons
-              accessible={false}
-              name="bookmark-outline"
-              color={colors.white}
-              size={24}
-            />
-          </View>
-          <View style={styles.flex}>
-            <Text style={styles.adventureTitle}>Your Saved Places</Text>
-            <Text style={styles.adventureCopy}>
-              {saved.length} restaurants · Your wishlist & collections
-            </Text>
-          </View>
-          <Ionicons
-            accessible={false}
-            name="chevron-forward"
-            color={colors.ink}
-            size={20}
-          />
-        </Pressable>
-      )}
-
-      <View style={styles.adventureCard}>
-        <View style={styles.adventureIcon}>
-          <Ionicons name="compass" color={colors.white} size={26} />
-        </View>
-        <View style={styles.flex}>
-          <Text style={styles.eyebrowDark}>YOUR NEXT ADVENTURE</Text>
-          <Text style={styles.adventureTitle}>
-            Your culinary journey starts here
-          </Text>
-          <Text style={styles.adventureCopy}>
-            Choose a cuisine and unlock your first food quest.
-          </Text>
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Explore quests"
-          onPress={handleOpenQuests}
-          style={({ pressed }) => [
-            styles.adventureButton,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Text style={styles.adventureButtonText}>Explore quests</Text>
-          <Ionicons name="arrow-forward" color={colors.white} size={16} />
-        </Pressable>
-      </View>
-
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text accessibilityRole="header" style={styles.sectionTitle}>
-            Cuisine Passport
-          </Text>
-          <Pressable onPress={handleOpenDex}>
-            <Text style={styles.link}>See all →</Text>
-          </Pressable>
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.passportRow}
-        >
-          {shownCuisines.map((row) => {
-            const percent = row.total
-              ? Math.round((row.done / row.total) * 100)
-              : 0;
-            const cover = cuisineCovers[row.cuisine];
-            const discovered = row.done > 0;
-            return (
-              <View
-                key={row.cuisine}
-                style={[
-                  styles.passportCard,
-                  !discovered && styles.passportCardLocked,
-                ]}
-              >
-                <View style={styles.passportCardTop}>
-                  {discovered && cover ? (
-                    <CatalogPhoto
-                      source={catalogPhoto(cover)}
-                      label={row.cuisine}
-                      style={styles.passportPhoto}
-                    />
-                  ) : (
-                    <View style={styles.lockedCircle}>
-                      <Ionicons
-                        name="lock-closed"
-                        color={colors.muted}
-                        size={18}
-                      />
-                    </View>
-                  )}
-                  <Text
-                    style={[
-                      styles.passportCuisine,
-                      !discovered && styles.passportCuisineLocked,
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {row.cuisine}
-                  </Text>
-                </View>
-                <View style={styles.passportProgress}>
-                  <View style={styles.progressTrack}>
-                    <View
-                      style={[
-                        styles.progressFill,
-                        { width: `${percent}%` },
-                        !discovered && styles.progressFillLocked,
-                      ]}
-                    />
-                  </View>
-                  <Text style={styles.passportCount}>
-                    {row.done}/{row.total}
-                  </Text>
-                </View>
-                <Text style={styles.passportStatus}>
-                  {discovered ? "Collected" : "Locked"}
-                </Text>
-              </View>
-            );
-          })}
-          {shownCuisines.length === 0
-            ? cuisines.slice(0, 4).map((cuisine) => (
-                <View
-                  key={cuisine}
-                  style={[styles.passportCard, styles.passportCardLocked]}
-                >
-                  <View style={styles.passportCardTop}>
-                    <View style={styles.lockedCircle}>
-                      <Ionicons
-                        name="lock-closed"
-                        color={colors.muted}
-                        size={18}
-                      />
-                    </View>
-                    <Text
-                      style={[
-                        styles.passportCuisine,
-                        styles.passportCuisineLocked,
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {cuisine}
-                    </Text>
-                  </View>
-                  <View style={styles.passportProgress}>
-                    <View style={styles.progressTrack}>
-                      <View
-                        style={[
-                          styles.progressFill,
-                          styles.progressFillLocked,
-                          { width: "0%" },
-                        ]}
-                      />
-                    </View>
-                    <Text style={styles.passportCount}>
-                      0/{dishes.filter((d) => d.cuisine === cuisine).length}
-                    </Text>
-                  </View>
-                  <Text style={styles.passportStatus}>Locked</Text>
-                </View>
-              ))
-            : null}
-        </ScrollView>
-      </View>
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
@@ -682,7 +476,6 @@ export function ProfileScreen({
       <ProfileAtlas
         entries={entries}
         onOpenDex={onOpenDex}
-        onOpenQuests={onOpenQuests}
       />
 
       {storageError ? (
@@ -782,7 +575,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   flex: { flex: 1, gap: 4 },
-  passportHeader: {
+  profileHeader: {
     borderRadius: 28,
     padding: 20,
     backgroundColor: colors.white,
@@ -802,13 +595,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 1.4,
   },
-  eyebrowDark: {
-    color: colors.muted,
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 1.4,
-  },
-  passportTitle: {
+  profileTitle: {
     color: colors.ink,
     fontSize: 24,
     fontWeight: "700",
@@ -929,50 +716,6 @@ const styles = StyleSheet.create({
   stat: { flex: 1, alignItems: "center", gap: 2 },
   statValue: { color: colors.accent, fontSize: 22, fontWeight: "700" },
   statLabel: { color: colors.muted, fontSize: 10, fontWeight: "600" },
-  adventureCard: {
-    borderRadius: 24,
-    padding: 18,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.border,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    alignItems: "center",
-    boxShadow: "0 4px 20px #3D568F10",
-  },
-  adventureIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: colors.accent,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  adventureTitle: {
-    color: colors.ink,
-    fontSize: 16,
-    fontWeight: "700",
-    marginTop: 2,
-  },
-  adventureCopy: {
-    color: colors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 2,
-  },
-  adventureButton: {
-    width: "100%",
-    marginTop: 4,
-    backgroundColor: colors.accent,
-    borderRadius: 14,
-    minHeight: 46,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-  },
-  adventureButtonText: { color: colors.white, fontSize: 14, fontWeight: "600" },
   section: { gap: 10 },
   sectionHeader: {
     flexDirection: "row",
@@ -983,51 +726,6 @@ const styles = StyleSheet.create({
   link: { color: colors.accent, fontSize: 12, fontWeight: "700" },
   copy: { color: colors.muted, fontSize: 12, lineHeight: 19 },
   hint: { color: colors.accent, fontSize: 12, lineHeight: 19 },
-  passportRow: { gap: 12, paddingVertical: 2 },
-  passportCard: {
-    width: 150,
-    borderRadius: 20,
-    padding: 12,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.border,
-    gap: 10,
-  },
-  passportCardLocked: { opacity: 0.6, backgroundColor: colors.tint },
-  passportCardTop: { flexDirection: "row", alignItems: "center", gap: 8 },
-  passportPhoto: { width: 40, height: 40, borderRadius: 12 },
-  lockedCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: colors.paper,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  passportCuisine: {
-    color: colors.ink,
-    fontSize: 13,
-    fontWeight: "700",
-    flex: 1,
-  },
-  passportCuisineLocked: { color: colors.muted },
-  passportProgress: { gap: 4 },
-  progressTrack: {
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.tint,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: 3,
-    backgroundColor: colors.accent,
-  },
-  progressFillLocked: { backgroundColor: colors.border },
-  passportCount: { color: colors.muted, fontSize: 11, fontWeight: "600" },
-  passportStatus: { color: colors.muted, fontSize: 11, fontWeight: "700" },
   badgeRow: { gap: 12, paddingVertical: 2 },
   badgeGrid: {
     flexDirection: "row",

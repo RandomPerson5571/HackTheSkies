@@ -13,6 +13,10 @@ import {
 } from "./gameFeedback";
 
 export type SoundName =
+  | "interfaceClick"
+  | "openBook"
+  | "alert"
+  | "bell"
   | "menuOpen"
   | "menuClose"
   | "select"
@@ -31,6 +35,10 @@ export type SoundName =
   | "tap";
 
 const soundFiles: Record<SoundName, number> = {
+  interfaceClick: require("../../../../assets/interfaceclick.mp3"),
+  openBook: require("../../../../assets/openbook.mp3"),
+  alert: require("../../../../assets/alert.mp3"),
+  bell: require("../../../../assets/bell ding.mp3"),
   menuOpen: require("../../assets/sfx/kenney/open_001.wav"),
   menuClose: require("../../assets/sfx/kenney/close_001.wav"),
   select: require("../../assets/sfx/kenney/select_001.wav"),
@@ -131,6 +139,8 @@ export async function playFeedback(name: SoundName) {
         case "select":
           hapticSelection();
           break;
+        case "openBook":
+        case "bell":
         case "success":
           hapticSuccess();
           break;

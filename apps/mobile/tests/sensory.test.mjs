@@ -48,7 +48,7 @@ function setup({
       }
     },
     require: (name) => {
-      if (name.endsWith(".wav")) return name;
+      if ((name.endsWith(".wav") || name.endsWith(".mp3"))) return name;
       if (name === "./gameFeedback")
         return {
           prepareGameFeedback() {},

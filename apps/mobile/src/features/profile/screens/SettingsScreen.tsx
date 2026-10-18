@@ -12,9 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { colors } from "../../../theme/index";
 import { playFeedback } from "../../../lib/sensory";
-import type { Profile } from "../models/profile";
-
-const diets = ["No preference", "Vegetarian", "Vegan", "Pescatarian"] as const;
+import { dietaryPreferences, type Profile } from "../models/profile";
 
 export function SettingsScreen({
   profile,
@@ -57,7 +55,7 @@ export function SettingsScreen({
     edited.current = false;
     onSave(next);
     setMessage("Settings saved.");
-    void playFeedback("success");
+    void playFeedback("bell");
   }
 
   return (
@@ -114,14 +112,14 @@ export function SettingsScreen({
         />
         <Text style={styles.label}>Dietary preference</Text>
         <View style={styles.choices}>
-          {diets.map((diet) => (
+          {dietaryPreferences.map((diet) => (
             <Pressable
               key={diet}
               accessibilityRole="radio"
               accessibilityState={{ checked: draft.diet === diet }}
               onPress={() => {
                 update({ diet });
-                void playFeedback("tap");
+                void playFeedback("click");
               }}
               style={({ pressed }) => [
                 styles.choice,
@@ -140,6 +138,10 @@ export function SettingsScreen({
             </Pressable>
           ))}
         </View>
+        <Text style={styles.hint}>
+          Gluten-free, halal, and kosher recommendations only include
+          restaurants with confirmed dietary information.
+        </Text>
         <Pressable
           accessibilityRole="button"
           onPress={save}

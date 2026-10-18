@@ -6,7 +6,7 @@ political boundaries or exclusive culinary origins. FoodDex and the recognition
 endpoint both consume this file. Saved `Indian` and `Mexican` discoveries migrate
 to `South Asian` and `Latin` when loaded.
 
-`data/seeds.ts` contains 71 curated starter dishes covering every listed region.
+`data/seeds.ts` contains 101 curated starter dishes covering every listed region.
 `Other` accepts custom discoveries. The app reads `data/catalog.ts` locally;
 opening FoodDex never calls the food or photo providers. Restaurant/menu records
 and the user's discoveries remain separate from this dish catalog.
@@ -22,9 +22,9 @@ node --env-file-if-exists=.env.local scripts/import-food-catalog.mjs
 Or use `pnpm catalog:import`. The importer requests TheMealDB's current area list,
 fetches only mapped areas, and merges results with the curated starter dishes.
 It takes up to 25 dishes per available area by default (`--limit 5` for a smaller
-snapshot; accepted range: 1–100). The current full snapshot has 256 dishes and
-256 downloaded photos (188 from TheMealDB and 68 from Wikimedia Commons), about
-44 MB of image data. Images retain their review flags.
+snapshot; accepted range: 1–100). The current full snapshot has 286 dishes and
+286 downloaded photos (188 from TheMealDB and 98 from Wikimedia Commons), about
+50 MB of image data. Images retain their review flags.
 Names are normalized for case, whitespace, and accent variants within a group.
 Curated IDs and descriptions survive a matching provider result. Recipe IDs,
 provider areas, image URLs, source pages, and image credits are retained.

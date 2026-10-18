@@ -59,7 +59,7 @@ export const cuisineBadges = [
     category: "Bakery",
     goal: 2,
     icon: "storefront-outline",
-    description: "Visit two different bakeries for your pastry passport.",
+    description: "Visit two different bakeries for your next pastry favorite.",
   },
   {
     id: "coffee",
@@ -115,12 +115,12 @@ export const cuisineBadges = [
   },
   {
     id: "italian",
-    name: "Pasta passport",
+    name: "Pasta explorer",
     category: "Italian",
     cuisine: true,
     goal: 2,
     icon: "restaurant-outline",
-    description: "Visit two Italian restaurants to fill your passport.",
+    description: "Visit two Italian restaurants to discover a new favorite.",
   },
   {
     id: "latin",

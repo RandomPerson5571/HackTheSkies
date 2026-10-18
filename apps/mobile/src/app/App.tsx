@@ -1414,6 +1414,17 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               style={[styles.bottom, { bottom: insets.bottom + 90 }]}
             >
               <View style={styles.mapActions}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Open restaurant list"
+                  onPress={() => setListVisible(true)}
+                  style={({ pressed }) => [
+                    styles.roundButton,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Icon name="list-outline" />
+                </Pressable>
                 {token && (
                   <Pressable
                     accessibilityRole="button"
@@ -2194,6 +2205,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
+    gap: 8,
   },
   areaPill: {
     flexDirection: "row",

@@ -122,6 +122,7 @@ test("all requested cuisine groups and regions are represented", () => {
     "Latin",
     "Caribbean",
     "American",
+    "Drinks",
     "Other",
   ]);
   for (const cuisine of cuisines.filter((cuisine) => cuisine !== "Other")) {

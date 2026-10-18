@@ -20,8 +20,8 @@ test("offline import covers the taxonomy without making provider requests", asyn
       throw new Error("Unexpected request");
     },
   });
-  assert.equal(foods.length, 101);
-  assert.equal(Object.keys(report.counts).length, 15);
+  assert.equal(foods.length, 131);
+  assert.equal(Object.keys(report.counts).length, 16);
   assert.equal(report.counts.Other, 0);
   assert.equal(new Set(foods.map((food) => food.id)).size, foods.length);
 });
@@ -47,7 +47,7 @@ test("provider areas map to groups, merge accent variants, and retain curated ID
     });
   };
   const { foods, report } = await buildCatalog({ fetcher });
-  assert.equal(foods.length, 101);
+  assert.equal(foods.length, 131);
   const pho = foods.find((food) => food.id === "pho");
   assert.equal(pho.name, "Phở");
   assert.deepEqual(pho.providerIds, ["1", "2"]);
@@ -194,7 +194,7 @@ test("full imports do not truncate provider areas at 100 dishes", async () => {
             },
       ),
   });
-  assert.equal(foods.length, 221);
+  assert.equal(foods.length, 251);
   assert.equal(report.providerAreaCounts.Japanese, 120);
   assert.equal(report.limitPerArea, null);
 });

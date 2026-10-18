@@ -2837,6 +2837,854 @@ export const catalogDishes: CatalogDish[] = [
     }
   },
   {
+    "id": "matcha-latte",
+    "name": "Matcha latte",
+    "cuisine": "Drinks",
+    "regions": [
+      "Japan"
+    ],
+    "note": "Whisked green tea softened with steamed milk.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Matcha_tea_art.jpg/960px-Matcha_tea_art.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Matcha_tea_art.jpg",
+      "photographer": "John Beans",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "licenseName": "CC BY 2.0",
+      "attribution": "John Beans / Wikimedia Commons / CC BY 2.0",
+      "fileTitle": "File:Matcha tea art.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Matcha latte",
+      "localPath": "images/matcha-latte.jpg"
+    }
+  },
+  {
+    "id": "sake",
+    "name": "Sake",
+    "cuisine": "Drinks",
+    "regions": [
+      "Japan"
+    ],
+    "note": "Polished rice brewed into a smooth, fragrant wine.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Overflowing_sake_glass_in_masu.jpg/960px-Overflowing_sake_glass_in_masu.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Overflowing_sake_glass_in_masu.jpg",
+      "photographer": "Intforce",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Intforce / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Overflowing sake glass in masu.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Sake",
+      "localPath": "images/sake.jpg"
+    }
+  },
+  {
+    "id": "bubble-tea",
+    "name": "Bubble tea",
+    "cuisine": "Drinks",
+    "regions": [
+      "Taiwan"
+    ],
+    "note": "Milky tea with chewy tapioca pearls at the bottom.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/A_bubble_tea_with_tapioca_pearls%2C_July_2018.jpg/960px-A_bubble_tea_with_tapioca_pearls%2C_July_2018.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_bubble_tea_with_tapioca_pearls,_July_2018.jpg",
+      "photographer": "sam651030 from Pixabay",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "licenseName": "CC0",
+      "attribution": "sam651030 from Pixabay / Wikimedia Commons / CC0",
+      "fileTitle": "File:A bubble tea with tapioca pearls, July 2018.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:A bubble tea with tapioca pearls, July 2018.jpg",
+      "localPath": "images/bubble-tea.jpg"
+    }
+  },
+  {
+    "id": "oolong-tea",
+    "name": "Oolong tea",
+    "cuisine": "Drinks",
+    "regions": [
+      "China",
+      "Taiwan"
+    ],
+    "note": "Partly oxidized tea with a roasted, floral finish.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Oolong_tea_being_poured%2C_Holiday_Restaurant%2C_Semarang%2C_2014-06-19.jpg/960px-Oolong_tea_being_poured%2C_Holiday_Restaurant%2C_Semarang%2C_2014-06-19.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Oolong_tea_being_poured,_Holiday_Restaurant,_Semarang,_2014-06-19.jpg",
+      "photographer": "Crisco 1492",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Crisco 1492 / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Oolong tea being poured, Holiday Restaurant, Semarang, 2014-06-19.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Oolong tea being poured, Holiday Restaurant, Semarang, 2014-06-19.jpg",
+      "localPath": "images/oolong-tea.jpg"
+    }
+  },
+  {
+    "id": "soju",
+    "name": "Soju",
+    "cuisine": "Drinks",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "A clear, clean spirit poured into little shot glasses.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Soju.jpg/960px-Soju.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Soju.jpg",
+      "photographer": "/Repository/2022/11/29/thiet-ke-chua-co-ten-17.png",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "licenseName": "CC BY 2.0",
+      "attribution": "/Repository/2022/11/29/thiet-ke-chua-co-ten-17.png / Wikimedia Commons / CC BY 2.0",
+      "fileTitle": "File:Soju.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Soju",
+      "localPath": "images/soju.jpg"
+    }
+  },
+  {
+    "id": "sikhye",
+    "name": "Sikhye",
+    "cuisine": "Drinks",
+    "regions": [
+      "South Korea"
+    ],
+    "note": "A sweet, chilled rice punch with floating grains.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/Korean_rice_punch-Sikhye-01A.jpg/960px-Korean_rice_punch-Sikhye-01A.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Korean_rice_punch-Sikhye-01A.jpg",
+      "photographer": "by gliuoo",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "licenseName": "CC BY-SA 2.0",
+      "attribution": "by gliuoo / Wikimedia Commons / CC BY-SA 2.0",
+      "fileTitle": "File:Korean rice punch-Sikhye-01A.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Korean rice punch-Sikhye-01A.jpg",
+      "localPath": "images/sikhye.jpg"
+    }
+  },
+  {
+    "id": "vietnamese-iced-coffee",
+    "name": "Vietnamese iced coffee",
+    "cuisine": "Drinks",
+    "regions": [
+      "Vietnam"
+    ],
+    "note": "Strong drip coffee over ice and condensed milk.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Viet-coffee.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Viet-coffee.jpg",
+      "photographer": "Mike Verdone",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "licenseName": "Public domain",
+      "attribution": "Mike Verdone / Wikimedia Commons / Public domain",
+      "fileTitle": "File:Viet-coffee.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Vietnamese iced coffee",
+      "localPath": "images/vietnamese-iced-coffee.jpg"
+    }
+  },
+  {
+    "id": "thai-iced-tea",
+    "name": "Thai iced tea",
+    "cuisine": "Drinks",
+    "regions": [
+      "Thailand"
+    ],
+    "note": "Bright orange spiced tea with a creamy pour.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Cha_yen.JPG/960px-Cha_yen.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cha_yen.JPG",
+      "photographer": "Takeaway",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Takeaway / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Cha yen.JPG",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Thai tea",
+      "localPath": "images/thai-iced-tea.jpg"
+    }
+  },
+  {
+    "id": "masala-chai",
+    "name": "Masala chai",
+    "cuisine": "Drinks",
+    "regions": [
+      "North India",
+      "South India"
+    ],
+    "note": "Black tea simmered with milk, ginger and warm spices.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/89/Chai_In_Sakora.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chai_In_Sakora.jpg",
+      "photographer": "Dadhichbittu007",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Dadhichbittu007 / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Chai In Sakora.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Masala chai",
+      "localPath": "images/masala-chai.jpg"
+    }
+  },
+  {
+    "id": "mango-lassi",
+    "name": "Mango lassi",
+    "cuisine": "Drinks",
+    "regions": [
+      "North India",
+      "Pakistan"
+    ],
+    "note": "A thick blend of yogurt and ripe mango.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Mango_lassi_at_Everest_Dine_in_November_2022.jpg/960px-Mango_lassi_at_Everest_Dine_in_November_2022.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mango_lassi_at_Everest_Dine_in_November_2022.jpg",
+      "photographer": "JIP",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "JIP / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Mango lassi at Everest Dine in November 2022.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Mango lassi at Everest Dine in November 2022.jpg",
+      "localPath": "images/mango-lassi.jpg"
+    }
+  },
+  {
+    "id": "turkish-coffee",
+    "name": "Turkish coffee",
+    "cuisine": "Drinks",
+    "regions": [
+      "Turkey"
+    ],
+    "note": "Finely ground coffee brewed thick in a small pot.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/T%C3%BCrk_Kahvesi_-_Bakir_Cezve.jpg/960px-T%C3%BCrk_Kahvesi_-_Bakir_Cezve.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:T%C3%BCrk_Kahvesi_-_Bakir_Cezve.jpg",
+      "photographer": "Eaeeae",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Eaeeae / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Türk Kahvesi - Bakir Cezve.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Turkish coffee",
+      "localPath": "images/turkish-coffee.jpg"
+    }
+  },
+  {
+    "id": "ayran",
+    "name": "Ayran",
+    "cuisine": "Drinks",
+    "regions": [
+      "Turkey",
+      "Syria",
+      "Lebanon"
+    ],
+    "note": "Cold, salted yogurt drink made for hot days.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Fresh_ayran.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fresh_ayran.jpg",
+      "photographer": "Mavigogun",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Mavigogun / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Fresh ayran.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Ayran",
+      "localPath": "images/ayran.jpg"
+    }
+  },
+  {
+    "id": "greek-frappe",
+    "name": "Frappé",
+    "cuisine": "Drinks",
+    "regions": [
+      "Greece"
+    ],
+    "note": "Shaken instant coffee with a tall layer of foam.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d3/Greek_frapp%C3%A9.jpg/960px-Greek_frapp%C3%A9.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Greek_frapp%C3%A9.jpg",
+      "photographer": "Wimmiden",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Wimmiden / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Greek frappé.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Greek frappé.jpg",
+      "localPath": "images/greek-frappe.jpg"
+    }
+  },
+  {
+    "id": "doogh",
+    "name": "Doogh",
+    "cuisine": "Drinks",
+    "regions": [
+      "Iran",
+      "Afghanistan"
+    ],
+    "note": "Sparkling yogurt drink seasoned with dried mint.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/%D0%A2%D0%90%D0%9D_%28%D0%BD%D0%B0%D0%BF%D0%B8%D1%82%D0%BE%D0%BA%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:%D0%A2%D0%90%D0%9D_(%D0%BD%D0%B0%D0%BF%D0%B8%D1%82%D0%BE%D0%BA).jpg",
+      "photographer": "Schekinov Alexey Victorovich",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Schekinov Alexey Victorovich / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:ТАН (напиток).jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Doogh",
+      "localPath": "images/doogh.jpg"
+    }
+  },
+  {
+    "id": "cafe-au-lait",
+    "name": "Café au lait",
+    "cuisine": "Drinks",
+    "regions": [
+      "France"
+    ],
+    "note": "Coffee and hot milk in a wide breakfast bowl.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Caf%C3%A9_au_lait.jpg/960px-Caf%C3%A9_au_lait.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Caf%C3%A9_au_lait.jpg",
+      "photographer": "Tim Boyd from Brooklyn",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "licenseName": "CC BY 2.0",
+      "attribution": "Tim Boyd from Brooklyn / Wikimedia Commons / CC BY 2.0",
+      "fileTitle": "File:Café au lait.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Café au lait",
+      "localPath": "images/cafe-au-lait.jpg"
+    }
+  },
+  {
+    "id": "champagne",
+    "name": "Champagne",
+    "cuisine": "Drinks",
+    "regions": [
+      "France"
+    ],
+    "note": "Sparkling wine for toasts and celebrations.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Glass_of_champagne.jpg/960px-Glass_of_champagne.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Glass_of_champagne.jpg",
+      "photographer": "bgvjpe",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "licenseName": "CC BY 2.0",
+      "attribution": "bgvjpe / Wikimedia Commons / CC BY 2.0",
+      "fileTitle": "File:Glass of champagne.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Champagne",
+      "localPath": "images/champagne.jpg"
+    }
+  },
+  {
+    "id": "espresso",
+    "name": "Espresso",
+    "cuisine": "Drinks",
+    "regions": [
+      "Italy"
+    ],
+    "note": "A short, intense shot of coffee with golden crema.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Tazzina_di_caff%C3%A8_a_Ventimiglia.jpg/960px-Tazzina_di_caff%C3%A8_a_Ventimiglia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tazzina_di_caff%C3%A8_a_Ventimiglia.jpg",
+      "photographer": "Lemone",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Lemone / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Tazzina di caffè a Ventimiglia.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Espresso",
+      "localPath": "images/espresso.jpg"
+    }
+  },
+  {
+    "id": "aperol-spritz",
+    "name": "Aperol spritz",
+    "cuisine": "Drinks",
+    "regions": [
+      "Italy"
+    ],
+    "note": "Bittersweet orange aperitivo topped with prosecco.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Aperol_Spritz_aboard_Viking_Mariella.jpg/960px-Aperol_Spritz_aboard_Viking_Mariella.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Aperol_Spritz_aboard_Viking_Mariella.jpg",
+      "photographer": "JIP",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "JIP / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Aperol Spritz aboard Viking Mariella.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Spritz (cocktail)",
+      "localPath": "images/aperol-spritz.jpg"
+    }
+  },
+  {
+    "id": "horchata",
+    "name": "Horchata",
+    "cuisine": "Drinks",
+    "regions": [
+      "Mexico"
+    ],
+    "note": "Creamy rice drink with cinnamon, served over ice.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Horchata_de_chufa_2.jpg/960px-Horchata_de_chufa_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Horchata_de_chufa_2.jpg",
+      "photographer": "Photocapy",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "licenseName": "CC BY-SA 2.0",
+      "attribution": "Photocapy / Wikimedia Commons / CC BY-SA 2.0",
+      "fileTitle": "File:Horchata de chufa 2.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Horchata",
+      "localPath": "images/horchata.jpg"
+    }
+  },
+  {
+    "id": "yerba-mate",
+    "name": "Yerba mate",
+    "cuisine": "Drinks",
+    "regions": [
+      "Argentina",
+      "Brazil"
+    ],
+    "note": "Herbal tea sipped through a metal straw from a gourd.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Traditional_mate_set_calabash_gourd_with_La_Merced_yerba_mate.jpg/960px-Traditional_mate_set_calabash_gourd_with_La_Merced_yerba_mate.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Traditional_mate_set_calabash_gourd_with_La_Merced_yerba_mate.jpg",
+      "photographer": "Siarhei Besarab",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Siarhei Besarab / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Traditional mate set calabash gourd with La Merced yerba mate.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Traditional mate set calabash gourd with La Merced yerba mate.jpg",
+      "localPath": "images/yerba-mate.jpg"
+    }
+  },
+  {
+    "id": "caipirinha",
+    "name": "Caipirinha",
+    "cuisine": "Drinks",
+    "regions": [
+      "Brazil"
+    ],
+    "note": "Cachaça muddled with lime and sugar.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Caipirinha_with_lime.jpg/960px-Caipirinha_with_lime.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Caipirinha_with_lime.jpg",
+      "photographer": "rawpixel.com",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "licenseName": "CC0",
+      "attribution": "rawpixel.com / Wikimedia Commons / CC0",
+      "fileTitle": "File:Caipirinha with lime.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Caipirinha",
+      "localPath": "images/caipirinha.jpg"
+    }
+  },
+  {
+    "id": "pina-colada",
+    "name": "Piña colada",
+    "cuisine": "Drinks",
+    "regions": [
+      "Puerto Rico"
+    ],
+    "note": "Pineapple and coconut blended into a frosty cocktail.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Pi%C3%B1a_Colada.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pi%C3%B1a_Colada.jpg",
+      "photographer": "User Barmix on de.wikipedia",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "licenseName": "Public domain",
+      "attribution": "User Barmix on de.wikipedia / Wikimedia Commons / Public domain",
+      "fileTitle": "File:Piña Colada.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Piña colada",
+      "localPath": "images/pina-colada.jpg"
+    }
+  },
+  {
+    "id": "mojito",
+    "name": "Mojito",
+    "cuisine": "Drinks",
+    "regions": [
+      "Cuba"
+    ],
+    "note": "Rum, lime and fresh mint over crushed ice.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Mojito_-_Versailles_Restaurant%2C_Little_Havana%2C_Miami%2C_Florida.jpg/960px-Mojito_-_Versailles_Restaurant%2C_Little_Havana%2C_Miami%2C_Florida.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mojito_-_Versailles_Restaurant,_Little_Havana,_Miami,_Florida.jpg",
+      "photographer": "Daniel Lobo",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "licenseName": "CC0",
+      "attribution": "Daniel Lobo / Wikimedia Commons / CC0",
+      "fileTitle": "File:Mojito - Versailles Restaurant, Little Havana, Miami, Florida.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Mojito - Versailles Restaurant, Little Havana, Miami, Florida.jpg",
+      "localPath": "images/mojito.jpg"
+    }
+  },
+  {
+    "id": "sorrel",
+    "name": "Sorrel",
+    "cuisine": "Drinks",
+    "regions": [
+      "Jamaica",
+      "Trinidad"
+    ],
+    "note": "Spiced hibiscus drink brewed for the holidays.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/61/Homemade_sorrel_drink.jpg/960px-Homemade_sorrel_drink.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Homemade_sorrel_drink.jpg",
+      "photographer": "stu_spivack",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "licenseName": "CC BY-SA 2.0",
+      "attribution": "stu_spivack / Wikimedia Commons / CC BY-SA 2.0",
+      "fileTitle": "File:Homemade sorrel drink.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Homemade sorrel drink.jpg",
+      "localPath": "images/sorrel.jpg"
+    }
+  },
+  {
+    "id": "milkshake",
+    "name": "Milkshake",
+    "cuisine": "Drinks",
+    "regions": [
+      "United States"
+    ],
+    "note": "Ice cream and milk blended thick enough for a spoon.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Chocolate_Milkshake_%28Rudford%27s_Restaurant%29.jpg/960px-Chocolate_Milkshake_%28Rudford%27s_Restaurant%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chocolate_Milkshake_(Rudford%27s_Restaurant).jpg",
+      "photographer": "Visitor7",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "licenseName": "CC BY-SA 3.0",
+      "attribution": "Visitor7 / Wikimedia Commons / CC BY-SA 3.0",
+      "fileTitle": "File:Chocolate Milkshake (Rudford's Restaurant).jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Chocolate Milkshake (Rudford's Restaurant).jpg",
+      "localPath": "images/milkshake.jpg"
+    }
+  },
+  {
+    "id": "lemonade",
+    "name": "Lemonade",
+    "cuisine": "Drinks",
+    "regions": [
+      "United States"
+    ],
+    "note": "Fresh lemons, sugar and cold water.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Lemonade_-_27682817724.jpg/960px-Lemonade_-_27682817724.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lemonade_-_27682817724.jpg",
+      "photographer": "HarshLight",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "licenseName": "CC BY 2.0",
+      "attribution": "HarshLight / Wikimedia Commons / CC BY 2.0",
+      "fileTitle": "File:Lemonade - 27682817724.jpg",
+      "reviewed": true,
+      "matchMethod": "dish-article",
+      "matchTitle": "Lemonade",
+      "localPath": "images/lemonade.jpg"
+    }
+  },
+  {
+    "id": "moroccan-mint-tea",
+    "name": "Moroccan mint tea",
+    "cuisine": "Drinks",
+    "regions": [
+      "Morocco"
+    ],
+    "note": "Green tea and fresh mint poured from a height.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/Mint_tea%2C_Marrakesh.jpg/960px-Mint_tea%2C_Marrakesh.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Mint_tea,_Marrakesh.jpg",
+      "photographer": "Adam Harangozó",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "Adam Harangozó / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Mint tea, Marrakesh.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Mint tea, Marrakesh.jpg",
+      "localPath": "images/moroccan-mint-tea.jpg"
+    }
+  },
+  {
+    "id": "sangria",
+    "name": "Sangria",
+    "cuisine": "Drinks",
+    "regions": [
+      "Spain"
+    ],
+    "note": "Red wine with chopped fruit, shared by the pitcher.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/A_glass_of_sangria_and_bread.jpg/960px-A_glass_of_sangria_and_bread.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_glass_of_sangria_and_bread.jpg",
+      "photographer": "PierreSelim",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+      "licenseName": "CC BY 3.0",
+      "attribution": "PierreSelim / Wikimedia Commons / CC BY 3.0",
+      "fileTitle": "File:A glass of sangria and bread.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:A glass of sangria and bread.jpg",
+      "localPath": "images/sangria.jpg"
+    }
+  },
+  {
+    "id": "rooibos-tea",
+    "name": "Rooibos tea",
+    "cuisine": "Drinks",
+    "regions": [
+      "South Africa"
+    ],
+    "note": "Caffeine-free red bush tea with a honeyed taste.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Rooibos_tea_at_Plagen_Beach.jpg/960px-Rooibos_tea_at_Plagen_Beach.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rooibos_tea_at_Plagen_Beach.jpg",
+      "photographer": "JIP",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "licenseName": "CC BY-SA 4.0",
+      "attribution": "JIP / Wikimedia Commons / CC BY-SA 4.0",
+      "fileTitle": "File:Rooibos tea at Plagen Beach.jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Rooibos tea at Plagen Beach.jpg",
+      "localPath": "images/rooibos-tea.jpg"
+    }
+  },
+  {
+    "id": "bissap",
+    "name": "Bissap",
+    "cuisine": "Drinks",
+    "regions": [
+      "Senegal"
+    ],
+    "note": "Tart, ruby-red hibiscus drink served chilled.",
+    "source": "curated",
+    "cuisineIds": [
+      "Drinks"
+    ],
+    "image": {
+      "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/Bissap_%26_Ginger_Juice_%287558541174%29.jpg/960px-Bissap_%26_Ginger_Juice_%287558541174%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "source": "wikimedia",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bissap_%26_Ginger_Juice_(7558541174).jpg",
+      "photographer": "Jen Arrr",
+      "photographerUrl": null,
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "licenseName": "CC BY-SA 2.0",
+      "attribution": "Jen Arrr / Wikimedia Commons / CC BY-SA 2.0",
+      "fileTitle": "File:Bissap & Ginger Juice (7558541174).jpg",
+      "reviewed": true,
+      "matchMethod": "curated-dish-file",
+      "matchTitle": "File:Bissap & Ginger Juice (7558541174).jpg",
+      "localPath": "images/bissap.jpg"
+    }
+  },
+  {
     "id": "chinese:themealdb:52945",
     "name": "Kung Pao Chicken",
     "cuisine": "Chinese",

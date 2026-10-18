@@ -17,6 +17,23 @@ const fileOverrides = {
     "File:Coffee, croissants, and jam on a plate with cookies on a table during breakfast time in a cozy setting.jpg",
   cheeseburger: "File:Cheeseburger and steak fries at Rentier-Burger.jpg",
   jambalaya: "File:Jambalaya on plate.jpg",
+  // Drinks whose article image is a plant, a studio cut-out or the wrong drink.
+  "bubble-tea": "File:A bubble tea with tapioca pearls, July 2018.jpg",
+  sikhye: "File:Korean rice punch-Sikhye-01A.jpg",
+  "mango-lassi": "File:Mango lassi at Everest Dine in November 2022.jpg",
+  "moroccan-mint-tea": "File:Mint tea, Marrakesh.jpg",
+  "greek-frappe": "File:Greek frappé.jpg",
+  "oolong-tea":
+    "File:Oolong tea being poured, Holiday Restaurant, Semarang, 2014-06-19.jpg",
+  "rooibos-tea": "File:Rooibos tea at Plagen Beach.jpg",
+  "yerba-mate":
+    "File:Traditional mate set calabash gourd with La Merced yerba mate.jpg",
+  sorrel: "File:Homemade sorrel drink.jpg",
+  bissap: "File:Bissap & Ginger Juice (7558541174).jpg",
+  milkshake: "File:Chocolate Milkshake (Rudford's Restaurant).jpg",
+  sangria: "File:A glass of sangria and bread.jpg",
+  mojito:
+    "File:Mojito - Versailles Restaurant, Little Havana, Miami, Florida.jpg",
 };
 
 const headers = {

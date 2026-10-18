@@ -1,3 +1,4 @@
+import { playSound, hapticLight, hapticSelection } from "../lib/sensory";
 import {
   useCallback,
   useDeferredValue,
@@ -394,6 +395,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     setMapReady(false);
   }, []);
   function toggleSave(place: Place) {
+    hapticLight();
+    void playSound("tap");
     dispatch({ type: "save", placeId: place.id });
   }
   function openFoodCamera(mode: "food" | "menu" = "food") {
@@ -1324,6 +1327,10 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       }}
                       onPress={() => {
                         setCameraMenuOpen(false);
+                        if (!navigationSelected(item.id)) {
+                          hapticSelection();
+                          void playSound("click");
+                        }
                         setTab(item.id);
                         setFoodCapture(null);
                         setSelected(null);

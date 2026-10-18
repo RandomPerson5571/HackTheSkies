@@ -1,3 +1,4 @@
+import { playSound, hapticMedium, hapticSuccess, hapticError } from "../../../lib/sensory";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -131,13 +132,22 @@ export function FoodCameraScreen({
       const result = await recognizeFood(resized.base64, controller.signal);
       if (mounted.current && generation.current === current) {
         setRecognition(result);
+        if (result) {
+          hapticSuccess();
+          void playSound("success");
+        } else {
+          hapticError();
+          void playSound("error");
+        }
         if (!result)
           setError(
             "No meal was identified. Retake the photo or enter the dish yourself.",
           );
       }
     } catch (cause) {
-      if (mounted.current && generation.current === current)
+      if (mounted.current && generation.current === current) {
+        hapticError();
+        void playSound("error");
         setError(
           controller.signal.aborted
             ? "Recognition timed out. Retry or add the meal by hand."
@@ -145,6 +155,7 @@ export function FoodCameraScreen({
               ? cause.message
               : "Couldn’t identify this meal.",
         );
+      }
     } finally {
       clearTimeout(timeout);
       if (upload) deleteScanImage(upload.uri);
@@ -157,6 +168,8 @@ export function FoodCameraScreen({
   async function snap() {
     if (!camera.current || !ready || capturing.current) return;
     capturing.current = true;
+    hapticMedium();
+    void playSound("scan");
     setBusy(true);
     setError("");
     const current = generation.current;
@@ -193,6 +206,8 @@ export function FoodCameraScreen({
   async function selectPhoto() {
     if (capturing.current) return;
     capturing.current = true;
+    hapticMedium();
+    void playSound("scan");
     setBusy(true);
     setError("");
     const current = generation.current;

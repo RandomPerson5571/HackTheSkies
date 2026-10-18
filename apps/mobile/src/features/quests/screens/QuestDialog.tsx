@@ -15,7 +15,7 @@ import { catalogPhoto } from "../../food-dex/services/catalogPhotos";
 import { useReducedMotion } from "../../food-dex/hooks/useReducedMotion";
 import { hasDish, lessonFor, pathDishes, type Quest } from "../models/quests";
 import type { FoodEntry } from "../../food-dex/models/foodDex";
-import { hapticSuccess } from "../../../lib/sensory";
+import { hapticSuccess, playSound } from "../../../lib/sensory";
 import { questColors as c } from "../../../theme";
 
 export function QuestButton({
@@ -96,6 +96,7 @@ export function QuestDialog({
   }, [stage, reduced, scale]);
   function finish() {
     hapticSuccess();
+    void playSound(isBoss ? "levelup" : "success");
     onComplete();
     setStage("reward");
   }

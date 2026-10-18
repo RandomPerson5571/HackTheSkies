@@ -38,7 +38,7 @@ import {
 import { CulinaryAtlas } from "../components/CulinaryAtlas";
 import { CollectionProgress } from "../components/CollectionProgress";
 import { collectionProgress, cardTier, nextDiscoveryMilestone, cuisineMastery, cuisineMasteryTarget } from "../models/discovery";
-import { hapticSuccess } from "../../../lib/sensory";
+import { hapticSuccess, playSound } from "../../../lib/sensory";
 import { catalogPhoto } from "../services/catalogPhotos";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
 import type { useFoodDex } from "../hooks/useFoodDex";
@@ -257,6 +257,7 @@ export function FoodDexScreen({
       before: entries,
     });
     hapticSuccess();
+    void playSound("discover");
     setNotice("");
     closeScan();
   }

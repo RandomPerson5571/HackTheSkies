@@ -74,6 +74,7 @@ export type Place = {
   cuisine?: string;
   sourceUrl?: string;
   locationAccuracy?: string;
+  rating?: number;
   // Optional aggregate from a future community/provider feed. Missing is unrated.
   ratingSummary?: { averageRating: number; reviewCount: number };
 };
@@ -116,6 +117,7 @@ export const places: Place[] = importedRestaurants.map((restaurant): Place => ({
   note: `${restaurant.cuisine} · ${restaurant.category}.${restaurant.locationAccuracy === "approximate" ? " Approximate map location." : ""} Map data © OpenStreetMap contributors.`,
   sourceUrl: restaurant.source_url,
   locationAccuracy: restaurant.locationAccuracy,
+  rating: restaurant.rating,
 }));
 
 export const categories: Category[] = [

@@ -1651,7 +1651,7 @@ const styles = StyleSheet.create({
   searchActive: {
     borderColor: colors.accent,
     boxShadow: "0 10px 30px #3D568F35",
-    backgroundColor: "rgba(255,253,245,0.72)",
+    backgroundColor: "rgba(255,253,245,0.32)",
   },
   input: { flex: 1, color: colors.ink, fontSize: 14, paddingVertical: 15 },
   clear: {
@@ -1913,10 +1913,14 @@ const styles = StyleSheet.create({
   navItems: { flex: 1, flexDirection: "row" },
   navActive: { backgroundColor: "rgba(234,243,178,0.66)" },
   placeCard: {
-    backgroundColor: colors.paper,
+    ...webGlassBlur,
+    backgroundColor: "rgba(255,253,245,0.72)",
     borderRadius: 24,
     padding: 16,
     gap: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.78)",
+    boxShadow: "0 12px 36px #263D6728, inset 0 1px 0 #FFFFFFB8",
   },
   cardTop: { flexDirection: "row", gap: 12, alignItems: "flex-start" },
   cardImage: { width: 70, height: 86, borderRadius: 13 },

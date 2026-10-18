@@ -575,10 +575,16 @@ export function RestaurantsScreen({
                     <Text style={styles.ratingText}>
                       {rec?.averageRating
                         ? rec.averageRating.toFixed(1)
-                        : "New"}
+                        : item.rating?.toFixed(1) ?? "New"}
                     </Text>
                   </View>
-                  <Text style={styles.badge}>{recommendationBadge(rec)}</Text>
+                  <Text style={styles.badge}>
+                    {rec?.averageRating
+                      ? recommendationBadge(rec)
+                      : item.rating != null
+                        ? "Sample rating"
+                        : recommendationBadge(rec)}
+                  </Text>
                 </View>
               </Pressable>
               <Pressable
@@ -851,6 +857,15 @@ export function RestaurantsScreen({
                 </Text>
                 <Text style={styles.note}>{actionPlace.note}</Text>
                 <Text style={styles.small}>{actionPlace.address}</Text>
+                {actionPlace.rating != null && (
+                  <View style={styles.detailRating}>
+                    <Icon name="star" size={16} color={colors.gold} />
+                    <Text style={styles.ratingText}>
+                      {actionPlace.rating.toFixed(1)} / 5
+                    </Text>
+                    <Text style={styles.small}>Sample directory rating</Text>
+                  </View>
+                )}
                 <Pressable
                   accessibilityRole="button"
                   onPress={() => {
@@ -1269,6 +1284,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     color: colors.ink,
+  },
+  detailRating: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 10,
+    marginBottom: 8,
   },
   badge: {
     fontSize: 11,

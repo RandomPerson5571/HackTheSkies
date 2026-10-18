@@ -19,6 +19,7 @@ rows = []
 for filename in ['downtown_toronto_restaurants.csv', 'etobicoke_restaurants.csv']:
     with open(Path('data') / filename, encoding='utf-8-sig', newline='') as source:
         for row in csv.DictReader(source):
+            row['rating'] = float(row['rating'])
             identity = row['restaurant_name'].strip().lower() + '|' + row['address'].strip().lower()
             row['id'] = 'csv-' + hashlib.sha256(identity.encode()).hexdigest()[:16]
             rows.append(row)
@@ -44,7 +45,7 @@ def locate(query):
 
 def geocode(row):
     if row['id'] in cache:
-        return cache[row['id']]
+        return {**cache[row['id']], **row}
     address = re.split(r',|#|\bUnit\b|\bSuite\b|\bSte\b|(?:\d+(?:st|nd|rd|th)|Top|Ground|Main|Second)\s+Floor|\bFloor\b', row['address'], flags=re.I)[0].strip()
     address = address.replace('Queens Plate', "Queen's Plate")
     feature = locate(address + ', Toronto, Ontario, Canada')

@@ -8,10 +8,7 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.boberto2790.hack-the-skies",
-      "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Show your current location on the map to help you find nearby restaurants."
-      }
+      "bundleIdentifier": "com.boberto2790.hack-the-skies"
     },
     "android": {
       "adaptiveIcon": {

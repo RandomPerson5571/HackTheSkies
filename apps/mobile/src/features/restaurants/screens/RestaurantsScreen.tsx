@@ -9,8 +9,6 @@ import {
   type ComponentProps,
 } from "react";
 import {
-  Animated,
-  Easing,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -21,6 +19,7 @@ import {
   Text,
   TextInput,
   View,
+  type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -35,12 +34,7 @@ import {
   surpriseCuisine,
   type RestaurantSort,
 } from "../models/restaurantBrowse";
-import {
-  colors,
-  frostedGlass,
-  frostedGlassSelected,
-  frostedGlassTint,
-} from "../../../theme/index";
+import { colors } from "../../../theme/index";
 import type {
   CollectionAction,
   RestaurantCollection,
@@ -60,6 +54,15 @@ type Props = {
   onOpenCommunity?: () => void;
   mode?: "discover" | "journal";
 };
+
+const webGlassBlur = (
+  Platform.OS === "web"
+    ? {
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+      }
+    : {}
+) as ViewStyle;
 
 function Icon({
   name,
@@ -125,108 +128,39 @@ export function RestaurantsScreen({
     () => buildRecommendations(places, collection.ratings),
     [places, collection.ratings],
   );
-  const [filter, setFilter] = useState<Filter>("discover");
-  const filterIndicatorX = useRef(new Animated.Value(0)).current;
-  const filterIndicatorWidth = useRef(new Animated.Value(0)).current;
-  const filterChipLayouts = useRef(
-    new Map<Filter, { x: number; width: number }>(),
-  ).current;
-  const filterIndicatorReady = useRef(false);
-  const pendingFilterIndicator = useRef<Filter | null>(null);
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<Category>("All");
-  const [creating, setCreating] = useState(false);
-  const [listName, setListName] = useState("");
-  const [formError, setFormError] = useState("");
-  const [managing, setManaging] = useState<Place | null>(null);
-  const wantCount = collection.saved.filter(
-    (id) => !collection.visited.includes(id),
-  ).length;
-  const activeList = collection.lists.find(
-    (list) => `list:${list.id}` === filter,
-  );
-  const options: {
-    id: Filter;
-    label: string;
-    count: number;
-    icon: ComponentProps<typeof Ionicons>["name"];
-  }[] = [
-    {
-      id: "discover",
-      label: "Discover",
-      count: places.length,
-      icon: "compass-outline",
-    },
-    {
-      id: "saved",
-      label: "Saved",
-      count: collection.saved.length,
-      icon: "bookmark-outline",
-    },
-    {
-      id: "want",
-      label: "Want to try",
-      count: wantCount,
-      icon: "bookmark-outline",
-    },
-    {
-      id: "visited",
-      label: "Visited",
-      count: collection.visited.length,
-      icon: "checkmark-circle-outline",
-    },
-    ...collection.lists.map((list) => ({
-      id: `list:${list.id}` as Filter,
-      label: list.name,
-      count: list.placeIds.length,
-      icon: "list-outline" as const,
-    })),
-  ];
-  function animateFilterIndicator(layout: { x: number; width: number }) {
-    if (!filterIndicatorReady.current) {
-      filterIndicatorX.setValue(layout.x);
-      filterIndicatorWidth.setValue(layout.width);
-      filterIndicatorReady.current = true;
-      return;
-    }
-    Animated.parallel([
-      Animated.timing(filterIndicatorX, {
-        toValue: layout.x,
-        duration: 260,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-      Animated.timing(filterIndicatorWidth, {
-        toValue: layout.width,
-        duration: 260,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-    ]).start();
-  }
-  function selectFilter(nextFilter: Filter) {
-    const layout = filterChipLayouts.get(nextFilter);
-    if (layout) {
-      pendingFilterIndicator.current = null;
-      animateFilterIndicator(layout);
-    } else {
-      pendingFilterIndicator.current = nextFilter;
-    }
-    setFilter(nextFilter);
-  }
-  const inCollection = places.filter(
-    (place) =>
-      filter === "discover" ||
-      (filter === "saved" && collection.saved.includes(place.id)) ||
-      (filter === "want" &&
-        collection.saved.includes(place.id) &&
-        !collection.visited.includes(place.id)) ||
-      (filter === "visited" && collection.visited.includes(place.id)) ||
-      Boolean(activeList?.placeIds.includes(place.id)),
-  );
-  const visible = browseRestaurants(
-    inCollection,
-    { query, category, cuisine, sort },
+  const visible = useMemo(() => {
+    const base = browseRestaurants(
+      places,
+      { query, category, cuisine, sort },
+      recommendations,
+    );
+    return base.filter((place) => {
+      if (
+        hiddenGemsOnly &&
+        recommendationBadge(recommendations.get(place.id)) !== "Hidden gem"
+      )
+        return false;
+      if (mode !== "journal") return true;
+      if (collectionTab === "saved") return collection.saved.includes(place.id);
+      if (collectionTab === "visited")
+        return collection.visited.includes(place.id);
+      if (collectionTab === "want")
+        return (
+          collection.saved.includes(place.id) &&
+          !collection.visited.includes(place.id)
+        );
+      return (
+        collection.lists
+          .find((item) => item.id === collectionTab)
+          ?.placeIds.includes(place.id) ?? false
+      );
+    });
+  }, [
+    places,
+    query,
+    category,
+    cuisine,
+    sort,
     recommendations,
     hiddenGemsOnly,
     mode,
@@ -272,10 +206,8 @@ export function RestaurantsScreen({
       dispatch({ type: "membership", listId: id, placeId: managing.id });
       setManaging(null);
     }
-    selectFilter(`list:${id}`);
-    setQuery("");
-    setCategory("All");
-    setCuisine("All");
+    resetFilters();
+    if (mode === "journal") setCollectionTab(id);
     setCreating(false);
     setListName("");
     setFormError("");
@@ -671,93 +603,48 @@ export function RestaurantsScreen({
                 />
               </Pressable>
             </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={[styles.chips, styles.filterChips]}
-              keyboardShouldPersistTaps="handled"
-            >
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.activeChipIndicator,
-                  {
-                    left: filterIndicatorX,
-                    width: filterIndicatorWidth,
-                  },
-                ]}
-              />
-              {options.map((option) => (
-                <Pressable
-                  key={option.id}
-                  accessibilityRole="tab"
-                  accessibilityState={{ selected: filter === option.id }}
-                  accessibilityLabel={`${option.label}, ${option.count} places`}
-                  onLayout={(event) => {
-                    const layout = {
-                      x: event.nativeEvent.layout.x,
-                      width: event.nativeEvent.layout.width,
-                    };
-                    filterChipLayouts.set(option.id, layout);
-                    if (pendingFilterIndicator.current === option.id) {
-                      pendingFilterIndicator.current = null;
-                      animateFilterIndicator(layout);
-                    } else if (
-                      filter === option.id &&
-                      !filterIndicatorReady.current
-                    ) {
-                      animateFilterIndicator(layout);
-                    }
-                  }}
-                  onPress={() => {
-                    selectFilter(option.id);
-                    setQuery("");
-                    setCategory("All");
-                    setCuisine("All");
-                  }}
-                  style={({ pressed }) => [
-                    styles.listChip,
-                    filter === option.id && styles.activeChip,
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <Icon
-                    name={option.icon}
-                    color={colors.accent}
-                    size={18}
-                  />
-                  <Text
-                    style={[
-                      styles.chipText,
-                      filter === option.id && styles.activeText,
-                    ]}
-                  >
-                    {option.label} · {option.count}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-            <View style={styles.search}>
-              <Icon name="search-outline" color={colors.muted} />
-              <TextInput
-                accessibilityLabel="Search restaurants by name, food or neighborhood"
-                placeholder="Restaurant, food, neighborhood…"
-                placeholderTextColor={colors.muted}
-                value={query}
-                onChangeText={setQuery}
-                style={styles.input}
-                returnKeyType="search"
-              />
-              {query ? (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="Clear restaurant search"
-                  onPress={() => setQuery("")}
-                  style={styles.iconButton}
-                >
-                  <Icon name="close" />
-                </Pressable>
-              ) : null}
+          );
+        }}
+      />
+
+      <Modal
+        visible={filterSheetVisible}
+        transparent
+        animationType={reducedMotion === false ? "slide" : "none"}
+        onRequestClose={() => setFilterSheetVisible(false)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.modal}
+        >
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Close filters"
+            style={styles.scrim}
+            onPress={() => setFilterSheetVisible(false)}
+          />
+          <View
+            accessibilityViewIsModal
+            style={[
+              styles.sheet,
+              { paddingBottom: insets.bottom + 24, maxHeight: "85%" },
+            ]}
+          >
+            <View style={styles.sectionRow}>
+              <Text
+                accessibilityRole="header"
+                style={[styles.sectionTitle, styles.flex]}
+              >
+                Sort & filter
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close filters"
+                onPress={() => setFilterSheetVisible(false)}
+                style={styles.iconButton}
+              >
+                <Icon name="close" />
+              </Pressable>
             </View>
             <ScrollView
               style={styles.filterScroll}
@@ -842,81 +729,104 @@ export function RestaurantsScreen({
             <View style={styles.sectionRow}>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Surprise me with another cuisine"
-                onPress={() => {
-                  setCuisine(surpriseCuisine(cuisineOptions, cuisine));
-                  setQuery("");
-                  setCategory("All");
-                  selectFilter("discover");
-                  list.current?.scrollToOffset({ offset: 0, animated: false });
-                }}
+                onPress={resetFilters}
+                style={styles.iconButton}
+              >
+                <Text style={styles.chipText}>Reset all</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setFilterSheetVisible(false)}
                 style={({ pressed }) => [
                   styles.primaryButton,
                   styles.flex,
                   pressed && styles.pressed,
                 ]}
               >
-                <Icon name="shuffle-outline" />
-                <Text style={styles.actionText}>Surprise me</Text>
+                <Text style={styles.primaryText}>
+                  Show {visible.length}{" "}
+                  {visible.length === 1 ? "spot" : "spots"}
+                </Text>
               </Pressable>
             </View>
-            <View style={styles.resultsHeading}>
-              <Text accessibilityRole="header" style={styles.sectionTitle}>
-                {filter === "discover"
-                  ? "Good food, close by"
-                  : filter === "saved"
-                    ? "Your saved places"
-                    : filter === "want"
-                      ? "On your must-try list"
-                      : filter === "visited"
-                        ? "Places you’ve been"
-                        : activeList?.name}
-              </Text>
-              <Text style={styles.small}>
-                {visible.length} {visible.length === 1 ? "spot" : "spots"}
-              </Text>
-            </View>
-            <Text style={styles.caption}>Toronto · Restaurant listings</Text>
           </View>
-        }
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <View style={styles.brand}>
-              <Icon
-                name={hasFilters ? "search-outline" : "bookmark-outline"}
-                size={26}
-                color={colors.accent}
-              />
+        </KeyboardAvoidingView>
+      </Modal>
+
+      <Modal
+        visible={infoVisible}
+        transparent
+        animationType={reducedMotion === false ? "fade" : "none"}
+        onRequestClose={() => setInfoVisible(false)}
+      >
+        <View style={styles.modal}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Close recommendation info"
+            style={styles.scrim}
+            onPress={() => setInfoVisible(false)}
+          />
+          <View
+            accessibilityViewIsModal
+            style={[styles.sheet, { paddingBottom: insets.bottom + 24 }]}
+          >
+            <View style={styles.sectionRow}>
+              <Text
+                accessibilityRole="header"
+                style={[styles.sectionTitle, styles.flex]}
+              >
+                How Cibo suggests
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Close recommendation info"
+                onPress={() => setInfoVisible(false)}
+                style={styles.iconButton}
+              >
+                <Icon name="close" />
+              </Pressable>
             </View>
-            <Text style={styles.sectionTitle}>
-              {hasFilters
-                ? "No matches this time"
-                : filter === "visited"
-                  ? "Good meals to remember"
-                  : "Your next favorite goes here"}
+            <Text style={styles.note}>
+              Cibo balances great ratings (60%) with fewer reviews (40%), so you
+              can find hidden gems instead of only the most popular spots. Rate
+              a place to personalize your results.
             </Text>
-            <Text style={styles.emptyCopy}>
-              {hasFilters
-                ? "Try another food or neighborhood, or clear your filters."
-                : filter === "visited"
-                  ? "Mark a restaurant as visited to keep track of where you’ve eaten."
-                  : "Discover a spot and save it for later. Use Lists to organize your cravings."}
+            <Text style={styles.small}>
+              Labels: “Hidden gem,” “Highly rated,” and “Worth exploring.”
             </Text>
-            <Pressable
-              accessibilityRole="button"
-              onPress={() => {
-                setQuery("");
-                setCategory("All");
-                setCuisine("All");
-                if (!hasFilters) selectFilter("discover");
-              }}
-              style={({ pressed }) => [
-                styles.primaryButton,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Text style={styles.primaryText}>
-                {hasFilters ? "Clear filters" : "Discover restaurants"}
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={!!actionPlace}
+        transparent
+        animationType={reducedMotion === false ? "slide" : "none"}
+        onRequestClose={() => setActionPlace(null)}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.modal}
+        >
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Close actions"
+            style={styles.scrim}
+            onPress={() => setActionPlace(null)}
+          />
+          <View
+            accessibilityViewIsModal
+            style={[
+              styles.sheet,
+              { paddingBottom: insets.bottom + 24, maxHeight: "80%" },
+            ]}
+          >
+            <View style={styles.sectionRow}>
+              <Text
+                accessibilityRole="header"
+                style={[styles.sectionTitle, styles.flex]}
+              >
+                {actionPlace?.name}
               </Text>
               <Pressable
                 accessibilityRole="button"
@@ -1229,53 +1139,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   flex: { flex: 1 },
-  header: { gap: 16, paddingBottom: 18 },
-  headingRow: { flexDirection: "row", alignItems: "center", gap: 12 },
-  eyebrow: {
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 1.2,
-    color: colors.muted,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "700",
-    letterSpacing: -1,
-    color: colors.ink,
-    marginTop: 5,
-  },
-  brand: {
-    ...frostedGlassTint,
-    width: 52,
-    height: 52,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(234,243,178,0.14)",
-  },
-  intro: { fontSize: 14, lineHeight: 21, color: colors.muted },
-  summary: {
-    ...frostedGlassTint,
-    flexDirection: "row",
+  header: {
     gap: 10,
-    padding: 12,
-    borderRadius: 22,
-    backgroundColor: "rgba(234,243,178,0.14)",
-  },
-  statCard: {
-    flex: 1,
-    minHeight: 92,
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "#C9D77A",
-    justifyContent: "center",
-  },
-  stat: {
-    fontSize: 27,
-    fontWeight: "600",
-    color: colors.accent,
-    marginBottom: 3,
+    paddingBottom: 4,
+    paddingHorizontal: 16,
+    width: "100%",
+    maxWidth: 720,
+    alignSelf: "center",
   },
   sectionRow: {
     flexDirection: "row",
@@ -1286,47 +1156,30 @@ const styles = StyleSheet.create({
   locationRow: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  actionText: { fontSize: 12, fontWeight: "600", color: colors.accent },
-  chips: { flexDirection: "row", gap: 8 },
-  filterChips: { position: "relative" },
-  activeChipIndicator: {
-    ...frostedGlassSelected,
-    position: "absolute",
-    top: 0,
-    height: 48,
-    borderRadius: 24,
-  },
-  listChip: {
-    ...frostedGlass,
-    minHeight: 48,
-    paddingHorizontal: 15,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
-    flexDirection: "row",
     gap: 8,
-    alignItems: "center",
-    backgroundColor: "rgba(255,253,245,0.07)",
-    boxShadow: "0 5px 18px #3D568F14",
   },
-  activeChip: {
-    backgroundColor: "transparent",
-    borderColor: "transparent",
+  location: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: colors.ink,
   },
-  chipText: { fontSize: 13, fontWeight: "600", color: colors.ink },
-  activeText: { color: colors.ink },
+  eyebrow: {
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 0.6,
+    color: colors.muted,
+  },
   search: {
-    ...frostedGlass,
+    ...webGlassBlur,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
     paddingLeft: 14,
     paddingRight: 4,
     borderRadius: 16,
-    backgroundColor: "rgba(255,253,245,0.06)",
+    backgroundColor: "rgba(255,253,245,0.50)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
+    borderColor: "rgba(255,255,255,0.70)",
     boxShadow: "0 8px 24px #3D568F18",
   },
   searchActive: {
@@ -1347,18 +1200,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  category: {
-    ...frostedGlass,
+  chips: { flexDirection: "row", gap: 8 },
+  chip: {
+    ...webGlassBlur,
     minHeight: 44,
-    paddingHorizontal: 14,
-    justifyContent: "center",
-    borderRadius: 14,
-    backgroundColor: "rgba(255,253,245,0.07)",
+    paddingHorizontal: 12,
+    borderRadius: 18,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
+    borderColor: "rgba(255,255,255,0.68)",
+    flexDirection: "row",
+    gap: 6,
+    alignItems: "center",
+    backgroundColor: "rgba(255,253,245,0.48)",
   },
-  selectedCategory: {
-    ...frostedGlassSelected,
+  selectedChip: {
+    backgroundColor: "rgba(234,243,178,0.64)",
+    borderColor: "rgba(61,86,143,0.38)",
   },
   chipText: { fontSize: 12, fontWeight: "600", color: colors.ink },
   notice: {
@@ -1370,14 +1227,16 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   card: {
-    ...frostedGlass,
-    padding: 16,
-    borderRadius: 22,
-    backgroundColor: "rgba(255,253,245,0.09)",
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 18,
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
-    marginBottom: 14,
-    gap: 13,
+    borderColor: colors.border,
+    marginBottom: 12,
+    gap: 8,
+    minHeight: 124,
   },
   cardMain: {
     flex: 1,
@@ -1473,8 +1332,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.scrim,
   },
   sheet: {
-    ...frostedGlass,
-    backgroundColor: "rgba(255,253,245,0.30)",
+    backgroundColor: colors.paper,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     padding: 24,

@@ -42,13 +42,8 @@ import { collectionProgress, cardTier, nextDiscoveryMilestone, cuisineMastery, c
 import { playFeedback } from "../../../lib/sensory";
 import { catalogPhoto } from "../services/catalogPhotos";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
-import { useFoodDex } from "../hooks/useFoodDex";
-import {
-  colors,
-  frostedGlass,
-  frostedGlassSelected,
-  frostedGlassTint,
-} from "../../../theme/index";
+import type { useFoodDex } from "../hooks/useFoodDex";
+import { colors } from "../../../theme/index";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 function Icon({
@@ -761,12 +756,7 @@ export function FoodDexScreen({
                       pressed && s.dim,
                     ]}
                   >
-                    <Text
-                      style={[
-                        s.chipText,
-                        scanCuisine === item && s.chipTextActive,
-                      ]}
-                    >
+                    <Text style={[s.chipText, scanCuisine === item && s.white]}>
                       {item}
                     </Text>
                   </Pressable>
@@ -902,13 +892,12 @@ export function FoodDexScreen({
                           pressed && s.dim,
                         ]}
                       >
-                        <Text
-                          style={[
-                            s.chipText,
-                            filter === item && s.chipTextActive,
-                          ]}
-                        >
-                          {item === "all" ? "All dishes" : "Collected"}
+                        <Text style={[s.chipText, filter === item && s.white]}>
+                          {item === "all"
+                            ? "All"
+                            : item === "collected"
+                              ? "Collected"
+                              : "Not tried"}
                         </Text>
                       </Pressable>
                     ))}
@@ -1118,11 +1107,10 @@ const s = StyleSheet.create({
   },
   copy: { fontSize: 14, lineHeight: 21, color: colors.muted },
   brand: {
-    ...frostedGlassTint,
     width: 52,
     height: 52,
     borderRadius: 18,
-    backgroundColor: "rgba(234,243,178,0.14)",
+    backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -1170,12 +1158,11 @@ const s = StyleSheet.create({
   meta: { fontSize: 12, lineHeight: 18, color: colors.muted },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
   cuisineCard: {
-    ...frostedGlass,
     width: "48%",
     flexGrow: 1,
     flexBasis: "45%",
     borderRadius: 20,
-    backgroundColor: "rgba(255,253,245,0.07)",
+    backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
     overflow: "hidden",
@@ -1227,11 +1214,10 @@ const s = StyleSheet.create({
     flexShrink: 1,
   },
   discovery: {
-    ...frostedGlass,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    backgroundColor: "rgba(255,253,245,0.07)",
+    backgroundColor: colors.white,
     padding: 12,
     borderRadius: 18,
     borderWidth: 1,
@@ -1244,18 +1230,16 @@ const s = StyleSheet.create({
     backgroundColor: colors.tint,
   },
   notice: {
-    ...frostedGlassTint,
     padding: 14,
-    backgroundColor: "rgba(234,243,178,0.14)",
+    backgroundColor: colors.tint,
     borderRadius: 16,
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
   },
   error: {
-    ...frostedGlassTint,
     color: colors.ink,
-    backgroundColor: "rgba(234,243,178,0.14)",
+    backgroundColor: colors.tint,
     padding: 14,
     borderRadius: 14,
     fontSize: 13,
@@ -1291,11 +1275,10 @@ const s = StyleSheet.create({
     backgroundColor: colors.tint,
   },
   search: {
-    ...frostedGlass,
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
-    backgroundColor: "rgba(255,253,245,0.06)",
+    backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 16,
@@ -1307,35 +1290,25 @@ const s = StyleSheet.create({
   },
   input: { flex: 1, minHeight: 50, color: colors.ink, fontSize: 14 },
   chip: {
-    ...frostedGlass,
     minHeight: 48,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 24,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: "rgba(255,253,245,0.06)",
+    backgroundColor: colors.white,
     justifyContent: "center",
   },
-  chipActive: {
-    ...frostedGlassSelected,
-  },
+  chipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
   chipText: { color: colors.ink, fontSize: 13, fontWeight: "600" },
-  chipTextActive: { color: colors.ink },
+  white: { color: colors.white },
   dishGroup: {
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
     paddingBottom: 4,
   },
   dish: {
-    ...frostedGlass,
-    backgroundColor: "rgba(255,253,245,0.06)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.26)",
-    borderRadius: 16,
     paddingVertical: 16,
-    paddingHorizontal: 12,
-    marginBottom: 8,
     flexDirection: "row",
     gap: 12,
     alignItems: "center",
@@ -1368,10 +1341,9 @@ const s = StyleSheet.create({
     color: colors.muted,
   },
   field: {
-    ...frostedGlass,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
-    backgroundColor: "rgba(255,253,245,0.09)",
+    borderColor: colors.border,
+    backgroundColor: colors.white,
     borderRadius: 16,
     minHeight: 52,
     padding: 14,
@@ -1468,11 +1440,10 @@ const s = StyleSheet.create({
     overlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "#3D568F4D",
+    backgroundColor: "#3D568F99",
   },
   detailSheet: {
-    ...frostedGlass,
-    backgroundColor: "rgba(255,253,245,0.30)",
+    backgroundColor: colors.paper,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     padding: 24,

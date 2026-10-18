@@ -2,13 +2,13 @@ import assert from "node:assert/strict";
 import process from "node:process";
 import { Buffer } from "node:buffer";
 import { afterEach, test } from "node:test";
-import { POST, OPTIONS } from "../routes/food-scan.ts";
-import { cuisines } from "../../../../packages/food-catalog/src/cuisines.ts";
-import { catalogDishes } from "../../../../packages/food-catalog/data/catalog.ts";
+import { POST as post, OPTIONS } from "../src/routes/food-scan.ts";
+import { cuisines } from "../../../packages/food-catalog/src/cuisines.ts";
+import { catalogDishes } from "../../../packages/food-catalog/data/catalog.ts";
 import {
   retrieveFoodCandidates,
   MAX_FOOD_CANDIDATES,
-} from "../services/food-catalog.ts";
+} from "../src/services/food-catalog.ts";
 const originalKey = process.env.GROQ_API_KEY;
 const originalModel = process.env.GROQ_FOOD_SCAN_MODEL;
 const originalFetch = globalThis.fetch;
@@ -328,3 +328,5 @@ test("cancellation after observation prevents starting the verifier", async () =
   assert.equal((await POST(req)).status, 502);
   assert.equal(calls, 1);
 });
+
+const POST = (request) => post(request, process.env);

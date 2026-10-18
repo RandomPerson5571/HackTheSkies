@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { POST, OPTIONS } from "../routes/quest-personalization.ts";
-import { handleRequest } from "../app.ts";
+import { POST as post, OPTIONS } from "../src/routes/quest-personalization.ts";
+import { handleRequest as handle } from "../src/index.ts";
+const handleRequest = (request) => handle(request, process.env);
 
 const preferences = {
   cuisine: "Japanese",
@@ -112,3 +113,5 @@ test("dietary preferences enforce learning and provider failures stay retryable"
     else process.env.GROQ_API_KEY = key;
   }
 });
+
+const POST = (request) => post(request, process.env);

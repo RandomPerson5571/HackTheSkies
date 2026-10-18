@@ -1,6 +1,7 @@
+import { readCompletion } from "../services/completion.ts";
 import { Buffer } from "node:buffer";
-import process from "node:process";
-import restaurants from "../../src/features/restaurants/data/importedRestaurants.json" with { type: "json" };
+import type { ApiEnvironment } from "../environment.ts";
+import { restaurantCandidates } from "../services/restaurant-candidates.ts";
 
 const headers = {
   "Access-Control-Allow-Origin": "*",
@@ -20,8 +21,8 @@ export function OPTIONS() {
   });
 }
 
-export async function POST(request: Request) {
-  if (!process.env.GROQ_API_KEY)
+export async function POST(request: Request, env: ApiEnvironment) {
+  if (!env.GROQ_API_KEY)
     return reply(
       {
         error:
@@ -60,26 +61,24 @@ export async function POST(request: Request) {
       { error: "Describe your craving in 1–1,000 characters." },
       400,
     );
-  const catalog = restaurants.map((r) => ({
-    id: r.id,
-    name: r.restaurant_name,
-    cuisine: r.cuisine,
-    neighborhood: r.neighbourhood,
-    address: r.address,
-  }));
+  const catalog = restaurantCandidates(input.prompt);
   try {
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          Authorization: `Bearer ${env.GROQ_API_KEY}`,
           "Content-Type": "application/json",
         },
         signal: AbortSignal.any([request.signal, AbortSignal.timeout(25_000)]),
         body: JSON.stringify({
-          model:
-            process.env.GROQ_RECOMMENDATION_MODEL || "llama-3.3-70b-versatile",
+          model: env.GROQ_RECOMMENDATION_MODEL || "qwen/qwen3.8-27b",
+          ...((env.GROQ_RECOMMENDATION_MODEL || "qwen/qwen3.8-27b").startsWith(
+            "qwen/qwen3.",
+          )
+            ? { reasoning_effort: "none" }
+            : {}),
           temperature: 0.5,
           max_completion_tokens: 1200,
           response_format: { type: "json_object" },
@@ -112,8 +111,8 @@ export async function POST(request: Request) {
         },
         response.status === 429 ? 429 : 502,
       );
-    const body = await response.json();
-    const result = JSON.parse(body.choices?.[0]?.message?.content ?? "null");
+    const completion = await readCompletion(response);
+    const result = JSON.parse(completion.content);
     if (
       !result ||
       typeof result.message !== "string" ||

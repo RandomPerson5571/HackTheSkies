@@ -1,3 +1,4 @@
+import { apiEndpoint } from "../../../lib/api.ts";
 import {
   pathDishIds,
   type PathCuisine,
@@ -17,7 +18,10 @@ export async function generateQuest(
 ): Promise<PersonalizedQuest> {
   const foodEndpoint = process.env.EXPO_PUBLIC_FOOD_SCAN_URL;
   const endpoint =
-    process.env.EXPO_PUBLIC_QUEST_URL ||
+    apiEndpoint(
+      "/api/quest-personalization",
+      process.env.EXPO_PUBLIC_QUEST_URL,
+    ) ||
     (foodEndpoint
       ? new URL("/api/quest-personalization", foodEndpoint).toString()
       : "");

@@ -1,4 +1,5 @@
 import { normalizeCuisine, dishes } from "../models/foodDex.ts";
+import { apiEndpoint } from "../../../lib/api.ts";
 import type { Cuisine } from "../models/foodDex";
 export type FoodRecognition = {
   name: string;
@@ -10,7 +11,10 @@ export async function recognizeFood(
   base64: string,
   signal: AbortSignal,
 ): Promise<FoodRecognition | null> {
-  const endpoint = process.env.EXPO_PUBLIC_FOOD_SCAN_URL;
+  const endpoint = apiEndpoint(
+    "/api/food-scan",
+    process.env.EXPO_PUBLIC_FOOD_SCAN_URL,
+  );
   if (!endpoint)
     throw new Error(
       "Photo recognition isn’t connected yet. Choose the dish and cuisine below to add it yourself.",

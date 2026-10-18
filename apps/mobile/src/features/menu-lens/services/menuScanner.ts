@@ -1,9 +1,10 @@
 import { parseMenuDishes } from "../../../../../../packages/food-catalog/src/menuLens.ts";
+import { apiEndpoint } from "../../../lib/api.ts";
 
 export async function scanMenu(image: string, signal: AbortSignal) {
   const foodEndpoint = process.env.EXPO_PUBLIC_FOOD_SCAN_URL;
   const endpoint =
-    process.env.EXPO_PUBLIC_MENU_SCAN_URL ||
+    apiEndpoint("/api/menu-scan", process.env.EXPO_PUBLIC_MENU_SCAN_URL) ||
     (foodEndpoint ? new URL("/api/menu-scan", foodEndpoint).toString() : "");
   if (!endpoint)
     throw new Error("Menu scanning isn’t connected yet. Try the sample menu.");

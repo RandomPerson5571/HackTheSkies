@@ -1500,18 +1500,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           <Pressable
             style={styles.plusMenuItem}
             accessibilityRole="button"
-            accessibilityLabel="Cibo Lens — scan a menu"
-            onPress={() => {
-              setPlusMenuOpen(false);
-              openFoodCamera("menu");
-            }}
-          >
-            <Icon name="scan-outline" size={20} color={colors.ink} />
-            <Text style={{ color: colors.ink, fontSize: 12 }}>Lens</Text>
-          </Pressable>
-          <Pressable
-            style={styles.plusMenuItem}
-            accessibilityRole="button"
             accessibilityLabel="Take photo"
             onPress={() => {
               setPlusMenuOpen(false);

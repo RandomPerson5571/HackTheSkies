@@ -1,8 +1,8 @@
 import process from "node:process";
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
-import { POST, OPTIONS } from "../routes/food-recommendations.ts";
-import restaurants from "../../src/features/restaurants/data/importedRestaurants.json" with { type: "json" };
+import { POST as post, OPTIONS } from "../src/routes/food-recommendations.ts";
+import restaurants from "../../mobile/src/features/restaurants/data/importedRestaurants.json" with { type: "json" };
 const originalFetch = globalThis.fetch;
 const originalKey = process.env.GROQ_API_KEY;
 afterEach(() => {
@@ -82,3 +82,5 @@ test("Expo web can preflight the recommendation endpoint", () => {
   assert.equal(response.status, 204);
   assert.equal(response.headers.get("Access-Control-Allow-Origin"), "*");
 });
+
+const POST = (request) => post(request, process.env);

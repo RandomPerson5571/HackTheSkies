@@ -1,10 +1,11 @@
+import { readCompletion } from "../services/completion.ts";
 import { Buffer } from "node:buffer";
-import process from "node:process";
+import type { ApiEnvironment } from "../environment.ts";
 import {
   isPathCuisine,
   pathDishes,
-} from "../../src/features/quests/models/quests.ts";
-import restaurants from "../../src/features/restaurants/data/importedRestaurants.json" with { type: "json" };
+} from "../../../mobile/src/features/quests/models/quests.ts";
+import restaurants from "../../../mobile/src/features/restaurants/data/importedRestaurants.json" with { type: "json" };
 
 const headers = {
   "Access-Control-Allow-Origin": "*",
@@ -22,7 +23,7 @@ export function OPTIONS() {
     },
   });
 }
-export async function POST(request: Request) {
+export async function POST(request: Request, env: ApiEnvironment) {
   if (!request.headers.get("content-type")?.includes("application/json"))
     return reply({ error: "Send JSON preferences." }, 415);
   let input;
@@ -61,7 +62,7 @@ export async function POST(request: Request) {
     )
   )
     return reply({ error: "Invalid quest preferences." }, 400);
-  if (!process.env.GROQ_API_KEY)
+  if (!env.GROQ_API_KEY)
     return reply({ error: "AI quests are not configured." }, 503);
   const dishes = pathDishes(input.cuisine);
   const undiscovered = dishes.filter(
@@ -105,12 +106,16 @@ export async function POST(request: Request) {
         method: "POST",
         signal: AbortSignal.any([request.signal, AbortSignal.timeout(25_000)]),
         headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          Authorization: `Bearer ${env.GROQ_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model:
-            process.env.GROQ_RECOMMENDATION_MODEL || "llama-3.3-70b-versatile",
+          model: env.GROQ_RECOMMENDATION_MODEL || "qwen/qwen3.8-27b",
+          ...((env.GROQ_RECOMMENDATION_MODEL || "qwen/qwen3.8-27b").startsWith(
+            "qwen/qwen3.",
+          )
+            ? { reasoning_effort: "none" }
+            : {}),
           temperature: 0.3,
           max_completion_tokens: 500,
           response_format: { type: "json_object" },
@@ -137,10 +142,9 @@ export async function POST(request: Request) {
         { error: "AI quest picker unavailable." },
         response.status === 429 ? 429 : 502,
       );
-    const result = await response.json();
-    const choice = result.choices?.[0];
-    if (choice?.finish_reason !== "stop") throw new Error("Incomplete quest");
-    const value = JSON.parse(choice.message.content);
+    const completion = await readCompletion(response);
+    if (completion.finishReason !== "stop") throw new Error("Incomplete quest");
+    const value = JSON.parse(completion.content);
     if (
       !candidates.some((dish) => dish.id === value?.dishId) ||
       typeof value.reason !== "string" ||

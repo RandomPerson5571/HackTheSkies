@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { Buffer } from "node:buffer";
 import process from "node:process";
 import { afterEach, test } from "node:test";
-import { POST, OPTIONS } from "../routes/menu-scan.ts";
-import { handleRequest } from "../app.ts";
+import { POST as post, OPTIONS } from "../src/routes/menu-scan.ts";
+import { handleRequest as handle } from "../src/index.ts";
+const handleRequest = (request) => handle(request, process.env);
 const originalFetch = globalThis.fetch;
 const originalKey = process.env.GROQ_API_KEY;
 afterEach(() => {
@@ -104,3 +105,5 @@ test("provider failures and incomplete responses do not expose internals", async
   globalThis.fetch = async () => answer({ dishes: [dish] }, "length");
   assert.equal((await POST(req())).status, 502);
 });
+
+const POST = (request) => post(request, process.env);

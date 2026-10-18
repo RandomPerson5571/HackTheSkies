@@ -1,5 +1,6 @@
+import { readCompletion } from "../services/completion.ts";
 import { Buffer } from "node:buffer";
-import process from "node:process";
+import type { ApiEnvironment } from "../environment.ts";
 import {
   cuisines,
   cuisineGuide,
@@ -33,8 +34,8 @@ class RecognitionError extends Error {
   }
 }
 
-export async function POST(request: Request) {
-  const key = process.env.GROQ_API_KEY;
+export async function POST(request: Request, env: ApiEnvironment) {
+  const key = env.GROQ_API_KEY;
   if (!key) return reply({ error: "Food recognition is not configured." }, 503);
   if (!request.headers.get("content-type")?.includes("application/json"))
     return reply({ error: "Send a JSON image." }, 415);
@@ -81,7 +82,7 @@ export async function POST(request: Request) {
   if (!mime) return reply({ error: "Use a JPEG or PNG photo." }, 400);
 
   try {
-    const model = process.env.GROQ_FOOD_SCAN_MODEL || "qwen/qwen3.8-27b";
+    const model = env.GROQ_FOOD_SCAN_MODEL || "qwen/qwen3.8-27b";
     // One deadline covers both vision calls, including retrieval between them.
     const signal = AbortSignal.any([
       request.signal,
@@ -158,11 +159,10 @@ export async function POST(request: Request) {
           response.status === 429 ? 429 : 502,
         );
       }
-      const body = await response.json();
+      const completion = await readCompletion(response);
       signal.throwIfAborted();
-      const choice = body?.choices?.[0];
-      const output = choice?.message?.content;
-      if (choice?.finish_reason !== "stop" || typeof output !== "string")
+      const output = completion.content;
+      if (completion.finishReason !== "stop")
         throw new RecognitionError("Recognition did not finish. Try again.");
       const result: unknown = JSON.parse(output);
       if (!result || typeof result !== "object" || Array.isArray(result))

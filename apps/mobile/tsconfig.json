@@ -9,5 +9,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "exclude": ["node_modules", "server", "scripts", "tests", "metro.config.cjs", "dist", "ios", "android"]
+  "exclude": ["node_modules", "scripts", "tests", "metro.config.cjs", "dist", "ios", "android"]
 }

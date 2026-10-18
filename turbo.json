@@ -37,8 +37,7 @@
         "GROQ_MENU_SCAN_MODEL",
         "GROQ_FOOD_SCAN_MODEL",
         "GROQ_RECOMMENDATION_MODEL",
-        "API_PORT",
-        "API_HOST"
+        "CIBO_REMOTE_API"
       ]
     }
   },

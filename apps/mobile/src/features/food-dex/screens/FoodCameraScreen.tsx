@@ -17,17 +17,15 @@ import {
   type CameraType,
   type CameraCapturedPicture,
 } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { cameraColors, colors } from "../../../theme";
 import type { FoodCapture } from "./FoodDexScreen";
 import { FoodCameraView } from "../components/FoodCameraView";
 import type { FoodCameraHandle } from "../components/FoodCameraView.types";
-import { FoodBoundingBox } from "../components/FoodBoundingBox";
-import { useLiveFoodDetection } from "../hooks/useLiveFoodDetection";
 import { resizeScanImage, deleteScanImage } from "../services/scanImages";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
-import { overlap, type FoodTrack } from "../models/foodDetection";
 import { useFoodDex } from "../hooks/useFoodDex";
 import { foodKey } from "../models/foodDex";
 
@@ -61,20 +59,11 @@ export function FoodCameraScreen({
   const [active, setActive] = useState(AppState.currentState === "active");
   const [attempt, setAttempt] = useState(0);
   const [preview, setPreview] = useState({ width: 0, height: 0 });
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [capturedTracks, setCapturedTracks] = useState<FoodTrack[]>([]);
   const [recognition, setRecognition] = useState<FoodRecognition | null>(null);
   const [identifying, setIdentifying] = useState(false);
   const request = useRef<AbortController | null>(null);
   const generation = useRef(0);
   const { entries } = useFoodDex();
-  const live = useLiveFoodDetection(
-    camera,
-    ready && active && !photo && mode === "food",
-    `${facing}-${attempt}`,
-  );
-  const boxes = photo ? capturedTracks : live.tracks;
-  const selectedBox = boxes.find((box) => box.id === selectedId) ?? boxes[0];
   const collected =
     recognition &&
     entries.some(
@@ -124,10 +113,7 @@ export function FoodCameraScreen({
       );
     }
   }
-  async function identify(
-    image: CameraCapturedPicture,
-    box: FoodTrack | undefined,
-  ) {
+  async function identify(image: CameraCapturedPicture) {
     request.current?.abort();
     const controller = new AbortController();
     request.current = controller;
@@ -138,7 +124,7 @@ export function FoodCameraScreen({
     let upload: { uri: string } | undefined;
     const timeout = setTimeout(() => controller.abort(), 30_000);
     try {
-      const resized = await resizeScanImage(image, 1024, true, box?.box);
+      const resized = await resizeScanImage(image, 1024, true);
       upload = resized;
       if (!resized.base64 || controller.signal.aborted)
         throw new Error("Recognition was interrupted. Please try again.");
@@ -176,8 +162,6 @@ export function FoodCameraScreen({
     const current = generation.current;
     let raw: CameraCapturedPicture | undefined;
     try {
-      // Never capture concurrently with the live sampling loop.
-      await live.pause();
       if (!mounted.current || !camera.current || current !== generation.current)
         return;
       raw = await camera.current.takePictureAsync({
@@ -196,35 +180,51 @@ export function FoodCameraScreen({
       const captured: CameraCapturedPicture = { ...image, format: "jpg" };
       setPhoto(captured);
       if (mode === "menu") return;
-      let tracks: FoodTrack[] = [];
-      // Re-detect the captured image so the frozen box and upload crop match it.
-      try {
-        const detections = await live.detectCaptured(image);
-        tracks = detections.map((detection, index) => ({
-          ...detection,
-          id: index + 1,
-          hits: 1,
-          missed: 0,
-        }));
-      } catch {
-        /* Capturing and server recognition still work without a local detector. */
-      }
-      if (!mounted.current || current !== generation.current) return;
-      const selected = selectedBox
-        ? [...tracks].sort(
-            (a, b) =>
-              overlap(b.box, selectedBox.box) - overlap(a.box, selectedBox.box),
-          )[0]
-        : tracks[0];
-      setCapturedTracks(tracks);
-      setSelectedId(selected?.id ?? null);
-      void identify(captured, selected);
+      void identify(captured);
     } catch {
       if (mounted.current)
         setError("We couldn’t take that photo. Please try again.");
-      live.resume();
     } finally {
       if (raw) deleteScanImage(raw.uri);
+      capturing.current = false;
+      if (mounted.current) setBusy(false);
+    }
+  }
+  async function selectPhoto() {
+    if (capturing.current) return;
+    capturing.current = true;
+    setBusy(true);
+    setError("");
+    const current = generation.current;
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        quality: 0.8,
+      });
+      const asset = result.assets?.[0];
+      if (
+        result.canceled ||
+        !asset ||
+        !mounted.current ||
+        current !== generation.current
+      )
+        return;
+      const image = await resizeScanImage(
+        asset,
+        mode === "menu" ? 1800 : 1024,
+        true,
+      );
+      if (!mounted.current || current !== generation.current) {
+        deleteScanImage(image.uri);
+        return;
+      }
+      const captured: CameraCapturedPicture = { ...image, format: "jpg" };
+      setPhoto(captured);
+      if (mode === "food") void identify(captured);
+    } catch {
+      if (mounted.current && current === generation.current)
+        setError("Couldn’t open that photo. Try another image.");
+    } finally {
       capturing.current = false;
       if (mounted.current) setBusy(false);
     }
@@ -234,12 +234,9 @@ export function FoodCameraScreen({
     request.current?.abort();
     request.current = null;
     if (photo) deleteScanImage(photo.uri);
-    live.resume();
     setReady(false);
     setAttempt((value) => value + 1);
     setPhoto(null);
-    setCapturedTracks([]);
-    setSelectedId(null);
     setRecognition(null);
     setIdentifying(false);
     setError("");
@@ -336,29 +333,6 @@ export function FoodCameraScreen({
             <Text style={s.menuHint}>Keep the full menu in the frame</Text>
           </View>
         )}
-        {mode === "food" &&
-          boxes.map((box) => (
-            <FoodBoundingBox
-              key={box.id}
-              box={box.box}
-              frame={photo ?? live.frame}
-              preview={preview}
-              mirrored={!photo && (live.frame.mirrored ?? facing === "front")}
-              label={
-                photo && box.id === selectedBox?.id
-                  ? resultLabel
-                  : "Food detected"
-              }
-              selected={box.id === selectedBox?.id}
-              onSelect={() => {
-                if (identifying || box.id === selectedBox?.id) return;
-                setSelectedId(box.id);
-                if (photo) {
-                  setRecognition(null);
-                }
-              }}
-            />
-          ))}
       </View>
       <View
         pointerEvents="box-none"
@@ -437,30 +411,29 @@ export function FoodCameraScreen({
           <Text style={s.panelCopy}>
             {mode === "menu"
               ? "Frame the full menu with readable dish names, take a photo, then scan it to explore dishes, discoveries, and dietary details. Captured menus are sent to our AI service."
-              : "Frame your dish, take a photo, then review the suggestion before saving it. Photos are sent to Groq to identify your meal. Live detection stays on your device."}
+              : "Frame your dish, take a photo, then review the suggestion before saving it. Only the photo you take or select is uploaded to identify your meal. Review the result before adding it to your collection."}
           </Text>
-          {mode === "food" &&
-            !photo &&
-            ready &&
-            live.status.startsWith("Live detection unavailable") && (
-              <>
-                <Text style={s.panelCopy}>
-                  Live food boxes are unavailable. Photo identification still
-                  works.
-                </Text>
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={live.retry}
-                  style={({ pressed }) => [s.secondary, pressed && s.pressed]}
-                >
-                  {icon("refresh-outline", 20)}
-                  <Text style={s.secondaryText}>Retry live detection</Text>
-                </Pressable>
-              </>
-            )}
         </ScrollView>
       )}
       <View style={[s.overlay, { bottom: insets.bottom + 24 }]}>
+        {!photo && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Choose a photo from your library"
+            accessibilityState={{ disabled: busy, busy }}
+            disabled={busy}
+            onPress={() => void selectPhoto()}
+            style={({ pressed }) => [
+              s.secondary,
+              (pressed || busy) && s.pressed,
+            ]}
+          >
+            {icon("images-outline", 20)}
+            <Text style={s.secondaryText}>
+              {busy ? "Preparing photo…" : "Choose a photo"}
+            </Text>
+          </Pressable>
+        )}
         {mode === "menu" && !photo && (
           <Pressable
             accessibilityRole="button"
@@ -508,7 +481,7 @@ export function FoodCameraScreen({
             {mode === "food" && !identifying && !recognition && (
               <Pressable
                 accessibilityRole="button"
-                onPress={() => void identify(photo, selectedBox)}
+                onPress={() => void identify(photo)}
                 style={({ pressed }) => [s.secondary, pressed && s.pressed]}
               >
                 {icon("refresh-outline", 20)}

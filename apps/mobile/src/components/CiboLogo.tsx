@@ -1,14 +1,13 @@
 import { Image, StyleSheet } from "react-native";
 
-// Keep the original map wordmark as the single brand asset for every screen.
-const logo = require("../../assets/cibo.png");
+import { ciboLogoSource } from "./ciboLogoSource";
 
 export function CiboLogo() {
   return (
     <Image
       accessibilityRole="image"
       accessibilityLabel="Cibo"
-      source={logo}
+      source={ciboLogoSource}
       resizeMode="contain"
       style={styles.logo}
     />

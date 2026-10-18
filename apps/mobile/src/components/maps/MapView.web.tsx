@@ -14,7 +14,10 @@ import {
   type PlaceFeatures,
 } from "./placeFeatures";
 import type { MapProps } from "./types";
-import { getMapMarkerPlaces } from "../../features/restaurants/models/recommendations";
+import {
+  getMapMarkerPlaces,
+  recommendationPolicy,
+} from "../../features/restaurants/models/recommendations";
 
 // mapbox-gl v2 ships without TypeScript declarations in this app.
 // @ts-expect-error No declaration file for the installed mapbox-gl package.
@@ -38,6 +41,8 @@ type PlaceSource = {
   ) => void;
 };
 type WebMap = {
+  isStyleLoaded: () => boolean;
+  getZoom: () => number;
   flyTo: (options: {
     center: number[];
     zoom: number;
@@ -70,6 +75,7 @@ type WebMap = {
     paint?: Record<string, unknown>;
     layout?: Record<string, unknown>;
   }) => void;
+  setPaintProperty: (layerId: string, property: string, value: string) => void;
   queryRenderedFeatures(
     bounds: [number[], number[]],
     options: { layers: string[] },
@@ -88,6 +94,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     () => new Map(props.places.map((place) => [place.id, place])),
     [props.places],
   );
+  const [zoom, setZoom] = useState(props.zoom);
   const [visibleIds, setVisibleIds] = useState<ReadonlySet<string>>(new Set());
   const markers = useMemo(
     () =>
@@ -96,8 +103,9 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         visibleIds,
         props.recommendations,
         props.selectedId,
+        zoom,
       ),
-    [props.places, visibleIds, props.recommendations, props.selectedId],
+    [props.places, visibleIds, props.recommendations, props.selectedId, zoom],
   );
   const currentData = useRef({ data, placeIndex });
   useEffect(() => {
@@ -150,7 +158,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
           source: "places",
           filter: ["has", "point_count"],
           paint: {
-            "circle-color": colors.accent,
+            "circle-color": latest.current.themeAccent ?? "#253D6A",
             "circle-radius": [
               "step",
               ["get", "point_count"],
@@ -184,7 +192,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
           filter: ["!", ["has", "point_count"]],
           paint: {
             "circle-radius": 7,
-            "circle-color": colors.accent,
+            "circle-color": latest.current.themeAccent ?? "#253D6A",
             "circle-stroke-width": 2,
             "circle-stroke-color": colors.white,
           },
@@ -204,7 +212,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
             "text-allow-overlap": false,
           },
           paint: {
-            "text-color": colors.ink,
+            "text-color": latest.current.themeInk ?? "#253D6A",
             "text-halo-color": colors.white,
             "text-halo-width": 2,
           },
@@ -217,12 +225,16 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
             ],
             { layers: ["place-clusters", "place-points", "place-labels"] },
           )[0];
-          if (!feature || feature.geometry.type !== "Point") return;
+          if (!feature || feature.geometry.type !== "Point") {
+            latest.current.onMapPress?.();
+            return;
+          }
           const request = ++clusterRequest;
           if (
             feature.properties.cluster &&
             feature.properties.cluster_id !== undefined
           ) {
+            latest.current.onMapPress?.();
             const requestedData = currentData.current.data;
             currentMap
               .getSource("places")
@@ -248,6 +260,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
               feature.properties.placeId ?? "",
             );
             if (place) latest.current.onSelect(place);
+            else latest.current.onMapPress?.();
           }
         });
         for (const layer of [
@@ -264,6 +277,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         }
         currentMap.on("idle", () => {
           if (disposed) return;
+          setZoom(currentMap.getZoom());
           const features = currentMap.queryRenderedFeatures({
             layers: ["place-points"],
           });
@@ -299,6 +313,41 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     map.current?.getSource("places")?.setData(data);
   }, [data, props.token]);
 
+  useEffect(() => {
+    if (!map.current?.isStyleLoaded()) return;
+    const accent = props.themeAccent ?? "#253D6A";
+    const ink = props.themeInk ?? accent;
+    map.current.setPaintProperty("place-clusters", "circle-color", accent);
+    map.current.setPaintProperty("place-points", "circle-color", accent);
+    map.current.setPaintProperty("place-labels", "text-color", ink);
+  }, [props.themeAccent, props.themeInk, props.token]);
+
+  useEffect(() => {
+    if (!map.current || !props.currentLocation) return;
+    const marker = document.createElement("div");
+    marker.setAttribute("role", "img");
+    marker.setAttribute("aria-label", "Your current location");
+    Object.assign(marker.style, {
+      width: "40px",
+      height: "40px",
+      borderRadius: "50%",
+      background: "#2878F0",
+      border: "4px solid #FFFFFF",
+      boxShadow: "0 0 0 10px rgba(40,120,240,0.24), 0 3px 12px rgba(20,45,90,0.4)",
+      boxSizing: "border-box",
+      pointerEvents: "none",
+    });
+    if (props.profilePictureUri) {
+      marker.style.backgroundImage = `url("${props.profilePictureUri}")`;
+      marker.style.backgroundSize = "cover";
+      marker.style.backgroundPosition = "center";
+    }
+    const currentMarker = new mapboxgl.Marker({ element: marker, anchor: "center" })
+      .setLngLat(props.currentLocation)
+      .addTo(map.current);
+    return () => currentMarker.remove();
+  }, [props.currentLocation, props.profilePictureUri, props.token]);
+
   // Reconcile a bounded set of photo pins. Panning/selection never recreates all pins.
   const markerCache = useRef(new Map<string, { remove: () => void }>());
   useEffect(() => {
@@ -312,10 +361,12 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     if (!map.current) return;
     const cache = markerCache.current;
     const desired = new Set(
-      markers.map(
-        (place) =>
-          `${place.id}:${props.recommendations.get(place.id)?.suggested ? "photo" : "plain"}:${place.id === props.selectedId}`,
-      ),
+      markers.map((place) => {
+        const suggested = props.recommendations.get(place.id)?.suggested ?? false;
+        const showPhoto =
+          suggested || zoom >= recommendationPolicy.photoPinZoomThreshold;
+        return `${place.id}:${showPhoto ? "photo" : "plain"}:${place.id === props.selectedId}`;
+      }),
     );
     for (const [key, marker] of cache) {
       if (!desired.has(key)) {
@@ -325,8 +376,10 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     }
     for (const place of markers) {
       const suggested = props.recommendations.get(place.id)?.suggested ?? false;
+      const showPhoto =
+        suggested || zoom >= recommendationPolicy.photoPinZoomThreshold;
       const selected = place.id === props.selectedId;
-      const key = `${place.id}:${suggested ? "photo" : "plain"}:${selected}`;
+      const key = `${place.id}:${showPhoto ? "photo" : "plain"}:${selected}`;
       if (cache.has(key)) continue;
       const button = document.createElement("button");
       button.type = "button";
@@ -346,7 +399,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         fontSize: "11px",
         fontWeight: "600",
       });
-      if (suggested) {
+      if (showPhoto) {
         const image = document.createElement("img");
         image.src = place.image;
         image.onerror = () => image.remove();
@@ -376,7 +429,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         .addTo(map.current);
       cache.set(key, marker);
     }
-  }, [markers, props.recommendations, props.selectedId, props.token]);
+  }, [markers, props.recommendations, props.selectedId, props.token, zoom]);
 
   return <div ref={container} style={{ position: "absolute", inset: 0 }} />;
 });

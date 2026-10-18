@@ -33,6 +33,7 @@ import { migrateWebBookmarks } from "../lib/migrateWebBookmarks";
 import { places as bundledPlaces } from "../features/restaurants/data/places";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
+import { resizeScanImage } from "../features/food-dex/services/scanImages";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { MenuLensScreen } from "../features/menu-lens/screens/MenuLensScreen";
 import { FoodCameraScreen } from "../features/food-dex/screens/FoodCameraScreen";
@@ -58,7 +59,8 @@ import {
 import { SettingsScreen } from "../features/profile/screens/SettingsScreen";
 
 const token = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
-import { colors } from "../theme/index";
+import { applyAvatarTheme, colors } from "../theme/index";
+import { avatarPalettes } from "../features/profile/models/customization";
 import { SavedScreen } from "../features/saved/screens/SavedScreen";
 import { RestaurantsScreen } from "../features/restaurants/screens/RestaurantsScreen";
 import { useRestaurantCollection } from "../features/restaurants/hooks/useRestaurantCollection";
@@ -228,7 +230,11 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [savedReturnTab, setSavedReturnTab] = useState<
     "explore" | "restaurants" | "journal" | "profile"
   >("profile");
+  const [settingsReturnTab, setSettingsReturnTab] = useState<
+    "profile" | "favorites"
+  >("profile");
   const [cameraMode, setCameraMode] = useState<"food" | "menu">("food");
+  const [currentLocation, setCurrentLocation] = useState<[number, number] | null>(null);
   const [menuPhoto, setMenuPhoto] = useState<
     import("expo-camera").CameraCapturedPicture | null
   >(null);
@@ -247,6 +253,13 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     }),
     parseProfile,
   );
+  const appTheme =
+    avatarPalettes.find(
+      (item) => item.id === profile.customization?.palette,
+    ) ?? avatarPalettes[0];
+  useEffect(() => {
+    applyAvatarTheme(appTheme);
+  }, [appTheme]);
   const [recommenderVisible, setRecommenderVisible] = useState(false);
   const [cameraMenuOpen, setCameraMenuOpen] = useState(false);
   const [nfcScanOpen, setNfcScanOpen] = useState(false);
@@ -396,6 +409,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       animationDuration: 0,
     });
   }, []);
+  const dismissSelection = useCallback(() => setSelected(null), []);
   const onMapReady = useCallback(() => {
     setMapReady(true);
     setMapError(false);
@@ -442,6 +456,26 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       Alert.alert("Upload failed", "Couldn’t open your photo library.");
     }
   }
+  async function uploadProfilePicture() {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+      const image = result.assets?.[0];
+      if (result.canceled || !image) return;
+      const resized = await resizeScanImage(image, 256, true);
+      if (!resized.base64) throw new Error("Could not prepare this image.");
+      setProfile((previous) => ({
+        ...previous,
+        avatarUri: `data:image/jpeg;base64,${resized.base64}`,
+      }));
+    } catch {
+      Alert.alert("Upload failed", "Choose a different photo and try again.");
+    }
+  }
   function writeBlog() {
     setPlusMenuOpen(false);
     Alert.alert("Write a blog", "Blog editor coming soon.");
@@ -453,6 +487,27 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       zoomLevel: 10.5,
       animationDuration: 0,
     });
+  }
+  function locateMe() {
+    if (Platform.OS !== "web" || !navigator.geolocation) {
+      resetMap();
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const coordinate: [number, number] = [coords.longitude, coords.latitude];
+        setCurrentLocation(coordinate);
+        setSelected(null);
+        camera.current?.setCamera({
+          centerCoordinate: coordinate,
+          zoomLevel: 14,
+          animationDuration: 500,
+        });
+      },
+      (error) =>
+        Alert.alert("Location unavailable", error.message || "Allow location access and try again."),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
+    );
   }
   function selectedFilterLabel(dimension: FilterDimension) {
     if (dimension === "rating") {
@@ -564,6 +619,10 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             collection={collection}
             dispatch={dispatch}
             storageError={migrationError || storageError || backendError}
+            onOpenSettings={() => {
+              setSettingsReturnTab("favorites");
+              setTab("settings");
+            }}
             onShowMap={(place) => {
               setTab("explore");
               setCategory("All");
@@ -606,7 +665,11 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             topInset={insets.top}
             bottomInset={insets.bottom}
             onOpenQuests={() => setTab("challenges")}
-            onOpenSettings={() => setTab("settings")}
+            onOpenSettings={() => {
+              setSettingsReturnTab("profile");
+              setTab("settings");
+            }}
+            onUploadAvatar={() => void uploadProfilePicture()}
             onOpenDex={() => setTab("dex")}
             onOpenAtlas={() => setTab("dex")}
           />
@@ -617,7 +680,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             storageError={migrationError || profileError}
             topInset={insets.top}
             bottomInset={insets.bottom}
-            onBack={() => setTab("profile")}
+            onBack={() => setTab(settingsReturnTab)}
           />
         ) : tab === "restaurants" || tab === "journal" ? (
           <RestaurantsScreen
@@ -664,13 +727,18 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               <MapView
                 ref={camera}
                 token={token}
-                center={selected?.coordinate ?? mapCenter}
-                zoom={selected ? 14.7 : 10.5}
+                center={mapCenter}
+                zoom={10.5}
                 topInset={insets.top}
                 bottomInset={insets.bottom}
                 places={visible}
+                currentLocation={currentLocation}
+                profilePictureUri={profile.avatarUri}
+                themeAccent={appTheme.foreground}
+                themeInk={appTheme.foreground}
                 selectedId={active?.id}
                 onSelect={choose}
+                onMapPress={dismissSelection}
                 onReady={onMapReady}
                 onError={onMapError}
                 renderPlaceMarker={renderPlaceMarker}
@@ -787,24 +855,29 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 contentContainerStyle={styles.chips}
                 keyboardShouldPersistTaps="handled"
               >
-                {!filtersVisible ? (
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel="Show search filters"
-                    accessibilityState={{ expanded: false }}
-                    onPress={() => {
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`${filtersExpanded ? "Hide" : "Show"} search filters`}
+                  accessibilityState={{ expanded: filtersExpanded }}
+                  onPress={() => {
+                    if (filtersExpanded) {
+                      setFiltersExpanded(false);
+                    } else {
                       setFiltersVisible(true);
                       setFiltersExpanded(true);
-                    }}
-                    style={({ pressed }) => [
-                      styles.chip,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Icon name="options-outline" size={17} />
-                    <Text style={styles.chipText}>Filters</Text>
-                  </Pressable>
-                ) : (
+                    }
+                  }}
+                  style={({ pressed }) => [
+                    styles.chip,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Icon name="options-outline" size={17} />
+                  <Text style={styles.chipText}>
+                    {filtersExpanded ? "Filters ×" : "Filters"}
+                  </Text>
+                </Pressable>
+                {filtersVisible && (
                   <Animated.View
                     style={{
                       flexDirection: "row",
@@ -820,21 +893,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       ],
                     }}
                   >
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel="Hide search filters"
-                      accessibilityState={{ expanded: true }}
-                      onPress={() => {
-                        setFiltersExpanded(false);
-                      }}
-                      style={({ pressed }) => [
-                        styles.chip,
-                        pressed && styles.pressed,
-                      ]}
-                    >
-                      <Icon name="options-outline" size={17} />
-                      <Text style={styles.chipText}>Filters ×</Text>
-                    </Pressable>
                     {(
                       [
                         "price",
@@ -1065,8 +1123,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 {token && (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel="Show all Toronto restaurants"
-                    onPress={resetMap}
+                    accessibilityLabel="Show your current location"
+                    onPress={locateMe}
                     style={({ pressed }) => [
                       styles.roundButton,
                       pressed && styles.pressed,

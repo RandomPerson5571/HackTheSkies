@@ -17,9 +17,14 @@ export type MapProps = {
   topInset: number;
   bottomInset: number;
   places: Place[];
+  currentLocation?: [number, number] | null;
+  profilePictureUri?: string;
+  themeAccent?: string;
+  themeInk?: string;
   selectedId?: string;
   recommendations: Recommendations;
   onSelect: (place: Place) => void;
+  onMapPress?: () => void;
   onReady: () => void;
   onError: () => void;
   renderPlaceMarker: (place: Place, selected: boolean) => ReactElement;

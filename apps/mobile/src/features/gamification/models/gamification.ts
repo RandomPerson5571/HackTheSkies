@@ -10,7 +10,15 @@ export type BadgeId =
   | "saver"
   | "wanderer"
   | "streak-3"
-  | "streak-7";
+  | "streak-7"
+  | "passport-pro"
+  | "menu-maestro"
+  | "century-supper"
+  | "curator"
+  | "pin-collector"
+  | "peoples-palate"
+  | "two-week-taster"
+  | "xp-legend";
 
 export type Badge = {
   id: BadgeId;
@@ -33,6 +41,14 @@ export const BADGES: Badge[] = [
   { id: "wanderer", name: "Wanderer", description: "Save 25 restaurants.", icon: "map" },
   { id: "streak-3", name: "On a Roll", description: "3-day discovery streak.", icon: "flame" },
   { id: "streak-7", name: "Week Warrior", description: "7-day discovery streak.", icon: "flash" },
+  { id: "passport-pro", name: "Passport Pro", description: "Explore 8 different cuisines.", icon: "map" },
+  { id: "menu-maestro", name: "Menu Maestro", description: "Log 75 dishes.", icon: "restaurant" },
+  { id: "century-supper", name: "Century Supper Club", description: "Log 100 dishes.", icon: "trophy" },
+  { id: "curator", name: "Curator", description: "Save 10 restaurants.", icon: "bookmark" },
+  { id: "pin-collector", name: "Pin Collector", description: "Save 50 restaurants.", icon: "pin" },
+  { id: "peoples-palate", name: "People's Palate", description: "Rate 50 restaurants.", icon: "star" },
+  { id: "two-week-taster", name: "Two-Week Taster", description: "Keep a 14-day discovery streak.", icon: "flame" },
+  { id: "xp-legend", name: "XP Legend", description: "Earn 2,000 experience points.", icon: "sparkles" },
 ];
 
 export type GamificationState = {
@@ -160,6 +176,14 @@ export function evaluateBadges(state: GamificationState): BadgeId[] {
   if (state.saves >= 25 && !has("wanderer")) unlocked.push("wanderer");
   if (state.streak >= 3 && !has("streak-3")) unlocked.push("streak-3");
   if (state.streak >= 7 && !has("streak-7")) unlocked.push("streak-7");
+  if (state.cuisinesExplored >= 8 && !has("passport-pro")) unlocked.push("passport-pro");
+  if (state.discoveries >= 75 && !has("menu-maestro")) unlocked.push("menu-maestro");
+  if (state.discoveries >= 100 && !has("century-supper")) unlocked.push("century-supper");
+  if (state.saves >= 10 && !has("curator")) unlocked.push("curator");
+  if (state.saves >= 50 && !has("pin-collector")) unlocked.push("pin-collector");
+  if (state.ratings >= 50 && !has("peoples-palate")) unlocked.push("peoples-palate");
+  if (state.streak >= 14 && !has("two-week-taster")) unlocked.push("two-week-taster");
+  if (state.xp >= 2000 && !has("xp-legend")) unlocked.push("xp-legend");
   return unlocked;
 }
 

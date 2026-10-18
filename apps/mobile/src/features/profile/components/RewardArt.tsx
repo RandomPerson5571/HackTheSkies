@@ -16,6 +16,14 @@ const trophies = {
   wanderer: require("../../../../assets/rewards/trophy-wanderer.svg"),
   "streak-3": require("../../../../assets/rewards/trophy-streak-3.svg"),
   "streak-7": require("../../../../assets/rewards/trophy-streak-7.svg"),
+  "passport-pro": require("../../../../assets/rewards/trophy-passport-pro.svg"),
+  "menu-maestro": require("../../../../assets/rewards/trophy-menu-maestro.svg"),
+  "century-supper": require("../../../../assets/rewards/trophy-century-supper.svg"),
+  curator: require("../../../../assets/rewards/trophy-curator.svg"),
+  "pin-collector": require("../../../../assets/rewards/trophy-pin-collector.svg"),
+  "peoples-palate": require("../../../../assets/rewards/trophy-peoples-palate.svg"),
+  "two-week-taster": require("../../../../assets/rewards/trophy-two-week-taster.svg"),
+  "xp-legend": require("../../../../assets/rewards/trophy-xp-legend.svg"),
   japanese: require("../../../../assets/rewards/trophy-japanese.svg"),
   bakery: require("../../../../assets/rewards/trophy-bakery.svg"),
   coffee: require("../../../../assets/rewards/trophy-coffee.svg"),
@@ -31,6 +39,10 @@ const frames: Record<RankId, number> = {
   artisan: require("../../../../assets/rewards/frame-artisan.svg"),
   connoisseur: require("../../../../assets/rewards/frame-connoisseur.svg"),
   master: require("../../../../assets/rewards/frame-master.svg"),
+  legend: require("../../../../assets/rewards/frame-legend.svg"),
+  royal: require("../../../../assets/rewards/frame-royal.svg"),
+  celestial: require("../../../../assets/rewards/frame-celestial.svg"),
+  mythic: require("../../../../assets/rewards/frame-mythic.svg"),
 };
 // Labels live on the surrounding controls/cards so illustrations aren't read twice.
 export function TrophyArt({
@@ -56,11 +68,13 @@ export function DecoratedAvatar({
   name,
   frame,
   palette,
+  imageUri,
   size = 104,
 }: {
   name: string;
   frame: RankId | null;
   palette: (typeof avatarPalettes)[number];
+  imageUri?: string;
   size?: number;
 }) {
   return (
@@ -83,15 +97,28 @@ export function DecoratedAvatar({
           justifyContent: "center",
         }}
       >
-        <Text
-          style={{
-            color: palette.foreground,
-            fontSize: size * 0.29,
-            fontWeight: "800",
-          }}
-        >
-          {name.trim().charAt(0).toUpperCase() || "F"}
-        </Text>
+        {imageUri ? (
+          <Image
+            source={{ uri: imageUri }}
+            contentFit="cover"
+            accessible={false}
+            style={{
+              width: size * 0.64,
+              height: size * 0.64,
+              borderRadius: size,
+            }}
+          />
+        ) : (
+          <Text
+            style={{
+              color: palette.foreground,
+              fontSize: size * 0.29,
+              fontWeight: "800",
+            }}
+          >
+            {name.trim().charAt(0).toUpperCase() || "F"}
+          </Text>
+        )}
       </View>
       {frame && (
         <Image

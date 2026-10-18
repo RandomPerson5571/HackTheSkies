@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { frames, trophies } from "./rewardSources";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import type { RankId, avatarPalettes } from "../models/customization";
 
 // Labels live on the surrounding controls/cards so illustrations aren't read twice.
@@ -86,7 +86,13 @@ export function DecoratedAvatar({
           source={frames[frame]}
           accessible={false}
           resizeMode="contain"
-          style={StyleSheet.absoluteFill}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: size,
+            height: size,
+          }}
         />
       )}
     </View>

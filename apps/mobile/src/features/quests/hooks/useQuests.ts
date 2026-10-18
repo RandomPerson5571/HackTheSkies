@@ -1,67 +1,77 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initialQuests, parseQuests, type QuestState } from "../models/quests";
 
 const KEY = "cibo.quests.v1";
-// One ordered queue survives screen remounts and prevents a late write from
-// replacing a newer completion. Hydration finishes before any edits are allowed.
+type Snapshot = { state: QuestState; ready: boolean; error: string };
+let snapshot: Snapshot = { state: initialQuests(), ready: false, error: "" };
+const listeners = new Set<(value: Snapshot) => void>();
+let loadStarted = false;
 let pending: Promise<unknown> = Promise.resolve();
+
+function publish(next: Snapshot) {
+  snapshot = next;
+  listeners.forEach((listener) => listener(snapshot));
+}
+
+function loadQuests() {
+  if (loadStarted) return;
+  loadStarted = true;
+  pending = pending
+    .catch(() => {})
+    .then(async () => {
+      try {
+        const raw = await AsyncStorage.getItem(KEY);
+        publish({
+          state: raw ? parseQuests(JSON.parse(raw)) : initialQuests(),
+          ready: true,
+          error: "",
+        });
+      } catch {
+        publish({
+          ...snapshot,
+          ready: true,
+          error: "Couldn’t load quest progress on this device.",
+        });
+      }
+    });
+}
+
 export function useQuests() {
-  const [state, setState] = useState(initialQuests);
-  const [ready, setReady] = useState(false);
-  const [error, setError] = useState("");
-  const current = useRef(state);
-  const mounted = useRef(false);
-  const readyRef = useRef(false);
+  const [value, setValue] = useState(snapshot);
   useEffect(() => {
-    mounted.current = true;
-    pending = pending
-      .catch(() => {})
-      .then(async () => {
-        try {
-          const raw = await AsyncStorage.getItem(KEY);
-          const value = raw ? parseQuests(JSON.parse(raw)) : initialQuests();
-          if (mounted.current) {
-            current.current = value;
-            setState(value);
-          }
-        } catch {
-          if (mounted.current)
-            setError("Couldn’t load quest progress on this device.");
-        } finally {
-          readyRef.current = true;
-          if (mounted.current) setReady(true);
-        }
-      });
+    const listener = (next: Snapshot) => setValue(next);
+    listeners.add(listener);
+    listener(snapshot);
+    loadQuests();
     return () => {
-      mounted.current = false;
+      listeners.delete(listener);
     };
   }, []);
+
   const update = useCallback((change: (previous: QuestState) => QuestState) => {
-    if (!readyRef.current) return;
-    const next = change(current.current);
-    if (next === current.current) return;
-    current.current = next;
-    setState(next);
+    if (!snapshot.ready) return;
+    const nextState = change(snapshot.state);
+    if (nextState === snapshot.state) return;
+    publish({ ...snapshot, state: nextState });
     pending = pending
       .catch(() => {})
       .then(async () => {
         try {
-          await AsyncStorage.setItem(KEY, JSON.stringify(next));
-          if (mounted.current) setError("");
+          await AsyncStorage.setItem(KEY, JSON.stringify(nextState));
+          publish({ ...snapshot, error: "" });
         } catch {
-          if (mounted.current)
-            setError(
-              "Quest progress hasn’t saved. Keep this screen open and try again.",
-            );
+          publish({
+            ...snapshot,
+            error: "Quest progress hasn’t saved. Keep this screen open and try again.",
+          });
         }
       });
   }, []);
+
   return {
-    state,
-    ready,
-    error,
+    ...value,
     update,
-    retry: () => update((value) => ({ ...value })),
+    retry: () => update((state) => ({ ...state })),
   };
 }

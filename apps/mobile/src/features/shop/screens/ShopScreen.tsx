@@ -25,6 +25,7 @@ type Offer = {
   title: string;
   category: Category;
   value: string;
+  pointsPrice: number;
   subtitle: string;
   icon: IconName;
   background: string;
@@ -37,6 +38,7 @@ const offers: Offer[] = [
     title: "Your next coffee, on us",
     category: "Coffee",
     value: "FREE",
+    pointsPrice: 75,
     subtitle: "A little pick-me-up for your next adventure.",
     icon: "cafe-outline",
     background: questColors.lime,
@@ -48,6 +50,7 @@ const offers: Offer[] = [
     title: "Make a meal of it",
     category: "Dining",
     value: "20% OFF",
+    pointsPrice: 200,
     subtitle: "Good food. Even better together.",
     icon: "restaurant-outline",
     background: questColors.peach,
@@ -59,6 +62,7 @@ const offers: Offer[] = [
     title: "A sweeter kind of break",
     category: "Sweet treats",
     value: "2 FOR 1",
+    pointsPrice: 100,
     subtitle: "One for you. One for your favourite person.",
     icon: "ice-cream-outline",
     background: questColors.lavender,
@@ -70,6 +74,7 @@ const offers: Offer[] = [
     title: "Lunch tastes better for less",
     category: "Dining",
     value: "$5 OFF",
+    pointsPrice: 125,
     subtitle: "Something delicious for your lunch hour.",
     icon: "fast-food-outline",
     background: questColors.lime,
@@ -88,7 +93,24 @@ const Icon = ({
   color?: string;
 }) => <Ionicons name={name} size={size} color={color} accessible={false} />;
 
-export function ShopScreen() {
+type PurchaseResult =
+  | "not-ready"
+  | "already-purchased"
+  | "insufficient-points"
+  | "save-failed"
+  | "purchased";
+
+export function ShopScreen({
+  pointsBalance,
+  pointsReady,
+  purchases,
+  onPurchase,
+}: {
+  pointsBalance: number;
+  pointsReady: boolean;
+  purchases: string[];
+  onPurchase: (offerId: string, cost: number) => Promise<PurchaseResult>;
+}) {
   const insets = useSafeAreaInsets();
   const reducedMotion = useReducedMotion();
   const [category, setCategory] = useState<Category>("All offers");
@@ -98,6 +120,8 @@ export function ShopScreen() {
   const [ready, setReady] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [purchaseMessage, setPurchaseMessage] = useState("");
+  const [purchasing, setPurchasing] = useState(false);
   const [selected, setSelected] = useState<Offer | null>(null);
   useMenuSound(selected !== null);
   useEffect(() => {
@@ -142,6 +166,23 @@ export function ShopScreen() {
       setSaving(false);
     }
   }
+  async function buyOffer(offer: Offer) {
+    setPurchasing(true);
+    const result = await onPurchase(offer.id, offer.pointsPrice);
+    if (result === "purchased") {
+      setPurchaseMessage(`${offer.title} added to your purchases.`);
+      setSelected(null);
+    } else if (result === "insufficient-points") {
+      setPurchaseMessage("You need more points for this offer.");
+    } else if (result === "already-purchased") {
+      setPurchaseMessage("You already purchased this offer.");
+    } else if (result === "save-failed") {
+      setPurchaseMessage("The purchase couldn’t be saved. Your points were returned.");
+    } else {
+      setPurchaseMessage("Your points balance is still loading. Try again shortly.");
+    }
+    setPurchasing(false);
+  }
   const visible = offers.filter(
     (offer) =>
       (category === "All offers" || category === offer.category) &&
@@ -171,6 +212,12 @@ export function ShopScreen() {
           <View style={styles.bag}>
             <Icon name="bag-handle-outline" />
           </View>
+        </View>
+        <View style={styles.balanceStrip}>
+          <Icon name="sparkles-outline" size={18} color={colors.accent} />
+          <Text style={styles.balanceText}>
+            {pointsBalance.toLocaleString()} spendable points
+          </Text>
         </View>
         <View style={styles.tabs}>
           {[false, true].map((isSaved) => (
@@ -258,6 +305,11 @@ export function ShopScreen() {
             {error}
           </Text>
         )}
+        {purchaseMessage !== "" && (
+          <Text accessibilityLiveRegion="polite" style={styles.purchaseNotice}>
+            {purchaseMessage}
+          </Text>
+        )}
         <View style={styles.grid}>
           {visible.map((offer) => (
             <View key={offer.id} style={styles.card}>
@@ -287,38 +339,42 @@ export function ShopScreen() {
                   </Text>
                   <Text style={styles.cardTitle}>{offer.title}</Text>
                   <Text style={styles.cardCopy}>{offer.subtitle}</Text>
+                  <Text style={styles.priceText}>{offer.pointsPrice} points</Text>
                 </View>
               </Pressable>
               <View style={styles.cardFooter}>
+                <View style={styles.cardActions}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`View ${offer.title}`}
+                    onPress={() => setSelected(offer)}
+                    style={styles.detailsButton}
+                  >
+                    <Text style={styles.detailsText}>View offer</Text>
+                    <Icon name="arrow-forward" size={16} />
+                  </Pressable>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`${saved.includes(offer.id) ? "Unsave" : "Save"} ${offer.title}`}
+                    accessibilityState={{ selected: saved.includes(offer.id), disabled: !ready || saving }}
+                    disabled={!ready || saving}
+                    onPress={() => void toggleSave(offer)}
+                    style={({ pressed }) => [styles.iconButton, pressed && styles.pressed]}
+                  >
+                    <Icon name={saved.includes(offer.id) ? "bookmark" : "bookmark-outline"} size={21} />
+                  </Pressable>
+                </View>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel={`View ${offer.title}`}
-                  onPress={() => setSelected(offer)}
-                  style={styles.detailsButton}
+                  accessibilityLabel={purchases.includes(offer.id) ? `${offer.title} purchased` : `Buy ${offer.title} for ${offer.pointsPrice} points`}
+                  accessibilityState={{ disabled: !pointsReady || purchasing || purchases.includes(offer.id) || pointsBalance < offer.pointsPrice }}
+                  disabled={!pointsReady || purchasing || purchases.includes(offer.id) || pointsBalance < offer.pointsPrice}
+                  onPress={() => void buyOffer(offer)}
+                  style={({ pressed }) => [styles.buyButton, pressed && styles.pressed, (purchases.includes(offer.id) || pointsBalance < offer.pointsPrice) && styles.buyButtonDisabled]}
                 >
-                  <Text style={styles.detailsText}>View offer</Text>
-                  <Icon name="arrow-forward" size={16} />
-                </Pressable>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`${saved.includes(offer.id) ? "Unsave" : "Save"} ${offer.title}`}
-                  accessibilityState={{
-                    selected: saved.includes(offer.id),
-                    disabled: !ready || saving,
-                  }}
-                  disabled={!ready || saving}
-                  onPress={() => void toggleSave(offer)}
-                  style={({ pressed }) => [
-                    styles.iconButton,
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <Icon
-                    name={
-                      saved.includes(offer.id) ? "bookmark" : "bookmark-outline"
-                    }
-                    size={21}
-                  />
+                  <Text style={styles.buyButtonText}>
+                    {purchases.includes(offer.id) ? "Purchased" : `Buy · ${offer.pointsPrice} points`}
+                  </Text>
                 </Pressable>
               </View>
             </View>
@@ -412,13 +468,30 @@ export function ShopScreen() {
                 <Text style={styles.body}>{selected.terms}</Text>
                 <Text style={styles.notice}>
                   This is a sample offer. Partner locations, availability, and
-                  redemption will be added when the shop launches.
+                  redemption will be added when the shop launches. Purchases are
+                  saved on this device for now.
                 </Text>
+                {purchaseMessage !== "" && (
+                  <Text accessibilityLiveRegion="polite" style={styles.purchaseNotice}>
+                    {purchaseMessage}
+                  </Text>
+                )}
                 {error !== "" && (
                   <Text accessibilityRole="alert" style={styles.body}>
                     {error}
                   </Text>
                 )}
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: !pointsReady || purchasing || purchases.includes(selected.id) || pointsBalance < selected.pointsPrice }}
+                  disabled={!pointsReady || purchasing || purchases.includes(selected.id) || pointsBalance < selected.pointsPrice}
+                  onPress={() => void buyOffer(selected)}
+                  style={({ pressed }) => [styles.buyButton, pressed && styles.pressed, (purchases.includes(selected.id) || pointsBalance < selected.pointsPrice) && styles.buyButtonDisabled]}
+                >
+                  <Text style={styles.buyButtonText}>
+                    {purchases.includes(selected.id) ? "Purchased" : `Buy for ${selected.pointsPrice} points`}
+                  </Text>
+                </Pressable>
                 <Pressable
                   accessibilityRole="button"
                   accessibilityState={{ disabled: !ready || saving }}
@@ -471,6 +544,18 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 8,
   },
+  balanceStrip: {
+    minHeight: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  balanceText: { color: colors.ink, fontSize: 13, fontWeight: "700" },
   eyebrow: {
     fontSize: 10,
     fontWeight: "700",
@@ -619,16 +704,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   cardCopy: { color: colors.muted, fontSize: 12, lineHeight: 18 },
+  priceText: { color: colors.accent, fontSize: 13, fontWeight: "800", marginTop: 2 },
   cardFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: "column",
+    alignItems: "stretch",
     marginTop: "auto",
-    paddingLeft: 14,
-    paddingRight: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 4,
     borderTopWidth: 1,
     borderColor: colors.border,
   },
+  cardActions: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   detailsButton: {
     minHeight: 48,
     flexDirection: "row",
@@ -637,6 +724,18 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   detailsText: { fontSize: 12, fontWeight: "700", color: colors.ink },
+  buyButton: {
+    minHeight: 42,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.accent,
+  },
+  buyButtonDisabled: { opacity: 0.5 },
+  buyButtonText: { color: colors.white, fontSize: 12, fontWeight: "800", textAlign: "center" },
+  modalBuyButton: { minHeight: 52 },
+  purchaseNotice: { color: colors.accent, fontSize: 13, fontWeight: "700" },
   footnote: {
     flexDirection: "row",
     gap: 8,

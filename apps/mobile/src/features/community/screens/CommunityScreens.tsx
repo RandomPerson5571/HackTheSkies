@@ -155,6 +155,12 @@ function Page({
     >
       <View style={s.brandHeader}>
         <CiboLogo />
+        <View style={[s.heading, s.headerHeading]}>
+          <Text style={s.eyebrow}>{eyebrow}</Text>
+          <Text accessibilityRole="header" style={s.title}>
+            {title}
+          </Text>
+        </View>
         <View style={s.headerActions}>
           <View style={s.brand}>
             <Icon name={icon} size={26} />
@@ -171,15 +177,7 @@ function Page({
           )}
         </View>
       </View>
-      <View style={s.heading}>
-        <View style={s.flex}>
-          <Text style={s.eyebrow}>{eyebrow}</Text>
-          <Text accessibilityRole="header" style={s.title}>
-            {title}
-          </Text>
-        </View>
-        <Text style={s.intro}>{intro}</Text>
-      </View>
+      <Text style={s.intro}>{intro}</Text>
       {navigation && (
         <View accessibilityRole="tablist" style={s.tabs}>
           {(["favorites", "friends", "badges"] as const).map((section) => (
@@ -765,7 +763,7 @@ export function AchievementsScreen({
   );
   return (
     <Page
-      title="A taste for adventure."
+      title="Your Badges"
       eyebrow="YOUR BADGES"
       intro="Little rewards for following your appetite. Visit different spots to build your collection."
       icon="ribbon-outline"
@@ -898,6 +896,7 @@ const s = StyleSheet.create({
   },
   headerActions: { flexDirection: "row", alignItems: "center", gap: 8 },
   heading: { gap: 10 },
+  headerHeading: { flex: 1, marginLeft: 14, gap: 0 },
   eyebrow: {
     fontSize: 10,
     fontWeight: "700",

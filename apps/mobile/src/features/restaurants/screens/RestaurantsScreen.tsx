@@ -292,7 +292,7 @@ export function RestaurantsScreen({
           <CiboLogo />
           <View style={styles.flex}>
             <Text style={styles.eyebrow}>
-              {mode === "journal" ? "YOUR COLLECTION" : "EXPLORE TORONTO"}
+              {mode === "journal" ? "YOUR FOOD JOURNAL" : "THE MEALS ALONG THE WAY"}
             </Text>
             <Text accessibilityRole="header" style={styles.location}>
               {mode === "journal" ? "Your food journal" : "Toronto, ON"}

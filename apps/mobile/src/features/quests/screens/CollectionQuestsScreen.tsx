@@ -71,7 +71,10 @@ export function CollectionQuestsScreen({
             style={({ pressed }) => [s.brand, pressed && s.dim]}
           >
             <CiboLogo />
-            <Text style={s.brandLabel}>Quests</Text>
+            <View style={s.brandCopy}>
+              <Text style={s.eyebrow}>YOUR NEXT CHALLENGE</Text>
+              <Text style={s.brandLabel}>Quests</Text>
+            </View>
           </Pressable>
           <Pressable
             accessibilityRole="button"
@@ -348,8 +351,10 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  brand: { minHeight: 48, flexDirection: "row", gap: 10, alignItems: "center" },
-  brandLabel: { fontSize: 22, fontWeight: "700", color: c.ink },
+  brand: { minHeight: 48, flexDirection: "row", gap: 14, alignItems: "center" },
+  brandCopy: { gap: 2 },
+  eyebrow: { fontSize: 10, fontWeight: "700", letterSpacing: 1.3, color: c.muted },
+  brandLabel: { fontSize: 28, lineHeight: 32, fontWeight: "700", color: c.ink, letterSpacing: -0.8 },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",

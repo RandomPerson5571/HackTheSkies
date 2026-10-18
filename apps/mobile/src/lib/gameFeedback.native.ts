@@ -3,6 +3,7 @@ import type { GameFeedbackName } from "./gameFeedback";
 
 type PulsarSDK = typeof import("react-native-pulsar");
 let sdk: PulsarSDK | null | undefined;
+let soundEnabled = false;
 
 function getPulsar(): PulsarSDK | null {
   if (sdk !== undefined) return sdk;
@@ -11,6 +12,7 @@ function getPulsar(): PulsarSDK | null {
     if (!TurboModuleRegistry.get("RNPulsar")) return (sdk = null);
     const pulsar: PulsarSDK = require("react-native-pulsar");
     pulsar.Settings.enableSound(true);
+    soundEnabled = true;
     pulsar.Settings.enableCache(true);
     pulsar.Settings.preloadPresets([
       "CoinDrop",
@@ -35,6 +37,11 @@ export function prepareGameFeedback() {
 export function stopGameFeedback() {
   try {
     sdk?.Settings.stopHaptics();
+    // Pulsar 1.7 stops vibration separately from its generated audio player.
+    if (sdk && soundEnabled) {
+      sdk.Settings.enableSound(false);
+      soundEnabled = false;
+    }
   } catch {
     // Feedback must never prevent an interaction or background transition.
   }
@@ -44,6 +51,10 @@ export function playGameFeedback(name: GameFeedbackName): number | false {
   const pulsar = getPulsar();
   if (!pulsar) return false;
   try {
+    if (!soundEnabled) {
+      pulsar.Settings.enableSound(true);
+      soundEnabled = true;
+    }
     const presets = {
       reward: pulsar.Presets.coinDrop,
       chest: pulsar.Presets.unfurl,

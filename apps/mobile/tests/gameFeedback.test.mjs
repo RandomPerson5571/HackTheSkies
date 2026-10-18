@@ -79,7 +79,9 @@ test("native rewards play distinct Pulsar presets with generated sound enabled",
   ]);
   assert.equal(feedback.calls.filter((call) => call === "load").length, 1);
   feedback.stopGameFeedback();
-  assert.equal(feedback.calls.at(-1), "stop");
+  assert.deepEqual(feedback.calls.slice(-2), ["stop", ["sound", false]]);
+  feedback.playGameFeedback("levelup");
+  assert.deepEqual(feedback.calls.slice(-2), [["sound", true], "ascent"]);
 });
 
 test("Expo Go never imports the unavailable native Pulsar SDK", () => {

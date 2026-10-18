@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors } from "../../../theme";
+import { colors, frostedGlass, frostedGlassTint } from "../../../theme";
 import { type Place } from "../data/places";
 
 import { useBackend } from "../../../lib/BackendProvider";
@@ -262,7 +262,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.scrim,
   },
   sheet: {
-    backgroundColor: colors.paper,
+    ...frostedGlass,
+    backgroundColor: "rgba(255,253,245,0.30)",
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     padding: 20,
@@ -288,7 +289,8 @@ const styles = StyleSheet.create({
   copy: { color: colors.ink, fontSize: 15, lineHeight: 22 },
   label: { color: colors.accent, fontSize: 14, fontWeight: "700" },
   input: {
-    backgroundColor: colors.white,
+    ...frostedGlass,
+    backgroundColor: "rgba(255,253,245,0.07)",
     borderColor: colors.border,
     borderWidth: 1,
     borderRadius: 16,
@@ -300,7 +302,8 @@ const styles = StyleSheet.create({
   },
   starters: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   chip: {
-    backgroundColor: colors.tint,
+    ...frostedGlassTint,
+    backgroundColor: "rgba(234,243,178,0.12)",
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 12,
@@ -319,8 +322,10 @@ const styles = StyleSheet.create({
   submitText: { color: colors.white, fontSize: 16, fontWeight: "700" },
   pressed: { opacity: 0.6 },
   card: {
+    ...frostedGlass,
+    backgroundColor: "rgba(255,253,245,0.07)",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.28)",
     padding: 16,
     borderRadius: 18,
     gap: 8,

@@ -313,7 +313,11 @@ export function FoodDexScreen({
     closeScan();
   }
 
-  const cuisinesExplored = new Set(entries.map((entry) => entry.cuisine)).size;
+  const cuisinesExplored = new Set(
+    entries
+      .map((entry) => entry.cuisine)
+      .filter((value) => value !== "Drinks"),
+  ).size;
   const collectionForCuisine = entries.filter(
     (entry) => entry.cuisine === cuisine,
   );
@@ -459,7 +463,7 @@ export function FoodDexScreen({
                         style={s.cuisineImage}
                         label={
                           cuisineCovers[item]
-                            ? `${item} cuisine: ${cuisineCovers[item].name}`
+                            ? `${item}${item === "Drinks" ? "" : " cuisine"}: ${cuisineCovers[item].name}`
                             : "Other cuisines"
                         }
                       />

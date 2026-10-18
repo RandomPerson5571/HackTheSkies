@@ -1173,10 +1173,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             capture={foodCapture}
             onOpenCamera={openFoodCamera}
             onDiscover={(cuisine) => {
-              const count = new Set([
-                ...foodDex.entries.map((entry) => entry.cuisine),
-                cuisine,
-              ]).size;
+              // Drinks are a collection, not a cuisine, for cuisine badges.
+              const count = new Set(
+                [...foodDex.entries.map((entry) => entry.cuisine), cuisine].filter(
+                  (value) => value !== "Drinks",
+                ),
+              ).size;
               gamification.onDiscovery(count);
             }}
           />

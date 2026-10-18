@@ -130,6 +130,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     if (!container.current) return;
     let instance: WebMap | undefined;
     let disposed = false;
+    let mapLoaded = false;
     let clusterRequest = 0;
     try {
       const currentMap: WebMap = new mapboxgl.Map({
@@ -159,7 +160,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
           source: "places",
           filter: ["has", "point_count"],
           paint: {
-            "circle-color": latest.current.themeAccent ?? "#253D6A",
+            "circle-color": "#253D6A",
             "circle-radius": [
               "step",
               ["get", "point_count"],
@@ -193,7 +194,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
           filter: ["!", ["has", "point_count"]],
           paint: {
             "circle-radius": 7,
-            "circle-color": latest.current.themeAccent ?? "#253D6A",
+            "circle-color": "#253D6A",
             "circle-stroke-width": 2,
             "circle-stroke-color": colors.white,
           },
@@ -301,10 +302,11 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
               : ids,
           );
         });
+        mapLoaded = true;
         latest.current.onReady();
       });
       currentMap.on("error", () => {
-        if (!disposed) latest.current.onError();
+        if (!disposed && !mapLoaded) latest.current.onError();
       });
     } catch {
       latest.current.onError();
@@ -325,8 +327,8 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     if (!map.current?.isStyleLoaded()) return;
     const accent = props.themeAccent ?? "#253D6A";
     const ink = props.themeInk ?? accent;
-    map.current.setPaintProperty("place-clusters", "circle-color", accent);
-    map.current.setPaintProperty("place-points", "circle-color", accent);
+    map.current.setPaintProperty("place-clusters", "circle-color", "#253D6A");
+    map.current.setPaintProperty("place-points", "circle-color", "#253D6A");
     map.current.setPaintProperty("place-labels", "text-color", ink);
   }, [props.themeAccent, props.themeInk, props.token]);
 
@@ -372,7 +374,8 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       markers.map((place) => {
         const suggested = props.recommendations.get(place.id)?.suggested ?? false;
         const showPhoto =
-          suggested || zoom >= recommendationPolicy.photoPinZoomThreshold;
+          (suggested || zoom >= recommendationPolicy.photoPinZoomThreshold) &&
+          Boolean(place.image);
         return `${place.id}:${showPhoto ? "photo" : "plain"}:${place.id === props.selectedId}`;
       }),
     );
@@ -385,7 +388,8 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     for (const place of markers) {
       const suggested = props.recommendations.get(place.id)?.suggested ?? false;
       const showPhoto =
-        suggested || zoom >= recommendationPolicy.photoPinZoomThreshold;
+        (suggested || zoom >= recommendationPolicy.photoPinZoomThreshold) &&
+        Boolean(place.image);
       const selected = place.id === props.selectedId;
       const key = `${place.id}:${showPhoto ? "photo" : "plain"}:${selected}`;
       if (cache.has(key)) continue;

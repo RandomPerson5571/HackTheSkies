@@ -1,7 +1,4 @@
-import { catalogDishes } from "../../../../../../packages/food-catalog/data/catalog.ts";
-import { cuisineCovers } from "../../food-dex/models/foodDex.ts";
-import restaurantPhotos from "./restaurantPhotos.json" with { type: "json" };
-import importedRestaurants from "./importedRestaurants.json" with { type: "json" };
+﻿import globalRestaurantSample from "../../../../../../data/global-restaurant-sample.json" with { type: "json" };
 import type { DietaryPreference } from "../../profile/models/profile";
 
 export type Category =
@@ -76,6 +73,7 @@ export type Place = {
   photo?: { url: string; sourceUrl: string; photographer: string | null; licenseName: string | null; licenseUrl: string | null; provider?: string; kind?: "restaurant" | "illustration"; dishName?: string; capturedAt: string };
   note: string;
   cuisine?: string;
+  country?: string;
   sourceUrl?: string;
   locationAccuracy?: string;
   priceLevel?: PriceLevel;
@@ -95,66 +93,24 @@ export function matchesDietaryPreference(
   return place.confirmedDietaryOptions?.includes(diet) === true;
 }
 
-const photos: Record<string, NonNullable<Place["photo"]>> = restaurantPhotos;
-
-// Venues in these cuisines show the Food Dex cover rather than a random dish,
-// so they don't land on a studio cut-out like the cheeseburger or croissant.
-const coverOnlyCuisines = new Set(["French", "American"]);
-
-// A cuisine illustration is explicitly distinguished from a photo of the venue.
-function photoFor(restaurant: (typeof importedRestaurants)[number]): Place["photo"] {
-  if (photos[restaurant.id]) return photos[restaurant.id];
-  const candidates = catalogDishes.filter((dish) => dish.image && dish.cuisine === restaurant.cuisine);
-  const pool = candidates.length ? candidates : catalogDishes.filter((dish) => dish.image);
-  const hash = [...restaurant.id].reduce((value, char) => (value * 31 + char.charCodeAt(0)) >>> 0, 0);
-  const dish = coverOnlyCuisines.has(restaurant.cuisine)
-    ? cuisineCovers[restaurant.cuisine as keyof typeof cuisineCovers]
-    : pool[hash % pool.length];
-  if (!dish?.image) return undefined;
-  return {
-    url: dish.image.url,
-    sourceUrl: dish.image.sourceUrl,
-    photographer: dish.image.photographer,
-    licenseName: dish.image.licenseName || null,
-    licenseUrl: dish.image.licenseUrl,
-    capturedAt: "",
-    provider: dish.image.source,
-    kind: "illustration",
-    dishName: dish.name,
-  };
-}
-
-// Imported restaurant listings; not a live availability feed.
-export const places: Place[] = importedRestaurants.map((restaurant): Place => ({
-  id: restaurant.id,
-  name: restaurant.restaurant_name,
-  category: "Restaurant",
-  cuisine: restaurant.cuisine,
-  confirmedDietaryOptions: (
-    restaurant as typeof restaurant & {
-      confirmed_dietary_options?: ("Halal" | "Kosher" | "Gluten-free")[];
-    }
-  ).confirmed_dietary_options,
-  neighborhood: restaurant.neighbourhood,
-  address: `${restaurant.address}, Toronto, ON`,
-  coordinate: [restaurant.coordinate[0]!, restaurant.coordinate[1]!],
-  photo: photoFor(restaurant),
-  image: photoFor(restaurant)?.url ??
-    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=400&fit=crop",
-  note: `${restaurant.cuisine} · ${restaurant.category}.${restaurant.locationAccuracy === "approximate" ? " Approximate map location." : ""} Map data © OpenStreetMap contributors.`,
-  sourceUrl: restaurant.source_url,
-  locationAccuracy: restaurant.locationAccuracy,
-  priceLevel:
-    restaurant.estimated_price_range === "$0-$15"
-      ? "$"
-      : restaurant.estimated_price_range === "$15-$30"
-        ? "$$"
-        : restaurant.category === "Fine Dining"
-          ? "$$$$"
-          : "$$$",
-  rating: restaurant.rating,
-}));
-
+// Offline catalog sample collected from Geoapify/OpenStreetMap. Live viewport
+// searches can return other restaurants; this bundled sample is capped at 400.
+export const places: Place[] = globalRestaurantSample
+  .slice(0, 400)
+  .map((restaurant): Place => ({
+    id: restaurant.id,
+    name: restaurant.name,
+    category: "Restaurant",
+    country: restaurant.country,
+    neighborhood: restaurant.neighborhood,
+    address: [restaurant.address, restaurant.country]
+      .filter(Boolean)
+      .join(", "),
+    coordinate: [restaurant.coordinate[0]!, restaurant.coordinate[1]!],
+    image: "",
+    note: restaurant.note,
+    sourceUrl: restaurant.sourceUrl,
+  }));
 export const categories: Category[] = [
   "All",
   "Coffee",

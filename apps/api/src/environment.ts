@@ -6,4 +6,4 @@ export type ApiEnvironment = Partial<
     | "GROQ_FOOD_SCAN_MODEL"
     | "GROQ_RECOMMENDATION_MODEL"
   >
->;
+> & { GEOAPIFY_API_KEY?: string };

@@ -9,5 +9,5 @@
     "GROQ_FOOD_SCAN_MODEL": "qwen/qwen3.8-27b",
     "GROQ_RECOMMENDATION_MODEL": "qwen/qwen3.8-27b",
   },
-  "secrets": { "required": ["GROQ_API_KEY"] },
+  "secrets": { "required": ["GROQ_API_KEY", "GEOAPIFY_API_KEY"] },
 }

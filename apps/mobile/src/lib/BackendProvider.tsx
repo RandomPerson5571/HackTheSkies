@@ -12,15 +12,31 @@ import {
   places as bundledPlaces,
   type Place,
 } from "../features/restaurants/data/places";
+import torontoRestaurantSample from "../features/restaurants/data/importedRestaurants.json" with { type: "json" };
 import {
   sampleFriends,
   type SampleFriend,
 } from "../features/community/models/community";
 import { supabase } from "./supabase";
+import { apiEndpoint } from "./api";
 
-const bundledPriceLevels = new Map(
-  bundledPlaces.map((place) => [place.id, place.priceLevel]),
-);
+const mapCacheTtlMs = 10 * 60 * 1000;
+const offlinePlaces: Place[] = [
+  ...bundledPlaces,
+  ...torontoRestaurantSample.map((restaurant): Place => ({
+    id: restaurant.id,
+    name: restaurant.restaurant_name,
+    category: "Restaurant",
+    cuisine: restaurant.cuisine,
+    neighborhood: restaurant.neighbourhood,
+    address: restaurant.address,
+    coordinate: [restaurant.coordinate[0]!, restaurant.coordinate[1]!],
+    image: "",
+    note: restaurant.category,
+    sourceUrl: restaurant.source_url,
+    rating: restaurant.rating,
+  })),
+];
 
 export type MapBounds = [
   west: number,
@@ -79,6 +95,9 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   });
   const mapRequest = useRef(0);
   const mapQueryKey = useRef("");
+  const mapResponseCache = useRef(
+    new Map<string, { expiresAt: number; count: number; places?: Place[] }>(),
+  );
   const [mapPlaces, setMapPlaces] = useState<Place[]>([]);
   const [mapCount, setMapCount] = useState<number | null>(null);
   const [mapNeedsZoom, setMapNeedsZoom] = useState(true);
@@ -191,25 +210,27 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   const loadMapViewport = useCallback(
     async (bounds: MapBounds, zoom: number) => {
       const [west, south, east, north] = bounds;
-      const queryKey = `${bounds.map((value) => value.toFixed(3)).join(",")}:${zoom.toFixed(1)}`;
+      const mode = zoom < 12 ? "count" : "details";
+      const queryKey = `${mode}:${bounds.map((value) => value.toFixed(3)).join(",")}`;
       if (queryKey === mapQueryKey.current) return;
       mapQueryKey.current = queryKey;
       const request = ++mapRequest.current;
-      setMapNeedsZoom(zoom < 12);
+      setMapNeedsZoom(mode === "count");
       const inBounds = (place: Place) => {
         const [longitude, latitude] = place.coordinate;
         return (
-          longitude >= west &&
-          longitude <= east &&
+          (west <= east
+            ? longitude >= west && longitude <= east
+            : longitude >= west || longitude <= east) &&
           latitude >= south &&
           latitude <= north
         );
       };
-      const localPlaces = bundledPlaces.filter(inBounds);
+      const localPlaces = offlinePlaces.filter(inBounds);
       // Keep already loaded details and fill new areas immediately from the catalog.
       setMapPlaces((previous) =>
-        zoom < 12
-          ? []
+        mode === "count"
+          ? localPlaces.slice(0, 400)
           : [
               ...new Map(
                 [...localPlaces, ...previous.filter(inBounds)].map((place) => [
@@ -221,52 +242,53 @@ export function BackendProvider({ children }: { children: ReactNode }) {
       );
       setMapCount(localPlaces.length);
 
-      // Counting must never delay restaurant pins or discard a successful list.
-      const loadCount = async () => {
-        try {
-          if (!supabase) return;
-          const { data, error } = await supabase.rpc(
-            "cibo_count_restaurants_in_bounds",
-            { p_west: west, p_south: south, p_east: east, p_north: north },
-          );
-          if (error) throw error;
-          const count = Number(data);
-          if (request === mapRequest.current && Number.isFinite(count))
-            setMapCount(count);
-        } catch {
-          // The local count remains available when the network is unavailable.
-        }
-      };
-      void loadCount();
-      if (zoom < 12) return;
+      const cached = mapResponseCache.current.get(queryKey);
+      if (cached && cached.expiresAt > Date.now()) {
+        setMapCount(cached.count);
+        if (mode === "details") setMapPlaces(cached.places ?? []);
+        return;
+      }
+      if (cached) mapResponseCache.current.delete(queryKey);
 
       try {
-        if (!supabase) throw new Error("Missing Supabase configuration");
-        const placesResult = await supabase.rpc("cibo_restaurants_in_bounds", {
-          p_west: west,
-          p_south: south,
-          p_east: east,
-          p_north: north,
-          p_limit: 400,
+        const endpoint = apiEndpoint("/api/restaurants");
+        if (!endpoint) throw new Error("Missing restaurant search API configuration");
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ bounds: { west, south, east, north }, mode }),
+          signal: AbortSignal.timeout(30_000),
         });
-        if (placesResult.error) throw placesResult.error;
-        const rows = Array.isArray(placesResult.data) ? placesResult.data : [];
-        const loaded = rows.flatMap((row) => {
-          const place =
-            row && typeof row === "object"
-              ? (row as { data?: Place }).data
-              : null;
-          if (!place || !Array.isArray(place.coordinate) || !inBounds(place))
-            return [];
-          return [
-            {
-              ...place,
-              priceLevel: place.priceLevel ?? bundledPriceLevels.get(place.id),
-            },
-          ];
-        });
+        if (!response.ok) throw new Error("Restaurant search request failed");
+        const payload = await response.json() as { places?: unknown; count?: unknown };
+        const loaded = mode === "details" && Array.isArray(payload.places)
+          ? payload.places.flatMap((value) => {
+              if (!value || typeof value !== "object") return [];
+              const place = value as Place;
+              if (
+                typeof place.id !== "string" ||
+                typeof place.name !== "string" ||
+                !Array.isArray(place.coordinate) ||
+                !inBounds(place)
+              ) return [];
+              return [{ ...place, image: "", photo: undefined }];
+            }).slice(0, 400)
+          : [];
         if (request === mapRequest.current) {
-          setMapPlaces(loaded);
+          if (mode === "details") setMapPlaces(loaded);
+          const responseCount = Number(payload.count);
+          const count = Number.isFinite(responseCount) ? responseCount : loaded.length;
+          setMapCount(count);
+          while (mapResponseCache.current.size >= 128) {
+            const oldest = mapResponseCache.current.keys().next().value;
+            if (oldest === undefined) break;
+            mapResponseCache.current.delete(oldest);
+          }
+          mapResponseCache.current.set(queryKey, {
+            expiresAt: Date.now() + mapCacheTtlMs,
+            count,
+            ...(mode === "details" ? { places: loaded } : {}),
+          });
         }
       } catch {
         // Allow a subsequent idle event to retry this viewport after a failure.

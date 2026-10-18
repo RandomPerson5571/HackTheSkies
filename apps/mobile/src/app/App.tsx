@@ -244,8 +244,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   }
   const saved = collection.saved;
   const recommendations = useMemo(
-    () => buildRecommendations(places, collection.ratings),
-    [places, collection.ratings],
+    () =>
+      buildRecommendations(
+        [...new Map([...places, ...mapPlaces].map((place) => [place.id, place])).values()],
+        collection.ratings,
+      ),
+    [places, mapPlaces, collection.ratings],
   );
   const [tab, setTab] = useState<
     | "explore"

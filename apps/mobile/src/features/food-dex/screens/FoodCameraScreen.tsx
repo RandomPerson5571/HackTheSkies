@@ -708,35 +708,37 @@ export function FoodCameraScreen({
             </Text>
           </Pressable>
         )}
-        {(noFood || !!error) && !identifying && !busy && (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Enter dish manually"
-            onPress={() => deliverCapture(true)}
-            style={({ pressed }) => [s.round, s.manualEntry, pressed && s.pressed]}
-          >
-            {icon("create-outline", 20)}
-          </Pressable>
-        )}
-        {!photo && (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Choose a photo from your library"
-            accessibilityState={{ disabled: busy, busy }}
-            disabled={busy}
-            onPress={() => void selectPhoto()}
-            style={({ pressed }) => [
-              s.secondary,
-              s.choosePhoto,
-              (pressed || busy) && s.pressed,
-            ]}
-          >
-            {icon("images-outline", 16)}
-            <Text style={s.secondaryText}>
-              {busy ? "Preparing photo…" : "Choose a photo"}
-            </Text>
-          </Pressable>
-        )}
+        <View style={s.photoActions}>
+          {!photo && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Choose a photo from your library"
+              accessibilityState={{ disabled: busy, busy }}
+              disabled={busy}
+              onPress={() => void selectPhoto()}
+              style={({ pressed }) => [
+                s.secondary,
+                s.choosePhoto,
+                (pressed || busy) && s.pressed,
+              ]}
+            >
+              {icon("images-outline", 16)}
+              <Text style={s.secondaryText}>
+                {busy ? "Preparing photo…" : "Choose a photo"}
+              </Text>
+            </Pressable>
+          )}
+          {(noFood || !!error) && !identifying && !busy && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Enter dish manually"
+              onPress={() => deliverCapture(true)}
+              style={({ pressed }) => [s.round, pressed && s.pressed]}
+            >
+              {icon("create-outline", 20)}
+            </Pressable>
+          )}
+        </View>
 
         {photo && (
           <View style={s.result}>
@@ -1038,7 +1040,12 @@ const s = StyleSheet.create({
     fontWeight: "600",
     flexShrink: 1,
   },
-  manualEntry: { alignSelf: "center" },
+  photoActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
   warning: {
     position: "absolute",
     left: 20,

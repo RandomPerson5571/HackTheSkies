@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   badgeProgress,
+  calculatePoints,
   cuisineBadges,
   sampleFriends,
 } from "../src/features/community/models/community.ts";
@@ -39,6 +40,26 @@ test("badges count distinct visited places in their own category", () => {
       ) >= badge.goal,
     );
   }
+});
+
+test("points count valid unique visits and earned badge bonuses", () => {
+  const fixtures = [
+    ["test-bakery", "Bakery"],
+    ["test-bread", "Bakery"],
+    ["test-ramen", "Ramen"],
+    ["test-coffee", "Coffee"],
+    ["test-espresso", "Coffee"],
+    ["test-pizza", "Pizza"],
+  ].map(([id, category]) => ({ ...places[0], id, category }));
+
+  assert.equal(calculatePoints([], fixtures), 0);
+  assert.equal(
+    calculatePoints(
+      ["test-bakery", "test-bread", "test-ramen", "test-ramen", "unknown"],
+      fixtures,
+    ),
+    130,
+  );
 });
 
 test("every sample friend visit links to an existing restaurant", () => {

@@ -6,6 +6,8 @@ import {
   type ComponentProps,
 } from "react";
 import {
+  Animated,
+  Easing,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -16,7 +18,6 @@ import {
   Text,
   TextInput,
   View,
-  type ViewStyle,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -32,7 +33,12 @@ import {
   surpriseCuisine,
   type RestaurantSort,
 } from "../models/restaurantBrowse";
-import { colors } from "../../../theme/index";
+import {
+  colors,
+  frostedGlass,
+  frostedGlassSelected,
+  frostedGlassTint,
+} from "../../../theme/index";
 import type {
   CollectionAction,
   RestaurantCollection,
@@ -47,15 +53,6 @@ type Props = {
   onShowMap: (place: Place) => void;
 };
 type Filter = "discover" | "saved" | "want" | "visited" | `list:${string}`;
-
-const webGlassBlur = (
-  Platform.OS === "web"
-    ? {
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-      }
-    : {}
-) as ViewStyle;
 
 function Icon({
   name,
@@ -98,6 +95,13 @@ export function RestaurantsScreen({
     [places, collection.ratings],
   );
   const [filter, setFilter] = useState<Filter>("discover");
+  const filterIndicatorX = useRef(new Animated.Value(0)).current;
+  const filterIndicatorWidth = useRef(new Animated.Value(0)).current;
+  const filterChipLayouts = useRef(
+    new Map<Filter, { x: number; width: number }>(),
+  ).current;
+  const filterIndicatorReady = useRef(false);
+  const pendingFilterIndicator = useRef<Filter | null>(null);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("All");
   const [creating, setCreating] = useState(false);
@@ -147,6 +151,38 @@ export function RestaurantsScreen({
       icon: "list-outline" as const,
     })),
   ];
+  function animateFilterIndicator(layout: { x: number; width: number }) {
+    if (!filterIndicatorReady.current) {
+      filterIndicatorX.setValue(layout.x);
+      filterIndicatorWidth.setValue(layout.width);
+      filterIndicatorReady.current = true;
+      return;
+    }
+    Animated.parallel([
+      Animated.timing(filterIndicatorX, {
+        toValue: layout.x,
+        duration: 260,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }),
+      Animated.timing(filterIndicatorWidth, {
+        toValue: layout.width,
+        duration: 260,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }
+  function selectFilter(nextFilter: Filter) {
+    const layout = filterChipLayouts.get(nextFilter);
+    if (layout) {
+      pendingFilterIndicator.current = null;
+      animateFilterIndicator(layout);
+    } else {
+      pendingFilterIndicator.current = nextFilter;
+    }
+    setFilter(nextFilter);
+  }
   const inCollection = places.filter(
     (place) =>
       filter === "discover" ||
@@ -184,7 +220,7 @@ export function RestaurantsScreen({
       dispatch({ type: "membership", listId: id, placeId: managing.id });
       setManaging(null);
     }
-    setFilter(`list:${id}`);
+    selectFilter(`list:${id}`);
     setQuery("");
     setCategory("All");
     setCuisine("All");
@@ -270,17 +306,43 @@ export function RestaurantsScreen({
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chips}
+              contentContainerStyle={[styles.chips, styles.filterChips]}
               keyboardShouldPersistTaps="handled"
             >
+              <Animated.View
+                pointerEvents="none"
+                style={[
+                  styles.activeChipIndicator,
+                  {
+                    left: filterIndicatorX,
+                    width: filterIndicatorWidth,
+                  },
+                ]}
+              />
               {options.map((option) => (
                 <Pressable
                   key={option.id}
                   accessibilityRole="tab"
                   accessibilityState={{ selected: filter === option.id }}
                   accessibilityLabel={`${option.label}, ${option.count} places`}
+                  onLayout={(event) => {
+                    const layout = {
+                      x: event.nativeEvent.layout.x,
+                      width: event.nativeEvent.layout.width,
+                    };
+                    filterChipLayouts.set(option.id, layout);
+                    if (pendingFilterIndicator.current === option.id) {
+                      pendingFilterIndicator.current = null;
+                      animateFilterIndicator(layout);
+                    } else if (
+                      filter === option.id &&
+                      !filterIndicatorReady.current
+                    ) {
+                      animateFilterIndicator(layout);
+                    }
+                  }}
                   onPress={() => {
-                    setFilter(option.id);
+                    selectFilter(option.id);
                     setQuery("");
                     setCategory("All");
                     setCuisine("All");
@@ -293,7 +355,7 @@ export function RestaurantsScreen({
                 >
                   <Icon
                     name={option.icon}
-                    color={filter === option.id ? colors.white : colors.accent}
+                    color={colors.accent}
                     size={18}
                   />
                   <Text
@@ -425,7 +487,7 @@ export function RestaurantsScreen({
                   setCuisine(surpriseCuisine(cuisineOptions, cuisine));
                   setQuery("");
                   setCategory("All");
-                  setFilter("discover");
+                  selectFilter("discover");
                   list.current?.scrollToOffset({ offset: 0, animated: false });
                 }}
                 style={({ pressed }) => [
@@ -485,7 +547,7 @@ export function RestaurantsScreen({
                 setQuery("");
                 setCategory("All");
                 setCuisine("All");
-                if (!hasFilters) setFilter("discover");
+                if (!hasFilters) selectFilter("discover");
               }}
               style={({ pressed }) => [
                 styles.primaryButton,
@@ -777,20 +839,22 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   brand: {
+    ...frostedGlassTint,
     width: 52,
     height: 52,
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.tint,
+    backgroundColor: "rgba(234,243,178,0.14)",
   },
   intro: { fontSize: 14, lineHeight: 21, color: colors.muted },
   summary: {
+    ...frostedGlassTint,
     flexDirection: "row",
     gap: 10,
     padding: 12,
     borderRadius: 22,
-    backgroundColor: colors.tint,
+    backgroundColor: "rgba(234,243,178,0.14)",
   },
   statCard: {
     flex: 1,
@@ -832,36 +896,44 @@ const styles = StyleSheet.create({
   },
   actionText: { fontSize: 12, fontWeight: "600", color: colors.accent },
   chips: { flexDirection: "row", gap: 8 },
+  filterChips: { position: "relative" },
+  activeChipIndicator: {
+    ...frostedGlassSelected,
+    position: "absolute",
+    top: 0,
+    height: 48,
+    borderRadius: 24,
+  },
   listChip: {
-    ...webGlassBlur,
+    ...frostedGlass,
     minHeight: 48,
     paddingHorizontal: 15,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.68)",
+    borderColor: "rgba(255,255,255,0.28)",
     flexDirection: "row",
     gap: 8,
     alignItems: "center",
-    backgroundColor: "rgba(255,253,245,0.48)",
+    backgroundColor: "rgba(255,253,245,0.07)",
     boxShadow: "0 5px 18px #3D568F14",
   },
   activeChip: {
-    backgroundColor: "rgba(61,86,143,0.76)",
-    borderColor: "rgba(255,255,255,0.48)",
+    backgroundColor: "transparent",
+    borderColor: "transparent",
   },
   chipText: { fontSize: 13, fontWeight: "600", color: colors.ink },
-  activeText: { color: colors.white },
+  activeText: { color: colors.ink },
   search: {
-    ...webGlassBlur,
+    ...frostedGlass,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
     paddingLeft: 14,
     paddingRight: 4,
     borderRadius: 16,
-    backgroundColor: "rgba(255,253,245,0.50)",
+    backgroundColor: "rgba(255,253,245,0.06)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.70)",
+    borderColor: "rgba(255,255,255,0.28)",
     boxShadow: "0 8px 24px #3D568F18",
   },
   input: {
@@ -878,18 +950,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   category: {
-    ...webGlassBlur,
+    ...frostedGlass,
     minHeight: 44,
     paddingHorizontal: 14,
     justifyContent: "center",
     borderRadius: 14,
-    backgroundColor: "rgba(255,253,245,0.44)",
+    backgroundColor: "rgba(255,253,245,0.07)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.68)",
+    borderColor: "rgba(255,255,255,0.28)",
   },
   selectedCategory: {
-    backgroundColor: "rgba(234,243,178,0.64)",
-    borderColor: "rgba(61,86,143,0.38)",
+    ...frostedGlassSelected,
   },
   resultsHeading: {
     flexDirection: "row",
@@ -899,11 +970,12 @@ const styles = StyleSheet.create({
   },
   caption: { fontSize: 11, color: colors.muted, marginTop: -8 },
   card: {
+    ...frostedGlass,
     padding: 16,
     borderRadius: 22,
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.09)",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.28)",
     marginBottom: 14,
     gap: 13,
   },
@@ -974,7 +1046,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.scrim,
   },
   sheet: {
-    backgroundColor: colors.paper,
+    ...frostedGlass,
+    backgroundColor: "rgba(255,253,245,0.30)",
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     padding: 24,

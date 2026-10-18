@@ -78,6 +78,8 @@ export const cuisineBadges = [
   },
 ] as const;
 
+export const pointPolicy = { perVisit: 10, perBadge: 50 } as const;
+
 export function badgeProgress(
   category: Place["category"],
   visited: string[],
@@ -86,4 +88,20 @@ export function badgeProgress(
   return places.filter(
     (place) => place.category === category && visited.includes(place.id),
   ).length;
+}
+
+export function calculatePoints(visited: string[], places: Place[]) {
+  const visitedIds = new Set(visited);
+  const validPlaceIds = new Set(places.map((place) => place.id));
+  const visitCount = [...visitedIds].filter((id) =>
+    validPlaceIds.has(id),
+  ).length;
+  const earnedBadgeCount = cuisineBadges.filter(
+    (badge) => badgeProgress(badge.category, visited, places) >= badge.goal,
+  ).length;
+
+  return (
+    visitCount * pointPolicy.perVisit +
+    earnedBadgeCount * pointPolicy.perBadge
+  );
 }

@@ -9,8 +9,9 @@ import {
   type ComponentProps,
   type RefObject,
 } from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import Mapbox from "@rnmapbox/maps";
+import { requestAndroidLocationPermissions } from "@rnmapbox/maps";
 import { colors } from "../../theme/index";
 import {
   clusterMaxZoom,
@@ -144,7 +145,26 @@ const PlaceLayers = memo(function PlaceLayers({
 export default memo(function MapView({ ref, ...props }: MapProps) {
   const camera = useRef<Mapbox.Camera>(null);
   const mapView = useRef<Mapbox.MapView>(null);
+  const userCoordinate = useRef<number[] | null>(null);
+  const centeredOnUserLocation = useRef(false);
+  const [hasLocationPermission, setHasLocationPermission] = useState(
+    Platform.OS !== "android",
+  );
   const queryVersion = useRef(0);
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+    let mounted = true;
+    void requestAndroidLocationPermissions()
+      .then((granted) => {
+        if (mounted) setHasLocationPermission(granted);
+      })
+      .catch(() => {
+        if (mounted) setHasLocationPermission(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
   const [visibleIds, setVisibleIds] = useState<ReadonlySet<string>>(new Set());
   const refreshPhotoPins = useCallback(async () => {
     const version = ++queryVersion.current;
@@ -202,7 +222,17 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
   );
   useImperativeHandle(
     ref,
-    () => ({ setCamera: (settings) => camera.current?.setCamera(settings) }),
+    () => ({
+      setCamera: (settings) => camera.current?.setCamera(settings),
+      centerOnUserLocation: () => {
+        if (!userCoordinate.current) return;
+        camera.current?.setCamera({
+          centerCoordinate: userCoordinate.current,
+          zoomLevel: 14,
+          animationDuration: 650,
+        });
+      },
+    }),
     [],
   );
   useEffect(() => {
@@ -233,6 +263,21 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         onSelect={props.onSelect}
         camera={camera}
       />
+      {hasLocationPermission && (
+        <Mapbox.UserLocation
+          visible
+          onUpdate={({ coords }) => {
+            userCoordinate.current = [coords.longitude, coords.latitude];
+            if (centeredOnUserLocation.current) return;
+            centeredOnUserLocation.current = true;
+            camera.current?.setCamera({
+              centerCoordinate: userCoordinate.current,
+              zoomLevel: 14,
+              animationDuration: 700,
+            });
+          }}
+        />
+      )}
       {markers.map((place) => (
         <Mapbox.MarkerView
           key={place.id}

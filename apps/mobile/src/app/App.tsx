@@ -2,6 +2,7 @@ import {
   useCallback,
   useDeferredValue,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -23,7 +24,6 @@ import {
   TextInput,
   View,
   useWindowDimensions,
-  type ViewStyle,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { migrateWebBookmarks } from "../lib/migrateWebBookmarks";
@@ -52,7 +52,12 @@ import {
 } from "../features/profile/screens/ProfileScreen";
 
 const token = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
-import { colors } from "../theme/index";
+import {
+  colors,
+  frostedGlass,
+  frostedGlassSelected,
+  frostedGlassTint,
+} from "../theme/index";
 import { RestaurantsScreen } from "../features/restaurants/screens/RestaurantsScreen";
 import { useRestaurantCollection } from "../features/restaurants/hooks/useRestaurantCollection";
 import {
@@ -114,15 +119,6 @@ function Icon({
 }) {
   return <Ionicons name={name} size={size} color={color} accessible={false} />;
 }
-
-const webGlassBlur = (
-  Platform.OS === "web"
-    ? {
-        backdropFilter: "blur(18px)",
-        WebkitBackdropFilter: "blur(18px)",
-      }
-    : {}
-) as ViewStyle;
 
 function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const { places, error: backendError } = useBackend();
@@ -188,6 +184,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [cameraMenuOpen, setCameraMenuOpen] = useState(false);
   const [nfcScanOpen, setNfcScanOpen] = useState(false);
   const cameraMenuProgress = useRef(new Animated.Value(0)).current;
+  const tabTransitionProgress = useRef(new Animated.Value(1)).current;
   const [foodCapture, setFoodCapture] = useState<FoodCapture | null>(null);
   const [listVisible, setListVisible] = useState(false);
   const [mapReady, setMapReady] = useState(false);
@@ -203,6 +200,17 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     animation.start();
     return () => animation.stop();
   }, [cameraMenuOpen, cameraMenuProgress]);
+  useLayoutEffect(() => {
+    tabTransitionProgress.setValue(0);
+    const animation = Animated.timing(tabTransitionProgress, {
+      toValue: 1,
+      duration: 210,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [tab, tabTransitionProgress]);
   const deferredQuery = useDeferredValue(query);
   const savedFilter = tab === "explore" ? null : saved;
   const visible = useMemo(() => {
@@ -288,13 +296,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     setSelected(null);
     setListVisible(false);
   }
-  function resetMap() {
+  function centerOnUserLocation() {
     setSelected(null);
-    camera.current?.setCamera({
-      centerCoordinate: mapCenter,
-      zoomLevel: 10.5,
-      animationDuration: 0,
-    });
+    camera.current?.centerOnUserLocation();
   }
   function selectedFilterLabel(dimension: FilterDimension) {
     if (dimension === "rating") {
@@ -350,605 +354,622 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   return (
     <View style={styles.screen}>
       <StatusBar style={tab === "camera" ? "light" : "dark"} />
-      {tab === "camera" ? (
-        <FoodCameraScreen
-          onClose={() => setTab(cameraReturnTab.current)}
-          onCapture={(capture) => {
-            setFoodCapture(capture);
-            setTab("dex");
-          }}
-        />
-      ) : tab === "dex" ? (
-        <FoodDexScreen
-          key={foodCapture?.id ?? "dex"}
-          capture={foodCapture}
-          onOpenCamera={openFoodCamera}
-        />
-      ) : tab === "favorites" ? (
-        <CommunityScreen
-          collection={collection}
-          dispatch={dispatch}
-          storageError={migrationError || storageError || backendError}
-          onShowMap={(place) => {
-            setTab("explore");
-            setCategory("All");
-            setQuery("");
-            choose(place);
-          }}
-        />
-      ) : tab === "profile" ? (
-        <ProfileScreen
-          saved={saved}
-          profile={profile}
-          onSave={setProfile}
-          storageError={migrationError || profileError}
-          topInset={insets.top}
-          bottomInset={insets.bottom}
-        />
-      ) : tab === "restaurants" ? (
-        <RestaurantsScreen
-          collection={collection}
-          dispatch={dispatch}
-          storageError={migrationError || storageError || backendError}
-          onShowMap={(place) => {
-            setTab("explore");
-            setCategory("All");
-            setQuery("");
-            choose(place);
-          }}
-        />
-      ) : (
-        <>
-          {token ? (
-            <MapView
-              ref={camera}
-              token={token}
-              center={selected?.coordinate ?? mapCenter}
-              zoom={selected ? 14.7 : 10.5}
-              topInset={insets.top}
-              bottomInset={insets.bottom}
-              places={visible}
-              selectedId={active?.id}
-              onSelect={choose}
-              onReady={onMapReady}
-              onError={onMapError}
-              renderPlaceMarker={renderPlaceMarker}
-              recommendations={recommendations}
-            />
-          ) : (
-            <View style={styles.emptyMap}>
-              <Icon name="map-outline" size={46} color={colors.accent} />
-              <Text style={styles.emptyTitle}>Your next bite starts here</Text>
-              <Text style={styles.emptyCopy}>
-                Add your Mapbox public token to load the map. You can explore
-                the restaurants below.
-              </Text>
-              <Text style={styles.setupCode}>
-                EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN
-              </Text>
-            </View>
-          )}
-          {token && (!mapReady || mapError) && (
-            <View pointerEvents="none" style={styles.mapStatus}>
-              {mapError ? (
-                <>
-                  <Icon name="cloud-offline-outline" />
-                  <Text style={styles.emptyCopy}>
-                    The map couldn’t load. Check your connection and Mapbox
-                    token.
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <ActivityIndicator color={colors.accent} />
-                  <Text style={styles.small}>Loading your neighborhood…</Text>
-                </>
-              )}
-            </View>
-          )}
-
-          <View
-            pointerEvents="box-none"
-            style={[styles.top, { top: insets.top + 12 }]}
-          >
-            <View style={styles.headingRow}>
-              <View>
-                <Image
-                  accessibilityLabel="Cibo"
-                  source={require("../../../../assets/cibo.png")}
-                  resizeMode="contain"
-                  style={styles.wordmark}
-                />
-                <Text style={styles.eyebrow}>GOOD FOOD. GREAT FINDS.</Text>
-              </View>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Open AI food recommender"
-                onPress={() => {
-                  Keyboard.dismiss();
-                  setRecommenderVisible(true);
-                }}
-                style={({ pressed }) => [
-                  styles.brand,
-                  pressed && styles.pressed,
-                ]}
-              >
-                <Icon name="sparkles-outline" size={23} color={colors.accent} />
-              </Pressable>
-            </View>
-            <View style={styles.search}>
-              <Icon name="search-outline" color={colors.muted} />
-              <TextInput
-                accessibilityLabel="Search restaurants"
-                placeholder="Coffee, pizza, a little treat…"
-                placeholderTextColor={colors.muted}
-                value={query}
-                onChangeText={setQuery}
-                style={styles.input}
-                returnKeyType="search"
+      <Animated.View
+        style={[
+          styles.tabContent,
+          {
+            opacity: tabTransitionProgress,
+            transform: [
+              {
+                translateY: tabTransitionProgress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [8, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      >
+        {tab === "camera" ? (
+          <FoodCameraScreen
+            onClose={() => setTab(cameraReturnTab.current)}
+            onCapture={(capture) => {
+              setFoodCapture(capture);
+              setTab("dex");
+            }}
+          />
+        ) : tab === "dex" ? (
+          <FoodDexScreen
+            key={foodCapture?.id ?? "dex"}
+            capture={foodCapture}
+            onOpenCamera={openFoodCamera}
+          />
+        ) : tab === "favorites" ? (
+          <CommunityScreen
+            collection={collection}
+            dispatch={dispatch}
+            storageError={migrationError || storageError || backendError}
+            onShowMap={(place) => {
+              setTab("explore");
+              setCategory("All");
+              setQuery("");
+              choose(place);
+            }}
+          />
+        ) : tab === "profile" ? (
+          <ProfileScreen
+            saved={saved}
+            profile={profile}
+            onSave={setProfile}
+            storageError={migrationError || profileError}
+            topInset={insets.top}
+            bottomInset={insets.bottom}
+          />
+        ) : tab === "restaurants" ? (
+          <RestaurantsScreen
+            collection={collection}
+            dispatch={dispatch}
+            storageError={migrationError || storageError || backendError}
+            onShowMap={(place) => {
+              setTab("explore");
+              setCategory("All");
+              setQuery("");
+              choose(place);
+            }}
+          />
+        ) : (
+          <>
+            {token ? (
+              <MapView
+                ref={camera}
+                token={token}
+                center={selected?.coordinate ?? mapCenter}
+                zoom={selected ? 14.7 : 10.5}
+                topInset={insets.top}
+                bottomInset={insets.bottom}
+                places={visible}
+                selectedId={active?.id}
+                onSelect={choose}
+                onReady={onMapReady}
+                onError={onMapError}
+                renderPlaceMarker={renderPlaceMarker}
+                recommendations={recommendations}
               />
-              {query.length > 0 && (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="Clear search"
-                  onPress={() => setQuery("")}
-                  style={styles.clear}
-                >
-                  <Icon name="close" size={18} />
-                </Pressable>
-              )}
-            </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chips}
-              keyboardShouldPersistTaps="handled"
+            ) : (
+              <View style={styles.emptyMap}>
+                <Icon name="map-outline" size={46} color={colors.accent} />
+                <Text style={styles.emptyTitle}>Your next bite starts here</Text>
+                <Text style={styles.emptyCopy}>
+                  Add your Mapbox public token to load the map. You can explore
+                  the restaurants below.
+                </Text>
+                <Text style={styles.setupCode}>
+                  EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN
+                </Text>
+              </View>
+            )}
+            {token && (!mapReady || mapError) && (
+              <View pointerEvents="none" style={styles.mapStatus}>
+                {mapError ? (
+                  <>
+                    <Icon name="cloud-offline-outline" />
+                    <Text style={styles.emptyCopy}>
+                      The map couldn’t load. Check your connection and Mapbox
+                      token.
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <ActivityIndicator color={colors.accent} />
+                    <Text style={styles.small}>Loading your neighborhood…</Text>
+                  </>
+                )}
+              </View>
+            )}
+  
+            <View
+              pointerEvents="box-none"
+              style={[styles.top, { top: insets.top + 12 }]}
             >
-              {!filtersExpanded ? (
+              <View style={styles.headingRow}>
+                <View>
+                  <Image
+                    accessibilityLabel="Cibo"
+                    source={require("../../../../assets/cibo.png")}
+                    resizeMode="contain"
+                    style={styles.wordmark}
+                  />
+                  <Text style={styles.eyebrow}>GOOD FOOD. GREAT FINDS.</Text>
+                </View>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Show search filters"
-                  accessibilityState={{ expanded: false }}
-                  onPress={() => setFiltersExpanded(true)}
+                  accessibilityLabel="Open AI food recommender"
+                  onPress={() => {
+                    Keyboard.dismiss();
+                    setRecommenderVisible(true);
+                  }}
                   style={({ pressed }) => [
-                    styles.chip,
+                    styles.brand,
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Icon name="options-outline" size={17} />
-                  <Text style={styles.chipText}>Filters</Text>
+                  <Icon name="sparkles-outline" size={23} color={colors.accent} />
                 </Pressable>
-              ) : (
-                <>
+              </View>
+              <View style={styles.search}>
+                <Icon name="search-outline" color={colors.muted} />
+                <TextInput
+                  accessibilityLabel="Search restaurants"
+                  placeholder="Coffee, pizza, a little treat…"
+                  placeholderTextColor={colors.muted}
+                  value={query}
+                  onChangeText={setQuery}
+                  style={styles.input}
+                  returnKeyType="search"
+                />
+                {query.length > 0 && (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel="Hide search filters"
-                    accessibilityState={{ expanded: true }}
-                    onPress={() => {
-                      setFiltersExpanded(false);
-                      setOpenFilter(null);
-                    }}
+                    accessibilityLabel="Clear search"
+                    onPress={() => setQuery("")}
+                    style={styles.clear}
+                  >
+                    <Icon name="close" size={18} />
+                  </Pressable>
+                )}
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.chips}
+                keyboardShouldPersistTaps="handled"
+              >
+                {!filtersExpanded ? (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Show search filters"
+                    accessibilityState={{ expanded: false }}
+                    onPress={() => setFiltersExpanded(true)}
                     style={({ pressed }) => [
                       styles.chip,
                       pressed && styles.pressed,
                     ]}
                   >
                     <Icon name="options-outline" size={17} />
-                    <Text style={styles.chipText}>Filters ×</Text>
+                    <Text style={styles.chipText}>Filters</Text>
                   </Pressable>
-                  {(
-                    [
-                      "price",
-                      "rating",
-                      "cuisine",
-                      "restaurantType",
-                      "foodType",
-                      "rarity",
-                    ] as const
-                  ).map((dimension) =>
-                    (() => {
-                      const selectedLabel = selectedFilterLabel(dimension);
-                      return (
-                        <Pressable
-                          key={dimension}
-                          ref={(ref) => {
-                            filterButtonRefs.current[dimension] = ref;
-                          }}
-                          accessibilityRole="button"
-                          accessibilityLabel={`${dimension} filter${selectedLabel ? `: ${selectedLabel}` : ""}`}
-                          accessibilityState={{
-                            selected: !!selectedLabel,
-                            expanded: openFilter === dimension,
-                          }}
-                          onPress={() => {
-                            if (openFilter === dimension) {
-                              closeFilterDropdown();
-                              return;
-                            }
-                            setOpenFilter(dimension);
-                            filterButtonRefs.current[
-                              dimension
-                            ]?.measureInWindow((x, y, _width, height) =>
-                              setFilterAnchor({ left: x, top: y + height + 6 }),
-                            );
-                          }}
-                          style={({ pressed }) => [
-                            styles.chip,
-                            selectedLabel && styles.selectedFilterChip,
-                            pressed && styles.pressed,
-                          ]}
-                        >
-                          <Icon
-                            name={
-                              selectedLabel
-                                ? "checkmark"
-                                : dimension === "price"
-                                  ? "cash-outline"
-                                  : dimension === "rating"
-                                    ? "star"
-                                    : dimension === "cuisine"
-                                      ? "restaurant-outline"
-                                      : dimension === "restaurantType"
-                                        ? "storefront-outline"
-                                        : dimension === "foodType"
-                                          ? "fast-food-outline"
-                                          : "sparkles-outline"
-                            }
-                            size={17}
-                          />
-                          <Text style={styles.chipText}>
-                            {selectedLabel ??
-                              (dimension === "restaurantType"
-                                ? "Restaurant Type"
-                                : dimension === "foodType"
-                                  ? "Food Type"
-                                  : `${dimension[0]!.toUpperCase()}${dimension.slice(1)}`)}
-                          </Text>
-                        </Pressable>
-                      );
-                    })(),
-                  )}
-                </>
-              )}
-            </ScrollView>
-            {filtersExpanded && openFilter && filterAnchor && (
-              <View
-                style={[
-                  styles.filterDropdown,
-                  {
-                    left: Math.max(
-                      0,
-                      Math.min(
-                        filterAnchor.left - 20,
-                        windowWidth - 40 - Math.min(240, windowWidth - 32),
-                      ),
-                    ),
-                    top: filterAnchor.top - insets.top - 12,
-                    width: Math.min(240, windowWidth - 32),
-                    maxHeight: Math.max(
-                      140,
-                      windowHeight - filterAnchor.top - insets.bottom - 12,
-                    ),
-                  },
-                ]}
-              >
-                <Text style={styles.filterDropdownTitle}>
-                  {openFilter === "restaurantType"
-                    ? "Restaurant Type"
-                    : openFilter === "foodType"
-                      ? "Food Type"
-                      : `${openFilter[0]!.toUpperCase()}${openFilter.slice(1)}`}
-                </Text>
-                <ScrollView
+                ) : (
+                  <>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Hide search filters"
+                      accessibilityState={{ expanded: true }}
+                      onPress={() => {
+                        setFiltersExpanded(false);
+                        setOpenFilter(null);
+                      }}
+                      style={({ pressed }) => [
+                        styles.chip,
+                        pressed && styles.pressed,
+                      ]}
+                    >
+                      <Icon name="options-outline" size={17} />
+                      <Text style={styles.chipText}>Filters ×</Text>
+                    </Pressable>
+                    {(
+                      [
+                        "price",
+                        "rating",
+                        "cuisine",
+                        "restaurantType",
+                        "foodType",
+                        "rarity",
+                      ] as const
+                    ).map((dimension) =>
+                      (() => {
+                        const selectedLabel = selectedFilterLabel(dimension);
+                        return (
+                          <Pressable
+                            key={dimension}
+                            ref={(ref) => {
+                              filterButtonRefs.current[dimension] = ref;
+                            }}
+                            accessibilityRole="button"
+                            accessibilityLabel={`${dimension} filter${selectedLabel ? `: ${selectedLabel}` : ""}`}
+                            accessibilityState={{
+                              selected: !!selectedLabel,
+                              expanded: openFilter === dimension,
+                            }}
+                            onPress={() => {
+                              if (openFilter === dimension) {
+                                closeFilterDropdown();
+                                return;
+                              }
+                              setOpenFilter(dimension);
+                              filterButtonRefs.current[
+                                dimension
+                              ]?.measureInWindow((x, y, _width, height) =>
+                                setFilterAnchor({ left: x, top: y + height + 6 }),
+                              );
+                            }}
+                            style={({ pressed }) => [
+                              styles.chip,
+                              selectedLabel && styles.selectedFilterChip,
+                              pressed && styles.pressed,
+                            ]}
+                          >
+                            <Icon
+                              name={
+                                selectedLabel
+                                  ? "checkmark"
+                                  : dimension === "price"
+                                    ? "cash-outline"
+                                    : dimension === "rating"
+                                      ? "star"
+                                      : dimension === "cuisine"
+                                        ? "restaurant-outline"
+                                        : dimension === "restaurantType"
+                                          ? "storefront-outline"
+                                          : dimension === "foodType"
+                                            ? "fast-food-outline"
+                                            : "sparkles-outline"
+                              }
+                              size={17}
+                            />
+                            <Text style={styles.chipText}>
+                              {selectedLabel ??
+                                (dimension === "restaurantType"
+                                  ? "Restaurant Type"
+                                  : dimension === "foodType"
+                                    ? "Food Type"
+                                    : `${dimension[0]!.toUpperCase()}${dimension.slice(1)}`)}
+                            </Text>
+                          </Pressable>
+                        );
+                      })(),
+                    )}
+                  </>
+                )}
+              </ScrollView>
+              {filtersExpanded && openFilter && filterAnchor && (
+                <View
                   style={[
-                    styles.filterDropdownList,
+                    styles.filterDropdown,
                     {
-                      maxHeight: Math.max(
-                        120,
-                        windowHeight - filterAnchor.top - insets.bottom - 76,
+                      left: Math.max(
+                        0,
+                        Math.min(
+                          filterAnchor.left - 20,
+                          windowWidth - 40 - Math.min(240, windowWidth - 32),
+                        ),
                       ),
-                      ...(openFilter === "rating" ? { height: 46 } : {}),
+                      top: filterAnchor.top - insets.top - 12,
+                      width: Math.min(240, windowWidth - 32),
+                      maxHeight: Math.max(
+                        140,
+                        windowHeight - filterAnchor.top - insets.bottom - 12,
+                      ),
                     },
                   ]}
-                  nestedScrollEnabled
                 >
-                  {openFilter === "rating" ? (
-                    <View style={styles.ratingFilterRow}>
-                      {[1, 2, 3, 4, 5].map((value) => (
+                  <Text style={styles.filterDropdownTitle}>
+                    {openFilter === "restaurantType"
+                      ? "Restaurant Type"
+                      : openFilter === "foodType"
+                        ? "Food Type"
+                        : `${openFilter[0]!.toUpperCase()}${openFilter.slice(1)}`}
+                  </Text>
+                  <ScrollView
+                    style={[
+                      styles.filterDropdownList,
+                      {
+                        maxHeight: Math.max(
+                          120,
+                          windowHeight - filterAnchor.top - insets.bottom - 76,
+                        ),
+                        ...(openFilter === "rating" ? { height: 46 } : {}),
+                      },
+                    ]}
+                    nestedScrollEnabled
+                  >
+                    {openFilter === "rating" ? (
+                      <View style={styles.ratingFilterRow}>
+                        {[1, 2, 3, 4, 5].map((value) => (
+                          <Pressable
+                            key={value}
+                            accessibilityRole="button"
+                            accessibilityLabel={`Filter ${value} stars and up`}
+                            accessibilityState={{
+                              selected: ratingFilter === value,
+                            }}
+                            onPress={() => {
+                              setRatingFilter(
+                                ratingFilter === value ? null : value,
+                              );
+                              closeFilterDropdown();
+                            }}
+                            style={styles.ratingFilterStar}
+                          >
+                            <Icon
+                              name={
+                                value <= (ratingFilter ?? 0)
+                                  ? "star"
+                                  : "star-outline"
+                              }
+                              color={colors.accent}
+                              size={24}
+                            />
+                          </Pressable>
+                        ))}
+                      </View>
+                    ) : openFilter === "restaurantType" ? (
+                      ["Any restaurant type", ...restaurantTypes].map((value) => (
                         <Pressable
                           key={value}
-                          accessibilityRole="button"
-                          accessibilityLabel={`Filter ${value} stars and up`}
-                          accessibilityState={{
-                            selected: ratingFilter === value,
-                          }}
                           onPress={() => {
-                            setRatingFilter(
-                              ratingFilter === value ? null : value,
+                            setRestaurantTypeFilter(
+                              value === "Any restaurant type" ? null : value,
+                            );
+                            setCategory("All");
+                            closeFilterDropdown();
+                          }}
+                          style={styles.filterDropdownOption}
+                        >
+                          <Text style={styles.filterDropdownOptionText}>
+                            {value}
+                          </Text>
+                        </Pressable>
+                      ))
+                    ) : openFilter === "foodType" ? (
+                      ["Any food type", ...foodSpecialties].map((value) => (
+                        <Pressable
+                          key={value}
+                          onPress={() => {
+                            setFoodTypeFilter(
+                              value === "Any food type" ? null : value,
                             );
                             closeFilterDropdown();
                           }}
-                          style={styles.ratingFilterStar}
+                          style={styles.filterDropdownOption}
                         >
-                          <Icon
-                            name={
-                              value <= (ratingFilter ?? 0)
-                                ? "star"
-                                : "star-outline"
-                            }
-                            color={colors.accent}
-                            size={24}
-                          />
+                          <Text style={styles.filterDropdownOptionText}>
+                            {value}
+                          </Text>
                         </Pressable>
-                      ))}
-                    </View>
-                  ) : openFilter === "restaurantType" ? (
-                    ["Any restaurant type", ...restaurantTypes].map((value) => (
-                      <Pressable
-                        key={value}
-                        onPress={() => {
-                          setRestaurantTypeFilter(
-                            value === "Any restaurant type" ? null : value,
-                          );
-                          setCategory("All");
-                          closeFilterDropdown();
-                        }}
-                        style={styles.filterDropdownOption}
-                      >
+                      ))
+                    ) : openFilter === "cuisine" ? (
+                      [
+                        "Any cuisine",
+                        ...cuisines.filter((value) => value !== "Bakery"),
+                      ].map((value) => (
+                        <Pressable
+                          key={value}
+                          onPress={() => {
+                            setCuisineFilter(
+                              value === "Any cuisine" ? null : value,
+                            );
+                            closeFilterDropdown();
+                          }}
+                          style={styles.filterDropdownOption}
+                        >
+                          <Text style={styles.filterDropdownOptionText}>
+                            {value}
+                          </Text>
+                        </Pressable>
+                      ))
+                    ) : openFilter === "price" ? (
+                      <View style={styles.priceFilterOptions}>
                         <Text style={styles.filterDropdownOptionText}>
-                          {value}
+                          $ · $$ · $$$ · $$$$
                         </Text>
-                      </Pressable>
-                    ))
-                  ) : openFilter === "foodType" ? (
-                    ["Any food type", ...foodSpecialties].map((value) => (
-                      <Pressable
-                        key={value}
-                        onPress={() => {
-                          setFoodTypeFilter(
-                            value === "Any food type" ? null : value,
-                          );
-                          closeFilterDropdown();
-                        }}
-                        style={styles.filterDropdownOption}
-                      >
-                        <Text style={styles.filterDropdownOptionText}>
-                          {value}
+                        <Text style={styles.small}>
+                          Price data isn’t available for these listings yet.
                         </Text>
-                      </Pressable>
-                    ))
-                  ) : openFilter === "cuisine" ? (
-                    [
-                      "Any cuisine",
-                      ...cuisines.filter((value) => value !== "Bakery"),
-                    ].map((value) => (
-                      <Pressable
-                        key={value}
-                        onPress={() => {
-                          setCuisineFilter(
-                            value === "Any cuisine" ? null : value,
-                          );
-                          closeFilterDropdown();
-                        }}
-                        style={styles.filterDropdownOption}
-                      >
-                        <Text style={styles.filterDropdownOptionText}>
-                          {value}
-                        </Text>
-                      </Pressable>
-                    ))
-                  ) : openFilter === "price" ? (
-                    <View style={styles.priceFilterOptions}>
-                      <Text style={styles.filterDropdownOptionText}>
-                        $ · $$ · $$$ · $$$$
-                      </Text>
+                      </View>
+                    ) : (
                       <Text style={styles.small}>
-                        Price data isn’t available for these listings yet.
+                        Rarity data isn’t available for these listings yet.
                       </Text>
-                    </View>
-                  ) : (
-                    <Text style={styles.small}>
-                      Rarity data isn’t available for these listings yet.
-                    </Text>
-                  )}
-                </ScrollView>
-              </View>
-            )}
-          </View>
-
-          <View
-            pointerEvents="box-none"
-            style={[styles.bottom, { bottom: insets.bottom + 90 }]}
-          >
-            <View style={styles.mapActions}>
-              {token && (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="Show all Toronto restaurants"
-                  onPress={resetMap}
-                  style={({ pressed }) => [
-                    styles.roundButton,
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <Icon name="locate-outline" />
-                </Pressable>
+                    )}
+                  </ScrollView>
+                </View>
               )}
             </View>
-            {active ? (
-              <View style={styles.placeCard}>
-                <View style={styles.cardTop}>
-                  <RestaurantPhoto
-                    eager
-                    showAll
-                    place={active}
-                    recommendation={recommendations.get(active.id)}
-                    style={styles.cardImage}
-                  />
-                  <View style={styles.cardInfo}>
-                    <Text style={styles.eyebrow}>
-                      {active.category.toUpperCase()} · {active.neighborhood}
-                    </Text>
-                    <Text style={styles.placeName}>{active.name}</Text>
-                    <Text style={styles.small}>{active.note}</Text>
-                    <RestaurantPhotoCredit place={active} />
-                  </View>
+  
+            <View
+              pointerEvents="box-none"
+              style={[styles.bottom, { bottom: insets.bottom + 90 }]}
+            >
+              <View style={styles.mapActions}>
+                {token && (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel="Close place details"
-                    onPress={() => setSelected(null)}
-                    style={styles.closeButton}
+                    accessibilityLabel="Center on my current location"
+                    onPress={centerOnUserLocation}
+                    style={({ pressed }) => [
+                      styles.roundButton,
+                      pressed && styles.pressed,
+                    ]}
                   >
-                    <Icon name="close" size={18} />
+                    <Icon name="locate-outline" />
                   </Pressable>
-                </View>
-                <Text style={styles.address}>{active.address}</Text>
-                <Text style={styles.small}>
-                  {recommendationLabel(recommendations.get(active.id))} · Sample
-                  community reviews
-                </Text>
-                <View style={styles.ratingRow}>
-                  <Text style={styles.small}>Your rating</Text>
-                  {[1, 2, 3, 4, 5].map((value) => (
+                )}
+              </View>
+              {active ? (
+                <View style={styles.placeCard}>
+                  <View style={styles.cardTop}>
+                    <RestaurantPhoto
+                      eager
+                      showAll
+                      place={active}
+                      recommendation={recommendations.get(active.id)}
+                      style={styles.cardImage}
+                    />
+                    <View style={styles.cardInfo}>
+                      <Text style={styles.eyebrow}>
+                        {active.category.toUpperCase()} · {active.neighborhood}
+                      </Text>
+                      <Text style={styles.placeName}>{active.name}</Text>
+                      <Text style={styles.small}>{active.note}</Text>
+                      <RestaurantPhotoCredit place={active} />
+                    </View>
                     <Pressable
-                      key={value}
                       accessibilityRole="button"
-                      accessibilityLabel={`Rate ${active.name} ${value} ${value === 1 ? "star" : "stars"}`}
-                      accessibilityHint="Tap the selected rating again to clear it."
-                      accessibilityState={{
-                        selected: collection.ratings[active.id] === value,
+                      accessibilityLabel="Close place details"
+                      onPress={() => setSelected(null)}
+                      style={styles.closeButton}
+                    >
+                      <Icon name="close" size={18} />
+                    </Pressable>
+                  </View>
+                  <Text style={styles.address}>{active.address}</Text>
+                  <Text style={styles.small}>
+                    {recommendationLabel(recommendations.get(active.id))} · Sample
+                    community reviews
+                  </Text>
+                  <View style={styles.ratingRow}>
+                    <Text style={styles.small}>Your rating</Text>
+                    {[1, 2, 3, 4, 5].map((value) => (
+                      <Pressable
+                        key={value}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Rate ${active.name} ${value} ${value === 1 ? "star" : "stars"}`}
+                        accessibilityHint="Tap the selected rating again to clear it."
+                        accessibilityState={{
+                          selected: collection.ratings[active.id] === value,
+                        }}
+                        onPress={() =>
+                          dispatch({
+                            type: "rate",
+                            placeId: active.id,
+                            rating:
+                              collection.ratings[active.id] === value ? 0 : value,
+                          })
+                        }
+                        style={({ pressed }) => [
+                          styles.ratingStar,
+                          pressed && styles.pressed,
+                        ]}
+                      >
+                        <Icon
+                          name={
+                            value <= (collection.ratings[active.id] ?? 0)
+                              ? "star"
+                              : "star-outline"
+                          }
+                          color={colors.accent}
+                        />
+                      </Pressable>
+                    ))}
+                  </View>
+                  <View style={styles.cardButtons}>
+                    <Pressable
+                      accessibilityRole="button"
+                      onPress={() => {
+                        setLinkError(false);
+                        void Linking.openURL(
+                          `https://www.google.com/maps/dir/?api=1&destination=${active.coordinate[1]},${active.coordinate[0]}`,
+                        ).catch(() => setLinkError(true));
                       }}
-                      onPress={() =>
-                        dispatch({
-                          type: "rate",
-                          placeId: active.id,
-                          rating:
-                            collection.ratings[active.id] === value ? 0 : value,
-                        })
-                      }
                       style={({ pressed }) => [
-                        styles.ratingStar,
+                        styles.directions,
+                        pressed && styles.pressed,
+                      ]}
+                    >
+                      <Icon
+                        name="navigate-outline"
+                        size={17}
+                        color={colors.white}
+                      />
+                      <Text style={styles.directionsText}>Get directions</Text>
+                    </Pressable>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={
+                        saved.includes(active.id) ? "Unsave place" : "Save place"
+                      }
+                      accessibilityState={{ selected: saved.includes(active.id) }}
+                      onPress={() => toggleSave(active)}
+                      style={({ pressed }) => [
+                        styles.saveButton,
                         pressed && styles.pressed,
                       ]}
                     >
                       <Icon
                         name={
-                          value <= (collection.ratings[active.id] ?? 0)
-                            ? "star"
-                            : "star-outline"
+                          saved.includes(active.id)
+                            ? "bookmark"
+                            : "bookmark-outline"
                         }
                         color={colors.accent}
                       />
                     </Pressable>
-                  ))}
+                  </View>
+                  {active.sourceUrl && (
+                    <Pressable
+                      accessibilityRole="link"
+                      accessibilityLabel={`View listing source for ${active.name}`}
+                      onPress={() => {
+                        setLinkError(false);
+                        void Linking.openURL(active.sourceUrl!).catch(() =>
+                          setLinkError(true),
+                        );
+                      }}
+                      style={({ pressed }) => [
+                        { minHeight: 44, justifyContent: "center" },
+                        pressed && styles.pressed,
+                      ]}
+                    >
+                      <Text style={styles.small}>View listing source ↗</Text>
+                    </Pressable>
+                  )}
+                  {linkError && (
+                    <Text accessibilityRole="alert" style={styles.small}>
+                      Couldn’t open this link. Please try again.
+                    </Text>
+                  )}
                 </View>
-                <View style={styles.cardButtons}>
-                  <Pressable
-                    accessibilityRole="button"
-                    onPress={() => {
-                      setLinkError(false);
-                      void Linking.openURL(
-                        `https://www.google.com/maps/dir/?api=1&destination=${active.coordinate[1]},${active.coordinate[0]}`,
-                      ).catch(() => setLinkError(true));
-                    }}
-                    style={({ pressed }) => [
-                      styles.directions,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Icon
-                      name="navigate-outline"
-                      size={17}
-                      color={colors.white}
-                    />
-                    <Text style={styles.directionsText}>Get directions</Text>
-                  </Pressable>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel={
-                      saved.includes(active.id) ? "Unsave place" : "Save place"
-                    }
-                    accessibilityState={{ selected: saved.includes(active.id) }}
-                    onPress={() => toggleSave(active)}
-                    style={({ pressed }) => [
-                      styles.saveButton,
-                      pressed && styles.pressed,
-                    ]}
-                  >
+              ) : tab === "saved" ? (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => setListVisible(true)}
+                  style={({ pressed }) => [
+                    styles.browseCard,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <View style={styles.browseIcon}>
                     <Icon
                       name={
-                        saved.includes(active.id)
-                          ? "bookmark"
-                          : "bookmark-outline"
+                        tab === "saved"
+                          ? "bookmark-outline"
+                          : "restaurant-outline"
                       }
-                      color={colors.accent}
+                      color={colors.white}
+                      size={24}
                     />
-                  </Pressable>
-                </View>
-                {active.sourceUrl && (
-                  <Pressable
-                    accessibilityRole="link"
-                    accessibilityLabel={`View listing source for ${active.name}`}
-                    onPress={() => {
-                      setLinkError(false);
-                      void Linking.openURL(active.sourceUrl!).catch(() =>
-                        setLinkError(true),
-                      );
-                    }}
-                    style={({ pressed }) => [
-                      { minHeight: 44, justifyContent: "center" },
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Text style={styles.small}>View listing source ↗</Text>
-                  </Pressable>
-                )}
-                {linkError && (
-                  <Text accessibilityRole="alert" style={styles.small}>
-                    Couldn’t open this link. Please try again.
-                  </Text>
-                )}
-              </View>
-            ) : tab === "saved" ? (
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => setListVisible(true)}
-                style={({ pressed }) => [
-                  styles.browseCard,
-                  pressed && styles.pressed,
-                ]}
-              >
-                <View style={styles.browseIcon}>
-                  <Icon
-                    name={
-                      tab === "saved"
-                        ? "bookmark-outline"
-                        : "restaurant-outline"
-                    }
-                    color={colors.white}
-                    size={24}
-                  />
-                </View>
-                <View style={styles.flex}>
-                  <Text style={styles.browseTitle}>
-                    {visible.length
-                      ? `${visible.length} spots to come back to`
-                      : "No spots here yet"}
-                  </Text>
-                  <Text style={styles.small}>
-                    {visible.length
-                      ? "Suggestions favor high ratings and fewer reviews."
-                      : tab === "saved"
-                        ? "Save a place from Explore to find it here."
-                        : "Try another category or search."}
-                  </Text>
-                </View>
-                <Icon name="chevron-up" size={18} />
-              </Pressable>
-            ) : null}
-          </View>
-        </>
-      )}
+                  </View>
+                  <View style={styles.flex}>
+                    <Text style={styles.browseTitle}>
+                      {visible.length
+                        ? `${visible.length} spots to come back to`
+                        : "No spots here yet"}
+                    </Text>
+                    <Text style={styles.small}>
+                      {visible.length
+                        ? "Suggestions favor high ratings and fewer reviews."
+                        : tab === "saved"
+                          ? "Save a place from Explore to find it here."
+                          : "Try another category or search."}
+                    </Text>
+                  </View>
+                  <Icon name="chevron-up" size={18} />
+                </Pressable>
+              ) : null}
+            </View>
+          </>
+        )}
+      </Animated.View>
       {tab !== "camera" && cameraMenuOpen && (
         <Pressable
           accessibilityRole="button"
@@ -1255,6 +1276,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.blue },
+  tabContent: { flex: 1 },
   flex: { flex: 1 },
   pressed: { opacity: 0.65 },
   top: {
@@ -1281,26 +1303,27 @@ const styles = StyleSheet.create({
     height: 62,
   },
   brand: {
+    ...frostedGlassTint,
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: colors.tint,
+    backgroundColor: "rgba(234,243,178,0.11)",
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.28)",
   },
   search: {
-    ...webGlassBlur,
+    ...frostedGlass,
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 16,
     paddingRight: 6,
     minHeight: 52,
-    backgroundColor: "rgba(255,253,245,0.50)",
+    backgroundColor: "rgba(255,253,245,0.05)",
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.68)",
+    borderColor: "rgba(255,255,255,0.26)",
     boxShadow: "0 8px 26px #3D568F20",
     gap: 10,
   },
@@ -1313,14 +1336,15 @@ const styles = StyleSheet.create({
   },
   chips: { gap: 8, paddingBottom: 5 },
   filterDropdown: {
+    ...frostedGlass,
     position: "absolute",
     alignSelf: "flex-start",
-    backgroundColor: colors.white,
-    borderRadius: 10,
+    backgroundColor: "rgba(255,253,245,0.07)",
+    borderRadius: 16,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.26)",
     boxShadow: "0 4px 14px #00000030",
     zIndex: 40,
     elevation: 40,
@@ -1352,21 +1376,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   chip: {
-    ...webGlassBlur,
+    ...frostedGlass,
     minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingHorizontal: 15,
     borderRadius: 24,
-    backgroundColor: "rgba(255,253,245,0.46)",
+    backgroundColor: "rgba(255,253,245,0.05)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.68)",
+    borderColor: "rgba(255,255,255,0.25)",
     boxShadow: "0 4px 16px #3D568F14",
   },
   selectedFilterChip: {
-    backgroundColor: "rgba(234,243,178,0.64)",
-    borderColor: "rgba(61,86,143,0.42)",
+    ...frostedGlassSelected,
   },
   chipActive: { backgroundColor: colors.ink, borderColor: colors.ink },
   chipText: { fontSize: 12, fontWeight: "600", color: colors.ink },
@@ -1426,12 +1449,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   areaPill: {
+    ...frostedGlass,
     flexDirection: "row",
     alignItems: "center",
     gap: 7,
-    backgroundColor: colors.paper,
+    backgroundColor: "rgba(255,253,245,0.05)",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.24)",
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: 20,
@@ -1439,22 +1463,24 @@ const styles = StyleSheet.create({
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.accent },
   small: { fontSize: 12, lineHeight: 18, color: colors.muted },
   roundButton: {
+    ...frostedGlass,
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.05)",
     alignItems: "center",
     justifyContent: "center",
   },
   browseCard: {
+    ...frostedGlass,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     padding: 18,
     borderRadius: 24,
-    backgroundColor: colors.paper,
+    backgroundColor: "rgba(255,253,245,0.06)",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.24)",
     boxShadow: "0 4px 24px #3D568F12",
   },
   browseIcon: {
@@ -1497,16 +1523,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cameraMenu: {
-    ...webGlassBlur,
+    ...frostedGlass,
     position: "absolute",
     bottom: 70,
     left: 2,
     width: 60,
     padding: 5,
     borderRadius: 30,
-    backgroundColor: "rgba(255,253,245,0.90)",
+    backgroundColor: "rgba(255,253,245,0.05)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.82)",
+    borderColor: "rgba(255,255,255,0.22)",
     boxShadow: "0 10px 30px #3D568F2A",
     zIndex: 60,
     elevation: 60,
@@ -1523,7 +1549,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: "rgba(61,86,143,0.10)",
+    backgroundColor: "rgba(61,86,143,0.06)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -1540,14 +1566,14 @@ const styles = StyleSheet.create({
     boxShadow: "0 4px 12px #364C8433",
   },
   navGroup: {
-    ...webGlassBlur,
+    ...frostedGlass,
     flex: 1,
     flexDirection: "row",
     padding: 4,
     borderRadius: 32,
-    backgroundColor: "rgba(255,253,245,0.50)",
+    backgroundColor: "rgba(255,253,245,0.05)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.62)",
+    borderColor: "rgba(255,255,255,0.24)",
     boxShadow: "0 8px 22px #3D568F1A",
   },
   navItem: {
@@ -1563,9 +1589,12 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     minHeight: 48,
   },
-  navActive: { backgroundColor: "rgba(234,243,178,0.66)" },
+  navActive: frostedGlassSelected,
   placeCard: {
-    backgroundColor: colors.paper,
+    ...frostedGlass,
+    backgroundColor: "rgba(255,253,245,0.12)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.28)",
     borderRadius: 24,
     padding: 16,
     gap: 12,
@@ -1638,7 +1667,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     padding: 18,
-    backgroundColor: colors.paper,
+    ...frostedGlass,
+    backgroundColor: "rgba(255,253,245,0.09)",
     borderRadius: 18,
     maxWidth: "85%",
   },
@@ -1652,7 +1682,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.scrim,
   },
   sheet: {
-    backgroundColor: colors.paper,
+    ...frostedGlass,
+    backgroundColor: "rgba(255,253,245,0.30)",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 22,

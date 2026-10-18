@@ -11,7 +11,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors } from "../../../theme/index";
+import {
+  colors,
+  frostedGlass,
+  frostedGlassTint,
+} from "../../../theme/index";
 import { readFoodTag } from "../services/nfcReader";
 import { parseNfcFoodPayload } from "../services/nfcFood";
 import type { NfcFoodItem } from "../services/nfcFood";
@@ -194,14 +198,15 @@ const s = StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "#3D568F99",
+    backgroundColor: "#3D568F4D",
   },
   sheet: {
+    ...frostedGlass,
     width: "100%",
     maxWidth: 560,
     alignSelf: "center",
     paddingBottom: 24,
-    backgroundColor: colors.paper,
+    backgroundColor: "rgba(255,253,245,0.30)",
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
   },
@@ -234,12 +239,13 @@ const s = StyleSheet.create({
     paddingTop: 28,
   },
   badge: {
+    ...frostedGlassTint,
     width: 76,
     height: 76,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 26,
-    backgroundColor: colors.tint,
+    backgroundColor: "rgba(234,243,178,0.14)",
   },
   title: {
     color: colors.ink,
@@ -268,12 +274,13 @@ const s = StyleSheet.create({
     gap: 10,
   },
   numberInput: {
+    ...frostedGlass,
     flex: 1,
     minHeight: 48,
     paddingHorizontal: 14,
     borderRadius: 14,
     color: colors.ink,
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.06)",
     borderWidth: 1,
     borderColor: colors.border,
   },

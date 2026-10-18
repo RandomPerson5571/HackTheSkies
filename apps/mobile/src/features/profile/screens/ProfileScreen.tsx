@@ -10,7 +10,12 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { categories, type Category } from "../../restaurants/data/places";
 
-import { colors } from "../../../theme/index";
+import {
+  colors,
+  frostedGlass,
+  frostedGlassSelected,
+  frostedGlassTint,
+} from "../../../theme/index";
 
 import { useBackend } from "../../../lib/BackendProvider";
 import type { Profile } from "../models/profile";
@@ -369,7 +374,8 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 24,
-    backgroundColor: colors.tint,
+    ...frostedGlassTint,
+    backgroundColor: "rgba(234,243,178,0.14)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -378,8 +384,9 @@ const styles = StyleSheet.create({
   copy: { color: colors.muted, fontSize: 12, lineHeight: 19 },
   tag: { color: colors.accent, fontSize: 12, fontWeight: "600", marginTop: 3 },
   stats: {
+    ...frostedGlassTint,
     flexDirection: "row",
-    backgroundColor: colors.tint,
+    backgroundColor: "rgba(234,243,178,0.14)",
     borderRadius: 22,
     paddingVertical: 20,
   },
@@ -387,11 +394,12 @@ const styles = StyleSheet.create({
   statValue: { color: colors.accent, fontSize: 26, fontWeight: "700" },
   statLabel: { color: colors.muted, fontSize: 10 },
   card: {
+    ...frostedGlass,
     borderRadius: 24,
     padding: 18,
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.07)",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.28)",
     gap: 12,
   },
   heading: { flexDirection: "row", gap: 9, alignItems: "center" },
@@ -433,7 +441,8 @@ const styles = StyleSheet.create({
   label: { color: colors.ink, fontSize: 13, fontWeight: "600" },
   hint: { color: colors.accent, fontSize: 12, lineHeight: 19 },
   input: {
-    backgroundColor: colors.paper,
+    ...frostedGlass,
+    backgroundColor: "rgba(255,253,245,0.07)",
     color: colors.ink,
     borderWidth: 1,
     borderColor: colors.border,
@@ -445,6 +454,7 @@ const styles = StyleSheet.create({
   },
   choices: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   choice: {
+    ...frostedGlass,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 24,
@@ -452,12 +462,9 @@ const styles = StyleSheet.create({
     minHeight: 48,
     justifyContent: "center",
   },
-  choiceSelected: {
-    backgroundColor: colors.accent,
-    borderColor: colors.accent,
-  },
+  choiceSelected: frostedGlassSelected,
   choiceText: { color: colors.ink, fontSize: 12, fontWeight: "600" },
-  choiceTextSelected: { color: colors.white },
+  choiceTextSelected: { color: colors.ink },
   save: {
     backgroundColor: colors.accent,
     borderRadius: 14,

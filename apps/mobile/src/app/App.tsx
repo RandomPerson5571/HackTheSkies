@@ -94,6 +94,9 @@ import { useGuestDocument } from "../hooks/useGuestDocument";
 import { CollectionQuestsScreen as QuestsScreen } from "../features/quests/screens/CollectionQuestsScreen";
 import { useFoodDex } from "../features/food-dex/hooks/useFoodDex";
 import { useGamification } from "../features/gamification/hooks/useGamification";
+import { usePointsWallet } from "../features/gamification/hooks/usePointsWallet";
+import { playerProgress } from "../features/gamification/models/playerProgress";
+import { useQuests } from "../features/quests/hooks/useQuests";
 import { parseProfile } from "../features/profile/models/profile";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
@@ -241,6 +244,14 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const { collection, dispatch: dispatchCollection, storageError } = useRestaurantCollection();
   const foodDex = useFoodDex();
   const gamification = useGamification();
+  const questProgress = useQuests();
+  const lifetimeXp = playerProgress(
+    gamification.state.xp,
+    questProgress.state,
+    foodDex.entries,
+    collection.visited,
+  ).totalXp;
+  const pointsWallet = usePointsWallet(lifetimeXp);
   function dispatch(action: CollectionAction) {
     const next = updateCollection(collection, action);
     const awards = restaurantQuestAwards(collection.visited, next.visited, foodDex.entries, gamification.state.xp);
@@ -1221,6 +1232,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         ) : tab === "profile" ? (
           <ProfileScreen
             game={gamification.state}
+            pointsBalance={pointsWallet.balance}
+            pointsReady={pointsWallet.ready}
             ratingsCount={Object.keys(collection.ratings).length}
             saved={saved}
             visited={collection.visited}
@@ -1235,6 +1248,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             }}
             onUploadAvatar={() => void uploadProfilePicture()}
             onOpenDex={() => setTab("dex")}
+            onOpenShop={() => setTab("restaurants")}
           />
         ) : tab === "settings" ? (
           <SettingsScreen
@@ -1246,7 +1260,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             onBack={() => setTab(settingsReturnTab)}
           />
         ) : tab === "restaurants" ? (
-          <ShopScreen />
+          <ShopScreen
+            pointsBalance={pointsWallet.balance}
+            pointsReady={pointsWallet.ready}
+            purchases={pointsWallet.purchases}
+            onPurchase={pointsWallet.purchase}
+          />
         ) : tab === "journal" ? (
           <RestaurantsScreen
             key={tab}
@@ -1403,27 +1422,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               style={[styles.top, { top: insets.top + 12 }]}
             >
               <View style={styles.headingRow}>
-                <View>
+                <View style={styles.homeLockup}>
                   <CiboLogo />
-                  <Text style={styles.eyebrow}>GOOD FOOD. GREAT FINDS.</Text>
-                </View>
-                <View style={{ flexDirection: "row", gap: 8 }}>
-                  <Pressable
-                    accessibilityRole="button"
-                    accessibilityLabel="Open challenges"
-                    onPress={() => setTab("challenges")}
-                    style={({ pressed }) => [
-                      styles.brand,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <MaterialCommunityIcons
-                      name="flag-checkered"
-                      size={23}
-                      color={colors.accent}
-                      accessible={false}
-                    />
-                  </Pressable>
+                  <View>
+                    <Text style={styles.eyebrow}>THE MEALS ALONG THE WAY</Text>
+                    <Text style={styles.homeTitle}>Explore Toronto</Text>
+                  </View>
                 </View>
               </View>
               <View
@@ -1460,6 +1464,17 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               style={[styles.bottom, { bottom: insets.bottom + 90 }]}
             >
               <View style={styles.mapActions}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Open restaurant list"
+                  onPress={() => setListVisible(true)}
+                  style={({ pressed }) => [
+                    styles.roundButton,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Icon name="list-outline" />
+                </Pressable>
                 {token && (
                   <Pressable
                     accessibilityRole="button"
@@ -2067,6 +2082,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  homeLockup: { flexDirection: "row", alignItems: "center", gap: 16 },
+  homeTitle: {
+    fontSize: 25,
+    lineHeight: 30,
+    fontWeight: "700",
+    letterSpacing: -0.8,
+    color: colors.ink,
+  },
 
   brandLockup: { gap: 10 },
   eyebrow: {
@@ -2275,6 +2298,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
+    gap: 8,
   },
   areaPill: {
     flexDirection: "row",

@@ -35,7 +35,6 @@ import {
   type DishBounds,
 } from "../models/foodTracking";
 import { DishOverlay } from "../components/DishOverlay";
-import { useReducedMotion } from "../hooks/useReducedMotion";
 
 // The Groq estimate backs up YOLO when tracking misses: wait out bursts of
 // misses (debounce), then probe with full frames spaced by a cooldown so a
@@ -52,11 +51,9 @@ export function FoodCameraScreen({
   onClose: () => void;
 }) {
   const insets = useSafeAreaInsets();
-  const reduced = useReducedMotion();
   const [live, setLive] = useState(true);
-  const [catching, setCatching] = useState(false);
+  const catching = false;
   const retainedPhoto = useRef<string | null>(null);
-  const catchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const camera = useRef<FoodCameraHandle>(null);
   const mounted = useRef(true);
@@ -94,6 +91,13 @@ export function FoodCameraScreen({
     setAnchor(bounds);
   }
   const [trackingError, setTrackingError] = useState("");
+  const [dismissedWarning, setDismissedWarning] = useState("");
+  const warning = error || (!photo ? trackingError : "");
+  const showWarning = !!warning && warning !== dismissedWarning;
+
+  useEffect(() => {
+    if (!warning) setDismissedWarning("");
+  }, [warning]);
   const scanned = useRef(false);
   const trackingActive = useRef(false);
   const [identifying, setIdentifying] = useState(false);
@@ -115,7 +119,7 @@ export function FoodCameraScreen({
   const resultLabel = identifying
     ? "Identifying meal…"
     : recognition
-      ? `${recognition.name} · ${collected ? "Collected" : recognition.catalogId ? "New badge" : "New discovery"}`
+      ? `Looks like ${recognition.name}`
       : "Food detected";
   // The overlay persists through the post-photo identify, so the box and
   // award cards never flicker off while the scan is running.
@@ -134,8 +138,6 @@ export function FoodCameraScreen({
         request.current?.abort();
         setIdentifying(false);
         setLive(false);
-        setCatching(false);
-        if (catchTimer.current) clearTimeout(catchTimer.current);
       }
       setActive(state === "active");
       if (state === "active") void refreshPermission().catch(() => {});
@@ -143,7 +145,6 @@ export function FoodCameraScreen({
     return () => {
       mounted.current = false;
       request.current?.abort();
-      if (catchTimer.current) clearTimeout(catchTimer.current);
       subscription.remove();
       if (retainedPhoto.current) deleteScanImage(retainedPhoto.current);
     };
@@ -161,41 +162,25 @@ export function FoodCameraScreen({
     return () => subscription.remove();
   }, [onClose]);
 
-  function reviewCapture() {
-    if (!photo || identifying || busy || catching) return;
-    const capture: FoodCapture = {
+  const delivered = useRef(false);
+  function deliverCapture(manual = false) {
+    if (delivered.current) return;
+    delivered.current = true;
+    generation.current++;
+    request.current?.abort();
+    request.current = null;
+    retainedPhoto.current = null;
+    onCapture({
       id: Date.now(),
-      error: "",
-      recognition,
-      photo: {
-        uri: photo.uri,
-        width: photo.width,
-        height: photo.height,
-        base64: photo.base64,
-        mimeType: "image/jpeg",
-        type: "image",
-      },
-    };
-    setLive(false);
-    if (!recognition) {
-      if (retainedPhoto.current === capture.photo?.uri)
-        retainedPhoto.current = null;
-      onCapture(capture);
-      return;
-    }
-    setCatching(true);
-    void playFeedback(collected ? "select" : "discover");
-    catchTimer.current = setTimeout(
-      () => {
-        if (mounted.current) {
-          if (retainedPhoto.current === capture.photo?.uri)
-            retainedPhoto.current = null;
-          onCapture(capture);
-        }
-      },
-      reduced ? 0 : 700,
-    );
+      error: manual ? "" : error,
+      recognition: manual ? null : recognition,
+      photo: photo ? { ...photo, mimeType: "image/jpeg", type: "image" } : null,
+    });
   }
+  const finishCapture = useEffectEvent(() => deliverCapture());
+  useEffect(() => {
+    if (photo && !identifying && !busy) finishCapture();
+  }, [photo, identifying, busy]);
 
   async function enableCamera() {
     setError("");
@@ -235,27 +220,26 @@ export function FoodCameraScreen({
         if (result) {
           void playFeedback("bell");
           setNoFood(false);
-          // YOLO owns live geometry. Groq localization only belongs to its
-          // frozen source image, and never replaces an active live track.
+          // Keep on-device tracking visible while live recognition is shown.
           const liveBox =
             fromPreview &&
             anchorRef.current.visible &&
             anchorRef.current.source !== "groq";
+          if (fromPreview && !liveBox) {
+            retained = true;
+            retainedPhoto.current = resized.uri;
+            setPhoto({ ...resized, format: "jpg" });
+          }
+          const box =
+            result.bbox && preview.height
+              ? projectDish(
+                  normalizedBoxToDetection(result.bbox),
+                  resized,
+                  preview,
+                  false,
+                )
+              : null;
           if (!liveBox) {
-            if (fromPreview) {
-              retained = true;
-              retainedPhoto.current = resized.uri;
-              setPhoto({ ...resized, format: "jpg" });
-            }
-            const box =
-              result.bbox && preview.height
-                ? projectDish(
-                    normalizedBoxToDetection(result.bbox),
-                    resized,
-                    preview,
-                    false,
-                  )
-                : null;
             if (box) showAnchor({ ...box, source: "groq" });
             else hideAnchor();
           }
@@ -387,15 +371,6 @@ export function FoodCameraScreen({
     error,
   ]);
 
-  useEffect(() => {
-    if (anchor.source !== "groq" || !anchor.visible || !photo) return;
-    const timer = setTimeout(() => {
-      anchorRef.current = { ...anchorRef.current, visible: false };
-      setAnchor(anchorRef.current);
-    }, 12_000);
-    return () => clearTimeout(timer);
-  }, [anchor.source, anchor.visible, photo]);
-
   async function snap() {
     if (!camera.current || !ready || capturing.current) return;
     capturing.current = true;
@@ -418,13 +393,10 @@ export function FoodCameraScreen({
       }
       const captured: CameraCapturedPicture = { ...image, format: "jpg" };
       setPhoto(captured);
-      if (!recognition || !live) {
-        void identify(captured);
-      } else {
-        // The live track maps to the preview, not this capture: without a
-        // photographic estimate the floating card stays centered instead.
-        hideAnchor();
-      }
+      // Localize the captured image itself; live preview coordinates may
+      // describe a different frame or crop.
+      hideAnchor();
+      void identify(captured);
     } catch {
       if (mounted.current)
         setError("We couldn’t take that photo. Please try again.");
@@ -503,6 +475,7 @@ export function FoodCameraScreen({
     setReady(false);
     setAttempt((value) => value + 1);
     setPhoto(null);
+    delivered.current = false;
     setNoFood(false);
     scanned.current = false;
     setRecognition(null);
@@ -554,6 +527,10 @@ export function FoodCameraScreen({
             onTracking={(bounds) => {
               trackingActive.current = true;
               if (bounds.visible) setNoFood(false);
+              if (!bounds.visible && anchorRef.current.visible && recognition) {
+                setRecognition(null);
+                scanned.current = false;
+              }
               anchorRef.current = bounds;
               setAnchor(bounds);
             }}
@@ -606,26 +583,6 @@ export function FoodCameraScreen({
           </View>
         )}
       </View>
-      {photo && recognition && !anchor.visible && (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Tap the food to place its discovery label"
-          style={StyleSheet.absoluteFill}
-          onPress={(event) => {
-            if (!preview.width || !preview.height) return;
-            const x = event.nativeEvent.locationX / preview.width;
-            const y = event.nativeEvent.locationY / preview.height;
-            showAnchor({
-              x: Math.max(0, Math.min(0.8, x - 0.1)),
-              y: Math.max(0, Math.min(0.8, y - 0.1)),
-              width: 0.2,
-              height: 0.2,
-              visible: true,
-              source: "groq",
-            });
-          }}
-        />
-      )}
       {foodInFrame && (
         <DishOverlay
           key={`${facing}-${attempt}-${live}`}
@@ -646,7 +603,6 @@ export function FoodCameraScreen({
           accessibilityRole="button"
           accessibilityLabel="Close camera"
           onPress={() => {
-            if (catchTimer.current) clearTimeout(catchTimer.current);
             onClose();
           }}
           style={({ pressed }) => [s.round, pressed && s.pressed]}
@@ -665,6 +621,34 @@ export function FoodCameraScreen({
           {icon("information-circle-outline")}
         </Pressable>
       </View>
+      {showWarning && !showInfo && (
+        <View
+          accessibilityLiveRegion="polite"
+          style={[s.errorRow, s.warning, { top: insets.top + 76 }]}
+        >
+          <Text style={s.error}>{warning}</Text>
+          {!!error && !ready && !photo && permission?.granted && (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                setError("");
+                setAttempt((value) => value + 1);
+              }}
+              style={s.retry}
+            >
+              <Text style={s.secondaryText}>Retry</Text>
+            </Pressable>
+          )}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Dismiss recognition warning"
+            onPress={() => setDismissedWarning(warning)}
+            style={({ pressed }) => [s.dismissWarning, pressed && s.pressed]}
+          >
+            {icon("close-outline", 20)}
+          </Pressable>
+        </View>
+      )}
       {showInfo && (
         <ScrollView
           contentContainerStyle={s.infoContent}
@@ -681,10 +665,10 @@ export function FoodCameraScreen({
         >
           <Text style={s.panelTitle}>Capture a food discovery</Text>
           <Text style={s.panelCopy}>
-            Live scan identifies a dish once before you take a photo. Object
-            tracking follows the dish locally; keep it in frame. Toggle Live
-            scan off and on to identify a new dish. Confirm the dish before
-            saving it and earning XP.
+            Live scan uploads a snapshot to our recognition service, powered by
+            Groq. Keep one dish in frame, then take a photo to review it. Save
+            your discovery to earn rewards. You can also take a photo, choose
+            one from your library, or enter a dish manually.
           </Text>
         </ScrollView>
       )}
@@ -699,6 +683,10 @@ export function FoodCameraScreen({
             onPress={() => {
               generation.current++;
               request.current?.abort();
+              request.current = null;
+              fallbackLeft.current = FALLBACK_MAX_ATTEMPTS;
+              fallbackLast.current = 0;
+              fallbackMissing.current = 0;
               scanned.current = false;
               setTrackingError("");
               hideAnchor();
@@ -720,8 +708,15 @@ export function FoodCameraScreen({
             </Text>
           </Pressable>
         )}
-        {!!trackingError && !photo && (
-          <Text style={s.panelCopy}>{trackingError}</Text>
+        {(noFood || !!error) && !identifying && !busy && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Enter dish manually"
+            onPress={() => deliverCapture(true)}
+            style={({ pressed }) => [s.round, s.manualEntry, pressed && s.pressed]}
+          >
+            {icon("create-outline", 20)}
+          </Pressable>
         )}
         {!photo && (
           <Pressable
@@ -743,23 +738,6 @@ export function FoodCameraScreen({
           </Pressable>
         )}
 
-        {!!error && (
-          <View accessibilityLiveRegion="polite" style={s.errorRow}>
-            <Text style={s.error}>{error}</Text>
-            {!ready && !photo && permission?.granted && (
-              <Pressable
-                accessibilityRole="button"
-                onPress={() => {
-                  setError("");
-                  setAttempt((value) => value + 1);
-                }}
-                style={s.retry}
-              >
-                <Text style={s.secondaryText}>Retry</Text>
-              </Pressable>
-            )}
-          </View>
-        )}
         {photo && (
           <View style={s.result}>
             <View style={s.resultHeading}>
@@ -799,34 +777,6 @@ export function FoodCameraScreen({
               <Text style={s.secondaryText}>
                 {live ? "Scan next dish" : "Retake"}
               </Text>
-            </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              disabled={identifying || busy || catching}
-              accessibilityState={{ disabled: identifying || busy || catching }}
-              onPress={reviewCapture}
-              style={({ pressed }) => [
-                s.primary,
-                (pressed || identifying || busy) && s.pressed,
-              ]}
-            >
-              <Text style={s.primaryText}>
-                {catching
-                  ? "Caught!"
-                  : identifying
-                    ? "Identifying…"
-                    : recognition
-                      ? collected
-                        ? "Review dish"
-                        : "Catch & review"
-                      : "Use photo"}
-              </Text>
-              <Ionicons
-                name="arrow-forward"
-                size={20}
-                color={colors.white}
-                accessible={false}
-              />
             </Pressable>
           </View>
         ) : permission?.granted && active ? (
@@ -1087,6 +1037,18 @@ const s = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     flexShrink: 1,
+  },
+  manualEntry: { alignSelf: "center" },
+  warning: {
+    position: "absolute",
+    left: 20,
+    right: 20,
+  },
+  dismissWarning: {
+    width: 48,
+    minHeight: 48,
+    alignItems: "center",
+    justifyContent: "center",
   },
   errorRow: {
     flexDirection: "row",

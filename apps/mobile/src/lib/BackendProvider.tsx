@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState } from "react-native";
 import {
   places as bundledPlaces,
@@ -17,10 +18,17 @@ import {
   type SampleFriend,
 } from "../features/community/models/community";
 import { supabase } from "./supabase";
-
-const bundledPriceLevels = new Map(
-  bundledPlaces.map((place) => [place.id, place.priceLevel]),
-);
+import { mapViewportKey } from "./mapViewport";
+import {
+  canLoadMapRestaurants,
+  fetchMapRestaurants,
+  mergeMapRestaurants,
+  withinBounds,
+  discoveryBounds,
+  discoveryKey,
+  isTorontoDemo,
+  isTorontoOnly,
+} from "./mapRestaurants";
 
 export type MapBounds = [
   west: number,
@@ -34,6 +42,9 @@ type Catalog = {
   mapPlaces: Place[];
   mapCount: number | null;
   mapNeedsZoom: boolean;
+  mapLoading: boolean;
+  mapLoadError: string;
+  retryMapRestaurants: () => void;
   loadMapViewport: (bounds: MapBounds, zoom: number) => Promise<void>;
   loadFavoritesPage: (
     query: string,
@@ -55,6 +66,9 @@ const Backend = createContext<Catalog>({
   mapPlaces: [],
   mapCount: null,
   mapNeedsZoom: true,
+  mapLoading: false,
+  mapLoadError: "",
+  retryMapRestaurants: () => {},
   loadMapViewport: async () => {},
   loadFavoritesPage: async () => ({ places: [], total: 0 }),
   loadPlacesByIds: async () => [],
@@ -71,6 +85,9 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     mapPlaces: [],
     mapCount: null,
     mapNeedsZoom: true,
+    mapLoading: false,
+    mapLoadError: "",
+    retryMapRestaurants: () => {},
     loadMapViewport: async () => {},
     loadFavoritesPage: async () => ({ places: [], total: 0 }),
     loadPlacesByIds: async () => [],
@@ -78,7 +95,47 @@ export function BackendProvider({ children }: { children: ReactNode }) {
     error: "",
   });
   const mapRequest = useRef(0);
+  const discoveredPlaces = useRef<Place[]>([]);
+  const discoveryRequest = useRef<AbortController | null>(null);
+  const discoveryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const discoveryCache = useRef(new Map<string, number>());
   const mapQueryKey = useRef("");
+  const lastViewport = useRef<{ bounds: MapBounds; zoom: number } | null>(null);
+  const storageReady = useRef<Promise<void>>(Promise.resolve());
+  const [mapLoading, setMapLoading] = useState(false);
+  const [mapLoadError, setMapLoadError] = useState("");
+  useEffect(() => {
+    let active = true;
+    storageReady.current = AsyncStorage.getItem("cibo.mapDiscovery.v1")
+      .then((value) => {
+        if (!active || !value) return;
+        const stored = JSON.parse(value);
+        if (
+          !Number.isFinite(stored.savedAt) ||
+          Date.now() - stored.savedAt > 86_400_000 ||
+          !Array.isArray(stored.places)
+        )
+          return;
+        const restored: Place[] = stored.places.filter(
+          (place: Place) =>
+            place &&
+            typeof place.id === "string" &&
+            typeof place.name === "string" &&
+            Array.isArray(place.coordinate) &&
+            place.coordinate.length === 2 &&
+            place.coordinate.every(Number.isFinite) &&
+            !isTorontoDemo(place),
+        );
+        discoveredPlaces.current = mergeMapRestaurants(
+          restored,
+          discoveredPlaces.current,
+        ).slice(-2000);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
   const [mapPlaces, setMapPlaces] = useState<Place[]>([]);
   const [mapCount, setMapCount] = useState<number | null>(null);
   const [mapNeedsZoom, setMapNeedsZoom] = useState(true);
@@ -161,6 +218,7 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   );
   const loadPlacesByIds = useCallback(async (ids: string[]) => {
     if (!ids.length) return [];
+    await storageReady.current;
     try {
       if (!supabase) throw new Error("Missing Supabase configuration");
       const { data, error } = await supabase
@@ -168,20 +226,27 @@ export function BackendProvider({ children }: { children: ReactNode }) {
         .select("id,data")
         .in("id", ids);
       if (error) throw error;
-      const byId = new Map(
-        (data ?? []).flatMap((row) => {
+      const byId = new Map<string, Place>([
+        ...mergeMapRestaurants(bundledPlaces, discoveredPlaces.current).map(
+          (place) => [place.id, place] as const,
+        ),
+        ...(data ?? []).flatMap((row) => {
           const place = row.data as Place;
           return place && Array.isArray(place.coordinate)
             ? [[row.id, place] as const]
             : [];
         }),
-      );
+      ]);
       return ids.flatMap((id) => {
         const place = byId.get(id);
         return place ? [place] : [];
       });
     } catch {
-      const byId = new Map(bundledPlaces.map((place) => [place.id, place]));
+      const byId = new Map(
+        mergeMapRestaurants(bundledPlaces, discoveredPlaces.current).map(
+          (place) => [place.id, place],
+        ),
+      );
       return ids.flatMap((id) => {
         const place = byId.get(id);
         return place ? [place] : [];
@@ -190,96 +255,92 @@ export function BackendProvider({ children }: { children: ReactNode }) {
   }, []);
   const loadMapViewport = useCallback(
     async (bounds: MapBounds, zoom: number) => {
-      const [west, south, east, north] = bounds;
-      const queryKey = `${bounds.map((value) => value.toFixed(3)).join(",")}:${zoom.toFixed(1)}`;
+      lastViewport.current = { bounds, zoom };
+      const queryKey = mapViewportKey(bounds, zoom);
       if (queryKey === mapQueryKey.current) return;
       mapQueryKey.current = queryKey;
       const request = ++mapRequest.current;
-      setMapNeedsZoom(zoom < 12);
-      const inBounds = (place: Place) => {
-        const [longitude, latitude] = place.coordinate;
-        return (
-          longitude >= west &&
-          longitude <= east &&
-          latitude >= south &&
-          latitude <= north
-        );
-      };
-      const localPlaces = bundledPlaces.filter(inBounds);
-      // Keep already loaded details and fill new areas immediately from the catalog.
-      setMapPlaces((previous) =>
-        zoom < 12
-          ? []
-          : [
-              ...new Map(
-                [...localPlaces, ...previous.filter(inBounds)].map((place) => [
-                  place.id,
-                  place,
-                ]),
-              ).values(),
-            ].slice(0, 400),
-      );
+      discoveryRequest.current?.abort();
+      if (discoveryTimer.current) clearTimeout(discoveryTimer.current);
+      setMapLoading(false);
+      setMapLoadError("");
+      const torontoOnly = isTorontoOnly(bounds);
+      const eligible = canLoadMapRestaurants(discoveryBounds(bounds), zoom);
+      setMapNeedsZoom(!torontoOnly && !eligible);
+      await storageReady.current;
+      if (request !== mapRequest.current) return;
+      const inBounds = (place: Place) => withinBounds(place, bounds);
+      // Toronto always uses CSV data, even in a view that spans its boundary.
+      const localPlaces = mergeMapRestaurants(
+        bundledPlaces,
+        discoveredPlaces.current.filter((place) => !isTorontoDemo(place)),
+      ).filter(inBounds);
+      setMapPlaces(localPlaces);
       setMapCount(localPlaces.length);
-
-      // Counting must never delay restaurant pins or discard a successful list.
-      const loadCount = async () => {
+      if (torontoOnly || !eligible) return;
+      const key = discoveryKey(bounds);
+      if (Date.now() - (discoveryCache.current.get(key) ?? 0) < 600_000) return;
+      const controller = new AbortController();
+      discoveryRequest.current = controller;
+      setMapLoading(true);
+      discoveryTimer.current = setTimeout(async () => {
+        const timeout = setTimeout(() => controller.abort(), 25_000);
         try {
-          if (!supabase) return;
-          const { data, error } = await supabase.rpc(
-            "cibo_count_restaurants_in_bounds",
-            { p_west: west, p_south: south, p_east: east, p_north: north },
-          );
-          if (error) throw error;
-          const count = Number(data);
-          if (request === mapRequest.current && Number.isFinite(count))
-            setMapCount(count);
-        } catch {
-          // The local count remains available when the network is unavailable.
+          const found = (
+            await fetchMapRestaurants(bounds, controller.signal)
+          ).filter((place) => !isTorontoDemo(place));
+          if (request !== mapRequest.current) return;
+          const merged = mergeMapRestaurants(discoveredPlaces.current, found);
+          discoveredPlaces.current = merged;
+          discoveryCache.current.set(key, Date.now());
+          if (discoveryCache.current.size > 64)
+            discoveryCache.current.delete(
+              discoveryCache.current.keys().next().value!,
+            );
+          const visible = mergeMapRestaurants(
+            bundledPlaces,
+            discoveredPlaces.current,
+          ).filter(inBounds);
+          setMapPlaces(visible);
+          setMapCount(visible.length);
+          // Keep recent discoveries available after reopening the app.
+          await AsyncStorage.setItem(
+            "cibo.mapDiscovery.v1",
+            JSON.stringify({
+              savedAt: Date.now(),
+              places: discoveredPlaces.current.slice(-2000),
+            }),
+          ).catch(() => {});
+        } catch (error) {
+          if (request === mapRequest.current) {
+            mapQueryKey.current = "";
+            setMapLoadError(
+              error instanceof Error && error.name !== "AbortError"
+                ? error.message
+                : "Restaurants couldn’t load. Please retry.",
+            );
+          }
+        } finally {
+          clearTimeout(timeout);
+          if (request === mapRequest.current) setMapLoading(false);
         }
-      };
-      void loadCount();
-      if (zoom < 12) return;
-
-      try {
-        if (!supabase) throw new Error("Missing Supabase configuration");
-        const placesResult = await supabase.rpc("cibo_restaurants_in_bounds", {
-          p_west: west,
-          p_south: south,
-          p_east: east,
-          p_north: north,
-          p_limit: 400,
-        });
-        if (placesResult.error) throw placesResult.error;
-        const rows = Array.isArray(placesResult.data) ? placesResult.data : [];
-        const loaded = rows.flatMap((row) => {
-          const place =
-            row && typeof row === "object"
-              ? (row as { data?: Place }).data
-              : null;
-          if (!place || !Array.isArray(place.coordinate) || !inBounds(place))
-            return [];
-          return [
-            {
-              ...place,
-              priceLevel: place.priceLevel ?? bundledPriceLevels.get(place.id),
-            },
-          ];
-        });
-        if (request === mapRequest.current) {
-          setMapPlaces(loaded);
-        }
-      } catch {
-        // Allow a subsequent idle event to retry this viewport after a failure.
-        // Keep the immediately available pins instead of blanking the map.
-        if (request === mapRequest.current) mapQueryKey.current = "";
-      }
+      }, 700);
     },
     [],
   );
+  const retryMapRestaurants = useCallback(() => {
+    const viewport = lastViewport.current;
+    if (!viewport) return;
+    discoveryCache.current.delete(discoveryKey(viewport.bounds));
+    mapQueryKey.current = "";
+    void loadMapViewport(viewport.bounds, viewport.zoom);
+  }, [loadMapViewport]);
 
   useEffect(
     () => () => {
       mapRequest.current += 1;
+      discoveryRequest.current?.abort();
+      if (discoveryTimer.current) clearTimeout(discoveryTimer.current);
     },
     [],
   );
@@ -364,6 +425,9 @@ export function BackendProvider({ children }: { children: ReactNode }) {
         mapPlaces,
         mapCount,
         mapNeedsZoom,
+        mapLoading,
+        mapLoadError,
+        retryMapRestaurants,
         loadMapViewport,
         loadFavoritesPage,
         loadPlacesByIds,

@@ -8,6 +8,7 @@ import {
 import {
   decodeYolo,
   letterboxRgb,
+  YOLO_INPUT_SIZE,
 } from "../src/features/food-dex/models/yolo.ts";
 
 test("cover projection accounts for portrait crop and front camera mirroring", () => {
@@ -51,18 +52,27 @@ test("arrows land outside box edges and respond to object movement", () => {
   assert.equal(diagonal.y, 92);
 });
 
-test("tracking holds the existing food target and excludes unrelated objects", () => {
+test("tracking selects the largest food box regardless of confidence or position", () => {
   const original = {
     label: "pizza",
     score: 0.6,
-    box: { xmin: 0.1, ymin: 0.1, xmax: 0.4, ymax: 0.4 },
+    box: { xmin: 0.05, ymin: 0.05, xmax: 0.5, ymax: 0.5 },
   };
   const other = {
     label: "cake",
     score: 0.95,
     box: { xmin: 0.6, ymin: 0.6, xmax: 0.9, ymax: 0.9 },
   };
-  assert.equal(selectDish([other, original], original), original);
+  assert.equal(selectDish([other, original]), original);
+  assert.equal(selectDish([original, other]), original);
+  const larger = { ...other, box: { xmin: 0, ymin: 0, xmax: 1, ymax: 1 } };
+  assert.equal(selectDish([original, larger]), larger);
+  assert.equal(
+    selectDish([original, { ...larger, label: "person" }]),
+    original,
+  );
+  assert.equal(selectDish([original, { ...larger, score: 0.1 }]), original);
+  assert.equal(selectDish([]), undefined);
   assert.equal(selectDish([{ ...original, label: "person" }]), undefined);
   assert.equal(selectDish([{ ...original, score: 0.1 }]), undefined);
 });
@@ -74,18 +84,21 @@ test("YOLO preprocessing uses RGB planes and decoder reverses letterboxing", () 
     height: 1,
   };
   const encoded = letterboxRgb(input);
-  assert.equal(encoded.offsetY, 160);
-  assert.equal(encoded.data[160 * 640], 1);
-  assert.equal(encoded.data[640 * 640 + 160 * 640], 0);
+  assert.equal(encoded.offsetY, 104);
+  assert.equal(encoded.data[104 * YOLO_INPUT_SIZE], 1);
+  assert.equal(
+    encoded.data[YOLO_INPUT_SIZE * YOLO_INPUT_SIZE + 104 * YOLO_INPUT_SIZE],
+    0,
+  );
   const detections = decodeYolo(
-    new Float32Array([0, 160, 640, 480, 0.9, 53, 0, 0, 1, 1, 0.9, 0]),
+    new Float32Array([208, 208, 416, 208, 0.9]),
     encoded.width,
     encoded.height,
     encoded.offsetX,
     encoded.offsetY,
   );
   assert.equal(detections.length, 1);
-  assert.equal(detections[0].label, "pizza");
+  assert.equal(detections[0].label, "food");
   assert.deepEqual(detections[0].box, { xmin: 0, ymin: 0, xmax: 1, ymax: 1 });
 });
 
@@ -120,4 +133,35 @@ test("rotation is applied before cover projection and mirroring", () => {
   assert.ok(Math.abs(projected.y - 0.1) < 1e-8);
   assert.ok(Math.abs(projected.width - 0.4) < 1e-8);
   assert.ok(Math.abs(projected.height - 0.3) < 1e-8);
+});
+
+test("food anchors use NMS, reject invalid boxes and ignore low confidence", () => {
+  // Five channels, four anchors: two overlapping, one invalid, one low score.
+  const data = new Float32Array([
+    100,
+    102,
+    NaN,
+    300,
+    100,
+    102,
+    100,
+    300,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    80,
+    0.9,
+    0.8,
+    0.9,
+    0.1,
+  ]);
+  const detections = decodeYolo(data, 416, 416, 0, 0);
+  assert.equal(detections.length, 1);
+  assert.equal(detections[0].label, "food");
+  assert.equal(selectDish(detections), detections[0]);
+  assert.throws(() => decodeYolo(new Float32Array(6), 416, 416, 0, 0));
 });

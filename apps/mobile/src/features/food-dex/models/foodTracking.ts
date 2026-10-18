@@ -16,6 +16,7 @@ export type Detection = {
   box: { xmin: number; ymin: number; xmax: number; ymax: number };
 };
 const foodLabels = new Set([
+  "food",
   "banana",
   "apple",
   "sandwich",
@@ -29,30 +30,13 @@ const foodLabels = new Set([
   "bowl",
 ]);
 
-// Prefer the same object across frames rather than jumping to a new nearby dish.
-export function selectDish(detections: Detection[], previous?: Detection) {
-  const candidates = detections.filter(
-    (d) => foodLabels.has(d.label) && d.score >= 0.4,
-  );
-  return candidates.sort((a, b) => rank(b) - rank(a))[0];
-  function rank(d: Detection) {
-    const box = d.box;
-    const cx = (box.xmin + box.xmax) / 2;
-    const cy = (box.ymin + box.ymax) / 2;
-    if (previous) {
-      const p = previous.box;
-      const intersection =
-        Math.max(0, Math.min(box.xmax, p.xmax) - Math.max(box.xmin, p.xmin)) *
-        Math.max(0, Math.min(box.ymax, p.ymax) - Math.max(box.ymin, p.ymin));
-      const area = (box.xmax - box.xmin) * (box.ymax - box.ymin);
-      const oldArea = (p.xmax - p.xmin) * (p.ymax - p.ymin);
-      return (
-        (intersection / Math.max(0.0001, area + oldArea - intersection)) * 3 +
-        d.score
-      );
-    }
-    return d.score - Math.hypot(cx - 0.5, cy - 0.5) * 0.5;
-  }
+// Always select the largest eligible food box in the current frame.
+export function selectDish(detections: Detection[]) {
+  const area = (d: Detection) =>
+    (d.box.xmax - d.box.xmin) * (d.box.ymax - d.box.ymin);
+  return detections
+    .filter((d) => foodLabels.has(d.label) && d.score >= 0.3)
+    .sort((a, b) => area(b) - area(a) || b.score - a.score)[0];
 }
 
 // Model coordinates are normalized to the source frame, before objectFit: cover.

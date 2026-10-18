@@ -141,6 +141,8 @@ export function FoodDexScreen({
     capture?.recognition?.cuisine ?? "Other",
   );
   const [busy, setBusy] = useState(false);
+  const [editingCuisine, setEditingCuisine] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [picking, setPicking] = useState(false);
   const [scanError, setScanError] = useState(capture?.error ?? "");
   const [notice, setNotice] = useState("");
@@ -198,6 +200,8 @@ export function FoodDexScreen({
     setScanCuisine(dishCuisine);
     setScanError("");
     setNotice("");
+    setEditingCuisine(false);
+    setShowDetails(false);
     setScanOpen(true);
   }
   async function pickPhoto() {
@@ -251,6 +255,7 @@ export function FoodDexScreen({
       setReview("");
       setLocation("");
       setScanCuisine(cuisine ?? "Other");
+      void analyze(picked);
     } catch {
       if (currentSession === session.current)
         setScanError(
@@ -261,8 +266,8 @@ export function FoodDexScreen({
       setPicking(false);
     }
   }
-  async function analyze() {
-    if (!photo?.base64 || busy) return;
+  async function analyze(asset = photo) {
+    if (!asset?.base64 || busy) return;
     const controller = new AbortController();
     request.current = controller;
     setBusy(true);
@@ -270,7 +275,7 @@ export function FoodDexScreen({
     const timeout = setTimeout(() => controller.abort(), 30_000);
     const currentSession = session.current;
     try {
-      const result = await recognizeFood(photo.base64, controller.signal);
+      const result = await recognizeFood(asset.base64, controller.signal);
       if (currentSession !== session.current) return;
       if (result) {
         setName(result.name);
@@ -646,8 +651,12 @@ export function FoodDexScreen({
               ]}
               keyboardShouldPersistTaps="handled"
             >
-              <Text style={s.title}>What’s on your plate?</Text>
-              <Text style={s.copy}>Snap it. Name it. Collect it.</Text>
+              <Text style={s.title}>
+                {name ? "Review your dish" : "What’s on your plate?"}
+              </Text>
+              <Text style={s.copy}>
+                Check the dish, then save your discovery.
+              </Text>
               {photo ? (
                 <Image
                   source={{ uri: photo.uri }}
@@ -667,7 +676,7 @@ export function FoodDexScreen({
               <View style={s.photoButtons}>
                 <View style={s.flex}>
                   <Button
-                    title="Camera"
+                    title={photo ? "Scan another dish" : "Camera"}
                     icon="camera-outline"
                     secondary
                     disabled={busy || picking}
@@ -687,14 +696,12 @@ export function FoodDexScreen({
                   />
                 </View>
               </View>
-              {photo && (
+              {photo && !name && (
                 <>
-                  <Text style={s.meta}>
-                    Analyze photo sends this image to our recognition service,
-                    powered by Groq. You can also enter the dish yourself below.
-                  </Text>
                   <Button
-                    title={busy ? "Identifying your food…" : "Analyze photo"}
+                    title={
+                      busy ? "Identifying your food…" : "Retry identification"
+                    }
                     icon="sparkles-outline"
                     disabled={busy || picking || !photo.base64}
                     onPress={() => void analyze()}
@@ -712,84 +719,123 @@ export function FoodDexScreen({
                   {scanError}
                 </Text>
               ) : null}
-              <View style={s.divider} />
-              <Text style={s.sectionTitle}>
-                {savedScan
-                  ? "Add your review"
-                  : name
-                    ? "Confirm your discovery"
-                    : "Or add it yourself"}
-              </Text>
-              <Text style={s.copy}>
-                {savedScan
-                  ? `You’ve already collected ${savedScan.name}. A fresh review will update its entry.`
-                  : "Check the name and cuisine before it joins your Dex."}
-              </Text>
-              <Text style={s.label}>DISH NAME</Text>
-              <TextInput
-                accessibilityLabel="Dish name"
-                placeholder="e.g. Ramen"
-                placeholderTextColor={colors.muted}
-                value={name}
-                editable={!busy}
-                maxLength={80}
-                onChangeText={setName}
-                style={s.field}
-              />
-              <Text style={s.label}>CUISINE</Text>
-              <View style={s.cuisineChips}>
-                {cuisines.map((item) => (
+              {(!!name || (!!scanError && !busy)) && (
+                <>
+                  <View style={s.divider} />
+                  <Text style={s.sectionTitle}>
+                    {savedScan
+                      ? "Add your review"
+                      : name
+                        ? "Confirm your discovery"
+                        : "Or add it yourself"}
+                  </Text>
+                  <Text style={s.copy}>
+                    {savedScan
+                      ? `You’ve already collected ${savedScan.name}. A fresh review will update its entry.`
+                      : "Check the name and cuisine before it joins your Dex."}
+                  </Text>
+                  <Text style={s.label}>DISH NAME</Text>
+                  <TextInput
+                    accessibilityLabel="Dish name"
+                    placeholder="e.g. Ramen"
+                    placeholderTextColor={colors.muted}
+                    value={name}
+                    editable={!busy}
+                    maxLength={80}
+                    onChangeText={setName}
+                    style={s.field}
+                  />
+                  <Text style={s.label}>CUISINE</Text>
                   <Pressable
-                    key={item}
                     accessibilityRole="button"
-                    accessibilityState={{
-                      selected: scanCuisine === item,
-                      disabled: busy,
-                    }}
+                    accessibilityState={{ expanded: editingCuisine }}
                     disabled={busy}
-                    onPress={() => setScanCuisine(item)}
-                    style={({ pressed }) => [
-                      s.chip,
-                      scanCuisine === item && s.chipActive,
-                      pressed && s.dim,
-                    ]}
+                    onPress={() => setEditingCuisine((value) => !value)}
+                    style={s.field}
                   >
-                    <Text style={[s.chipText, scanCuisine === item && s.white]}>
-                      {item}
+                    <Text style={s.copy}>
+                      {scanCuisine} ·{" "}
+                      {editingCuisine ? "Hide choices" : "Change cuisine"}
                     </Text>
                   </Pressable>
-                ))}
-              </View>
-              <Text style={s.label}>WHERE</Text>
-              <TextInput
-                accessibilityLabel="Restaurant or home kitchen"
-                placeholder="Restaurant or home kitchen (optional)"
-                placeholderTextColor={colors.muted}
-                value={location}
-                onChangeText={setLocation}
-                maxLength={120}
-                editable={!busy}
-                style={s.field}
-              />
-              <Text style={s.label}>YOUR REVIEW</Text>
-              <TextInput
-                accessibilityLabel="Written food review"
-                placeholder="What made that bite worth remembering? Flavor, texture, the whole story…"
-                placeholderTextColor={colors.muted}
-                value={review}
-                editable={!busy}
-                multiline
-                maxLength={480}
-                onChangeText={setReview}
-                style={[s.field, s.reviewField]}
-                textAlignVertical="top"
-              />
-              <Button
-                title={savedScan ? "Save my review" : "Add to my Food Dex"}
-                icon="checkmark-outline"
-                disabled={!name.trim() || busy || picking}
-                onPress={save}
-              />
+                  {editingCuisine && (
+                    <View style={s.cuisineChips}>
+                      {cuisines.map((item) => (
+                        <Pressable
+                          key={item}
+                          accessibilityRole="button"
+                          accessibilityState={{
+                            selected: scanCuisine === item,
+                            disabled: busy,
+                          }}
+                          disabled={busy}
+                          onPress={() => setScanCuisine(item)}
+                          style={({ pressed }) => [
+                            s.chip,
+                            scanCuisine === item && s.chipActive,
+                            pressed && s.dim,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              s.chipText,
+                              scanCuisine === item && s.white,
+                            ]}
+                          >
+                            {item}
+                          </Text>
+                        </Pressable>
+                      ))}
+                    </View>
+                  )}
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityState={{ expanded: showDetails }}
+                    onPress={() => setShowDetails((value) => !value)}
+                    style={s.field}
+                  >
+                    <Text style={s.copy}>
+                      {showDetails
+                        ? "Hide optional details"
+                        : "Add location or review (optional)"}
+                    </Text>
+                  </Pressable>
+                  {showDetails && (
+                    <>
+                      <Text style={s.label}>WHERE</Text>
+                      <TextInput
+                        accessibilityLabel="Restaurant or home kitchen"
+                        placeholder="Restaurant or home kitchen (optional)"
+                        placeholderTextColor={colors.muted}
+                        value={location}
+                        onChangeText={setLocation}
+                        maxLength={120}
+                        editable={!busy}
+                        style={s.field}
+                      />
+                      <Text style={s.label}>YOUR REVIEW</Text>
+                      <TextInput
+                        accessibilityLabel="Written food review"
+                        placeholder="What made that bite worth remembering? Flavor, texture, the whole story…"
+                        placeholderTextColor={colors.muted}
+                        value={review}
+                        editable={!busy}
+                        multiline
+                        maxLength={480}
+                        onChangeText={setReview}
+                        style={[s.field, s.reviewField]}
+                        textAlignVertical="top"
+                      />
+                    </>
+                  )}
+                  <Button
+                    title={savedScan ? "Save changes" : "Save discovery"}
+                    icon="checkmark-outline"
+                    disabled={!name.trim() || busy || picking}
+                    onPress={save}
+                  />
+                </>
+              )}
             </ScrollView>
           </KeyboardAvoidingView>
         ) : (

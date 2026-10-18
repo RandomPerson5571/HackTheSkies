@@ -18,7 +18,6 @@ import type {
 import {
   projectDish,
   selectDish,
-  type Detection,
   type DishBounds,
 } from "../models/foodTracking";
 import { deleteScanImage } from "../services/scanImages";
@@ -86,7 +85,6 @@ export function FoodCameraView({
     if (!tracking || !size.width || !size.height) return;
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
-    let previous: Detection | undefined;
     let lastSeen = 0;
     // Hidden tracking frames keep the last valid geometry; only `visible`
     // drops. Coordinates are never (0, 0) for a missing detection.
@@ -97,6 +95,7 @@ export function FoodCameraView({
         visible: !!lastBounds && Date.now() - lastSeen <= 700,
       }) satisfies DishBounds;
     async function tick() {
+      const started = Date.now();
       let image: CameraCapturedPicture | undefined;
       try {
         const { detectDish } = await import("../services/dishDetector.native");
@@ -116,10 +115,9 @@ export function FoodCameraView({
           if (cancelled) return;
           const result = await detectDish(image);
           if (cancelled) return;
-          const dish = selectDish(result, previous);
+          const dish = selectDish(result);
           const now = Date.now();
           if (dish) {
-            previous = dish;
             misses.current = 0;
             const projected = projectDish(
               dish.box,
@@ -137,13 +135,15 @@ export function FoodCameraView({
               tracked(hidden());
             }
           } else {
-            // Retarget only after the dish has clearly left the frame, so a
-            // passing person or cup does not steal the anchor mid-meal.
-            if (now - lastSeen > 650) previous = undefined;
+            // Briefly preserve the last box when no food is detected.
             tracked(hidden());
           }
         }
-        if (!cancelled) timer = setTimeout(() => void tick(), 250);
+        if (!cancelled)
+          timer = setTimeout(
+            () => void tick(),
+            Math.max(300, Date.now() - started),
+          );
       } catch {
         if (cancelled) return;
         tracked(hidden());

@@ -171,8 +171,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const {
     places,
     mapPlaces,
-    mapCount,
-    mapNeedsZoom,
     loadMapViewport,
     friends,
     error: backendError,
@@ -1423,23 +1421,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 )}
               </View>
             )}
-            {token &&
-              mapReady &&
-              !mapError &&
-              !mapVisible.length &&
-              mapCount !== null &&
-              !active && (
-                <View
-                  pointerEvents="none"
-                  style={[styles.mapCountHint, { bottom: insets.bottom + 100 }]}
-                >
-                  <Text style={styles.mapCountText}>
-                    {mapCount} {mapCount === 1 ? "place" : "places"} in this
-                    area
-                    {mapCount > 0 && mapNeedsZoom && " · zoom in to explore"}
-                  </Text>
-                </View>
-              )}
+
 
             <View
               pointerEvents="none"
@@ -2612,17 +2594,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     maxWidth: "85%",
   },
-  mapCountHint: {
-    position: "absolute",
-    alignSelf: "center",
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    borderRadius: 18,
-    backgroundColor: colors.paper,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  mapCountText: { color: colors.ink, fontSize: 12, fontWeight: "600" },
   retryMapButton: {
     minWidth: 132,
     borderRadius: 12,

@@ -80,19 +80,18 @@ remote and have unspecified reuse rights; Wikimedia licenses remain attached.
 The camera offers **take a photo**, **choose a photo**, and **Live scan**.
 Live scan starts enabled and sends one preview snapshot after a 1.6-second pause,
 before the user presses the shutter. Toggle it off and on to recognize a new dish.
-YOLOv10n runs locally through ONNX Runtime on browser and native cameras.
+The food-trained YOLO11n-Seg model runs locally through ONNX Runtime on browser and native cameras.
 Its bounding boxes stay invisible. Label cards hug the tracked box corners and
 move with it; arrows connect them to the tracked box perimeter, using Reanimated
 and respecting reduced motion. Missed detections retain the last valid box for
-700 ms, then stop rendering its arrows and geometry. The COCO model
-recognizes common foods and bowls; arbitrary plated meals may not be detected.
+700 ms, then stop rendering its arrows and geometry. The detector locates generic food regions; Groq supplies dish names. Unseen meals may still be missed.
 Tracking frames stay on device. Initial identification and up to two fallback
 snapshots can be uploaded to Groq per scan session, with an 800 ms debounce,
 7-second cooldown, and one request in flight. Groq identity is independent of
 localization: a valid YOLO track stays live, while Groq-only discoveries freeze
 the exact analyzed frame. Reliable 0–1000 estimates use a dashed amber box for
-12 seconds; missing or expired locations show a discovery card with tap-to-place
-on the frozen photo. Invalid or non-food results never render object boxes. Runtime/model assets download on first use and need network access.
+the duration of the photo review; missing locations show a discovery card
+without a box. Box positions come only from YOLO or Groq detection results. Invalid or non-food results never render object boxes. The model is bundled with the app. The browser ONNX runtime still downloads on first use.
 Browser inference runs in a worker; native inference samples serialized camera
 snapshots and may follow more slowly than a dedicated frame processor.
 Pressing the shutter also freezes the photo for review.
@@ -100,8 +99,17 @@ Pressing the shutter also freezes the photo for review.
 Native tracking requires rebuilding the development client after installing
 `onnxruntime-react-native`: run `pnpm --filter mobile exec expo prebuild`, then
 `pnpm ios` or `pnpm android`. Reloading JavaScript cannot add this module.
-The model is [YOLOv10n](https://huggingface.co/onnx-community/YOLOv10)
-(AGPL-3.0); review its license before distributing a closed-source app.
+The model is [food-trained YOLO11n-Seg](https://huggingface.co/kris-0918/lidar-food-measurable-yolo11n-seg)
+(AGPL-3.0), pinned to revision `4b766bcfc0e249deca6912229bbb3956beacac05`.
+Its bundled ONNX export uses a fixed 416×416 RGB input and only five box/score
+channels. Mask outputs are removed because tracking only needs boxes. This input
+has 42% of the pixels of 640×640; accuracy at this size must be checked on target
+meals. NMS suppresses duplicate anchors at IoU 0.45 with confidence 0.3.
+Frames run sequentially with at least 300 ms idle time, increased to the preceding
+frame's processing time on slower devices. Browser tracking pauses in hidden tabs;
+native tracking pauses when the app is inactive. Native inference uses two CPU
+threads. These limits control load, but are not a phone FPS or battery benchmark.
+See `assets/models/README.md` for provenance and reproduction.
 
 ### Separate Cloudflare API
 

@@ -17,7 +17,6 @@ import type {
 import {
   projectDish,
   selectDish,
-  type Detection,
   type DishBounds,
 } from "../models/foodTracking";
 
@@ -113,14 +112,13 @@ export function FoodCameraView({
     ),
   );
   // Preprocessing runs on the main thread, so the sampling canvas and cadence
-  // stay small: letterboxing pads to the model's 640px input either way.
-  const FRAME_WIDTH = 480;
+  // stay small: letterboxing pads to the model's 416px input either way.
+  const FRAME_WIDTH = 416;
   const MISSES_BEFORE_UNAVAILABLE = 3;
   useEffect(() => {
     if (!tracking) return;
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
-    let previous: Detection | undefined;
     let lastSeen = 0;
     let misses = 0;
     // Hidden frames keep the last valid geometry; only visibility drops, so a
@@ -134,6 +132,11 @@ export function FoodCameraView({
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d", { willReadFrequently: true });
     async function run() {
+      const started = Date.now();
+      if (document.hidden) {
+        timer = setTimeout(() => void run(), 1000);
+        return;
+      }
       try {
         const { detectDish } = await import("../services/dishDetector.web");
         if (cancelled) return;
@@ -148,10 +151,9 @@ export function FoodCameraView({
             context.getImageData(0, 0, canvas.width, canvas.height),
           );
           if (cancelled) return;
-          const dish = selectDish(detections, previous);
+          const dish = selectDish(detections);
           const now = Date.now();
           if (dish) {
-            previous = dish;
             misses = 0;
             const bounds = element.getBoundingClientRect();
             if (bounds.width && bounds.height) {
@@ -172,12 +174,15 @@ export function FoodCameraView({
               }
             }
           } else {
-            if (now - lastSeen > 650) previous = undefined;
             tracked(hidden());
           }
         }
         // Sequential inference: never queue frames or upload camera pixels.
-        if (!cancelled) timer = setTimeout(() => void run(), 180);
+        if (!cancelled)
+          timer = setTimeout(
+            () => void run(),
+            Math.max(300, Date.now() - started),
+          );
       } catch {
         if (cancelled) return;
         tracked(hidden());

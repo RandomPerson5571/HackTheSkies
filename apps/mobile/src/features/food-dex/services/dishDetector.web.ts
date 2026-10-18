@@ -1,4 +1,5 @@
-import { decodeYolo, letterboxRgb } from "../models/yolo";
+import { Asset } from "expo-asset";
+import { decodeYolo, letterboxRgb, YOLO_INPUT_SIZE } from "../models/yolo";
 import type { Detection } from "../models/foodTracking";
 type Ort = typeof import("onnxruntime-web");
 const version = "1.24.3";
@@ -36,25 +37,31 @@ function loadRuntime(): Promise<Ort> {
 async function createDetector() {
   const ort = await loadRuntime();
   const session = await ort.InferenceSession.create(
-    "https://huggingface.co/onnx-community/YOLOv10/resolve/main/yolov10n.onnx",
+    Asset.fromModule(require("../../../../assets/models/food-yolo11n-416.onnx"))
+      .uri,
     { executionProviders: ["wasm"] },
   );
   return { session, Tensor: ort.Tensor };
 }
 let detector: ReturnType<typeof createDetector> | undefined;
-export async function detectDish(frame: ImageData): Promise<Detection[]> {
+async function detectFrame(frame: ImageData): Promise<Detection[]> {
   detector ??= createDetector().catch((error: unknown) => {
     detector = undefined;
     throw error;
   });
   const { session, Tensor } = await detector;
   const { data, width, height, offsetX, offsetY } = letterboxRgb(frame);
-  const input = new Tensor("float32", data, [1, 3, 640, 640]);
+  const input = new Tensor("float32", data, [
+    1,
+    3,
+    YOLO_INPUT_SIZE,
+    YOLO_INPUT_SIZE,
+  ]);
   try {
     const output = await session.run({ [session.inputNames[0]!]: input });
     const tensor = output[session.outputNames[0]!]!;
     try {
-      if (tensor.dims[tensor.dims.length - 1] !== 6)
+      if (tensor.dims.length !== 3 || tensor.dims[1] !== 5)
         throw new Error("Unexpected YOLO output");
       return decodeYolo(
         tensor.data as Float32Array,
@@ -68,5 +75,18 @@ export async function detectDish(frame: ImageData): Promise<Detection[]> {
     }
   } finally {
     input.dispose();
+  }
+}
+
+// A remount or camera switch may overlap cleanup with the previous inference.
+// Drop that sample instead of queuing work on the shared session.
+let busy = false;
+export async function detectDish(frame: ImageData): Promise<Detection[]> {
+  if (busy) return [];
+  busy = true;
+  try {
+    return await detectFrame(frame);
+  } finally {
+    busy = false;
   }
 }

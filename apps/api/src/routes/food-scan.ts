@@ -1,3 +1,4 @@
+import { createGroqClient } from "../services/groq.ts";
 import { readCompletion } from "../services/completion.ts";
 import { Buffer } from "node:buffer";
 import type { ApiEnvironment } from "../environment.ts";
@@ -62,8 +63,10 @@ function parseEstimate(
 }
 
 export async function POST(request: Request, env: ApiEnvironment) {
-  const key = env.GROQ_API_KEY;
-  if (!key) return reply({ error: "Food recognition is not configured." }, 503);
+  const client = createGroqClient(env);
+  if (!client)
+    return reply({ error: "Food recognition is not configured." }, 503);
+  const callGroq = client;
   if (!request.headers.get("content-type")?.includes("application/json"))
     return reply({ error: "Send a JSON image." }, 415);
   // Bound the actual stream as well as Content-Length; clients can omit that header.
@@ -121,60 +124,56 @@ export async function POST(request: Request, env: ApiEnvironment) {
       properties: Record<string, unknown>,
     ) {
       signal.throwIfAborted();
-      const response = await fetch(
-        "https://api.groq.com/openai/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${key}`,
-            "Content-Type": "application/json",
-          },
-          signal,
-          body: JSON.stringify({
-            model,
-            ...(model.startsWith("qwen/qwen3.")
-              ? { reasoning_effort: "none" }
-              : {}),
-            temperature: 0,
-            max_completion_tokens: 600,
-            response_format:
-              model === "qwen/qwen3.8-27b"
-                ? {
-                    type: "json_schema",
-                    json_schema: {
-                      name: schemaName,
-                      strict: true,
-                      schema: {
-                        type: "object",
-                        properties,
-                        required: Object.keys(properties),
-                        additionalProperties: false,
-                      },
-                    },
-                  }
-                : { type: "json_object" },
-            messages: [
-              {
-                role: "system",
-                content: system,
-              },
-              {
-                role: "user",
-                content: [
-                  {
-                    type: "text",
-                    text: "Examine this photo and return the requested JSON.",
-                  },
-                  {
-                    type: "image_url",
-                    image_url: { url: `data:${mime};base64,${image}` },
-                  },
-                ],
-              },
-            ],
-          }),
+      const response = await callGroq({
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        signal,
+        body: JSON.stringify({
+          model,
+          ...(model.startsWith("qwen/qwen3.")
+            ? { reasoning_effort: "none" }
+            : {}),
+          temperature: 0,
+          max_completion_tokens: 600,
+          response_format:
+            model === "qwen/qwen3.8-27b"
+              ? {
+                  type: "json_schema",
+                  json_schema: {
+                    name: schemaName,
+                    strict: true,
+                    schema: {
+                      type: "object",
+                      properties,
+                      required: Object.keys(properties),
+                      additionalProperties: false,
+                    },
+                  },
+                }
+              : { type: "json_object" },
+          messages: [
+            {
+              role: "system",
+              content: system,
+            },
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: "Examine this photo and return the requested JSON.",
+                },
+                {
+                  type: "image_url",
+                  image_url: { url: `data:${mime};base64,${image}` },
+                },
+              ],
+            },
+          ],
+        }),
+      });
       if (!response.ok) {
         // Keep provider response bodies and credentials out of client errors/logs.
         console.error("Food recognition provider rejected the request", {

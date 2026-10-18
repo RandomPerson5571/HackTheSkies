@@ -1,3 +1,4 @@
+import * as mapRestaurants from "./routes/map-restaurants.ts";
 import * as foodScan from "./routes/food-scan.ts";
 import * as foodRecommendations from "./routes/food-recommendations.ts";
 import type { ApiEnvironment } from "./environment.ts";
@@ -29,6 +30,14 @@ export async function handleRequest(
     return request.method === "HEAD"
       ? new Response(null, { headers })
       : Response.json({ status: "ok" }, { headers });
+  if (pathname === "/api/map-restaurants") {
+    if (request.method === "OPTIONS") return mapRestaurants.OPTIONS();
+    if (request.method === "GET") return mapRestaurants.GET(request);
+    return Response.json(
+      { error: "Method not allowed." },
+      { status: 405, headers: { ...headers, Allow: "GET, OPTIONS" } },
+    );
+  }
   const route = Object.hasOwn(routes, pathname) ? routes[pathname] : undefined;
   if (!route)
     return Response.json({ error: "Not found." }, { status: 404, headers });

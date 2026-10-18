@@ -21,7 +21,6 @@ import { cardTier, cardTiers } from "../models/discovery";
 import { arrowToBox, type DishBounds } from "../models/foodTracking";
 import type { FoodRecognition } from "../services/foodScanner";
 import { useReducedMotion } from "../hooks/useReducedMotion";
-import { XP_PER_DISCOVERY } from "../../gamification/models/gamification";
 import { cameraColors } from "../../../theme";
 
 type Rect = { x: number; y: number; width: number; height: number };
@@ -94,19 +93,13 @@ export function DishOverlay({
   useEffect(() => {
     const w = preview?.width || size.width;
     const h = preview?.height || size.height;
-    if (anchor && !anchor.visible) {
+    if (!anchor?.visible) {
       // Unlocalized food gets a discovery card, never an invented object box.
       bounds.value = { x: w * 0.5, y: h * 0.35, width: 0, height: 0 };
       visible.value = 1;
       return;
     }
-    const b = anchor ?? {
-      x: 0.28,
-      y: 0.3,
-      width: 0.44,
-      height: 0.25,
-      visible: true,
-    };
+    const b = anchor;
     bounds.value = withTiming(
       { x: b.x * w, y: b.y * h, width: b.width * w, height: b.height * h },
       { duration: reduced === false ? 170 : 0 },
@@ -128,7 +121,7 @@ export function DishOverlay({
           </Text>
           <Text style={s.cuisine}>
             {recognition
-              ? `${recognition.cuisine} cuisine${!hasLocation ? " · Tap food to place label" : ""}`
+              ? `${recognition.cuisine} cuisine`
               : analyzing
                 ? "Matching your photo"
                 : "Keep your dish in view"}
@@ -148,14 +141,14 @@ export function DishOverlay({
           />
           <Text style={[s.status, { color: accent }]}>
             {estimated
-              ? "ESTIMATED · GROQ"
+              ? "APPROXIMATE LOCATION"
               : analyzing
                 ? "ANALYZING"
                 : scanning
                   ? "LIVE SCAN"
                   : collected
                     ? "IN YOUR DEX"
-                    : "NEW DISCOVERY!"}
+                    : "READY TO REVIEW"}
           </Text>
         </>
       ),
@@ -184,10 +177,10 @@ export function DishOverlay({
                 ? "Hold steady"
                 : collected
                   ? "Collected"
-                  : `+${XP_PER_DISCOVERY} XP`}
+                  : "Review dish"}
           </Text>
           <Text style={s.caption}>
-            {scanning ? "A little food magic" : "On discovery"}
+            {scanning ? "A little food magic" : "Save to collect"}
           </Text>
         </>
       ),
@@ -201,7 +194,9 @@ export function DishOverlay({
         setSize({ width: layout.width, height: layout.height })
       }
     >
-      {estimated && <EstimatedBox bounds={bounds} />}
+      {hasLocation && (
+        <DetectionBox bounds={bounds} estimated={estimated} color={accent} />
+      )}
       {labels
         .filter(({ id }) => hasLocation || id === "dish")
         .map(({ id, content }, index) => (
@@ -246,7 +241,15 @@ export function DishOverlay({
   );
 }
 
-function EstimatedBox({ bounds }: { bounds: SharedValue<Rect> }) {
+function DetectionBox({
+  bounds,
+  estimated,
+  color,
+}: {
+  bounds: SharedValue<Rect>;
+  estimated: boolean;
+  color: string;
+}) {
   const style = useAnimatedStyle(() => ({
     opacity: bounds.value.width > 0 && bounds.value.height > 0 ? 1 : 0,
     left: bounds.value.x,
@@ -260,8 +263,8 @@ function EstimatedBox({ bounds }: { bounds: SharedValue<Rect> }) {
         {
           position: "absolute",
           borderWidth: 1,
-          borderStyle: "dashed",
-          borderColor: "#F4DB91",
+          borderStyle: estimated ? "dashed" : "solid",
+          borderColor: color,
           borderRadius: 16,
         },
         style,

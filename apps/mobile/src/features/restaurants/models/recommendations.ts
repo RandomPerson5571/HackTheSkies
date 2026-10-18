@@ -49,6 +49,60 @@ export function scoreRestaurant(
   );
 }
 
+export const rarityPolicy = {
+  ratingWeight: 0.6,
+  nicheWeight: 0.4,
+  // Fewer public ratings than this are too thin to trust; the venue is
+  // scored as estimated instead of as the rarest spot in the city.
+  minimumRatings: 10,
+  // Stand-in count for venues without one: the median of the Toronto listings.
+  typicalRatingCount: 500,
+  // Toronto listings range from about 80 to 2,000 public ratings. At or below
+  // the floor a venue is fully niche; at or above the ceiling, fully mainstream.
+  nicheFloor: 50,
+  popularityCeiling: 2_000,
+} as const;
+export const rarityFilterOptions = [2.5, 3, 3.5, 4] as const;
+
+export type Rarity = { value: number; estimated: boolean };
+
+// Rarity out of 5 from public ratings: 60% the rating, 40% how few people have
+// rated the venue, so well-loved local spots outrank famous ones.
+export function rarityScore(
+  averageRating: number,
+  ratingCount: number,
+): number | null {
+  if (
+    !Number.isFinite(averageRating) ||
+    averageRating < 1 ||
+    averageRating > 5 ||
+    !Number.isSafeInteger(ratingCount) ||
+    ratingCount <= 0
+  )
+    return null;
+  const { nicheFloor, popularityCeiling } = rarityPolicy;
+  const niche =
+    1 -
+    Math.min(
+      1,
+      Math.max(
+        0,
+        Math.log(ratingCount / nicheFloor) /
+          Math.log(popularityCeiling / nicheFloor),
+      ),
+    );
+  const value =
+    5 *
+    ((averageRating / 5) * rarityPolicy.ratingWeight +
+      niche * rarityPolicy.nicheWeight);
+  return Math.round(value * 10) / 10;
+}
+
+export function rarityLabel(rarity: Rarity | undefined): string {
+  if (!rarity) return "Rarity unknown";
+  return `Rarity ${rarity.value.toFixed(1)}/5${rarity.estimated ? " (estimated)" : ""}`;
+}
+
 export function buildRecommendations(
   places: readonly Place[],
   personalRatings: Readonly<Record<string, number>>,

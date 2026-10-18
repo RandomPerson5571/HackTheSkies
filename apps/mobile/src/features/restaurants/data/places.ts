@@ -1,5 +1,11 @@
 ﻿import globalRestaurantSample from "../../../../../../data/global-restaurant-sample.json" with { type: "json" };
+import globalRestaurantDetails from "../../../../../../data/global-restaurant-details.json" with { type: "json" };
 import type { DietaryPreference } from "../../profile/models/profile";
+import {
+  rarityPolicy,
+  rarityScore,
+  type Rarity,
+} from "../models/recommendations.ts";
 
 export type Category =
   "All" | "Coffee" | "Pizza" | "Bakery" | "Ramen" | "Restaurant";
@@ -78,6 +84,9 @@ export type Place = {
   locationAccuracy?: string;
   priceLevel?: PriceLevel;
   rating?: number;
+  // Public rating count from the listing source; missing when no page matched.
+  ratingCount?: number;
+  rarity?: Rarity;
   // Optional aggregate from a future community/provider feed. Missing is unrated.
   ratingSummary?: { averageRating: number; reviewCount: number };
   /** Compliance must be explicitly confirmed by a reliable venue/provider source. */
@@ -93,24 +102,72 @@ export function matchesDietaryPreference(
   return place.confirmedDietaryOptions?.includes(diet) === true;
 }
 
+type SampleDetails = { cuisine: string; type: string };
+const details: Record<string, SampleDetails> = globalRestaurantDetails;
+
+// Deterministic 0–1 value per venue and salt, so sample values stay stable.
+function unit(id: string, salt: number) {
+  let hash = 2166136261 ^ salt;
+  for (const character of id)
+    hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
+  return ((hash >>> 0) + 0.5) / 4294967296;
+}
+
+// Placeholder rating until a provider feed is connected: a bell curve centred
+// on 3.9, with about 95% of venues between 3.4 and 4.4.
+function sampleRating(id: string) {
+  const normal =
+    Math.sqrt(-2 * Math.log(unit(id, 1))) * Math.cos(2 * Math.PI * unit(id, 2));
+  return Math.round(Math.min(5, Math.max(1, 3.9 + 0.25 * normal)) * 10) / 10;
+}
+
+// Estimated from the kind of venue, not from menus.
+const typePrices: Record<string, PriceLevel> = {
+  "Fast Food/QSR": "$",
+  Bakery: "$",
+  Cafe: "$",
+  Beverage: "$",
+  "Food Truck/Stand": "$",
+  "Dine-in": "$$",
+  "Bar & Lounge": "$$",
+  "Fine Dining": "$$$$",
+};
+
+// No public rating counts exist for this sample, so rarity is estimated at a
+// typical count and rests on the rating alone.
+function rarityFor(rating: number): Rarity | undefined {
+  const value = rarityScore(rating, rarityPolicy.typicalRatingCount);
+  return value === null ? undefined : { value, estimated: true };
+}
+
 // Offline catalog sample collected from Geoapify/OpenStreetMap. Live viewport
 // searches can return other restaurants; this bundled sample is capped at 400.
+// Cuisine and type are assigned from each venue's name and country.
 export const places: Place[] = globalRestaurantSample
   .slice(0, 400)
-  .map((restaurant): Place => ({
-    id: restaurant.id,
-    name: restaurant.name,
-    category: "Restaurant",
-    country: restaurant.country,
-    neighborhood: restaurant.neighborhood,
-    address: [restaurant.address, restaurant.country]
-      .filter(Boolean)
-      .join(", "),
-    coordinate: [restaurant.coordinate[0]!, restaurant.coordinate[1]!],
-    image: "",
-    note: restaurant.note,
-    sourceUrl: restaurant.sourceUrl,
-  }));
+  .map((restaurant): Place => {
+    const detail = details[restaurant.id];
+    const rating = sampleRating(restaurant.id);
+    return {
+      id: restaurant.id,
+      name: restaurant.name,
+      category: "Restaurant",
+      type: detail?.type,
+      cuisine: detail?.cuisine,
+      country: restaurant.country,
+      neighborhood: restaurant.neighborhood,
+      address: [restaurant.address, restaurant.country]
+        .filter(Boolean)
+        .join(", "),
+      coordinate: [restaurant.coordinate[0]!, restaurant.coordinate[1]!],
+      image: "",
+      note: `${[detail?.cuisine, detail?.type].filter(Boolean).join(" · ")}. Sample rating and estimated price. ${restaurant.note}`,
+      sourceUrl: restaurant.sourceUrl,
+      priceLevel: typePrices[detail?.type ?? ""] ?? "$$",
+      rating,
+      rarity: rarityFor(rating),
+    };
+  });
 export const categories: Category[] = [
   "All",
   "Coffee",

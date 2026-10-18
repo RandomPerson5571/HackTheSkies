@@ -58,7 +58,7 @@ export function CulinaryAtlas({
 }) {
   const reduced = useReducedMotion();
   const { width } = useWindowDimensions();
-  const size = Math.min(320, Math.max(216, Math.round(width - 112)));
+  const size = Math.min(340, Math.max(232, Math.round(width - 96)));
 
   const initial =
     focusCuisine && cuisineAnchors[focusCuisine]
@@ -410,66 +410,26 @@ export function CulinaryAtlas({
           />
         </Pressable>
       </View>
-      <View style={s.connections}>
-        <Text style={s.regionTitle}>Follow the flavor.</Text>
-        <Text style={s.body}>
-          Find a familiar ingredient or cooking style somewhere new.
-        </Text>
-        {connections.map((connection) => {
-          const shared = connection.shared[0]!;
-          return (
-            <Pressable
-              key={connection.cuisine}
-              accessibilityRole="button"
-              accessibilityLabel={`${shared.theme}: ${shared.from.name} connects to ${shared.to.name}. Explore ${connection.cuisine}`}
-              onPress={() => select(connection.cuisine)}
-              style={({ pressed }) => [s.connection, pressed && s.dim]}
-            >
-              <View style={s.connectionIcon}>
-                <Ionicons
-                  name="git-network-outline"
-                  size={20}
-                  color={colors.accent}
-                  accessible={false}
-                />
-              </View>
-              <View style={s.flex}>
-                <Text style={s.connectionTitle}>
-                  {shared.theme} · {connection.cuisine}
-                </Text>
-                <Text style={s.body}>
-                  {shared.from.name} → {shared.to.name}
-                </Text>
-              </View>
-              <Ionicons
-                name="chevron-forward"
-                size={18}
-                color={colors.accent}
-                accessible={false}
-              />
-            </Pressable>
-          );
-        })}
-        <Text style={s.footnote}>
-          An illustrated atlas of culinary regions, which can span borders.
-          Connections highlight shared food themes, not historical origins.
-          Discoveries in “Other” stay in your collection.
-        </Text>
-      </View>
+
     </View>
   );
 }
 
 const s = StyleSheet.create({
-  container: { gap: 16 },
+  container: { gap: 20 },
   flex: { flex: 1 },
   dim: { opacity: 0.65 },
   sky: {
     backgroundColor: c.night,
-    borderRadius: 28,
-    padding: 20,
+    borderRadius: 32,
+    padding: 24,
     overflow: "hidden",
-    gap: 14,
+    gap: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.18,
+    shadowRadius: 18,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 6,
   },
   auraSun: {
     position: "absolute",
@@ -521,11 +481,11 @@ const s = StyleSheet.create({
   },
   title: {
     color: c.light,
-    fontSize: 25,
+    fontSize: 28,
     fontWeight: "700",
-    letterSpacing: -0.6,
+    letterSpacing: -0.7,
   },
-  copy: { color: c.muted, fontSize: 13, lineHeight: 21, maxWidth: 340 },
+  copy: { color: c.muted, fontSize: 14, lineHeight: 22, maxWidth: 360 },
   globeRow: { alignItems: "center", marginVertical: 4 },
   globeControls: {
     flexDirection: "row",
@@ -577,20 +537,25 @@ const s = StyleSheet.create({
   chipText: { fontSize: 12, color: colors.ink, fontWeight: "600" },
   activeText: { color: colors.white },
   region: {
-    padding: 20,
-    borderRadius: 24,
+    padding: 24,
+    borderRadius: 28,
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
-    gap: 14,
+    gap: 16,
+    shadowColor: colors.ink,
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 3,
   },
   regionHeading: { flexDirection: "row", gap: 14, alignItems: "center" },
   thumbnail: { width: 68, height: 80, borderRadius: 16 },
   regionTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "700",
     color: colors.ink,
-    letterSpacing: -0.5,
+    letterSpacing: -0.6,
     marginVertical: 4,
   },
   body: { fontSize: 12, lineHeight: 20, color: colors.muted },

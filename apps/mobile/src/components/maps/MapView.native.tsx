@@ -9,7 +9,7 @@ import {
   type ComponentProps,
   type RefObject,
 } from "react";
-import { StyleSheet } from "react-native";
+import { Image, Pressable, StyleSheet, Text } from "react-native";
 import Mapbox from "@rnmapbox/maps";
 import { colors } from "../../theme/index";
 import {
@@ -18,6 +18,7 @@ import {
   createPlaceFeatures,
 } from "./placeFeatures";
 import type { MapProps } from "./types";
+import type { Place } from "../../features/restaurants/data/places";
 import { getMapMarkerPlaces } from "../../features/restaurants/models/recommendations";
 
 const token = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
@@ -193,6 +194,37 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       ),
     [props.places, visibleIds, props.recommendations, props.selectedId, zoom],
   );
+
+  const friendPins = useMemo(() => {
+    const placeIndex = new Map(props.places.map((place) => [place.id, place]));
+    const pins: {
+      key: string;
+      friend: NonNullable<typeof props.friends>[number];
+      place: Place;
+      visit: NonNullable<typeof props.friends>[number]["visits"][number];
+    }[] = [];
+    for (const friend of props.friends ?? []) {
+      for (const visit of friend.visits ?? []) {
+        const place = placeIndex.get(visit.placeId);
+        if (!place) continue;
+        pins.push({
+          key: `${friend.id}-${visit.placeId}-${visit.when}`,
+          friend,
+          place,
+          visit,
+        });
+      }
+    }
+    // Keep the community layer readable: at most ~6 friend pins per person in
+    // the current viewport.
+    const perFriend = new Map<string, number>();
+    return pins.filter((pin) => {
+      const shown = perFriend.get(pin.friend.id) ?? 0;
+      if (shown >= 6) return false;
+      perFriend.set(pin.friend.id, shown + 1);
+      return true;
+    });
+  }, [props.friends, props.places]);
   const defaultSettings = useMemo(
     () => ({ centerCoordinate: props.center, zoomLevel: props.zoom }),
     [props.center, props.zoom],
@@ -285,6 +317,52 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
           {props.renderPlaceMarker(place, place.id === props.selectedId)}
         </Mapbox.MarkerView>
       ))}
+      {friendPins.map(({ key, friend, place, visit }) => {
+        const avatarUri =
+          friend.avatarUri ||
+          friend.profilePictureUri ||
+          friend.profilePicture ||
+          friend.avatarUrl ||
+          friend.photoUrl ||
+          friend.imageUrl ||
+          friend.imageUri;
+        return (
+          <Mapbox.MarkerView
+            key={key}
+            id={key}
+            coordinate={place.coordinate}
+            allowOverlap
+          >
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`${friend.name} rated ${place.name} ${visit.rating} of 5`}
+              onPress={() => props.onSelect(place)}
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 17,
+                borderWidth: 2,
+                borderColor: colors.white,
+                overflow: "hidden",
+                backgroundColor: colors.tint,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {avatarUri ? (
+                <Image
+                  source={{ uri: avatarUri }}
+                  style={{ width: 30, height: 30, borderRadius: 15 }}
+                />
+              ) : (
+                <Text style={{ fontSize: 11, fontWeight: "700", color: colors.accent }}>
+                  {friend.initials}
+                </Text>
+              )}
+            </Pressable>
+          </Mapbox.MarkerView>
+        );
+      })}
     </Mapbox.MapView>
   );
 });

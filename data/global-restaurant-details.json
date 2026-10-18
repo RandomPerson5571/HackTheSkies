@@ -1,0 +1,2002 @@
+{
+  "geoapify-5170bc96eb48d55e4059f04fa91265c652c0f00103f901f2db966900000000": {
+    "name": "Route 66",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51a5776bb341d564405903ca09e3327653c0f00102f90123f4a6130000000092030c436f6666656520486f757365": {
+    "name": "Coffee House",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51b5623d36431351c059067dab6ff5664bc0f00102f901bad08531000000009203175061736f204761726962616c646920526573746f626172": {
+    "name": "Paso Garibaldi Restobar",
+    "cuisine": "Latin",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-5109c16b5c1bd550c0598c8c173c3c704bc0f00102f901af228f1000000000920311526573746f72616e742041636177616961": {
+    "name": "Restorant Acawaia",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51ce2335a3555f514059f123c852b5ee50c0f00103f901c99ed43501000000": {
+    "name": "sinigal",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5190377eec0e80614059dd0673726eaa50c0f00102f9011c7f310b0000000092030753c3a96a6f7572": {
+    "name": "Séjour",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-5114ba906e0ede634059a5190843cd3f4bc0f00102f901d00da30d000000009203044d657373": {
+    "name": "Mess",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-513a3e5a9cf11166c059bc3901f2caf945c0f00103f90166d7ea3c0100000092030d57616974616e67692043616665": {
+    "name": "Waitangi Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51d1178c5bd62352c0597aa93352ca3b48c0f00102f901c084f7540000000092030a43616d70616e6172696f": {
+    "name": "Campanario",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51fdf4447cccd750c059db28fc636be046c0f00103f9016424a7d30200000092031f50726564696f2046657269616c206465206c6120436f6f7065726174697661": {
+    "name": "Predio Ferial de la Cooperativa",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51c37c1e4883a028c059a23726d5888842c0f00103f901d37d443e0100000092030e436166c3a92064612043756e6861": {
+    "name": "Café da Cunha",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51e95cf6909524364059fafe17192e1741c0f00103f901501fbf070100000092030c4361726f6c6120416e6e2773": {
+    "name": "Carola Ann's",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51dbca01710dee3840591f7d38edce0441c0f00103f9019add7799000000009203034b4643": {
+    "name": "KFC",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-514eab329de7ed494059dd79e2395b3747c0f00103f901b0c5a94800000000": {
+    "name": "Route de la Plage",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-515cb11aa69164534059143e5b0707e642c0f00103f901395c02e102000000920303424352": {
+    "name": "BCR",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-519a971b5b66775d405916118301558041c0f00102f9010e1f834d000000009203085a616d627265726f": {
+    "name": "Zambrero",
+    "cuisine": "Latin",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51335a1fa8f631614059c38e40a281d741c0f00102f90160fe032e0000000092030e46726f6720616e6420526f736573": {
+    "name": "Frog and Roses",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51a29d2ee602f764405938a9c36570b546c0f00103f90130c46c8702000000920314476c6f7720576f726d2052657374617572616e74": {
+    "name": "Glow Worm Restaurant",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-511d42f05370e665c059dd2cb9e57e2235c0f00103f901c8202cba0000000092030b4361666520457363617065": {
+    "name": "Cafe Escape",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51956e015768b362c059014eefe2fd8e31c0f00103f901302fb1980000000092030e415049204e45575320534e41434b": {
+    "name": "API NEWS SNACK",
+    "cuisine": "French",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51a23bd22a04df60c0590dd06c0d5b1d37c0f00103f90159e3e44c010000009203084a6f6a6fe2809873": {
+    "name": "Jojo‘s",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-514c21eb040f5c5bc059deb06d5166273bc0f00103f90120a722250100000092030d50756e61204568753b4d6f6169": {
+    "name": "Puna Ehu;Moai",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51fac5b656455651c059a5fd6a69c94b40c0f00103f901a60d02c10000000092031450617272696c6c61646120456c2052616e63686f": {
+    "name": "Parrillada El Rancho",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51832788b1195e50c0593e49a04fded840c0f00102f9019a1284520000000092030b4361736120416c70696e61": {
+    "name": "Casa Alpina",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51658a39083a7a46c0595c9ce73eef6037c0f00103f9017c0ee4660000000092030f526563616e746f204974616970c3ba": {
+    "name": "Recanto Itaipú",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-511d07283e4220344059afe5c5ba9de440c0f00102f901c0ed6357000000009203034b4643": {
+    "name": "KFC",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51370d9b125a1c3d4059b528fdce400440c0f00103f9018af64d9c00000000": {
+    "name": "King Sabata Dalindyebo Ward 24",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51713d659016be46405958b55a16025139c0f00103f9011aa6fa7b02000000": {
+    "name": "N 10",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51d617aeb3c6c660405993af5f0bd56540c0f00103f901e06610ff0000000092031144726966742053747265616b7920426179": {
+    "name": "Drift Streaky Bay",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-517750e4a4cbee6040598f78680eff8540c0f00103f901f296a2410200000092030e577564696e6e612042616b657279": {
+    "name": "Wudinna Bakery",
+    "cuisine": "Other",
+    "type": "Bakery"
+  },
+  "geoapify-51d0ed258d512d6640593221e692aacd31c0f00103f901703c2a060100000092031457696e672048696e672052657374617572616e74": {
+    "name": "Wing Hing Restaurant",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-517bde0b905e7965c059a2feb03379b12bc0f00102f901bcafb95600000000": {
+    "name": "Papase'ea Road",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-512849d74cbeef62c059ef9fb82ddba230c0f00103f901faada87c00000000": {
+    "name": "RT 142",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51f0e0270e209456c059d9ba2fc26fdee7bff00103f9011ac47ef20000000092030e506c61796120536f6c79204d6172": {
+    "name": "Playa Soly Mar",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-513a52c774326756c0599402c1d2afe3ecbff00103f90144240d150300000092030743616c7970736f": {
+    "name": "Calypso",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51fab2599a802d50c05902a6c28eb5c50ac0f00103f901e8472a5f0200000092032442616e636120646520456c2053686164617920446f2049726dc3a36f20526f626572746f": {
+    "name": "Banca de El Shaday Do Irmão Roberto",
+    "cuisine": "Latin",
+    "type": "Food Truck/Stand"
+  },
+  "geoapify-51fce659a4e48043c0599138752f415730c0f00103f9018aec5c760200000092030b436162616e61204175c3aa": {
+    "name": "Cabana Auê",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-511c2d62331bdf16c05959ebd511d1d92fc0f00103f90174144e77020000009203114d616e7469732053742e2048656c656e61": {
+    "name": "Mantis St. Helena",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-510a39a572c99b2c4059f11f1cfd794830c0f00103f901b681d1990000000092030c4875c3ad6c6120436166c3a9": {
+    "name": "Huíla Café",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51de358d92fcc53c405977ef4d78ae8830c0f00103f901c4b44a7a0100000092030e5a504320596174636820436c7562": {
+    "name": "ZPC Yatch Club",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-5150c422861dcb4840595985cd0017ec30c0f00103f90148360728000000009203094c652052656c616973": {
+    "name": "Le Relais",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-511de09808795a5240596f925d00c615d2bff00102f901b0b3ae3d00000000": {
+    "name": "Genmiskih Mago",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-516a300dc347185c4059bcae5fb01bf6febff00103f901a1b1411a010000009203104d6965204179616d2050616b204d756c": {
+    "name": "Mie Ayam Pak Mul",
+    "cuisine": "Other",
+    "type": "Food Truck/Stand"
+  },
+  "geoapify-5198f15b193903604059e4254921daec2ec0f00103f901ca3195ff0000000092031354686520527573747920536865642043616665": {
+    "name": "The Rusty Shed Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-512459d130c62e6240592cadd051587b30c0f00103f90130411803010000009203075365616265616e": {
+    "name": "Seabean",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5170d4d769320064405994f117e694da22c0f00102f901f85c552b00000000": {
+    "name": "Kukum Highway",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51bc36c071bec057c059d2730b5d89703040f00103f901c6cac94c02000000920312546171756572696120225a6170616e647522": {
+    "name": "Taqueria \"Zapandu\"",
+    "cuisine": "Latin",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51b2f900d5641756c059b152194dcb913040f00102f90192087916000000009203134d6520616e6420552052657374617572616e74": {
+    "name": "Me and U Restaurant",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-51a9c53b1b4d524ac059d027f224e9aa1440f00103f90194cafc740000000092030b4e756d6d65722056696572": {
+    "name": "Nummer Vier",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51636d4210d65b38c059624e2be0f9903040f00103f90162fd0f740100000092031043616e74696e686f206427436166c3a9": {
+    "name": "Cantinho d'Café",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-5135c291f6f58030c059c46ae2d352073040f00103f901667c3ec90000000092030a4368657a20446173736f": {
+    "name": "Chez Dasso",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-519460c79273ae1d405984068e3aec42fa3ff00102f901625f544e0000000092032852657374617572616e74652041726d617ac3a96d20646120526fc3a76120506f72746f205265616c": {
+    "name": "Restaurante Armazém da Roça Porto Real",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5170a3b72eeb52394059f3a0eaa1c73d2b40f00103f90168f6a09000000000920317d983d8b1d985d8b3d988d98620d984d8a7d98ad8aad8b2": {
+    "name": "كرمسون لايتز",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-512bf86d88f152474059703e1af3dfc01d40f00103f901b4aefe8002000000": {
+    "name": "Hoodo Tea Shop",
+    "cuisine": "Other",
+    "type": "Beverage"
+  },
+  "geoapify-516360be1d2f615240598301daa7a1ed3040f00102f9017812203b0000000092030c4d616865736820486f74656c": {
+    "name": "Mahesh Hotel",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-51eddc0fd399155c4059075e2d7766d43040f00103f901def9bf190200000092030fe4b889e6b299e6b885e8a1a5e58789": {
+    "name": "三沙清补凉",
+    "cuisine": "Chinese",
+    "type": "Beverage"
+  },
+  "geoapify-5101c4b876fd6c5e40591b96500b6f8e3040f00103f901463e7bd6020000009203084445535320544541": {
+    "name": "DESS TEA",
+    "cuisine": "Other",
+    "type": "Beverage"
+  },
+  "geoapify-513a246f1adbfa624059e062ffe380c41d40f00102f90104d7ce120000000092031c5472756b2053746f7020486f74656c20262052657374617572616e74": {
+    "name": "Truk Stop Hotel & Restaurant",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-517781374998c663405962e58695c0d41b40f00103f901c4c7849b0000000092030841726e6f6c642773": {
+    "name": "Arnold's",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51cee90d524bea63c0598b9ccfca07103640f00103f901726fec1701000000920306537562776179": {
+    "name": "Subway",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-5162968796468e63c059bbe12d4613b83440f00103f901ce04421e010000009203124461204b69746368656e2045787072657373": {
+    "name": "Da Kitchen Express",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-519298fb3fe2615cc0599a8f108a52553f40f00103f901fa5d41020100000092030e4c6974746c652043616573617273": {
+    "name": "Little Caesars",
+    "cuisine": "Italian",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51ae38eadf9da056c059e06d2d31ccbd3e40f00102f90150168f3d0000000092030d536561666f6f6420536861636b": {
+    "name": "Seafood Shack",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-5100d18206d17b53c0598aa82e85acd13940f00103f901bcc504ae00000000": {
+    "name": "Nature Trail",
+    "cuisine": "Caribbean",
+    "type": "Dine-in"
+  },
+  "geoapify-517c50be393fa04fc059c1889fa3eb9d3140f00102f90106f5b0180000000092030654616e6b2764": {
+    "name": "Tank'd",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-516b42ffa95d0e39c05915319177b31d3140f00103f9013662dcb90200000092030a5461626f756c6569726f": {
+    "name": "Tabouleiro",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51a66494c217f130c059793afcda9f534040f00103f9010609c0ac0200000092030b50617061204d616e75656c": {
+    "name": "Papa Manuel",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-515f0b7a6f0c37344059d5bac3dca4be3e40f00103f901b6dfc6890100000092030ad8a8d98ad8aad8b2d8a7": {
+    "name": "بيتزا",
+    "cuisine": "Italian",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51b3d1393fc5fe4040595e4bc8073db53140f00103f9014a3c84c702000000920313d985d8b7d8b9d98520d8a7d984d8b4d98ad8ae": {
+    "name": "مطعم الشيخ",
+    "cuisine": "Levant",
+    "type": "Dine-in"
+  },
+  "geoapify-518e38094a7670474059cdabdff1927c3740f00103f9010618df0101000000920315d985d8b7d8b9d98520d8a7d984d988d8b3d8a7d985": {
+    "name": "مطعم الوسام",
+    "cuisine": "Levant",
+    "type": "Dine-in"
+  },
+  "geoapify-51837d62ad42625140592fd8900196254040f00102f901500577400000000092031b4d616c616b204e6f6f72204b68616e20477565737420486f757365": {
+    "name": "Malak Noor Khan Guest House",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-5197a949f086045740591f2e39ee94cc4040f00103f90156c9d01f01000000920312e4b8b4e5a48fe585abe59d8ae9a490e58e85": {
+    "name": "临夏八坊餐厅",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-512d4c95deed215c40591e8a027d227f4040f00103f9016acf630701000000920309e882afe5beb7e59fba": {
+    "name": "肯德基",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51982c6bd4f172614059e1d88362daf24040f00102f901b48b0d1c00000000920309e7be8ee7be8ee5bab5": {
+    "name": "美美庵",
+    "cuisine": "Japanese",
+    "type": "Dine-in"
+  },
+  "geoapify-510f44166922db64c059f07c5061b62e4440f00103f90192f35a0b030000009203117961726127732072657374617572616e74": {
+    "name": "yara's restaurant",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51a749df5adc825cc05957fcf03d6d7e4940f00103f9016e8438520000000092030757656e64792773": {
+    "name": "Wendy's",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51293c6876ddcf56c0596ae27899bce54540f00103f901fe5ce5fd020000009203044d4f4b41": {
+    "name": "MOKA",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51427d2656a11c52c059f2e4e48fb3fe4540f00103f901dc24d9030100000092030a44697869652773204949": {
+    "name": "Dixie's II",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51c9bfe0e4c86950c0596e44413a86ba4540f00103f901f08a64d000000000": {
+    "name": "Boundry Street",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-5152f75c01e0ff3bc0592f7df9ae52824340f00103f9019a4bf38f0100000092030e45737472656c6120646f204d6172": {
+    "name": "Estrela do Mar",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-513d7a68c47185ccbe590e2cec0ece454640f00103f9018bf4438802000000": {
+    "name": "Place Publique",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51b414da835a5d10405938995d9c9d7e4140f00103f901424f363801000000920308d985d982d987d989": {
+    "name": "مقهى",
+    "cuisine": "Levant",
+    "type": "Cafe"
+  },
+  "geoapify-5129379bd88de2374059c784984baac24140f00103f901caedb8d80000000092031254686561277320636f666665652073686f70": {
+    "name": "Thea's coffee shop",
+    "cuisine": "Greek",
+    "type": "Cafe"
+  },
+  "geoapify-5187cf8c34a79b46405908ee9b56655c4840f00103f9016ed0430101000000": {
+    "name": "Волгоград — Астрахань 4А",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51c35b8c26bc15514059a8e73812c33a4140f00103f90192db289c02000000": {
+    "name": "Yurt",
+    "cuisine": "Persian",
+    "type": "Dine-in"
+  },
+  "geoapify-51c328081e5f97574059b386414fb9fc4340f00103f9018800298f0100000092030b44696e696e672c20526f6d": {
+    "name": "Dining, Rom",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-51adb5f7d022145d4059435d61f6e6504940f00102f9017c8fd8110000000092030ad098d0b4d0b5d0b0d0bb": {
+    "name": "Идеал",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5118bb65ff0420624059f38bfc4b09094640f00102f9018ad5631600000000920306e795aae5b18b": {
+    "name": "番屋",
+    "cuisine": "Japanese",
+    "type": "Dine-in"
+  },
+  "geoapify-51b53876e42a4a64c0595c072e35c9874b40f00102f9013e03b2500000000092030d4e6577204d6573732048616c6c": {
+    "name": "New Mess Hall",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51b9c8f48ce1ea60c0590e87f94177864c40f00102f901e41c3a0e000000009203164b656e6e79277320576f6b2026205465726979616b69": {
+    "name": "Kenny's Wok & Teriyaki",
+    "cuisine": "Japanese",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-511c0f1192e0515dc05997b0917fc1884b40f00103f9011a2cb98e0100000092031254616c6c2054696d62657220436f66666565": {
+    "name": "Tall Timber Coffee",
+    "cuisine": "American",
+    "type": "Cafe"
+  },
+  "geoapify-51fdffeed3a77457c0591b536639bf824940f00103f901a850e53e0100000092030a53707564202620446f67": {
+    "name": "Spud & Dog",
+    "cuisine": "American",
+    "type": "Food Truck/Stand"
+  },
+  "geoapify-51e31ea6d82c2954c059ca4862eeffa24940f00103f9014449b6a6010000009203034b4643": {
+    "name": "KFC",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51b6a990c184b950c05918c440c038794a40f00102f9017942b4290000000092030853757368696c6162": {
+    "name": "Sushilab",
+    "cuisine": "Japanese",
+    "type": "Dine-in"
+  },
+  "geoapify-5193848e6761d142c0595571998958675040f00102f901a8ba6b2c000000009203054765726461": {
+    "name": "Gerda",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51332d5679a7f535c05936cb65a373045040f00103f9012a48aca30000000092030e4e6f72c3b0757262616b6b696e6e": {
+    "name": "Norðurbakkinn",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51a90425158c0fc83f597cdbfed727864940f00102f90172d57e390000000092030b57656c6174204b65626162": {
+    "name": "Welat Kebab",
+    "cuisine": "Levant",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51191c8785629e3740592fc1d5d0be1d4c40f00102f901824a8d0c0000000092030e53656e65646f206b6176696ec497": {
+    "name": "Senedo kavinė",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-517d186bc9f40f4740591bc4bde8e1bf4940f00103f9013633e8250000000092030cd0a2d0b5d0bbd0b5d0b3d0b0": {
+    "name": "Телега",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5138dc4f836e17514059bcd48929abe84940f00102f901e8d3b90a0000000092030ed09ad0b0d0bdd0b0d0b3d0b0d182": {
+    "name": "Канагат",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5191cb248fcc22574059f5ca06e3f1164d40f00103f9013641d5090100000092030ed0a2d0b0d188d0bad0b5d0bdd182": {
+    "name": "Ташкент",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5106c545a4dc8c5c4059ea6ae1687dec4c40f00103f9019ce3b6f30100000092030ed0a4d0bed180d182d183d0bdd0b0": {
+    "name": "Фортуна",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51d00f7e3d7ade6140592b64535337cc4a40f00103f9015afbcf7001000000920312d0a7d0b0d180d0bed0b4d0b5d0b9d0bad0b0": {
+    "name": "Чародейка",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-5198bf42e60a1b644059b76bf8cc48294c40f00103f9013800e84f00000000": {
+    "name": "улица Кирова",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51ae256c84c4d764c0593edd8c1252165140f00102f901b7a0d11d00000000": {
+    "name": "Ippiq Street",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-5145acb47ba89863c059bf243a7073d25140f00103f90124fb35970200000092030e5465726979616b6920486f757365": {
+    "name": "Teriyaki House",
+    "cuisine": "Japanese",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-511e00baee47b760c0596151be96fc165140f00102f901acb0d30e0000000092030954686520526f6f7374": {
+    "name": "The Roost",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-5115a529a762435ac0591828846973475140f00103f901d8d5b082020000009203034b4643": {
+    "name": "KFC",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-519c300e047f2f51c059e9e3a5cd71225340f00102f901ca975c1f0000000092030d44756e64617320427566666574": {
+    "name": "Dundas Buffet",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51a8fbfaf408704ac059d027957c3b2d5140f00102f901ce3f131a00000000920307436166c3a92033": {
+    "name": "Café 3",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51f9febc5fbb123040599e7f16a64a0e5140f00103f9017cf06b9302000000": {
+    "name": "E 6",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-516af2391c029a404059127239b9ba1f5140f00103f9017677456600000000920310d0a1d182d0bed0bbd0bed0b2d0b0d18f": {
+    "name": "Столовая",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5154539275b818564059db1dadc5825f5140f00103f9019eb63b0a01000000": {
+    "name": "улица Космонавтов 7",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5121078085a79e59405939b29712eefe5140f00103f90153b8e0410200000092030ed0a5d0b0d182d0b0d0bdd0b3d0b0": {
+    "name": "Хатанга",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-515bb05417b01b60405983c87d06afe85140f00103f9011209995d0100000092030ed090d181d181d0bed180d182d0b8": {
+    "name": "Ассорти",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-519abbf14982ce6440593ad9bc60a6035140f00103f901c6fee8bf00000000920316d091d0b8d0bbd0b8d0b1d0b8d0bdd181d0bad0b8d0b9": {
+    "name": "Билибинский",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-513fd873e3a7d564405913fd906d4f7653c0f00103f9014dfced830200000092030d42464320466f6f6420526f6f6d": {
+    "name": "BFC Food Room",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51f89edb9527b851c059b8e4b8533a8c4ac0f00103f901280c78eb0100000092031e52657374617572616e746520456c2052696e63c3b36e20416c656dc3a16e": {
+    "name": "Restaurante El Rincón Alemán",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51d850c5e894cc50c059f8544e7b4a414bc0f00103f901e1d3d51a010000009203184c6120506f73616461206465206c6f732052616d6972657a": {
+    "name": "La Posada de los Ramirez",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51f6285c8f421152c0593df372d87d2b49c0f00103f9018edf93a6020000009203064d6967612773": {
+    "name": "Miga's",
+    "cuisine": "Latin",
+    "type": "Cafe"
+  },
+  "geoapify-51c00abfbc7a5250c059a5003e8f05a245c0f00102f901e673293200000000920309446f6e20506f6c6c6f": {
+    "name": "Don Pollo",
+    "cuisine": "Latin",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-5160c4e347a1a534405946b1dcd26a0041c0f00103f901f4c70c2b0300000092030b496e205061726164697365": {
+    "name": "In Paradise",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51f56569a7e6aa394059f4e7363c180141c0f00103f901feaaa1c60000000092030952656e6465766f757a": {
+    "name": "Rendevouz",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51ce65ddbb088e5140596dea6b8bc7ac48c0f00102f901dda2280b0000000092030554696b6572": {
+    "name": "Tiker",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-517cd5ca845f785d4059eac083b0648241c0f00103f901c27a60280000000092030a4d63446f6e616c642773": {
+    "name": "McDonald's",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51abd61de6e6fb6040597f68e6c9355f41c0f00103f90140b755c30100000092030c437275697365727320487562": {
+    "name": "Cruisers Hub",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-519857642af3f6644059a1794a1817b546c0f00103f90132a4a4380100000092030752616468612773": {
+    "name": "Radha's",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-5105e42bcdbee665c0599b75b7d10b2635c0f00102f901b43b68130000000092034027417069206b6f20546176616e6120466169746520692046657475277520506f6e6769706f6e67692052657374617572616e7420616e642054616b6561776179": {
+    "name": "'Api ko Tavana Faite i Fetu'u Pongipongi Restaurant and Takeaway",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-514091ddbb3cb262c0593201bf46928a31c0f00103f9014ad25f7200000000920309477265656e2042616d": {
+    "name": "Green Bam",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-518d2551d43e4360c05965e65d503a1239c0f00103f901917b59b40100000092030f416e647927732050697a7a65726961": {
+    "name": "Andy's Pizzeria",
+    "cuisine": "Italian",
+    "type": "Dine-in"
+  },
+  "geoapify-5186d162df845b5bc05943d0871d7c253bc0f00103f90156f0a5230100000092030948616e692048616e69": {
+    "name": "Hani Hani",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-517efbdfb6db3851c059e95b8bbbe67f40c0f00103f901faa1290a0100000092030b4c617320446f6e6f736173": {
+    "name": "Las Donosas",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-519c1d0478e61850c059286cf58bc8f440c0f00103f9011239e86f0000000092030f526573746f6261725361626f726573": {
+    "name": "RestobarSabores",
+    "cuisine": "Latin",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-51b5615e91a95c46c059f71d68aacc5937c0f00103f9011cb5d80d010000009203064d7576756361": {
+    "name": "Muvuca",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51bd42d59e487e3640598c344cc862fd40c0f00103f901b22a57e502000000920305436f737461": {
+    "name": "Costa",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51f3188ae0241e3c405930e58ddd4f6c40c0f00103f90162479e8b0000000092031f4a6f6c6c7920526f676572202d2043696e7473612052657374617572616e74": {
+    "name": "Jolly Roger - Cintsa Restaurant",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5154faaead44be464059818d356d105139c0f00103f9011a2052090300000092030d43274761737920686f74656c79": {
+    "name": "C'Gasy hotely",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5129f27fa28db5604059ecd2d050ed0f40c0f00103f9010c4839610200000092030b42696c6c732050697a7a61": {
+    "name": "Bills Pizza",
+    "cuisine": "Italian",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-516a4b1de4f5ee6040592258b0e8318740c0f00103f9017dbea5410200000092030a54686520537475727473": {
+    "name": "The Sturts",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-51545cb0af9025664059b491eba6943131c0f00103f901a8eb80cf0200000092030a426c61636b20526f636b": {
+    "name": "Black Rock",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5110fd36259a7865c05987f3507e48aa2bc0f00102f901b42f7f5800000000": {
+    "name": "Service Road",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51af3b82c0ef0763c059b433f1b3367230c0f00103f901f849938a000000009203065461726f6e61": {
+    "name": "Tarona",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51db90da1f039456c0597e13549e8ae5e7bff00103f9013e2119230200000092030c544a2047616c61706f676f73": {
+    "name": "TJ Galapogos",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-5110768a55036756c0596d567daeb6e2ecbff00103f9014e58a79e020000009203066f6c696d706f": {
+    "name": "olimpo",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51d32b0a606f0150c0590d6a64fca01f22c0f00103f9019aa071a301000000920306596573687561": {
+    "name": "Yeshua",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-514122b7706a8b43c059d5f90159999630c0f00103f901c66f900601000000920311436162616e61205465727261204e6f7661": {
+    "name": "Cabana Terra Nova",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-518b6d52d158df16c0597215d56c2fd92fc0f00102f901bfb0ef200000000092030b4765742043617274657273": {
+    "name": "Get Carters",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51d7c2db9b23cd2840597b52ab46c33230c0f00102f90181471b280000000092030b52657374617572616e7465": {
+    "name": "Restaurante",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-519bcf149568523f40592ec55565dff530c0f00103f90126f73053010000009203184d6174657061746570612020436f756e74727920436c7562": {
+    "name": "Matepatepa  Country Club",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-513dba6ccf87014940592b37ac04e6ba30c0f00103f901925ed02101000000": {
+    "name": "tropic azura bar restaurant",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-5125495b108a5a5240590093d19b8802d2bff00102f9014a1ce95900000000920317546872657368657220436166652720262042697374726f": {
+    "name": "Thresher Cafe' & Bistro",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51aa60545227145c4059e622be13b33e01c0f00103f901ea53411a0100000092030a576172756e6720504452": {
+    "name": "Warung PDR",
+    "cuisine": "Other",
+    "type": "Food Truck/Stand"
+  },
+  "geoapify-5105c99640658860405942ba336ec5ed2cc0f00103f9010ca8898f0000000092030b436f6666656520436c7562": {
+    "name": "Coffee Club",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-5125517985cf2e624059e0dd25cc0f7b30c0f00103f901bc11b558000000009203094a6176612043616665": {
+    "name": "Java Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51abdcfa9fb2e5644059feb627486c072fc0f00103f901562eb26f0000000092030f4e6174616e676f726120436166c3a9": {
+    "name": "Natangora Café",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51b76933f6cdc057c05952fdc04197e43040f00102f901c6f04d120000000092031752657374617572616e74204c6173204361727265746173": {
+    "name": "Restaurant Las Carretas",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51d715ec20871756c05941bd014ec1833040f00102f901b07370160000000092030d5365637265742047617264656e": {
+    "name": "Secret Garden",
+    "cuisine": "Caribbean",
+    "type": "Dine-in"
+  },
+  "geoapify-514c45741948524ac05927dd96c805af1440f00103f901c6a74506010000009203104c27616967726574746520626c657565": {
+    "name": "L'aigrette bleue",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-5148707e1efe4b38c0595b7e3be4c19d3040f00103f9010cb05ac002000000920308426f63612053616c": {
+    "name": "Boca Sal",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-511c85ec6e2f8230c059e5610c2897063040f00102f901a2ba780c00000000": {
+    "name": "Avenue Ousmane Thiaré Sarr",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-513914949657ad1d4059b8cb659a123cfa3ff00102f901f413a04e00000000920308416dc3a26e64696f": {
+    "name": "Amândio",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-513354200e6d993c405961264003a0b82240f00103f901382d6f34010000009203114b61726b6164652054656120486f757365": {
+    "name": "Karkade Tea House",
+    "cuisine": "Other",
+    "type": "Beverage"
+  },
+  "geoapify-51280d350a49f94740594273428de7181f40f00103f901e698ee1a01000000920312576161626572692052657374756172656e74": {
+    "name": "Waaberi Restuarent",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51048576ef3f6052405945eb230d69f63040f00102f9017612203b0000000092030a53616920446172626172": {
+    "name": "Sai Darbar",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-51b750e8ab9a155c40597a257fe662d43040f00103f901e4f9bf1902000000920318e98791e6a0a2e588a9e58fb0e6b9bee6898be68a93e9a5bc": {
+    "name": "金栢利台湾手抓饼",
+    "cuisine": "Chinese",
+    "type": "Food Truck/Stand"
+  },
+  "geoapify-51f4482822e8435e40591e543df438e93040f00103f901b0824e3f010000009203094c652042697374726f": {
+    "name": "Le Bistro",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51c577bd8ffe176240599736c1dc93f02a40f00103f901f69fa8210100000092031553616d277320537465616b202620536561666f6f64": {
+    "name": "Sam's Steak & Seafood",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-5155e12aaa59c7634059acebab06bccf1b40f00103f9015413f9eb0000000092030a4e6574742052616d656e": {
+    "name": "Nett Ramen",
+    "cuisine": "Japanese",
+    "type": "Dine-in"
+  },
+  "geoapify-51e712584a20bc63c0598a0a308738553540f00103f9014ad9798a0100000092030a52617927732043616665": {
+    "name": "Ray's Cafe",
+    "cuisine": "American",
+    "type": "Cafe"
+  },
+  "geoapify-5159f21da10b8a63c05963e1da3f05da3440f00103f901326b0f8a0100000092030b50697a7a61204672657368": {
+    "name": "Pizza Fresh",
+    "cuisine": "Italian",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-516564da48a3625cc0596252d735b54f3f40f00103f9010e6daf0a0100000092030d416e6974612079204a65737573": {
+    "name": "Anita y Jesus",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-516e63658485a056c059cc8d2527c2b93e40f00102f9012eed893d00000000920315436f6f7020446576696c6c65206f6620416d697465": {
+    "name": "Coop Deville of Amite",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-5183143c855c6053c059c9b72d80df033940f00103f901142a9a1e020000009203084e696e657465656e": {
+    "name": "Nineteen",
+    "cuisine": "Caribbean",
+    "type": "Dine-in"
+  },
+  "geoapify-51dcb930d28b9f4fc059f9484a7a18a03140f00103f901a47a8041030000009203125361626120536e61636b20476f75726d6574": {
+    "name": "Saba Snack Gourmet",
+    "cuisine": "Caribbean",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-518c63c9c1115539c059cff753e3a5053140f00103f901708810c40200000092030b4368657a20446a756c6169": {
+    "name": "Chez Djulai",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5132df6696a9f030c05955ce28a787514040f00103f901568a20550200000092030a4c69646f204772696c6c": {
+    "name": "Lido Grill",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-519b9b25b7dc333440590955c5afb3c43e40f00103f901080f440803000000": {
+    "name": "Coastal Road",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51edfc91d8a4ff4040595002f62c63b03140f00103f9011eb65161010000009203194c6f63616c20537564616e6573652052657374617572616e74": {
+    "name": "Local Sudanese Restaurant",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-514ea0e3fe7e5d474059158db5bfb34d3640f00103f901664a132203000000920308d983d988d8afd988": {
+    "name": "كودو",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-5151d20d5e85f8514059c63ce1dbaa2b4040f00103f901dc13ea1301000000": {
+    "name": "Sargodha-Mianwali Road",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-5136470cf17e04574059cc5aaf8e88cc4040f00103f9010a14d1c80100000092030fe6b89de9a699e5b79de88f9ce9a686": {
+    "name": "渝香川菜馆",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-51c832b38556215c4059d118f730c57d4040f00103f901125e63070100000092030fe9ab98e7acace8a197e9a490e58e85": {
+    "name": "高第街餐厅",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-510a1d2a7c6c00614059545b45da21de4040f00103f9013062e1590100000092030fe98193e9a093e5a080e5afbfe58fb8": {
+    "name": "道頓堀寿司",
+    "cuisine": "Japanese",
+    "type": "Dine-in"
+  },
+  "geoapify-51ae1287c759865cc0596dd4f9a69f7c4940f00103f901d4ac9c6d0000000092030a4d63446f6e616c642773": {
+    "name": "McDonald's",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51069156c650cf56c059f25597f848e84540f00103f901a8daf47c01000000920307546f7070657273": {
+    "name": "Toppers",
+    "cuisine": "Italian",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-5137ba1fd8610952c059313f3e5de5f34540f00102f901d67701390000000092031153616d7572616920536f756c20466f6f64": {
+    "name": "Samurai Soul Food",
+    "cuisine": "Japanese",
+    "type": "Dine-in"
+  },
+  "geoapify-51670b08ad073250c05939af5692e1f94540f00103f901d943812d00000000920311536561205369646520536561666f6f6473": {
+    "name": "Sea Side Seafoods",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51f771d98de3223bc05902f96de3aa644340f00103f9013252a77e00000000": {
+    "name": "Canada do Porto",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51347d1b0703d402c059faa2f3d02d7e4940f00103f9017487a516030000009203064e6f2e203233": {
+    "name": "No. 23",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51aebce47ff2671440590c1357df0a4c4140f00103f901a64b7d1201000000": {
+    "name": "RN 46A",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51490389377ce637405981632a583ec24140f00103f9011ed044d9000000009203065374616d6e61": {
+    "name": "Stamna",
+    "cuisine": "Greek",
+    "type": "Dine-in"
+  },
+  "geoapify-51caf154d169dc464059751ce49aa74a4840f00103f9010a734c4600000000": {
+    "name": "Lenin Street",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51a0ce4f8d8f475140597a7dca8e40444140f00102f9018a9e29480000000092032dd8b7d8b9d8a7d98520d8aed8a7d986d98720d9bed988d984db8cd8aad8aed986db8cdaa920daa9d8a7d8a8d984": {
+    "name": "طعام خانه پولیتخنیک کابل",
+    "cuisine": "Persian",
+    "type": "Dine-in"
+  },
+  "geoapify-5197642eba86b4574059cdf1c0b634fe4140f00103f9018478e92001000000": {
+    "name": "Qinghai-Tibet Highway",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-51300851e087875d4059c8e40edb0b544940f00102f901d41b3f1200000000920308d09ad0b0d184d0b5": {
+    "name": "Кафе",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-519893066da83b6240598f311c74ae034640f00103f90192a6bbfb0000000092030ad09ed0bad0b5d0b0d0bd": {
+    "name": "Океан",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-516284f068e30f64c059751daa29c9ab4b40f00103f9017cf6a6f902000000920319416c65757469616e204368696e612052657374617572616e74": {
+    "name": "Aleutian China Restaurant",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-5135e37ed12fea60c059228ac91b60ba4d40f00103f90142cc80f9000000009203195468652053746174696f6e2042617220616e64204772696c6c": {
+    "name": "The Station Bar and Grill",
+    "cuisine": "American",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-51d6c44179c8b25dc0592504076369984b40f00102f9014066e61400000000920303412657": {
+    "name": "A&W",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-519799886dc1bb57c059c11bd2a8c0f24a40f00103f901bf5b3a0f030000009203164a6572656d6961682773204b6f726e65722043616665": {
+    "name": "Jeremiah's Korner Cafe",
+    "cuisine": "American",
+    "type": "Cafe"
+  },
+  "geoapify-51155e5a2c799b54c05918e250112b764a40f00102f901009c69180000000092030f546f6f6b61746527732053746f7265": {
+    "name": "Tookate's Store",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-519cc7bce9f1b350c0596b323e2718674b40f00103f9014702fe260300000092031343616e74696e65206368657a20526974612773": {
+    "name": "Cantine chez Rita's",
+    "cuisine": "French",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-5140daff006be337c059d420167b793a5040f00103f9011e57e5c4020000009203094d617461726c697374": {
+    "name": "Matarlist",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51754c272378f135c059241cc41822055040f00103f901ced2cf160000000092030753657272616e6f": {
+    "name": "Serrano",
+    "cuisine": "Latin",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51e4a1a08e0fb5c43f591ad531c078874940f00102f9015e6e2f0f00000000920317507573616e6f6e20546861692052657374617572616e74": {
+    "name": "Pusanon Thai Restaurant",
+    "cuisine": "Thai",
+    "type": "Dine-in"
+  },
+  "geoapify-51c6064082f5af3740597a567d892a354c40f00102f901360a960500000000920309506972616dc4ab6461": {
+    "name": "Piramīda",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51a92d1ad7640e4740598e379e74c7be4940f00103f9016cc07f7300000000920312d09dd0bed181d182d0b0d0bbd18cd0b6d0b8": {
+    "name": "Ностальжи",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5144b63d8b6fc25140597c3727405ed44940f00103f9013ed58cbf0000000092030cd091d0b8d181d182d180d0be": {
+    "name": "Бистро",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51165b688c9810574059da2addda67394d40f00102f901eacf7b0b00000000920310d0a1d182d0bed0bbd0bed0b2d0b0d18f": {
+    "name": "Столовая",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-514fb2d5e5947e5c4059b1c1c2499a454f40f00103f901967f3b9f0100000092030fd09ad0bed184d0b520d0bcd183d0b7": {
+    "name": "Кофе муз",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51f6e10ff5118e6140596607f071012f4a40f00102f901f278860c00000000920313d094d0bed0bbd0b8d0bdd0b020d180d0bed0b7": {
+    "name": "Долина роз",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5137c7b94db8526440595d05e7429b214c40f00103f901365b3f0501000000": {
+    "name": "улица 60 лет Октября",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51300219f0a89863c05976f39e1477d25140f00103f90123fb359702000000920310426172726f772773204b69746368656e": {
+    "name": "Barrow's Kitchen",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51757fab2b55a160c0596568e157515c5140f00103f901251bab88010000009203114772616e646d612773204b69746368656e": {
+    "name": "Grandma's Kitchen",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51aeb9a3ffe5435ac05992ca147390475140f00103f901232b02f0000000009203114175726f72612052657374617572616e74": {
+    "name": "Aurora Restaurant",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-510e3d732035c44ac059a86219d1ac4f5140f00103f90164880d950100000092030b4b75616e6e697420417274": {
+    "name": "Kuannit Art",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-512f979efa51c2304059338eeca584165140f00103f9015e97dd500000000092030d486161666a656c6c6879747461": {
+    "name": "Haafjellhytta",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-510f56ad96858d40405968dd5042fa3b5140f00103f901c011463a00000000920319d0a7d0b0d0b9d185d0b0d0bdd0b020d098d0bdd0b6d0b8d180": {
+    "name": "Чайхана Инжир",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51fbe362b17218564059d55a9885765f5140f00103f90178df55f00200000092030fd0a4d183d0b420d185d0bed0bbd0bb": {
+    "name": "Фуд холл",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-5152b7b3afbc1b60405984f1d3b8b7e85140f00103f9011fa7d97100000000": {
+    "name": "Trusova street",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51985d1abbeda064405987c7597beb145140f00102f9017a0bdc4000000000920331526f616420526573742041726561204d6f746f727761792053657276696365732037374b2d303033204368756b6f746b61": {
+    "name": "Road Rest Area Motorway Services 77K-003 Chukotka",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-516a7cd7ca561351c0597c3c7e661c674bc0f00102f9012a925f310000000092030f436166652d4261722042616e616e61": {
+    "name": "Cafe-Bar Banana",
+    "cuisine": "Latin",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-518008162cfad450c059fe158d1079704bc0f00103f901a5f4c8c000000000": {
+    "name": "Ruta Nacional 24 Complementaria J",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51399f2f1f041152c05908b4814f512b49c0f00102f901207a8f320000000092030c4c6120546f6c646572c3ad61": {
+    "name": "La Toldería",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-5193d1b7bb3d7950c059e64581994ae047c0f00103f90194f7367000000000920312526f7374697365726961204d7220436f6f6b": {
+    "name": "Rostiseria Mr Cook",
+    "cuisine": "Latin",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-518e36d8e5a550364059ba1fa633660641c0f00102f9015872010d000000009203085669736772616174": {
+    "name": "Visgraat",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51fa36b34c75e53840596ce5ca45210441c0f00103f901142b6ba30200000092030a466973682054616c6573": {
+    "name": "Fish Tales",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-511a8c95019b64534059dce230f60ce642c0f00102f9018b4b310b000000009203076c6520536b7561": {
+    "name": "le Skua",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51c13d2a5929d75d40599a07b0c8af3741c0f00103f90134685c9f0100000092030f57656c6c737465616420436166c3a9": {
+    "name": "Wellstead Café",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-518101295632196140590fc1278c1cfa41c0f00103f901c06ce6470000000092031342617564696e27732052657374617572616e74": {
+    "name": "Baudin's Restaurant",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-514611ad70e6f664405953d3895f0cb546c0f00103f90144882c980000000092030c53616e64666c792043616665": {
+    "name": "Sandfly Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-511aceeb3e36cb65c0592acb6b802dce33c0f00103f901a26c4cbd0000000092030f486127617061692044656c69676874": {
+    "name": "Ha'apai Delight",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51559808652bb262c059a31930ed408a31c0f00103f901b2b91998000000009203104d414e474f2052455354415552414e54": {
+    "name": "MANGO RESTAURANT",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51f03f43fb45df60c0592f55c1281f1e37c0f00102f9018e2ac42c00000000": {
+    "name": "RT 241",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51458d1abcbf5b5bc05988da77980e283bc0f00102f901963def1d00000000": {
+    "name": "Hotu Matu'a",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51a7bba1dfad3851c059154db1b49d7e40c0f00103f9017edee7c6000000009203085461636f20426172": {
+    "name": "Taco Bar",
+    "cuisine": "Latin",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-514d5e09490b8450c0595ac97d61688e40c0f00102f9017c4ee94700000000": {
+    "name": "Ruta Provincial 9",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-519176ed1c145b46c05986820827583837c0f00103f901facde80d01000000920314526566c3ba67696f2052657374617572616e7465": {
+    "name": "Refúgio Restaurante",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-51069e7b0f9708344059097c348b06aa40c0f00103f9011656ffd40200000092030b4d7567672026204265616e": {
+    "name": "Mugg & Bean",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51d0697121ea173a405904b80f2f3e5740c0f00103f901d6bf4b9c0000000092030a4561676c6520486f7574": {
+    "name": "Eagle Hout",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51ad60657e7fc3464059af8dc23fb69039c0f00103f901aa21520903000000": {
+    "name": "Faux Cap",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-511d26755dd3c660405909a93693ca6540c0f00103f9010533a9a50100000092030a54657272616365203234": {
+    "name": "Terrace 24",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5191346e20d3ee6040590a979f65278640c0f00103f901fb96a24102000000920308416c696369612773": {
+    "name": "Alicia's",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51e6370e189c2d664059cff4c44182c531c0f00102f90116a7221a00000000": {
+    "name": "Wailoaloa Road",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-517a0d6fd9637865c05950b2d1e701b02bc0f00102f9017818802700000000": {
+    "name": "Motootua Street",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51cb0d2b81398361c05958fdb6cc8ed121c0f00103f90172632ba70200000092031f526f756c6f74746520c392756d61746920284368657a20596f6c656e6e6529": {
+    "name": "Roulotte Òumati (Chez Yolenne)",
+    "cuisine": "French",
+    "type": "Food Truck/Stand"
+  },
+  "geoapify-518b998e4afb9356c059ff9da34401d1e7bff00103f901944d09520000000092030b54726f7069632042697264": {
+    "name": "Tropic Bird",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-5137250ffa080954c0596484a6dbc82bb2bff00103f901926698530100000092031752657374617572616e746520436f6d756e69746172696f": {
+    "name": "Restaurante Comunitario",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-5183328d26972e50c059e5d0c72187dd0ac0f00103f901eef6df5e0200000092031343687572726173636172696120646120526179": {
+    "name": "Churrascaria da Ray",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-516ca521f47d8c43c059ad174339d19630c0f00103f90181c7a499000000009203084d61726974616361": {
+    "name": "Maritaca",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-517d18d7a076de16c059fcf580518ed92fc0f00102f901b7b0ef200000000092030c416e6e65277320506c616365": {
+    "name": "Anne's Place",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51e28453307460314059dc12149a7f5f0ac0f00103f901229f3775010000009203064b6172696275": {
+    "name": "Karibu",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51fc259820d9fc3a40595dcbbff110cf30c0f00103f9014d544e2e0100000092030f4465626f6e616972732050697a7a61": {
+    "name": "Debonairs Pizza",
+    "cuisine": "Italian",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51629923d005ed484059adbd4f55a1ff30c0f00103f901c22776280000000092031652656c616973206427416d626f6469666f7461747261": {
+    "name": "Relais d'Ambodifotatra",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51e597665f1e46524059a97290c657b1e3bff00103f9013a6d484d0200000092030d5061706127732042697374726f": {
+    "name": "Papa's Bistro",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51df2a99ad861d5c40592782dd55b43e03c0f00103f90152d1fe1f0100000092031d52756d6168204d616b616e20536561466f6f642022446f612049627522": {
+    "name": "Rumah Makan SeaFood \"Doa Ibu\"",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51863d48aa0a8760405984c3c19437362bc0f00103f901d8586cc9000000009203144d61727920526976657220526f6164686f757365": {
+    "name": "Mary River Roadhouse",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51a9fcc632d82e62405942469b3e967b30c0f00103f901b811b5580000000092030a43616665204672657371": {
+    "name": "Cafe Fresq",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-510206eee5a3e76440591c9eb9e23d0a2fc0f00103f901e6c9366d0100000092030459656c65": {
+    "name": "Yele",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51c9b6c2aa30d857c059a63c049f301a3040f00103f9017e5f0fc402000000920308456c205361736f6e": {
+    "name": "El Sason",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-516dcd458abc1a56c0599d3f24ed418a3040f00102f901f06c7d16000000009203114f6374617669612773204b69746368656e": {
+    "name": "Octavia's Kitchen",
+    "cuisine": "Caribbean",
+    "type": "Dine-in"
+  },
+  "geoapify-51743d76bc6e524ac05952f17f4754a01440f00103f901d42a037f0000000092030c4c652053696e6761706f7572": {
+    "name": "Le Singapour",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-51ab1386b7bd5b38c059d542c9e4d4903040f00103f901aa281080010000009203144261722f52657374617572616e74652044696469": {
+    "name": "Bar/Restaurante Didi",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-51f1a0342fe28030c0592a334a3c45073040f00103f90148a73ec90000000092030d426f7520456c204d6f67646164": {
+    "name": "Bou El Mogdad",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5149fe16539ff21a40598dee2076a6d0d53ff00103f90136621e8a00000000920303423234": {
+    "name": "B24",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-512cb418e1924e374059b7eee6a90ef12a40f00103f901bdf439a702000000": {
+    "name": "Saraf Omra",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-517041b62c5fc2474059c0df79f365a31240f00103f901787f82b40200000092030f48616c696d6120776568656c697965": {
+    "name": "Halima weheliye",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51f5335074b8b45240597b415596322a3040f00103f90122bf0be80100000092031548702047757275204461727368616e20486f74656c": {
+    "name": "Hp Guru Darshan Hotel",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-51416c9f443a115b40597366bb421f003040f00103f90108c099990200000092030453617361": {
+    "name": "Sasa",
+    "cuisine": "Vietnamese",
+    "type": "Dine-in"
+  },
+  "geoapify-517938d46420485e40591388ce1667ca3040f00102f90126b76a2600000000920309526976657276696577": {
+    "name": "Riverview",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-510bfc975ae517624059bfd7101c97f12a40f00103f901b83f9d1d0100000092030b53696d706c7920466f6f64": {
+    "name": "Simply Food",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51abf87596cfc6634059f935edbd53dc1b40f00103f9017471a4c0000000009203114b6961c2b4732052657374617572616e74": {
+    "name": "Kia´s Restaurant",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-511195fc3ed2bb63c0592414b6fa45503540f00103f90110b2e4ca010000009203124a6f65e280997320537465616b686f757365": {
+    "name": "Joe’s Steakhouse",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-514d56fb2a2f7c63c059499ae4ec426a3340f00103f901728692ff02000000": {
+    "name": "Hawaii Belt Road",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51e8c880a2e8505cc0594ea95cf2893e3f40f00103f9017e6d43010100000092030742616c6368c3a9": {
+    "name": "Balché",
+    "cuisine": "Latin",
+    "type": "Dine-in"
+  },
+  "geoapify-510e8d823b2ba156c059a954e46b2aba3e40f00103f901f4b3928a02000000920305536f6e6963": {
+    "name": "Sonic",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-514b451960d55d53c0597823980fad0c3940f00103f901569b2464020000009203034b4643": {
+    "name": "KFC",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-518ddab39da57d4fc059fc2a0a05b6803140f00103f90180a562000100000092030b4672616e6b696527732032": {
+    "name": "Frankie's 2",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51e466b8019f1739c0591bae1fac10343140f00103f9014a1dc5750000000092030a536f6c706f6e74657365": {
+    "name": "Solpontese",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51d84812842bf030c059132c0e677e514040f00103f9012e71b98b0200000092030d4f204769726f204a617264696d": {
+    "name": "O Giro Jardim",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5124e18cabdb42344059915fe40a94ab3f40f00103f901b6644f0002000000920322d983d8a7d981d98a20d988d985d8b7d8b9d98520d8a7d984d985d8aed8aad8a7d8b1": {
+    "name": "كافي ومطعم المختار",
+    "cuisine": "Levant",
+    "type": "Cafe"
+  },
+  "geoapify-51a258b8f64f9c4240597fc6e0bc939c3340f00103f9010a83bb4e01000000920325447265616d2050697a7a6120616e642049636520437265616d2c20506f727420537564616e": {
+    "name": "Dream Pizza and Ice Cream, Port Sudan",
+    "cuisine": "Italian",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51506b3fbe298e464059c61a892bc2dc3240f00103f90122498f4d0100000092031253617074636f206761732073746174696f6e": {
+    "name": "Saptco gas station",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-514f8cd1df70dd5140598ffaeb1516374040f00103f901ac991d000100000092030c477265656e204c61676f6f6e": {
+    "name": "Green Lagoon",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-5119eb76514f045740591c4e4f0e55ca4040f00103f9011614d1c80100000092030fe4b8b4e5a48fe7be8ee9a39fe59f8e": {
+    "name": "临夏美食城",
+    "cuisine": "Chinese",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-5116fe6b5658545c40597cf1dba786cd4040f00102f901e8e6cb4c00000000920306e9a39fe5a082": {
+    "name": "食堂",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-5119bf3ad82c03614059048d9944bdf14040f00103f901b44f929801000000920309e3818be381ade4b985": {
+    "name": "かね久",
+    "cuisine": "Japanese",
+    "type": "Dine-in"
+  },
+  "geoapify-5112baf0283a865cc0598b187618937c4940f00103f901fa3c631e0100000092030650692d52686f": {
+    "name": "Pi-Rho",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51adaf647d39d056c059c45f9335eae74540f00103f9011ca9753d00000000920306537562776179": {
+    "name": "Subway",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-514eb9c2bb5c0952c059a2ddd737e6f34540f00103f901e27d641b0200000092031442726f6b656e2048656172747320427572676572": {
+    "name": "Broken Hearts Burger",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-511d7e48090b3450c0597118cc5f21fa4540f00102f90131e5b93e00000000920309546865204772696c6c": {
+    "name": "The Grill",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-5164062ae3dfed3bc05932207bbdfb4f4340f00103f901aeea91a9000000009203084f20426f72676573": {
+    "name": "O Borges",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51ae31c67efe4101c059407d06bda87b4940f00102f9015407e3170000000092030f4c6f7265206f662074686520536b79": {
+    "name": "Lore of the Sky",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-51a439b2f2cb881540591a42df27585d4140f00103f901fc1a247601000000920308d985d982d987d989": {
+    "name": "مقهى",
+    "cuisine": "Levant",
+    "type": "Cafe"
+  },
+  "geoapify-51d58d1c8e53e7374059e63686a526c24140f00103f901e0cf44d90000000092030644726f736961": {
+    "name": "Drosia",
+    "cuisine": "Greek",
+    "type": "Dine-in"
+  },
+  "geoapify-515591c0d5f0da464059b0ae0ad4624b4840f00103f90116444a9b0000000092030ed098d0bcd0bfd0b5d180d0b8d18f": {
+    "name": "Империя",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-515b010503254b514059e32d05b022444140f00102f90118247f300000000092031353686972706f6f722052657374617572616e74": {
+    "name": "Shirpoor Restaurant",
+    "cuisine": "Persian",
+    "type": "Dine-in"
+  },
+  "geoapify-51ead4f088e595574059c65e398c93d04340f00103f901689ba7380100000092030ce4b880e5908de5b08fe59083": {
+    "name": "一名小吃",
+    "cuisine": "Chinese",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-517654da8761035d4059b33511ecae604940f00102f90130cc371a0000000092030cd09dd0b0d182d0b0d0bbd0b8": {
+    "name": "Натали",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-517ef0f8bd670b624059b759d7de73fa4540f00102f901fadb7f180000000092030fe9baa6e3828fe38289e5b8bde5ad90": {
+    "name": "麦わら帽子",
+    "cuisine": "Japanese",
+    "type": "Cafe"
+  },
+  "geoapify-5161134559a33864c0594eaeff91a1654e40f00102f901da75135500000000920320416c6261277320436f666665652053686f70202620436f6e76656e69656e6365": {
+    "name": "Alba's Coffee Shop & Convenience",
+    "cuisine": "American",
+    "type": "Cafe"
+  },
+  "geoapify-517de2a5404bf760c0595b5ce333d9344d40f00103f901c6fd3acb0200000092031946697265776565642047616c6c65727920616e642043616665": {
+    "name": "Fireweed Gallery and Cafe",
+    "cuisine": "American",
+    "type": "Cafe"
+  },
+  "geoapify-51e3bea6523fb35dc059a952483ceb954b40f00102f9016c8ef9540000000092030b447574636820526f6f7473": {
+    "name": "Dutch Roots",
+    "cuisine": "Other",
+    "type": "Bakery"
+  },
+  "geoapify-51b690225df67457c059293dd4b357824940f00102f901f60e2c1900000000920309416e746f6e696f2773": {
+    "name": "Antonio's",
+    "cuisine": "Italian",
+    "type": "Dine-in"
+  },
+  "geoapify-51b3cce9fc109b54c059dd776a0470764a40f00102f9011b27761800000000920311546865204d6f6f73652054616b656f7574": {
+    "name": "The Moose Takeout",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51ce661f7585c550c0594b08b18e3e664a40f00103f90137e2a87400000000": {
+    "name": "Le Carrefour",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51da160a7d55a137c059a7a66e780b315040f00103f901ca3a6d5701000000920313536e6a6f66656c6c2052657374617572616e74": {
+    "name": "Snjofell Restaurant",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51da3faabc78e435c05909fce1e7bf065040f00103f901421dd75802000000920308486a61727461c3b0": {
+    "name": "Hjartað",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-516cd5a3a6d6b0c43f59476b1e9138864940f00102f9018a7e1c3900000000920307c39c746f706961": {
+    "name": "Ütopia",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-5155bda195209e3740594dd6a887681f4c40f00103f901289965d90100000092030a48617070792043616665": {
+    "name": "Happy Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-510941fd1d400d4740594b3ca06c4abe4940f00102f90154b5630e0000000092030cd0a1d0b0d0bcd0b5d0b1d0b0": {
+    "name": "Самеба",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5145dac69f2816514059a85725ec36e74940f00103f9015e671ccc02000000920307546f6d69726973": {
+    "name": "Tomiris",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5144238e2be49c564059478e7406461f4c40f00103f9013a9b885600000000": {
+    "name": "шоссе Байкал 1",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51573f0ca1d77e5c405922972fadd1444f40f00102f901ae47e82700000000": {
+    "name": "улица 40 лет Октября 43/3",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51162b0f775a156140590dada987c3984940f00103f901ec4c3dae0000000092030ad0a1d182d0b5d0bbd181": {
+    "name": "Стелс",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-5169de16d1db506440594ad63ca29d1e4c40f00103f9018518910601000000920310d0a0d0b0d0b7d0b3d183d0bbd18fd0b9": {
+    "name": "Разгуляй",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51c07971e2ab9863c0595e1c4b0e0ed35140f00103f901558c6fdb0000000092030d4e69c4a1c4a16976696b707574": {
+    "name": "Niġġivikput",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51cfabf01d2bb760c059c0e556adf1165140f00103f901abdba4a6020000009203034b4643": {
+    "name": "KFC",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51dc44d213bb435ac059f0a31af67b475140f00103f901f79eb28501000000920309536178696672616765": {
+    "name": "Saxifrage",
+    "cuisine": "American",
+    "type": "Dine-in"
+  },
+  "geoapify-51d1fb1065b98c49c05913526d26154e5140f00103f901bea63bf300000000920318496c756c6961712052657374617572616e74202620426172": {
+    "name": "Iluliaq Restaurant & Bar",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-512bdec83cf2ad314059b2a9a91bde2a5140f00103f901e0e824c900000000": {
+    "name": "Kaptein Nyquists vei",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-515d674b30728c40405991c5ef8025395140f00102f901669bef2f00000000920315d09bd183d0bdd0bdd18bd0b920d181d0b2d0b5d182": {
+    "name": "Лунный свет",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-518a26ab7d150d564059c352133331565140f00103f90110d4a22d0200000092030b4275726765722052696e67": {
+    "name": "Burger Ring",
+    "cuisine": "American",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51f93a5fa2701b60405913279c82a1e85140f00103f901e59f985d01000000": {
+    "name": "Leninskaya street",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51ab8f2c05c9486540597c3892150d6d5140f00103f901856e687a0100000092030ed090d180d0b0d0b1d0b8d0bad0b0": {
+    "name": "Арабика",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-5128c984a977b62a4059092758d240464a40f00103f9019cd557cf0100000092030f5061726973204772696c6c68617573": {
+    "name": "Paris Grillhaus",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51fbc9bd65f3b52a4059a89086ae9f464a40f00103f901105c2996020000009203085370756e74696e6f": {
+    "name": "Spuntino",
+    "cuisine": "Italian",
+    "type": "Dine-in"
+  },
+  "geoapify-514b8457dcc9b92a4059e1044b1a48474a40f00103f9017623b69f0200000092030c53656570666572646368656e": {
+    "name": "Seepferdchen",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-5168e66e7c92000ec059453d8e30562e4440f00103f9014ce3b7fc0200000092030e446f6d696e6f27732070697a7a61": {
+    "name": "Domino's pizza",
+    "cuisine": "Italian",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51b6792d324b0c0ec0592d0cec8c4a2e4440f00103f9015e1ececf0200000092030a476f2053757368696e67": {
+    "name": "Go Sushing",
+    "cuisine": "Japanese",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-519d048074fb060ec0594d373fb4452f4440f00103f9011a2ef85b02000000920309456c20c3816c616d6f": {
+    "name": "El Álamo",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-512747a6e8edfa344059505e1a7563264a40f00103f901f4d34edc0200000092030a4d616d6f20506174727a": {
+    "name": "Mamo Patrz",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51355f9bb35ffd344059a0dd566dd6234a40f00102f901b84e1b290000000092030a43616665204a75727461": {
+    "name": "Cafe Jurta",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-5137e2c96e66f63440591aa3755435234a40f00103f90116b5b713010000009203114d6973732044c3b66e6572204b65626170": {
+    "name": "Miss Döner Kebap",
+    "cuisine": "Levant",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-512ce22a05932b3a40591416269d92384640f00103f901525fe7d70000000092030a416d6972204b65626162": {
+    "name": "Amir Kebab",
+    "cuisine": "Levant",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51e7806e79f6263a40596e72535e86384640f00103f901a01efd610100000092030b4d69736869204d69736869": {
+    "name": "Mishi Mishi",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51e1e58ea3de223a4059e591e45e05394640f00103f901929d6b950000000092030c476f6c64656e204b65626170": {
+    "name": "Golden Kebap",
+    "cuisine": "Levant",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51dfe819b105c31340596baa381fe8324a40f00103f9012a60ebe00000000092030b467269657420506c617a61": {
+    "name": "Friet Plaza",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-512a8e03af96c31340596ef6ac10fb324a40f00103f901a6aac5a900000000920304436f436f": {
+    "name": "CoCo",
+    "cuisine": "Other",
+    "type": "Beverage"
+  },
+  "geoapify-519896a2a6a7d1134059de567a6d36324a40f00103f9019630c5a90000000092031142656e6e792773204c756e6368726f6f6d": {
+    "name": "Benny's Lunchroom",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-511874e72e2e221ec0596407f07101ce4040f00103f901be34b21a01000000": {
+    "name": "Allée de Jasmins",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51209331e3121c1ec0590274a95b87ce4040f00103f90192dbc2500100000092030f436166c3a9204d616a6f72656c6c65": {
+    "name": "Café Majorelle",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-514df8f7619e201ec0595361b43d7dcf4040f00102f901a8e4553900000000": {
+    "name": "Route de Zenata",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5156e6f74729383f4059bec8ba6e00163e40f00103f90124a1240a01000000920319d8add988d8a7d988d8b4d98a20d8a7d984d8b1d8a8d98ad8b9": {
+    "name": "حواوشي الربيع",
+    "cuisine": "Levant",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51f06dfab31f3f3f40594754a86e2e103e40f00103f9016c24b8470100000092030d64616e65737369206361666665": {
+    "name": "danessi caffe",
+    "cuisine": "Italian",
+    "type": "Cafe"
+  },
+  "geoapify-518ac33ea65a3a3f4059d046ae9b52123e40f00103f901c2803c290200000092030ed8b3d8aad8a7d8b1d8a8d983d8b3": {
+    "name": "ستاربكس",
+    "cuisine": "American",
+    "type": "Cafe"
+  },
+  "geoapify-512fe51df2017a0b405941c5a42a2adb1940f00102f9016ec06c200000000092030a42472047617264656e73": {
+    "name": "BG Gardens",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-518de612584a800a4059cb9b68fc67e21940f00103f901a40084b30000000092030c4d65676120436869636b656e": {
+    "name": "Mega Chicken",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-516d33ba281f6f0b4059807c09151cd21940f00102f901c0f4fd1f0000000092031543617361204c796469612052657374617572616e74": {
+    "name": "Casa Lydia Restaurant",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51fac04472e86342405901182a5a14d1f3bff00103f90134968e83020000009203204c612056696c6c612052657374617572616e7420616e642057696e6520426172": {
+    "name": "La Villa Restaurant and Wine Bar",
+    "cuisine": "Italian",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-51486c770fd06e4240598ba0d6d935a6f3bff00103f9010c9b267901000000920306472043616665": {
+    "name": "G Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-5196f8ed354e68424059b060d1634abaf3bff00103f9017c0da2110000000092030e4d61696e20436166657465726961": {
+    "name": "Main Cafeteria",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51a5164a26a75f43405959ac3cdc69062240f00103f90114fc6128000000009203094c6f6d626172646961": {
+    "name": "Lombardia",
+    "cuisine": "Italian",
+    "type": "Dine-in"
+  },
+  "geoapify-514a0a2c80295b434059f0a7c64b37112240f00103f9018639ea3100000000920306546967657374": {
+    "name": "Tigest",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51aa8251499d5c434059a19fa9d72d122240f00103f901c439ea3100000000920314546f206b6f6c666965204174656e612074657261": {
+    "name": "To kolfie Atena tera",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-518cbb41b456a22e40598ae18f47159e11c0f00102f901323a60280000000092030e446965752065737420616d6f7572": {
+    "name": "Dieu est amour",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-513d2185fc7d942e40596e066e9340a111c0f00103f9014c6fa93b01000000920311457370616365204dc3a87265204b616d73": {
+    "name": "Espace Mère Kams",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5157d06d0a52a22e4059c06ddc3b709e11c0f00102f9012a3a6028000000009203114d696e6920616c696d656e746174696f6e": {
+    "name": "Mini alimentation",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51c07c0d1c2b4c3c40595b536a40ceb92ec0f00103f901641cee7b020000009203084c696d617175796f": {
+    "name": "Limaquyo",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5124b4e55c8a493c405937a04a7265b92ec0f00103f901581cee7b02000000920306446f6c696e65": {
+    "name": "Doline",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5175221c0ea65e3c40597d8c5eb296cf2ec0f00103f901601cee7b020000009203114d616d6127732052657374617572616e74": {
+    "name": "Mama's Restaurant",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51837467dc8ab3c3bf597e00529b38811640f00103f90144be419a010000009203125a656e6f277320596f676875727420426172": {
+    "name": "Zeno's Yoghurt Bar",
+    "cuisine": "Other",
+    "type": "Beverage"
+  },
+  "geoapify-51589643e6255ac2bf59c0f0a54b5a8c1640f00103f9016a77bf140200000092030b53776565742041726f6d61": {
+    "name": "Sweet Aroma",
+    "cuisine": "Other",
+    "type": "Bakery"
+  },
+  "geoapify-5100e65ab4006dc2bf59dcda1dadc58a1640f00103f9018a8f714e0200000092031b41667269796927732052657374617572616e7420616e6420426172": {
+    "name": "Afriyi's Restaurant and Bar",
+    "cuisine": "Other",
+    "type": "Bar & Lounge"
+  },
+  "geoapify-51013beddfaba14340599a29087998691bc0f00103f9015eb2ebe400000000": {
+    "name": "Maneno Street",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-514d439e6eeaa0434059cdea1d6e876e1bc0f00103f90124de84e40000000092030a4a616469642043616665": {
+    "name": "Jadid Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-5194ff249930a14340592dc59ff2f96a1bc0f00103f9014a6ee8e40000000092031042726f74686572686f6f642043616665": {
+    "name": "Brotherhood Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-51857048f1a452404059b655dd5bc0ea39c0f00102f901868f714000000000": {
+    "name": "Av. da Marginal",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-5112b985538b504040594113bc7c46ef39c0f00103f9017406905201000000": {
+    "name": "Av. da Marginal",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-515f251fbb0b52404059d7d2ed36b9eb39c0f00103f9015c28c4f60100000092031f4d696d6d6f732d43656e74726f20636f6d6d65726369616c204d6172c3a973": {
+    "name": "Mimmos-Centro commercial Marés",
+    "cuisine": "Italian",
+    "type": "Dine-in"
+  },
+  "geoapify-510a39a572c951534059583101648da13c40f00103f901c2ed339f020000009203194275726e6f757420526f6c6c65732026205368617761726d61": {
+    "name": "Burnout Rolles & Shawarma",
+    "cuisine": "Levant",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51dc89ed49bb505340593d0565bf93ad3c40f00103f90134eda7fa020000009203064e6573746c65": {
+    "name": "Nestle",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-5123f94a20a551534059615a2fe12ba13c40f00103f9018665369d0200000092031f43697479206865617274732073776565747320262072657374617572616e74": {
+    "name": "City hearts sweets & restaurant",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-51b8edd68d529b56405974af93fab2bf3740f00102f9012a6a993b00000000920320e0a6b8e0a781e0a6aee0a6bfe0a6b020e0a6b9e0a69f20e0a695e0a787e0a695": {
+    "name": "সুমির হট কেক",
+    "cuisine": "South Asian",
+    "type": "Bakery"
+  },
+  "geoapify-510283ff081e9c5640592cd7db662abe3740f00103f9015c51469401000000920333e0a686e0a6b020e0a6b0e0a6bee0a69ce0a78de0a69ce0a6bee0a69520e0a695e0a6bee0a6ace0a6bee0a6ac20e0a698e0a6b0": {
+    "name": "আর রাজ্জাক কাবাব ঘর",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-51014b53a97e9a5640593130e186cebf3740f00103f9013cd14d0401000000": {
+    "name": "Comilla Hotel & Restaurant",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-518cd42071345455405949dd297865be3b40f00103f901c4adde5402000000": {
+    "name": "F81",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51af84a4051e56554059aa98ef856eaf3b40f00103f901a00aeac600000000920304466f726b": {
+    "name": "Fork",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-514884ebf6fe555540590365ae6763ae3b40f00103f9011a584b5b0200000092030f52616a20436f666665652053686f70": {
+    "name": "Raj Coffee Shop",
+    "cuisine": "South Asian",
+    "type": "Cafe"
+  },
+  "geoapify-5121510da0040f584059c2340c1f11d93040f00103f901b05560440100000092031241756e672053616e20507961652043616665": {
+    "name": "Aung San Pyae Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-5123f77475c70b584059ef8e8cd5e6dd3040f00103f901688e7d1101000000920358e1809be180bde180bee180b1e18080e180b1e180ace18084e180bae180b8e18080e180bce180bde1809ae180ba20e1809ce18080e180bae18096e18080e180bae1809be1808ae180bae18086e180ade180afe18084e180ba": {
+    "name": "ရွှေကောင်းကြွယ် လက်ဖက်ရည်ဆိုင်",
+    "cuisine": "Other",
+    "type": "Beverage"
+  },
+  "geoapify-51231afd02d308584059ff23e60f1ede3040f00102f901a47ef72d0000000092030c486f7420506f742043697479": {
+    "name": "Hot Pot City",
+    "cuisine": "Chinese",
+    "type": "Dine-in"
+  },
+  "geoapify-5104dfd9c38324594059cda6c8c628982b40f00103f901f67238e50200000092030e50756e7468616920436f66666565": {
+    "name": "Punthai Coffee",
+    "cuisine": "Thai",
+    "type": "Cafe"
+  },
+  "geoapify-51cedce8088524594059f403b23275922b40f00103f901ae03fe84020000009203134b616f20536f69205468656e677468726f6e67": {
+    "name": "Kao Soi Thengthrong",
+    "cuisine": "Thai",
+    "type": "Dine-in"
+  },
+  "geoapify-513f77ddb64a245940590cb08f4e5d912b40f00103f9017ea3db110300000092030e5468652054726164652043616665": {
+    "name": "The Trade Cafe",
+    "cuisine": "Other",
+    "type": "Cafe"
+  },
+  "geoapify-518ac4a97b89715a40593da9407793073540f00103f901607119b80100000092031043c3a0205068c3aa2046696d6f205370": {
+    "name": "Cà Phê Fimo Sp",
+    "cuisine": "Vietnamese",
+    "type": "Cafe"
+  },
+  "geoapify-51bfa6bd778a715a4059e542e55fcb053540f00103f901627119b80100000092031043c3a0205068c3aa2046696d6f205370": {
+    "name": "Cà Phê Fimo Sp",
+    "cuisine": "Vietnamese",
+    "type": "Cafe"
+  },
+  "geoapify-51041e4a758d725a40594e46d91065063540f00102f90174d7754e0000000092031143c3a0205068c3aa205675692056e1babb": {
+    "name": "Cà Phê Vui Vẻ",
+    "cuisine": "Vietnamese",
+    "type": "Cafe"
+  },
+  "geoapify-5115f18c6c1d405e40590b13a16c25132d40f00103f90188371e10030000009203084a6f6c6c69626565": {
+    "name": "Jollibee",
+    "cuisine": "Other",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51862f5dd2e2405e4059b69f8cf161162d40f00103f901725cc8a8010000009203124c652042697374726f206427416761746865": {
+    "name": "Le Bistro d'Agathe",
+    "cuisine": "French",
+    "type": "Dine-in"
+  },
+  "geoapify-51aa8e6676a7425e40591d13735a010f2d40f00103f90172982c9e0100000092031350616e79616e67277320496861772d69686177": {
+    "name": "Panyang's Ihaw-ihaw",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-517ba2ebc20fba5a405915a4bed133a218c0f00103f901809c467f010000009203044a2e436f": {
+    "name": "J.Co",
+    "cuisine": "Other",
+    "type": "Bakery"
+  },
+  "geoapify-51e6ce4c309cb95a4059fca31419c2ae18c0f00103f9012ee04b4003000000920319426162692050616e6767616e67204c61706f20536972616974": {
+    "name": "Babi Panggang Lapo Sirait",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-517cf1457bbcb95a4059605ad427b9a318c0f00103f901f04f32970200000092031a4d616e6720456e676b696e67204b656c61706120476164696e67": {
+    "name": "Mang Engking Kelapa Gading",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-514d70a076aef7534059f05f6a95aa8e1b40f00103f9016652cc930100000092030d54617374792043617465726572": {
+    "name": "Tasty Caterer",
+    "cuisine": "South Asian",
+    "type": "Dine-in"
+  },
+  "geoapify-5169e047356cf753405917b60b72bc8f1b40f00103f9014e3752cf0100000092030950697a7a6120487574": {
+    "name": "Pizza Hut",
+    "cuisine": "Italian",
+    "type": "Fast Food/QSR"
+  },
+  "geoapify-51de74cb0ef1f6534059f4cfc254e9951b40f00103f9012ccb17520000000092031050554e4348204a756963652053686f70": {
+    "name": "PUNCH Juice Shop",
+    "cuisine": "Other",
+    "type": "Beverage"
+  },
+  "geoapify-5165b147abe8525140591bc6a2f82b9f4440f00102f901342a800c0000000092030356264c": {
+    "name": "V&L",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  },
+  "geoapify-51d1f0c1c65053514059a2258fa7e59f4440f00103f9010ec970d000000000920306544153544541": {
+    "name": "TASTEA",
+    "cuisine": "Other",
+    "type": "Beverage"
+  },
+  "geoapify-518c08104f40535140591bab8372919f4440f00103f9017cfe5b3d00000000920321d09ad183d0b9d0bbd18ed0bad181d0bad0b8d0b920d0b4d0b2d0bed180d0b8d0ba": {
+    "name": "Куйлюкский дворик",
+    "cuisine": "Other",
+    "type": "Dine-in"
+  }
+}

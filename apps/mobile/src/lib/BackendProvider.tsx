@@ -324,21 +324,39 @@ export function BackendProvider({ children }: { children: ReactNode }) {
         ]);
         for (const result of [reviewers, reviews])
           if (result.error) throw result.error;
-        const friends: SampleFriend[] = (reviewers.data ?? []).map((row) => ({
-          id: row.id,
-          name: row.name,
-          handle: row.handle,
-          initials: row.initials,
-          bio: row.bio,
-          visits: (reviews.data ?? [])
-            .filter((review) => review.reviewer_id === row.id)
-            .map((review) => ({
-              placeId: review.restaurant_id,
-              rating: review.rating,
-              note: review.note,
-              when: new Date(review.visited_at).toLocaleDateString("en-CA"),
-            })),
-        }));
+        const friends: SampleFriend[] = (reviewers.data ?? []).map((row) => {
+          const avatarUri =
+            (typeof row.avatar_url === "string" && row.avatar_url) ||
+            `https://i.pravatar.cc/150?u=${row.id}`;
+          return {
+            id: row.id,
+            name: row.name,
+            handle: row.handle,
+            initials: row.initials,
+            bio: row.bio,
+            avatarUri,
+            profilePictureUri: avatarUri,
+            profilePicture: avatarUri,
+            avatarUrl: avatarUri,
+            photoUrl: avatarUri,
+            imageUrl: avatarUri,
+            imageUri: avatarUri,
+            visits: (reviews.data ?? [])
+              .filter((review) => review.reviewer_id === row.id)
+              .map((review) => {
+                const note = review.note;
+                return {
+                  placeId: review.restaurant_id,
+                  rating: review.rating,
+                  note,
+                  comment: note,
+                  review: note,
+                  text: note,
+                  when: new Date(review.visited_at).toLocaleDateString("en-CA"),
+                };
+              }),
+          };
+        });
         if (active)
           setCatalog((previous) => ({ ...previous, friends, error: "" }));
       } catch {

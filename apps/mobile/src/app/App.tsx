@@ -7,9 +7,11 @@ import {
   useState,
 } from "react";
 import {
+  Animated,
   ActivityIndicator,
   Alert,
   Animated,
+  Easing,
   FlatList,
   Keyboard,
   Linking,
@@ -23,13 +25,14 @@ import {
   TextInput,
   View,
   useWindowDimensions,
+  type ViewStyle,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { migrateWebBookmarks } from "../lib/migrateWebBookmarks";
 import { places as bundledPlaces } from "../features/restaurants/data/places";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { FoodCameraScreen } from "../features/food-dex/screens/FoodCameraScreen";
 import MapView, { type MapCamera } from "../components/maps";
 import {
@@ -59,18 +62,141 @@ import {
   recommendationLabel,
 } from "../features/restaurants/models/recommendations";
 import { FoodRecommender } from "../features/restaurants/components/FoodRecommender";
-import { RestaurantPhotoCredit } from "../features/restaurants/components/RestaurantPhotoCredit";
 import { RestaurantPhoto } from "../features/restaurants/components/RestaurantPhoto";
 import { CommunityScreen } from "../features/community/screens/CommunityScreens";
 import {
   FoodDexScreen,
   type FoodCapture,
 } from "../features/food-dex/screens/FoodDexScreen";
+import { NfcScanScreen } from "../features/food-dex/screens/NfcScanScreen";
+import type { NfcFoodItem } from "../features/food-dex/services/nfcFood";
 import { BackendProvider, useBackend } from "../lib/BackendProvider";
 import { useGuestDocument } from "../hooks/useGuestDocument";
 import { parseProfile } from "../features/profile/models/profile";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
+const challenges = [
+  {
+    id: "new-restaurants",
+    title: "Three New Finds",
+    cadence: "WEEKLY",
+    summary: "Visit 3 restaurants you’ve never tried in one week.",
+    details:
+      "Make this week deliciously different. Visit three restaurants that are new to you before the week ends, and keep discovering what your neighbourhood has to offer.",
+    points: 100,
+    icon: "restaurant-outline" as IconName,
+  },
+  {
+    id: "neighbourhood-explorer",
+    title: "Neighbourhood Hopper",
+    cadence: "WEEKLY",
+    summary: "Try a restaurant in 2 different neighbourhoods.",
+    details:
+      "Take your taste buds beyond your usual route. Visit one new restaurant in each of two different neighbourhoods this week.",
+    points: 75,
+    icon: "map-outline" as IconName,
+  },
+  {
+    id: "cuisine-collector",
+    title: "Cuisine Collector",
+    cadence: "MONTHLY",
+    summary: "Taste 5 different cuisines this month.",
+    details:
+      "Explore five different cuisines over the month. Save the places you visit and build a list of new favourites along the way.",
+    points: 250,
+    icon: "earth-outline" as IconName,
+  },
+  {
+    id: "local-regular",
+    title: "Support Local",
+    cadence: "MONTHLY",
+    summary: "Discover 4 independent restaurants this month.",
+    details:
+      "Get to know the independent spots that make the city special. Visit four locally owned restaurants before the month is over.",
+    points: 200,
+    icon: "heart-outline" as IconName,
+  },
+  {
+    id: "coffee-break",
+    title: "Coffee Crawl",
+    cadence: "WEEKLY",
+    summary: "Visit 3 cafés you haven’t tried before.",
+    details:
+      "Make room for a little pick-me-up. Visit three new cafés this week and discover your next favourite cup.",
+    points: 100,
+    icon: "cafe-outline" as IconName,
+  },
+  {
+    id: "sweet-tooth",
+    title: "Sweet Tooth",
+    cadence: "WEEKLY",
+    summary: "Try 2 new bakeries or dessert spots.",
+    details:
+      "Treat yourself to something new. Visit two bakeries or dessert spots you haven’t tried before this week.",
+    points: 75,
+    icon: "ice-cream-outline" as IconName,
+  },
+  {
+    id: "breakfast-club",
+    title: "Breakfast Club",
+    cadence: "WEEKLY",
+    summary: "Enjoy breakfast at 2 local restaurants.",
+    details:
+      "Start the day somewhere different. Have breakfast at two local restaurants during the week.",
+    points: 100,
+    icon: "sunny-outline" as IconName,
+  },
+  {
+    id: "plant-powered",
+    title: "Plant Powered",
+    cadence: "MONTHLY",
+    summary: "Order a plant-based meal at 4 restaurants.",
+    details:
+      "Try something green across the city. Order a plant-based meal at four different restaurants this month.",
+    points: 250,
+    icon: "leaf-outline" as IconName,
+  },
+  {
+    id: "pizza-tour",
+    title: "Pizza Passport",
+    cadence: "MONTHLY",
+    summary: "Compare slices from 3 different pizzerias.",
+    details:
+      "Find your perfect slice. Visit three different pizzerias this month and see which one earns a spot in your food journal.",
+    points: 200,
+    icon: "pizza-outline" as IconName,
+  },
+  {
+    id: "lunch-break",
+    title: "Lunch Local",
+    cadence: "MONTHLY",
+    summary: "Have lunch at 5 neighbourhood favourites.",
+    details:
+      "Make lunch part of the adventure. Visit five restaurants in your neighbourhood for lunch this month.",
+    points: 200,
+    icon: "restaurant-outline" as IconName,
+  },
+  {
+    id: "new-flavours",
+    title: "Try Something New",
+    cadence: "MONTHLY",
+    summary: "Order a dish you’ve never had at 4 restaurants.",
+    details:
+      "Be curious with your order. Choose a dish that’s new to you at four different restaurants this month.",
+    points: 300,
+    icon: "sparkles-outline" as IconName,
+  },
+  {
+    id: "dessert-month",
+    title: "Dessert Detour",
+    cadence: "MONTHLY",
+    summary: "Discover 3 new dessert spots around the city.",
+    details:
+      "Save a little room for dessert. Visit three dessert spots you haven’t tried before the month ends.",
+    points: 200,
+    icon: "nutrition-outline" as IconName,
+  },
+];
 type FilterDimension =
   "rating" | "restaurantType" | "foodType" | "rarity" | "price" | "cuisine";
 const specialtyMatchers: Record<(typeof foodSpecialties)[number], RegExp> = {
@@ -112,6 +238,15 @@ function Icon({
   return <Ionicons name={name} size={size} color={color} accessible={false} />;
 }
 
+const webGlassBlur = (
+  Platform.OS === "web"
+    ? {
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+      }
+    : {}
+) as ViewStyle;
+
 function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const { places, error: backendError } = useBackend();
   const insets = useSafeAreaInsets();
@@ -147,17 +282,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     | "favorites"
     | "dex"
     | "camera"
+    | "challenges"
   >("explore");
-  const [screenSlide] = useState(() => new Animated.Value(0));
   const cameraReturnTab = useRef<Exclude<typeof tab, "camera">>("explore");
-  useEffect(() => {
-    screenSlide.setValue(windowWidth || 0);
-    Animated.timing(screenSlide, {
-      toValue: 0,
-      duration: 220,
-      useNativeDriver: true,
-    }).start();
-  }, [tab, windowWidth, screenSlide]);
   const {
     value: profile,
     update: setProfile,
@@ -172,12 +299,28 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     parseProfile,
   );
   const [recommenderVisible, setRecommenderVisible] = useState(false);
+  const [cameraMenuOpen, setCameraMenuOpen] = useState(false);
+  const [nfcScanOpen, setNfcScanOpen] = useState(false);
+  const cameraMenuProgress = useRef(new Animated.Value(0)).current;
   const [foodCapture, setFoodCapture] = useState<FoodCapture | null>(null);
+  const [selectedChallenge, setSelectedChallenge] = useState<(typeof challenges)[number] | null>(null);
+  const [joinedChallenges, setJoinedChallenges] = useState<string[]>([]);
+  const [challengeTab, setChallengeTab] = useState<"explore" | "mine">("explore");
   const [listVisible, setListVisible] = useState(false);
   const [plusMenuOpen, setPlusMenuOpen] = useState(false);
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
   const [linkError, setLinkError] = useState(false);
+  useEffect(() => {
+    const animation = Animated.timing(cameraMenuProgress, {
+      toValue: cameraMenuOpen ? 1 : 0,
+      duration: 220,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [cameraMenuOpen, cameraMenuProgress]);
   const deferredQuery = useDeferredValue(query);
   const savedFilter = tab === "explore" ? null : saved;
   const visible = useMemo(() => {
@@ -222,6 +365,17 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       ? selected
       : null;
 
+  const acceptNfcFood = useCallback((food: NfcFoodItem) => {
+    setNfcScanOpen(false);
+    setFoodCapture({
+      id: Date.now(),
+      recognition: { ...food, catalogId: null },
+      photo: null,
+      error: "",
+    });
+    setTab("dex");
+  }, []);
+
   const choose = useCallback((place: Place) => {
     Keyboard.dismiss();
     setSelected(place);
@@ -246,6 +400,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   }
   function openFoodCamera() {
     Keyboard.dismiss();
+    setCameraMenuOpen(false);
     if (tab !== "camera") cameraReturnTab.current = tab;
     setTab("camera");
     setFoodCapture(null);
@@ -341,10 +496,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   return (
     <View style={styles.screen}>
       <StatusBar style={tab === "camera" ? "light" : "dark"} />
-      <Animated.View
-        key={tab}
-        style={{ flex: 1, transform: [{ translateX: screenSlide }] }}
-      >
+      <View style={{ flex: 1 }}>
       {tab === "camera" ? (
         <FoodCameraScreen
           onClose={() => setTab(cameraReturnTab.current)}
@@ -392,6 +544,211 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             choose(place);
           }}
         />
+      ) : tab === "challenges" ? (
+        <ScrollView
+          style={styles.challengeScreen}
+          contentContainerStyle={[
+            styles.challengeContent,
+            {
+              paddingTop: insets.top + 24,
+              paddingBottom: insets.bottom + 128,
+            },
+          ]}
+        >
+          <View style={styles.challengeHeader}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Back to explore"
+              onPress={() => setTab("explore")}
+              style={styles.challengeBack}
+            >
+              <Icon name="arrow-back" />
+            </Pressable>
+            <View style={styles.challengeHeading}>
+              <Text style={styles.challengeEyebrow}>FIND YOUR NEXT FAVOURITE</Text>
+              <Text accessibilityRole="header" style={styles.challengeTitle}>
+                Challenges
+              </Text>
+              <Text style={styles.challengeSlogan}>
+                Sign up for weekly and monthly food adventures, and earn points as you explore.
+              </Text>
+            </View>
+          </View>
+          <View style={styles.challengeTabs}>
+            {([
+              ["explore", "Explore challenges"],
+              ["mine", "My challenges"],
+            ] as const).map(([key, label]) => (
+              <Pressable
+                key={key}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: challengeTab === key }}
+                onPress={() => setChallengeTab(key)}
+                style={[
+                  styles.challengeTab,
+                  challengeTab === key && styles.challengeTabSelected,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.challengeTabText,
+                    challengeTab === key && styles.challengeTabTextSelected,
+                  ]}
+                >
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          <View style={styles.challengeGrid}>
+            {challenges
+              .filter(
+                (challenge) =>
+                  challengeTab === "explore" ||
+                  joinedChallenges.includes(challenge.id),
+              )
+              .map((challenge) => {
+              const joined = joinedChallenges.includes(challenge.id);
+              return (
+                <View
+                  key={challenge.id}
+                  style={[
+                    styles.challengeCard,
+                    windowWidth < 380
+                      ? styles.challengeCardFull
+                      : windowWidth < 900
+                        ? styles.challengeCardHalf
+                        : styles.challengeCardDesktop,
+                  ]}
+                >
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`${challenge.title}, ${challenge.points} points. Open details.`}
+                    onPress={() => setSelectedChallenge(challenge)}
+                    style={({ pressed }) => [
+                      styles.challengeCardBody,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <View style={styles.challengeCardTop}>
+                      <View style={styles.challengeIcon}>
+                        <Icon name={challenge.icon} size={25} color={colors.accent} />
+                      </View>
+                      <View style={styles.pointsBadge}>
+                        <Text style={styles.pointsText}>{challenge.points} pts</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.challengeCadence}>{challenge.cadence}</Text>
+                    <Text style={styles.challengeCardTitle}>{challenge.title}</Text>
+                    <Text style={styles.challengeCardCopy}>{challenge.summary}</Text>
+                  </Pressable>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={joined ? `Unjoin ${challenge.title}` : `Join ${challenge.title}`}
+                    onPress={() =>
+                      setJoinedChallenges((current) =>
+                        current.includes(challenge.id)
+                          ? current.filter((id) => id !== challenge.id)
+                          : [...current, challenge.id],
+                      )
+                    }
+                    style={({ pressed }) => [
+                      styles.cardJoinButton,
+                      joined && styles.cardUnjoinButton,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <Text style={styles.cardJoinText}>
+                      {joined ? "Unjoin" : "Join"}
+                    </Text>
+                  </Pressable>
+                </View>
+              );
+              })}
+          </View>
+          {challengeTab === "mine" && joinedChallenges.length === 0 && (
+            <View style={styles.emptyChallenges}>
+              <Icon name="flag-outline" size={28} color={colors.muted} />
+              <Text style={styles.emptyChallengesTitle}>No joined challenges yet</Text>
+              <Text style={styles.challengeSlogan}>
+                Explore challenges and join one to see it here.
+              </Text>
+            </View>
+          )}
+          <Modal
+            visible={selectedChallenge !== null}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setSelectedChallenge(null)}
+          >
+            <View style={styles.challengeModalBackdrop}>
+              <View style={styles.challengeDetail}>
+                {selectedChallenge && (
+                  <>
+                    <View style={styles.detailTop}>
+                      <View style={styles.challengeIcon}>
+                        <Icon
+                          name={selectedChallenge.icon}
+                          size={27}
+                          color={colors.accent}
+                        />
+                      </View>
+                      <View style={styles.pointsBadge}>
+                        <Text style={styles.pointsText}>
+                          {selectedChallenge.points} pts
+                        </Text>
+                      </View>
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Close challenge details"
+                        onPress={() => setSelectedChallenge(null)}
+                        style={styles.detailClose}
+                      >
+                        <Icon name="close" color={colors.muted} />
+                      </Pressable>
+                    </View>
+                    <Text style={styles.challengeCadence}>
+                      {selectedChallenge.cadence}
+                    </Text>
+                    <Text style={styles.detailTitle}>
+                      {selectedChallenge.title}
+                    </Text>
+                    <Text style={styles.detailCopy}>
+                      {selectedChallenge.details}
+                    </Text>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={
+                        joinedChallenges.includes(selectedChallenge.id)
+                          ? "Unjoin challenge"
+                          : "Sign up for challenge"
+                      }
+                      onPress={() =>
+                        setJoinedChallenges((current) =>
+                          current.includes(selectedChallenge.id)
+                            ? current.filter((id) => id !== selectedChallenge.id)
+                            : [...current, selectedChallenge.id],
+                        )
+                      }
+                      style={({ pressed }) => [
+                        styles.joinChallengeButton,
+                        joinedChallenges.includes(selectedChallenge.id) &&
+                          styles.unjoinChallengeButton,
+                        pressed && styles.pressed,
+                      ]}
+                    >
+                      <Text style={styles.joinChallengeText}>
+                        {joinedChallenges.includes(selectedChallenge.id)
+                          ? "Unjoin challenge"
+                          : "Sign up for challenge"}
+                      </Text>
+                    </Pressable>
+                  </>
+                )}
+              </View>
+            </View>
+          </Modal>
+        </ScrollView>
       ) : (
         <>
           {token ? (
@@ -473,17 +830,19 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               </View>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel="Open AI food recommender"
-                onPress={() => {
-                  Keyboard.dismiss();
-                  setRecommenderVisible(true);
-                }}
+                accessibilityLabel="Open challenges"
+                onPress={() => setTab("challenges")}
                 style={({ pressed }) => [
                   styles.brand,
                   pressed && styles.pressed,
                 ]}
               >
-                <Icon name="sparkles-outline" size={23} color={colors.accent} />
+                <MaterialCommunityIcons
+                  name="flag-checkered"
+                  size={23}
+                  color={colors.accent}
+                  accessible={false}
+                />
               </Pressable>
             </View>
             <View style={styles.search}>
@@ -801,7 +1160,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     </Text>
                     <Text style={styles.placeName}>{active.name}</Text>
                     <Text style={styles.small}>{active.note}</Text>
-                    <RestaurantPhotoCredit place={active} />
                   </View>
                   <Pressable
                     accessibilityRole="button"
@@ -959,7 +1317,15 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           </View>
         </>
       )}
-      </Animated.View>
+      </View>
+      {tab !== "camera" && cameraMenuOpen && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Close camera options"
+          onPress={() => setCameraMenuOpen(false)}
+          style={styles.cameraMenuScrim}
+        />
+      )}
       {tab !== "camera" && (
         <View
           style={[
@@ -978,9 +1344,10 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               <View key="camera" style={styles.cameraSlot}>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Take a food photo"
-                  accessibilityHint="Opens the camera to photograph food for your Food Dex"
-                  onPress={() => setPlusMenuOpen(true)}
+                  accessibilityLabel="Open camera and NFC options"
+                  accessibilityHint="Shows food capture options"
+                  accessibilityState={{ expanded: cameraMenuOpen }}
+                  onPress={() => setCameraMenuOpen((open) => !open)}
                   style={({ pressed }) => [
                     styles.cameraButton,
                     pressed && styles.pressed,
@@ -988,6 +1355,57 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 >
                   <Icon name="add" size={28} color={colors.white} />
                 </Pressable>
+                <Animated.View
+                  pointerEvents={cameraMenuOpen ? "auto" : "none"}
+                  accessibilityElementsHidden={!cameraMenuOpen}
+                  importantForAccessibility={
+                    cameraMenuOpen ? "auto" : "no-hide-descendants"
+                  }
+                  style={[
+                    styles.cameraMenu,
+                    {
+                      opacity: cameraMenuProgress,
+                      transform: [
+                        {
+                          translateY: cameraMenuProgress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [24, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Take a food photo with the camera"
+                    onPress={openFoodCamera}
+                    style={({ pressed }) => [
+                      styles.cameraMenuItem,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <View style={styles.cameraMenuIcon}>
+                      <Icon name="camera-outline" size={20} />
+                    </View>
+                  </Pressable>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Use NFC to scan a food tag"
+                    onPress={() => {
+                      setCameraMenuOpen(false);
+                      setNfcScanOpen(true);
+                    }}
+                    style={({ pressed }) => [
+                      styles.cameraMenuItem,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <View style={styles.cameraMenuIcon}>
+                      <Icon name="scan-outline" size={20} />
+                    </View>
+                  </Pressable>
+                </Animated.View>
               </View>
             ) : (
               <View key={index} style={styles.navGroup}>
@@ -1010,6 +1428,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     }
                     accessibilityState={{ selected: tab === item }}
                     onPress={() => {
+                      setCameraMenuOpen(false);
                       setTab(item);
                       setFoodCapture(null);
                       setSelected(null);
@@ -1043,6 +1462,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           )}
         </View>
       )}
+
+      <NfcScanScreen
+        visible={nfcScanOpen}
+        onCancel={() => setNfcScanOpen(false)}
+        onRead={acceptNfcFood}
+      />
 
       {recommenderVisible && (
         <FoodRecommender
@@ -1131,7 +1556,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     />
                     <View style={styles.flex}>
                       <Text style={styles.browseTitle}>{item.name}</Text>
-                      <RestaurantPhotoCredit place={item} />
                       <Text style={styles.small}>
                         {item.category} · {item.neighborhood}
                       </Text>
@@ -1256,6 +1680,193 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  challengeScreen: { flex: 1, backgroundColor: colors.paper },
+  challengeContent: {
+    paddingHorizontal: 20,
+    gap: 18,
+    flexGrow: 1,
+    width: "100%",
+    maxWidth: 1120,
+    alignSelf: "center",
+    boxSizing: "border-box",
+  },
+  challengeHeader: {
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: 8,
+  },
+  challengeHeading: { width: "100%", gap: 12 },
+  challengeEyebrow: {
+    color: colors.muted,
+    fontSize: 10,
+    letterSpacing: 1.2,
+    fontWeight: "700",
+  },
+  challengeBack: {
+    width: 44,
+    height: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  challengeTitle: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: colors.ink,
+    letterSpacing: -1,
+    marginTop: -10,
+  },
+  challengeSlogan: {
+    fontSize: 15,
+    lineHeight: 23,
+    color: colors.muted,
+    maxWidth: 460,
+  },
+  challengeTabs: {
+    flexDirection: "row",
+    padding: 4,
+    gap: 4,
+    borderRadius: 18,
+    backgroundColor: "#F0F1E8",
+  },
+  challengeTab: {
+    flex: 1,
+    minHeight: 42,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 14,
+  },
+  challengeTabSelected: { backgroundColor: colors.white },
+  challengeTabText: { color: colors.muted, fontSize: 13, fontWeight: "600" },
+  challengeTabTextSelected: { color: colors.ink, fontWeight: "700" },
+  challengeGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    width: "100%",
+    alignSelf: "stretch",
+    gap: 14,
+    marginTop: 8,
+  },
+  emptyChallenges: {
+    alignItems: "center",
+    gap: 10,
+    padding: 28,
+    borderRadius: 22,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  emptyChallengesTitle: { color: colors.ink, fontSize: 17, fontWeight: "700" },
+  challengeCard: {
+    flexGrow: 1,
+    flexShrink: 1,
+    boxSizing: "border-box",
+    minWidth: 0,
+    minHeight: 218,
+    padding: 16,
+    gap: 10,
+    borderRadius: 22,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    boxShadow: "0 5px 18px #3D568F12",
+  },
+  challengeCardFull: { flexBasis: "100%" },
+  challengeCardHalf: { flexBasis: "45%" },
+  challengeCardDesktop: { flexBasis: "22%" },
+  challengeCardBody: { flex: 1 },
+  challengeCardTop: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
+  challengeIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: colors.tint,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pointsBadge: {
+    backgroundColor: colors.tint,
+    borderRadius: 14,
+    paddingHorizontal: 9,
+    paddingVertical: 6,
+  },
+  pointsText: { color: colors.ink, fontSize: 12, fontWeight: "700" },
+  challengeCadence: {
+    color: colors.muted,
+    fontSize: 10,
+    letterSpacing: 1,
+    fontWeight: "700",
+    marginBottom: 5,
+  },
+  challengeCardTitle: {
+    color: colors.ink,
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "700",
+    marginBottom: 8,
+  },
+  challengeCardCopy: {
+    color: colors.muted,
+    fontSize: 13,
+    lineHeight: 19,
+    flex: 1,
+  },
+  cardJoinButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 2,
+    minHeight: 38,
+    borderRadius: 13,
+    backgroundColor: colors.tint,
+  },
+  cardUnjoinButton: { backgroundColor: colors.border },
+  cardJoinText: { color: colors.accent, fontSize: 13, fontWeight: "700" },
+  challengeModalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(30,42,70,0.42)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  challengeDetail: {
+    width: "100%",
+    maxWidth: 480,
+    backgroundColor: colors.paper,
+    borderRadius: 26,
+    padding: 24,
+    gap: 12,
+    boxShadow: "0 14px 40px #1D2D4A33",
+  },
+  detailTop: { flexDirection: "row", alignItems: "flex-start", gap: 10 },
+  detailClose: {
+    marginLeft: "auto",
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  detailTitle: {
+    color: colors.ink,
+    fontSize: 25,
+    lineHeight: 31,
+    fontWeight: "700",
+  },
+  detailCopy: { color: colors.muted, fontSize: 15, lineHeight: 23 },
+  joinChallengeButton: {
+    minHeight: 50,
+    borderRadius: 16,
+    backgroundColor: colors.accent,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 6,
+  },
+  unjoinChallengeButton: { backgroundColor: "#7180A8" },
+  joinChallengeText: { color: colors.white, fontSize: 15, fontWeight: "700" },
   eyebrow: {
     fontSize: 10,
     fontWeight: "700",
@@ -1277,14 +1888,17 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   search: {
+    ...webGlassBlur,
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 16,
     paddingRight: 6,
     minHeight: 52,
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.50)",
     borderRadius: 18,
-    boxShadow: "0 3px 18px #3D568F10",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.68)",
+    boxShadow: "0 8px 26px #3D568F20",
     gap: 10,
   },
   input: { flex: 1, color: colors.ink, fontSize: 14, paddingVertical: 15 },
@@ -1335,19 +1949,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   chip: {
+    ...webGlassBlur,
     minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingHorizontal: 15,
     borderRadius: 24,
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.46)",
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: "rgba(255,255,255,0.68)",
+    boxShadow: "0 4px 16px #3D568F14",
   },
   selectedFilterChip: {
-    backgroundColor: colors.tint,
-    borderColor: colors.accent,
+    backgroundColor: "rgba(234,243,178,0.64)",
+    borderColor: "rgba(61,86,143,0.42)",
   },
   chipActive: { backgroundColor: colors.ink, borderColor: colors.ink },
   chipText: { fontSize: 12, fontWeight: "600", color: colors.ink },
@@ -1460,9 +2076,51 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 32,
     alignItems: "center",
+    zIndex: 50,
+    elevation: 50,
+  },
+  cameraMenuScrim: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 40,
   },
   cameraSlot: {
+    position: "relative",
     width: 64,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cameraMenu: {
+    ...webGlassBlur,
+    position: "absolute",
+    bottom: 70,
+    left: 2,
+    width: 60,
+    padding: 5,
+    borderRadius: 30,
+    backgroundColor: "rgba(255,253,245,0.90)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.82)",
+    boxShadow: "0 10px 30px #3D568F2A",
+    zIndex: 60,
+    elevation: 60,
+  },
+  cameraMenuItem: {
+    width: 48,
+    minHeight: 48,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 24,
+  },
+  cameraMenuIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "rgba(61,86,143,0.10)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -1473,23 +2131,24 @@ const styles = StyleSheet.create({
     marginTop: -16,
     backgroundColor: colors.accent,
     borderWidth: 4,
-    borderColor: colors.paper,
+    borderColor: "rgba(255,253,245,0.88)",
     alignItems: "center",
     justifyContent: "center",
     boxShadow: "0 4px 12px #364C8433",
   },
   navGroup: {
+    ...webGlassBlur,
     flex: 1,
     flexDirection: "row",
     padding: 4,
     borderRadius: 32,
-    backgroundColor: colors.paper,
+    backgroundColor: "rgba(255,253,245,0.50)",
     borderWidth: 1,
-    borderColor: colors.border,
-    boxShadow: "0 4px 20px #3D568F12",
+    borderColor: "rgba(255,255,255,0.62)",
+    boxShadow: "0 8px 22px #3D568F1A",
   },
   navItem: {
-    backgroundColor: colors.paper,
+    backgroundColor: "transparent",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
@@ -1501,7 +2160,7 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     minHeight: 48,
   },
-  navActive: { backgroundColor: colors.tint },
+  navActive: { backgroundColor: "rgba(234,243,178,0.66)" },
   placeCard: {
     backgroundColor: colors.paper,
     borderRadius: 24,

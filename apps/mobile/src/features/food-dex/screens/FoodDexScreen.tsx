@@ -23,12 +23,12 @@ import {
   normalizeCuisine,
   cuisines,
   dishes,
+  dishNumber,
   foodKey,
   type Cuisine,
   type FoodEntry,
 } from "../models/foodDex";
 import { CatalogPhoto } from "../components/CatalogPhoto";
-import { PhotoCredit } from "../components/PhotoCredit";
 import { catalogPhoto } from "../services/catalogPhotos";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
 import { useFoodDex } from "../hooks/useFoodDex";
@@ -386,7 +386,6 @@ export function FoodDexScreen({
                     </Text>
                   </View>
                 </Pressable>
-                <PhotoCredit dish={cuisineCovers[item]} />
               </View>
             );
           })}
@@ -492,11 +491,6 @@ export function FoodDexScreen({
                     style={s.banner}
                     label={detail.name}
                   />
-                  {!detail.photo && (
-                    <PhotoCredit
-                      dish={findCatalogDish(detail.name, detail.cuisine)}
-                    />
-                  )}
                   <Text style={s.title}>{detail.name}</Text>
                   <Text style={s.copy}>
                     {detail.cuisine} · Discovered{" "}
@@ -701,7 +695,6 @@ export function FoodDexScreen({
                             : "Other cuisines"
                         }
                       />
-                      <PhotoCredit dish={cuisineCovers[cuisine]} />
                     </>
                   )}
                   <Text style={s.title}>A taste of {cuisine}.</Text>
@@ -746,11 +739,11 @@ export function FoodDexScreen({
                   </View>
                 </View>
               }
-              renderItem={({ item: dish, index }) => (
+              renderItem={({ item: dish }) => (
                 <View key={dish.id} style={s.dishGroup}>
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`${dish.name}, ${dish.entry ? "collected, view discovery" : "not collected, add food"}`}
+                    accessibilityLabel={`${dish.catalogDish ? `number ${dishNumber(dish.catalogDish)}, ` : "custom, "}${dish.name}, ${dish.entry ? "collected, view discovery" : "not collected, add food"}`}
                     onPress={() =>
                       dish.entry
                         ? setDetail(dish.entry)
@@ -769,8 +762,10 @@ export function FoodDexScreen({
                     />
                     <View style={s.flex}>
                       <Text style={s.eyebrow}>
-                        #{String(index + 1).padStart(3, "0")} ·{" "}
-                        {dish.entry ? "COLLECTED" : "UNDISCOVERED"}
+                        {dish.catalogDish
+                          ? `#${String(dishNumber(dish.catalogDish)).padStart(3, "0")}`
+                          : "CUSTOM"}{" "}
+                        · {dish.entry ? "COLLECTED" : "UNDISCOVERED"}
                       </Text>
                       <Text style={s.cardTitle}>{dish.name}</Text>
                       <Text style={s.meta}>{dish.note}</Text>
@@ -780,9 +775,6 @@ export function FoodDexScreen({
                       size={20}
                     />
                   </Pressable>
-                  {!dish.entry?.photo && (
-                    <PhotoCredit dish={dish.catalogDish} />
-                  )}
                 </View>
               )}
               ListEmptyComponent={

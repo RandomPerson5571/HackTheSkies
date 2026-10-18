@@ -10,7 +10,10 @@ Routes retain their existing request and response formats:
 
 ## Local development
 
-Copy `.dev.vars.example` to `.dev.vars` and set the server-only `GROQ_API_KEY`.
+Copy `.dev.vars.example` to `.dev.vars` and set the server-only `GROQ_API_KEY`,
+`GROQ_API_KEY_1`, and `GROQ_API_KEY_2`. The API reads secrets from
+`apps/api/.dev.vars`; it does not load `apps/mobile/.env.server.local`.
+Restart the API after changing this file.
 Run `pnpm --filter @cibo/api dev` from the root (port 8787), or `pnpm dev` for
 the API and Expo together. `.dev.vars` is ignored and blocked from Metro assets.
 Models are configured in `wrangler.jsonc` (currently `qwen/qwen3.8-27b`, verified

@@ -164,7 +164,7 @@ export function FoodCameraScreen({
 
   const delivered = useRef(false);
   function deliverCapture(manual = false) {
-    if (delivered.current) return;
+    if (delivered.current || busy || identifying) return;
     delivered.current = true;
     generation.current++;
     request.current?.abort();
@@ -177,10 +177,6 @@ export function FoodCameraScreen({
       photo: photo ? { ...photo, mimeType: "image/jpeg", type: "image" } : null,
     });
   }
-  const finishCapture = useEffectEvent(() => deliverCapture());
-  useEffect(() => {
-    if (photo && !identifying && !busy) finishCapture();
-  }, [photo, identifying, busy]);
 
   async function enableCamera() {
     setError("");
@@ -392,6 +388,7 @@ export function FoodCameraScreen({
         return;
       }
       const captured: CameraCapturedPicture = { ...image, format: "jpg" };
+      retainedPhoto.current = captured.uri;
       setPhoto(captured);
       // Localize the captured image itself; live preview coordinates may
       // describe a different frame or crop.
@@ -456,6 +453,7 @@ export function FoodCameraScreen({
         return;
       }
       const captured: CameraCapturedPicture = { ...image, format: "jpg" };
+      retainedPhoto.current = captured.uri;
       setPhoto(captured);
       void identify(captured);
     } catch {
@@ -764,6 +762,20 @@ export function FoodCameraScreen({
                 <Text style={s.secondaryText}>Try identification again</Text>
               </Pressable>
             )}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ disabled: busy || identifying, busy: identifying }}
+              disabled={busy || identifying}
+              onPress={() => deliverCapture()}
+              style={({ pressed }) => [
+                s.primary,
+                (pressed || busy || identifying) && s.pressed,
+              ]}
+            >
+              <Text style={s.primaryText}>
+                {identifying ? "Identifying…" : "Continue to review"}
+              </Text>
+            </Pressable>
           </View>
         )}
         {photo ? (

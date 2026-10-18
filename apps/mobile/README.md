@@ -94,7 +94,9 @@ the duration of the photo review; missing locations show a discovery card
 without a box. Box positions come only from YOLO or Groq detection results. Invalid or non-food results never render object boxes. The model is bundled with the app. The browser ONNX runtime still downloads on first use.
 Browser inference runs in a worker; native inference samples serialized camera
 snapshots and may follow more slowly than a dedicated frame processor.
-Pressing the shutter also freezes the photo for review.
+Pressing the shutter freezes the photo and identifies it with Groq. The recognition
+screen stays open after success or failure; users choose **Continue to review**
+once identification finishes, or retry identification or retake the photo.
 
 Native tracking requires rebuilding the development client after installing
 `onnxruntime-react-native`: run `pnpm --filter mobile exec expo prebuild`, then

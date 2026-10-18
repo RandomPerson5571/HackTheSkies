@@ -1,6 +1,6 @@
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { playFeedback } from "../../../lib/sensory";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import {
   ActivityIndicator,
   AppState,
@@ -29,6 +29,9 @@ import { resizeScanImage, deleteScanImage } from "../services/scanImages";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
 import { useFoodDex } from "../hooks/useFoodDex";
 import { foodKey } from "../models/foodDex";
+import type { DishBounds } from "../models/foodTracking";
+import { DishOverlay } from "../components/DishOverlay";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 
 export function FoodCameraScreen({
   onCapture,
@@ -38,6 +41,10 @@ export function FoodCameraScreen({
   onClose: () => void;
 }) {
   const insets = useSafeAreaInsets();
+  const reduced = useReducedMotion();
+  const [live, setLive] = useState(true);
+  const [catching, setCatching] = useState(false);
+  const catchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const camera = useRef<FoodCameraHandle>(null);
   const mounted = useRef(true);
@@ -55,6 +62,15 @@ export function FoodCameraScreen({
   const [attempt, setAttempt] = useState(0);
   const [preview, setPreview] = useState({ width: 0, height: 0 });
   const [recognition, setRecognition] = useState<FoodRecognition | null>(null);
+  const [anchor, setAnchor] = useState<DishBounds>({
+    x: 0.3,
+    y: 0.3,
+    width: 0.4,
+    height: 0.24,
+    visible: false,
+  });
+  const [trackingError, setTrackingError] = useState("");
+  const scanned = useRef(false);
   const [identifying, setIdentifying] = useState(false);
   const request = useRef<AbortController | null>(null);
   const generation = useRef(0);
@@ -76,12 +92,21 @@ export function FoodCameraScreen({
     mounted.current = true;
     const subscription = AppState.addEventListener("change", (state) => {
       setReady(false);
+      if (state !== "active") {
+        generation.current++;
+        request.current?.abort();
+        setIdentifying(false);
+        setLive(false);
+        setCatching(false);
+        if (catchTimer.current) clearTimeout(catchTimer.current);
+      }
       setActive(state === "active");
       if (state === "active") void refreshPermission().catch(() => {});
     });
     return () => {
       mounted.current = false;
       request.current?.abort();
+      if (catchTimer.current) clearTimeout(catchTimer.current);
       subscription.remove();
     };
   }, [refreshPermission]);
@@ -97,6 +122,36 @@ export function FoodCameraScreen({
     );
     return () => subscription.remove();
   }, [onClose]);
+
+  function reviewCapture() {
+    if (!photo || identifying || busy || catching) return;
+    const capture: FoodCapture = {
+      id: Date.now(),
+      error: "",
+      recognition,
+      photo: {
+        uri: photo.uri,
+        width: photo.width,
+        height: photo.height,
+        base64: photo.base64,
+        mimeType: "image/jpeg",
+        type: "image",
+      },
+    };
+    setLive(false);
+    if (!recognition) {
+      onCapture(capture);
+      return;
+    }
+    setCatching(true);
+    void playFeedback(collected ? "select" : "discover");
+    catchTimer.current = setTimeout(
+      () => {
+        if (mounted.current) onCapture(capture);
+      },
+      reduced === false ? 700 : 0,
+    );
+  }
 
   async function enableCamera() {
     setError("");
@@ -156,6 +211,47 @@ export function FoodCameraScreen({
       }
     }
   }
+  async function scanPreview() {
+    if (!camera.current || capturing.current || scanned.current) return;
+    scanned.current = true;
+    capturing.current = true;
+    let image: CameraCapturedPicture | undefined;
+    const current = generation.current;
+    try {
+      image = await camera.current.takePictureAsync({
+        quality: 0.5,
+        base64: false,
+      });
+      if (mounted.current && current === generation.current)
+        await identify(image);
+    } catch {
+      if (mounted.current && current === generation.current)
+        setError(
+          "Live scan failed. Take a photo or restart Live scan to retry.",
+        );
+    } finally {
+      if (image) deleteScanImage(image.uri);
+      capturing.current = false;
+    }
+  }
+  const autoSnap = useEffectEvent(() => void scanPreview());
+  // Recognize once per live session; tracking stays entirely on device.
+  useEffect(() => {
+    if (
+      !live ||
+      !ready ||
+      !active ||
+      photo ||
+      busy ||
+      identifying ||
+      error ||
+      scanned.current
+    )
+      return;
+    const timer = setTimeout(autoSnap, 1600);
+    return () => clearTimeout(timer);
+  }, [live, ready, active, photo, busy, identifying, error]);
+
   async function snap() {
     if (!camera.current || !ready || capturing.current) return;
     capturing.current = true;
@@ -171,18 +267,14 @@ export function FoodCameraScreen({
         quality: 0.7,
         base64: false,
       });
-      const image = await resizeScanImage(
-        raw,
-        1024,
-        true,
-      );
+      const image = await resizeScanImage(raw, 1024, true);
       if (!mounted.current || current !== generation.current) {
         deleteScanImage(image.uri);
         return;
       }
       const captured: CameraCapturedPicture = { ...image, format: "jpg" };
       setPhoto(captured);
-      void identify(captured);
+      if (!recognition || !live) void identify(captured);
     } catch {
       if (mounted.current)
         setError("We couldn’t take that photo. Please try again.");
@@ -194,6 +286,7 @@ export function FoodCameraScreen({
   }
   async function selectPhoto() {
     if (capturing.current) return;
+    setLive(false);
     capturing.current = true;
     void playFeedback("alert");
     setBusy(true);
@@ -235,11 +328,7 @@ export function FoodCameraScreen({
         current !== generation.current
       )
         return;
-      const image = await resizeScanImage(
-        asset,
-        1024,
-        true,
-      );
+      const image = await resizeScanImage(asset, 1024, true);
       if (!mounted.current || current !== generation.current) {
         deleteScanImage(image.uri);
         return;
@@ -263,6 +352,7 @@ export function FoodCameraScreen({
     setReady(false);
     setAttempt((value) => value + 1);
     setPhoto(null);
+    scanned.current = false;
     setRecognition(null);
     setIdentifying(false);
     setError("");
@@ -290,13 +380,11 @@ export function FoodCameraScreen({
             source={{ uri: photo.uri }}
             style={StyleSheet.absoluteFill}
             resizeMode="cover"
-            accessibilityLabel={
-              "Your captured food photo"
-            }
+            accessibilityLabel={"Your captured food photo"}
           />
         ) : permission?.granted && active ? (
           <FoodCameraView
-            key={`${facing}-${attempt}`}
+            key={`${facing}-${attempt}-${active}`}
             ref={camera}
             style={StyleSheet.absoluteFill}
             facing={facing}
@@ -306,6 +394,9 @@ export function FoodCameraScreen({
             mirror={false}
             animateShutter={false}
             autofocus="on"
+            tracking={live && !photo && active && ready}
+            onTracking={setAnchor}
+            onTrackingError={setTrackingError}
             onCameraReady={() => setReady(true)}
             onMountError={({ message }) => {
               setReady(false);
@@ -351,6 +442,21 @@ export function FoodCameraScreen({
           </View>
         )}
       </View>
+      {((live && !photo && ready) || recognition) && (
+        <DishOverlay
+          key={
+            recognition
+              ? `${recognition.name}-${recognition.cuisine}`
+              : "scanning"
+          }
+          preview={preview}
+          anchor={photo && !anchor.visible ? undefined : anchor}
+          scanning={!recognition}
+          recognition={recognition}
+          collected={!!collected}
+          catching={catching}
+        />
+      )}
       <View
         pointerEvents="box-none"
         style={[s.topBar, { top: insets.top + 16 }]}
@@ -358,7 +464,10 @@ export function FoodCameraScreen({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Close camera"
-          onPress={onClose}
+          onPress={() => {
+            if (catchTimer.current) clearTimeout(catchTimer.current);
+            onClose();
+          }}
           style={({ pressed }) => [s.round, pressed && s.pressed]}
         >
           {icon("close-outline")}
@@ -389,15 +498,49 @@ export function FoodCameraScreen({
             },
           ]}
         >
-          <Text style={s.panelTitle}>
-            "Capture a food discovery"
-          </Text>
+          <Text style={s.panelTitle}>Capture a food discovery</Text>
           <Text style={s.panelCopy}>
-            "Frame your dish, take a photo, then review the suggestion before saving it. Only the photo you take or select is uploaded to identify your meal. Review the result before adding it to your collection."
+            Live scan identifies a dish once before you take a photo. Object
+            tracking follows the dish locally; keep it in frame. Toggle Live
+            scan off and on to identify a new dish. Confirm the dish before
+            saving it and earning XP.
           </Text>
         </ScrollView>
       )}
       <View style={[s.overlay, { bottom: insets.bottom + 24 }]}>
+        {!photo && permission?.granted && active && (
+          <Pressable
+            accessibilityRole="switch"
+            accessibilityLabel="Live scan: upload a snapshot after a short pause"
+            accessibilityHint="Uploads one camera snapshot to identify your dish. Hold steady when enabled."
+            accessibilityState={{ checked: live, disabled: busy || !ready }}
+            disabled={busy || !ready}
+            onPress={() => {
+              generation.current++;
+              request.current?.abort();
+              scanned.current = false;
+              setTrackingError("");
+              setAnchor((value) => ({ ...value, visible: false }));
+              setRecognition(null);
+              setIdentifying(false);
+              setError("");
+              setLive((value) => !value);
+            }}
+            style={({ pressed }) => [
+              s.liveScan,
+              live && s.selected,
+              pressed && s.pressed,
+            ]}
+          >
+            {icon("scan-outline", 16)}
+            <Text style={s.secondaryText}>
+              {live ? "Live scan on" : "Live scan"}
+            </Text>
+          </Pressable>
+        )}
+        {!!trackingError && !photo && (
+          <Text style={s.panelCopy}>{trackingError}</Text>
+        )}
         {!photo && (
           <Pressable
             accessibilityRole="button"
@@ -407,10 +550,11 @@ export function FoodCameraScreen({
             onPress={() => void selectPhoto()}
             style={({ pressed }) => [
               s.secondary,
+              s.choosePhoto,
               (pressed || busy) && s.pressed,
             ]}
           >
-            {icon("images-outline", 20)}
+            {icon("images-outline", 16)}
             <Text style={s.secondaryText}>
               {busy ? "Preparing photo…" : "Choose a photo"}
             </Text>
@@ -464,39 +608,37 @@ export function FoodCameraScreen({
           <View style={s.controls}>
             <Pressable
               accessibilityRole="button"
+              disabled={catching}
+              accessibilityState={{ disabled: catching }}
               onPress={retake}
               style={({ pressed }) => [s.secondary, pressed && s.pressed]}
             >
               {icon("refresh-outline", 20)}
-              <Text style={s.secondaryText}>Retake</Text>
+              <Text style={s.secondaryText}>
+                {live ? "Scan next dish" : "Retake"}
+              </Text>
             </Pressable>
             <Pressable
               accessibilityRole="button"
-              disabled={identifying || busy}
-              accessibilityState={{ disabled: identifying || busy }}
-               onPress={() => {
-                 onCapture({
-                   id: Date.now(),
-                   error: "",
-                   recognition,
-                   photo: {
-                     uri: photo.uri,
-                     width: photo.width,
-                     height: photo.height,
-                     base64: photo.base64,
-                     mimeType: "image/jpeg",
-                     type: "image",
-                   },
-                 });
-               }}
+              disabled={identifying || busy || catching}
+              accessibilityState={{ disabled: identifying || busy || catching }}
+              onPress={reviewCapture}
               style={({ pressed }) => [
                 s.primary,
                 (pressed || identifying || busy) && s.pressed,
               ]}
             >
-               <Text style={s.primaryText}>
-                 {identifying ? "Identifying…" : "Use photo"}
-               </Text>
+              <Text style={s.primaryText}>
+                {catching
+                  ? "Caught!"
+                  : identifying
+                    ? "Identifying…"
+                    : recognition
+                      ? collected
+                        ? "Review dish"
+                        : "Catch & review"
+                      : "Use photo"}
+              </Text>
               <Ionicons
                 name="arrow-forward"
                 size={20}
@@ -531,9 +673,7 @@ export function FoodCameraScreen({
             )}
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={
-                "Take food photo"
-              }
+              accessibilityLabel={"Take food photo"}
               accessibilityState={{ disabled: !ready || busy, busy }}
               disabled={!ready || busy}
               onPress={() => void snap()}
@@ -556,6 +696,10 @@ export function FoodCameraScreen({
               onPress={() => {
                 setReady(false);
                 setFacing((value) => (value === "back" ? "front" : "back"));
+                scanned.current = false;
+                setTrackingError("");
+                setAnchor((value) => ({ ...value, visible: false }));
+                setRecognition(null);
               }}
               style={({ pressed }) => [
                 s.round,
@@ -731,6 +875,23 @@ const s = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
     paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 24,
+    backgroundColor: cameraColors.surface,
+  },
+  choosePhoto: {
+    alignSelf: "center",
+    gap: 6,
+    paddingHorizontal: 14,
+  },
+  liveScan: {
+    alignSelf: "center",
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 24,
     backgroundColor: cameraColors.surface,

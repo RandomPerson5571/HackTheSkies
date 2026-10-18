@@ -6,12 +6,24 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
+  type RefObject,
   useState,
   type ComponentProps,
   type Dispatch,
   type ReactNode,
 } from "react";
-import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Image,
+  Modal,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mapCenter, type Place } from "../../restaurants/data/places";
@@ -159,6 +171,10 @@ function Page({
   icon,
   error,
   children,
+  toolbar,
+  scrollRef,
+  onRefresh,
+  refreshing = false,
 }: {
   title: string;
   eyebrow: string;
@@ -166,85 +182,105 @@ function Page({
   icon: IconName;
   error: string;
   children: ReactNode;
+  toolbar?: ReactNode;
+  scrollRef?: RefObject<ScrollView | null>;
+  onRefresh?: () => void;
+  refreshing?: boolean;
 }) {
   const insets = useSafeAreaInsets();
   const navigation = useContext(Navigation);
   return (
     <ScrollView
+      ref={scrollRef}
       style={s.screen}
+      stickyHeaderIndices={toolbar ? [1] : undefined}
+      refreshControl={
+        onRefresh ? (
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.accent}
+          />
+        ) : undefined
+      }
       contentContainerStyle={[
         s.content,
         { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 115 },
       ]}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={s.brandHeader}>
-        <CiboLogo />
-        <View style={s.headerActions}>
-          <View style={s.brand}>
-            <Icon name={icon} size={26} />
+      <View style={{ gap: 20 }}>
+        <View style={s.brandHeader}>
+          <CiboLogo />
+          <View style={s.headerActions}>
+            <View style={s.brand}>
+              <Icon name={icon} size={26} />
+            </View>
+            {navigation && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Open settings"
+                onPress={navigation.onOpenSettings}
+                style={({ pressed }) => [s.brand, pressed && s.dim]}
+              >
+                <Icon name="settings-outline" size={22} />
+              </Pressable>
+            )}
           </View>
-          {navigation && (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Open settings"
-              onPress={navigation.onOpenSettings}
-              style={({ pressed }) => [s.brand, pressed && s.dim]}
-            >
-              <Icon name="settings-outline" size={22} />
-            </Pressable>
-          )}
         </View>
-      </View>
-      <View style={s.heading}>
-        <View style={s.flex}>
-          <Text style={s.eyebrow}>{eyebrow}</Text>
-          <Text accessibilityRole="header" style={s.title}>
-            {title}
-          </Text>
+        <View style={s.heading}>
+          <View style={s.flex}>
+            <Text style={s.eyebrow}>{eyebrow}</Text>
+            <Text accessibilityRole="header" style={s.title}>
+              {title}
+            </Text>
+          </View>
+          <Text style={s.intro}>{intro}</Text>
         </View>
-        <Text style={s.intro}>{intro}</Text>
-      </View>
-      {navigation && (
-        <View accessibilityRole="tablist" style={s.tabs}>
-          {(["favorites", "friends", "badges"] as const).map((section) => (
-            <Pressable
-              key={section}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: navigation.section === section }}
-              onPress={() => navigation.setSection(section)}
-              style={({ pressed }) => [
-                s.tab,
-                navigation.section === section && s.selectedTab,
-                pressed && s.dim,
-              ]}
-            >
-              <Icon
-                name={
-                  section === "favorites"
-                    ? "heart-outline"
+        {navigation && (
+          <View accessibilityRole="tablist" style={s.tabs}>
+            {(["favorites", "friends", "badges"] as const).map((section) => (
+              <Pressable
+                key={section}
+                accessibilityRole="tab"
+                accessibilityState={{
+                  selected: navigation.section === section,
+                }}
+                onPress={() => navigation.setSection(section)}
+                style={({ pressed }) => [
+                  s.tab,
+                  navigation.section === section && s.selectedTab,
+                  pressed && s.dim,
+                ]}
+              >
+                <Icon
+                  name={
+                    section === "favorites"
+                      ? "heart-outline"
+                      : section === "friends"
+                        ? "people-outline"
+                        : "ribbon-outline"
+                  }
+                  size={18}
+                />
+                <Text style={s.tabText}>
+                  {section === "favorites"
+                    ? "Favourites"
                     : section === "friends"
-                      ? "people-outline"
-                      : "ribbon-outline"
-                }
-                size={18}
-              />
-              <Text style={s.tabText}>
-                {section === "favorites"
-                  ? "Favorites"
-                  : section === "friends"
-                    ? "Friends"
-                    : "Badges"}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-      )}
-      {error ? (
-        <Text accessibilityRole="alert" style={s.notice}>
-          {error}
-        </Text>
-      ) : null}
+                      ? "Friends"
+                      : "Badges"}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
+        {error ? (
+          <Text accessibilityRole="alert" style={s.notice}>
+            {error}
+          </Text>
+        ) : null}
+      </View>
+      {toolbar}
       {children}
     </ScrollView>
   );
@@ -258,6 +294,42 @@ export function FavoritesScreen({
   currentLocation,
 }: Props) {
   const { loadFavoritesPage, loadPlacesByIds } = useBackend();
+  const { width } = useWindowDimensions();
+  const scrollRef = useRef<ScrollView>(null);
+  const nearbyY = useRef(0);
+  const [filter, setFilter] = useState("ranked");
+  const [sort, setSort] = useState<"ranking" | "rating" | "recent">("ranking");
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [creatingList, setCreatingList] = useState(false);
+  const [listName, setListName] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [covers, setCovers] = useState<Place[]>([]);
+  const filteredIds = useMemo(() => {
+    const ids =
+      filter === "ranked"
+        ? collection.favorites
+        : filter === "saved"
+          ? collection.saved.filter((id) => !collection.visited.includes(id))
+          : (collection.lists.find((list) => list.id === filter)?.placeIds ??
+            []);
+    return sort === "rating"
+      ? [...ids].sort(
+          (a, b) => (collection.ratings[b] ?? 0) - (collection.ratings[a] ?? 0),
+        )
+      : sort === "recent"
+        ? [...ids].sort(
+            (a, b) => collection.saved.indexOf(b) - collection.saved.indexOf(a),
+          )
+        : ids;
+  }, [
+    filter,
+    sort,
+    collection.favorites,
+    collection.saved,
+    collection.visited,
+    collection.lists,
+    collection.ratings,
+  ]);
   const [query, setQuery] = useState("");
   const [pageQuery, setPageQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
@@ -281,8 +353,9 @@ export function FavoritesScreen({
   );
   const rankedPageCount = Math.max(
     1,
-    Math.ceil(collection.favorites.length / FAVORITES_PAGE_SIZE),
+    Math.ceil(filteredIds.length / FAVORITES_PAGE_SIZE),
   );
+  if (rankedPage >= rankedPageCount) setRankedPage(rankedPageCount - 1);
   const unratedPageCount = Math.max(
     1,
     Math.ceil(Math.min(unratedTotal, NEARBY_PAGE_LIMIT) / NEARBY_PAGE_SIZE),
@@ -291,18 +364,18 @@ export function FavoritesScreen({
     unratedPage * NEARBY_PAGE_SIZE,
     (unratedPage + 1) * NEARBY_PAGE_SIZE,
   );
-  const favoriteStats = useMemo(() => {
-    const ratings = collection.favorites
-      .map((id) => collection.ratings[id] ?? 0)
-      .filter((value) => value > 0);
-    const average = ratings.length
-      ? Math.round(
-          (ratings.reduce((sum, value) => sum + value, 0) / ratings.length) *
-            10,
-        ) / 10
-      : 0;
-    return { average, topPick: ranked[0]?.name ?? null };
-  }, [collection.favorites, collection.ratings, ranked]);
+  useEffect(() => {
+    let active = true;
+    const ids = [
+      ...new Set(collection.lists.flatMap((list) => list.placeIds.slice(0, 4))),
+    ];
+    void loadPlacesByIds(ids).then((places) => {
+      if (active) setCovers(places);
+    });
+    return () => {
+      active = false;
+    };
+  }, [collection.lists, loadPlacesByIds, refreshKey]);
 
   useEffect(() => {
     const timer = setTimeout(() => setPageQuery(query), 250);
@@ -311,7 +384,7 @@ export function FavoritesScreen({
 
   useEffect(() => {
     let active = true;
-    const ids = collection.favorites.slice(
+    const ids = filteredIds.slice(
       rankedPage * FAVORITES_PAGE_SIZE,
       (rankedPage + 1) * FAVORITES_PAGE_SIZE,
     );
@@ -328,7 +401,7 @@ export function FavoritesScreen({
     return () => {
       active = false;
     };
-  }, [collection.favorites, rankedPage, loadPlacesByIds]);
+  }, [filteredIds, rankedPage, loadPlacesByIds, refreshKey]);
 
   useEffect(() => {
     let active = true;
@@ -350,7 +423,7 @@ export function FavoritesScreen({
     return () => {
       active = false;
     };
-  }, [pageQuery, ratedIds, currentLocation, loadFavoritesPage]);
+  }, [pageQuery, ratedIds, currentLocation, loadFavoritesPage, refreshKey]);
 
   function ratePlace(placeId: string, rating: number) {
     dispatch({ type: "rate", placeId, rating });
@@ -359,13 +432,14 @@ export function FavoritesScreen({
 
   function ratingCard(place: Place, rank?: number) {
     const rating = collection.ratings[place.id] ?? 0;
-    const isRanked = rank !== undefined;
+    const isRanked = rank !== undefined && rank >= 0;
     return (
       <View key={place.id} style={fs.card}>
         <View style={s.row}>
           <View>
             <RestaurantPhoto
               place={place}
+              showAll
               recommendation={recommendations.get(place.id)}
               style={fs.photo}
             />
@@ -410,6 +484,47 @@ export function FavoritesScreen({
             </Pressable>
           ))}
         </View>
+        {selectedPlace?.id === place.id && (
+          <View style={s.actions}>
+            <Action
+              label={
+                collection.saved.includes(place.id)
+                  ? "Remove from saved"
+                  : "Want to try"
+              }
+              icon="bookmark-outline"
+              onPress={() => {
+                dispatch({ type: "save", placeId: place.id });
+                setSelectedPlace(null);
+              }}
+            />
+            <Action
+              label={
+                collection.visited.includes(place.id)
+                  ? "Visited"
+                  : "Mark visited"
+              }
+              selected={collection.visited.includes(place.id)}
+              icon="checkmark-circle-outline"
+              onPress={() => dispatch({ type: "visit", placeId: place.id })}
+            />
+            {collection.lists.map((list) => (
+              <Action
+                key={list.id}
+                label={list.name}
+                icon="albums-outline"
+                selected={list.placeIds.includes(place.id)}
+                onPress={() =>
+                  dispatch({
+                    type: "membership",
+                    listId: list.id,
+                    placeId: place.id,
+                  })
+                }
+              />
+            ))}
+          </View>
+        )}
         <View style={fs.tools}>
           {isRanked && (
             <>
@@ -440,63 +555,289 @@ export function FavoritesScreen({
           <Action
             label="Map"
             icon="map-outline"
-            onPress={() => onShowMap(place)}
+            onPress={() => {
+              setSelectedPlace(null);
+              onShowMap(place);
+            }}
           />
         </View>
       </View>
     );
   }
+  function chooseFilter(value: string) {
+    setFilter(value);
+    setRankedPage(0);
+  }
+  const wantToTryCount = collection.saved.filter(
+    (id) => !collection.visited.includes(id),
+  ).length;
+  const activeTitle =
+    filter === "ranked"
+      ? "Your favourites"
+      : filter === "saved"
+        ? "Want to try"
+        : (collection.lists.find((list) => list.id === filter)?.name ??
+          "Your collection");
+  const gridWidth = Math.min(width, 720) - 40;
+  const cardWidth = gridWidth < 300 ? gridWidth : (gridWidth - 12) / 2;
   return (
     <Page
-      title="Your favorites."
-      eyebrow="THE ONES WORTH GOING BACK FOR"
-      intro="Rate your bites, then put your favorites in order. Your ranking is yours to make."
+      title="Good taste. Great memories."
+      eyebrow="YOUR LITTLE BOOK OF GOOD FOOD"
+      intro="The places you love, and the ones you’re dreaming of. All in one place."
       icon="heart-outline"
       error={storageError}
-    >
-      <View style={fs.hero}>
-        <View style={fs.heroIcon}>
-          <Icon name="podium-outline" size={28} />
+      scrollRef={scrollRef}
+      refreshing={refreshKey > 0 && (rankedLoading || unratedLoading)}
+      onRefresh={() => setRefreshKey((key) => key + 1)}
+      toolbar={
+        <View style={fs.filterBar}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={fs.chips}
+          >
+            {[
+              {
+                id: "ranked",
+                name: "Favourites",
+                count: collection.favorites.length,
+                icon: "heart-outline" as const,
+              },
+              {
+                id: "saved",
+                name: "Want to try",
+                count: wantToTryCount,
+                icon: "bookmark-outline" as const,
+              },
+            ].map((item) => (
+              <Pressable
+                key={item.id}
+                accessibilityRole="button"
+                accessibilityState={{ selected: filter === item.id }}
+                onPress={() => chooseFilter(item.id)}
+                style={[fs.chip, filter === item.id && fs.chipActive]}
+              >
+                <Icon
+                  name={item.icon}
+                  size={17}
+                  color={filter === item.id ? colors.paper : colors.accent}
+                />
+                <Text
+                  style={[fs.chipText, filter === item.id && fs.chipTextActive]}
+                >
+                  {item.name}
+                </Text>
+                <View style={[fs.count, filter === item.id && fs.countActive]}>
+                  <Text
+                    style={[
+                      fs.countText,
+                      filter === item.id && fs.chipTextActive,
+                    ]}
+                  >
+                    {item.count}
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
+          </ScrollView>
         </View>
-        <View style={fs.heroCopy}>
-          <Text style={fs.heroNumber}>
-            {collection.favorites.length} ranked
+      }
+    >
+      <View style={fs.sectionHeading}>
+        <View style={s.flex}>
+          <Text style={s.section}>Made for your cravings</Text>
+          <Text style={s.small}>Little collections. Big plans.</Text>
+        </View>
+        <ToolButton
+          icon="add"
+          label="Create a collection"
+          onPress={() => setCreatingList(true)}
+        />
+      </View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={fs.collections}
+      >
+        {collection.lists.map((list) => (
+          <Pressable
+            key={list.id}
+            accessibilityRole="button"
+            accessibilityLabel={`${list.name}, ${list.placeIds.length} places`}
+            accessibilityState={{ selected: filter === list.id }}
+            onPress={() => chooseFilter(list.id)}
+            style={[
+              fs.collectionCard,
+              filter === list.id && fs.collectionActive,
+            ]}
+          >
+            <View style={fs.mosaic}>
+              {[0, 1, 2, 3].map((index) => {
+                const place = covers.find(
+                  (item) => item.id === list.placeIds[index],
+                );
+                return place ? (
+                  <RestaurantPhoto
+                    key={index}
+                    place={place}
+                    showAll
+                    recommendation={undefined}
+                    style={fs.mosaicTile}
+                  />
+                ) : (
+                  <View key={index} style={fs.mosaicBlank}>
+                    <Icon name="restaurant-outline" size={19} />
+                  </View>
+                );
+              })}
+            </View>
+            <Text numberOfLines={1} style={fs.collectionName}>
+              {list.name}
+            </Text>
+            <Text style={s.small}>
+              {list.placeIds.length}{" "}
+              {list.placeIds.length === 1 ? "place" : "places"}
+            </Text>
+          </Pressable>
+        ))}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Create a new collection"
+          onPress={() => setCreatingList(true)}
+          style={fs.newCollection}
+        >
+          <View style={fs.newCollectionIcon}>
+            <Icon name="add" size={28} />
+          </View>
+          <Text style={fs.collectionName}>A list for every mood</Text>
+          <Text style={s.small}>Create a collection</Text>
+        </Pressable>
+      </ScrollView>
+      <View style={fs.sectionHeading}>
+        <View style={s.flex}>
+          <Text accessibilityRole="header" style={s.section}>
+            {activeTitle}
           </Text>
           <Text style={s.small}>
-            {collection.favorites.length
-              ? favoriteStats.topPick
-                ? `Top pick: ${favoriteStats.topPick} · ${favoriteStats.average}/5 average`
-                : "Your personal leaderboard."
-              : "Rate a spot below to start your leaderboard."}
+            {filteredIds.length} places worth keeping close
           </Text>
         </View>
+        {filter !== "ranked" && filter !== "saved" && (
+          <ToolButton
+            icon="close"
+            label="Show all favourites"
+            onPress={() => chooseFilter("ranked")}
+          />
+        )}
       </View>
-      <Text accessibilityRole="header" style={s.section}>
-        Your ranking
-      </Text>
-      <Text style={s.small}>
-        Use the arrows to rank independently of your star ratings.
-      </Text>
-      {!collection.favorites.length && (
+      <View style={fs.sortRow}>
+        <Icon name="swap-vertical-outline" size={16} />
+        {(["ranking", "rating", "recent"] as const).map((item) => (
+          <Pressable
+            key={item}
+            accessibilityRole="button"
+            accessibilityState={{ selected: sort === item }}
+            onPress={() => {
+              setSort(item);
+              setRankedPage(0);
+            }}
+            style={[fs.sortChip, sort === item && fs.sortSelected]}
+          >
+            <Text style={fs.sortText}>
+              {item === "ranking"
+                ? "Your order"
+                : item === "rating"
+                  ? "Top rated"
+                  : "Recently saved"}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+      {!filteredIds.length && (
         <View style={fs.empty}>
           <View style={fs.emptyArt}>
-            <Icon name="heart-outline" size={30} />
+            <Icon
+              name={filter === "saved" ? "bookmark-outline" : "heart"}
+              size={36}
+            />
           </View>
-          <Text style={fs.emptyTitle}>Every favorite starts with a bite.</Text>
-          <Text style={fs.emptyCopy}>
-            Rate a nearby spot below and it joins your personal leaderboard.
+          <Text style={fs.emptyTitle}>
+            {filter === "ranked"
+              ? "Your next favourite is out there."
+              : "Good things belong here."}
           </Text>
+          <Text style={fs.emptyCopy}>
+            {filter === "ranked"
+              ? "Rate a place you’ve tried to start a collection of bites worth coming back for."
+              : "Explore the nearby picks below. Open a place to save it or add it to this collection."}
+          </Text>
+          <Action
+            label="Explore nearby picks"
+            icon="arrow-down"
+            onPress={() =>
+              scrollRef.current?.scrollTo({
+                y: Math.max(0, nearbyY.current - 80),
+                animated: true,
+              })
+            }
+          />
         </View>
       )}
-      {rankedLoading && <Text style={s.notice}>Loading your favorites…</Text>}
-      {ranked.map((place, index) =>
-        ratingCard(place, rankedPage * FAVORITES_PAGE_SIZE + index),
-      )}
-      {collection.favorites.length > FAVORITES_PAGE_SIZE && (
+      {rankedLoading && <Text style={s.notice}>Loading your places…</Text>}
+      <View style={fs.grid}>
+        {ranked.map((place) => {
+          const rating = collection.ratings[place.id] ?? 0;
+          const rank = collection.favorites.indexOf(place.id);
+          return (
+            <Pressable
+              key={place.id}
+              accessibilityRole="button"
+              accessibilityLabel={`${place.name}, ${rating ? `${rating} out of 5 stars` : "not rated"}. Open place actions`}
+              onPress={() => setSelectedPlace(place)}
+              style={[fs.gridCard, { width: cardWidth }]}
+            >
+              <View>
+                <RestaurantPhoto
+                  place={place}
+                  showAll
+                  recommendation={recommendations.get(place.id)}
+                  style={fs.gridPhoto}
+                />
+                {rank >= 0 && (
+                  <View style={fs.gridRank}>
+                    <Text style={fs.rankChipText}>#{rank + 1}</Text>
+                  </View>
+                )}
+                <View style={fs.photoAction}>
+                  <Icon name="ellipsis-horizontal" size={18} />
+                </View>
+              </View>
+              <View style={fs.gridCopy}>
+                <Text style={s.eyebrow}>{place.category.toUpperCase()}</Text>
+                <Text numberOfLines={2} style={fs.placeName}>
+                  {place.name}
+                </Text>
+                <Text numberOfLines={1} style={s.small}>
+                  {place.neighborhood}
+                </Text>
+                <View style={fs.ratingLine}>
+                  <Icon name={rating ? "star" : "bookmark-outline"} size={14} />
+                  <Text style={fs.sortText}>
+                    {rating
+                      ? `${rating.toFixed(1)} · Your rating`
+                      : "On your wishlist"}
+                  </Text>
+                </View>
+              </View>
+            </Pressable>
+          );
+        })}
+      </View>
+      {filteredIds.length > FAVORITES_PAGE_SIZE && (
         <View style={s.actions}>
           <Action
             label="Previous"
-            icon="chevron-back"
             disabled={rankedPage === 0}
             onPress={() => setRankedPage((page) => Math.max(0, page - 1))}
           />
@@ -505,7 +846,6 @@ export function FavoritesScreen({
           </Text>
           <Action
             label="Next"
-            icon="chevron-forward"
             disabled={rankedPage >= rankedPageCount - 1}
             onPress={() =>
               setRankedPage((page) => Math.min(rankedPageCount - 1, page + 1))
@@ -513,9 +853,97 @@ export function FavoritesScreen({
           />
         </View>
       )}
-      <Text accessibilityRole="header" style={s.section}>
-        Tried something good?
-      </Text>
+      <Modal
+        visible={selectedPlace !== null || creatingList}
+        transparent
+        animationType="fade"
+        onRequestClose={() => {
+          setSelectedPlace(null);
+          setCreatingList(false);
+        }}
+      >
+        <View style={fs.modalBackdrop}>
+          <View style={fs.sheet} accessibilityViewIsModal>
+            <View style={fs.sectionHeading}>
+              <Text accessibilityRole="header" style={s.name}>
+                {creatingList ? "A new collection" : "Make it yours"}
+              </Text>
+              <ToolButton
+                icon="close"
+                label="Close place actions"
+                onPress={() => {
+                  setSelectedPlace(null);
+                  setCreatingList(false);
+                }}
+              />
+            </View>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              contentContainerStyle={fs.sheetContent}
+            >
+              {creatingList ? (
+                <>
+                  <Text style={s.small}>
+                    Weekend brunches, date nights, or the best noodles in town.
+                  </Text>
+                  <TextInput
+                    accessibilityLabel="Collection name"
+                    autoFocus
+                    value={listName}
+                    onChangeText={setListName}
+                    maxLength={40}
+                    placeholder="Give your collection a name"
+                    placeholderTextColor={colors.muted}
+                    style={s.input}
+                  />
+                  {collection.lists.some(
+                    (list) =>
+                      list.name.toLowerCase() === listName.trim().toLowerCase(),
+                  ) && (
+                    <Text style={s.small}>
+                      You already have a collection with this name.
+                    </Text>
+                  )}
+                  <Action
+                    label="Create collection"
+                    icon="add"
+                    disabled={
+                      !listName.trim() ||
+                      collection.lists.some(
+                        (list) =>
+                          list.name.toLowerCase() ===
+                          listName.trim().toLowerCase(),
+                      )
+                    }
+                    onPress={() => {
+                      const id = `list-${Date.now()}`;
+                      dispatch({ type: "create-list", id, name: listName });
+                      setListName("");
+                      setCreatingList(false);
+                      chooseFilter(id);
+                    }}
+                  />
+                </>
+              ) : (
+                selectedPlace &&
+                ratingCard(
+                  selectedPlace,
+                  collection.favorites.indexOf(selectedPlace.id),
+                )
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+      <View
+        onLayout={(event) => {
+          nearbyY.current = event.nativeEvent.layout.y;
+        }}
+      >
+        <Text accessibilityRole="header" style={s.section}>
+          Tried something good?
+        </Text>
+      </View>
       <Text style={s.small}>
         Rating a spot also marks it as visited and saves it to your journal.
       </Text>
@@ -672,10 +1100,7 @@ export function FriendsScreen({
                       friend.imageUrl ||
                       friend.imageUri;
                     return avatarUri ? (
-                      <Image
-                        source={{ uri: avatarUri }}
-                        style={s.avatar}
-                      />
+                      <Image source={{ uri: avatarUri }} style={s.avatar} />
                     ) : (
                       <View style={s.avatar}>
                         <Text style={s.avatarText}>{friend.initials}</Text>
@@ -768,10 +1193,7 @@ export function FriendsScreen({
                       friend.imageUrl ||
                       friend.imageUri;
                     return avatarUri ? (
-                      <Image
-                        source={{ uri: avatarUri }}
-                        style={s.avatar}
-                      />
+                      <Image source={{ uri: avatarUri }} style={s.avatar} />
                     ) : (
                       <View style={s.avatar}>
                         <Text style={s.avatarText}>{friend.initials}</Text>
@@ -1164,6 +1586,168 @@ const s = StyleSheet.create({
 });
 
 const fs = StyleSheet.create({
+  filterBar: {
+    backgroundColor: colors.paper,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderColor: colors.border,
+  },
+  chips: { gap: 8, paddingRight: 4 },
+  chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 14,
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 28,
+    backgroundColor: colors.white,
+  },
+  chipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
+  chipText: { fontSize: 13, fontWeight: "600", color: colors.accent },
+  chipTextActive: { color: colors.paper },
+  count: {
+    borderRadius: 12,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    backgroundColor: colors.tint,
+  },
+  countActive: { backgroundColor: colors.scrim },
+  countText: { fontSize: 11, fontWeight: "700", color: colors.accent },
+  sectionHeading: { flexDirection: "row", alignItems: "center", gap: 12 },
+  collections: { gap: 12, paddingBottom: 4 },
+  collectionCard: {
+    width: 170,
+    borderRadius: 20,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.white,
+    gap: 4,
+  },
+  collectionActive: {
+    borderColor: colors.accent,
+    backgroundColor: colors.tint,
+  },
+  mosaic: {
+    height: 112,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 3,
+    borderRadius: 13,
+    overflow: "hidden",
+    marginBottom: 6,
+  },
+  mosaicTile: { width: "49%", height: 55, backgroundColor: colors.tint },
+  mosaicBlank: {
+    width: "49%",
+    height: 55,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.tint,
+  },
+  collectionName: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.ink,
+    paddingHorizontal: 3,
+  },
+  newCollection: {
+    width: 170,
+    minHeight: 178,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: colors.accent,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+    gap: 8,
+  },
+  newCollectionIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.tint,
+  },
+  sortRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    flexWrap: "wrap",
+  },
+  sortChip: {
+    minHeight: 48,
+    paddingHorizontal: 10,
+    justifyContent: "center",
+    borderRadius: 14,
+  },
+  sortSelected: { backgroundColor: colors.tint },
+  sortText: { fontSize: 11, fontWeight: "600", color: colors.accent },
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: 12 },
+  gridCard: {
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.white,
+    overflow: "hidden",
+  },
+  gridPhoto: { width: "100%", aspectRatio: 1.12, backgroundColor: colors.tint },
+  gridRank: {
+    position: "absolute",
+    left: 10,
+    top: 10,
+    backgroundColor: colors.accent,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 20,
+  },
+  photoAction: {
+    position: "absolute",
+    right: 8,
+    top: 8,
+    backgroundColor: colors.paper,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  gridCopy: { padding: 12, gap: 5 },
+  placeName: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "600",
+    color: colors.ink,
+  },
+  ratingLine: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 5,
+    marginTop: 7,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: colors.scrim,
+    justifyContent: "center",
+    padding: 20,
+  },
+  sheet: {
+    width: "100%",
+    maxWidth: 520,
+    maxHeight: "85%",
+    alignSelf: "center",
+    borderRadius: 24,
+    padding: 16,
+    backgroundColor: colors.paper,
+    gap: 14,
+  },
+  sheetContent: { gap: 14, paddingBottom: 8 },
+
   card: {
     borderRadius: 22,
     backgroundColor: colors.white,
@@ -1207,14 +1791,19 @@ const fs = StyleSheet.create({
   },
   star: {
     width: 44,
-    height: 40,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
   },
-  tools: { flexDirection: "row", alignItems: "center", gap: 8 },
+  tools: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: 8,
+  },
   tool: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     borderRadius: 14,
     borderWidth: 1,
     borderColor: colors.border,
@@ -1232,7 +1821,12 @@ const fs = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  emptyTitle: { fontSize: 17, fontWeight: "600", color: colors.ink, textAlign: "center" },
+  emptyTitle: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: colors.ink,
+    textAlign: "center",
+  },
   emptyCopy: {
     fontSize: 12,
     lineHeight: 19,

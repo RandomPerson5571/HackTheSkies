@@ -26,6 +26,7 @@
     "plugins": [
       "@rnmapbox/maps",
       "expo-dev-client",
+      "onnxruntime-react-native",
       [
         "react-native-nfc-manager",
         {

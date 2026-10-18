@@ -9,7 +9,17 @@ import {
 } from "react";
 import { View } from "react-native";
 import type { CameraViewProps } from "expo-camera";
-import type { FoodCameraHandle } from "./FoodCameraView.types";
+import type {
+  FoodCameraHandle,
+  FoodTrackingProps,
+} from "./FoodCameraView.types";
+
+import {
+  projectDish,
+  selectDish,
+  type Detection,
+  type DishBounds,
+} from "../models/foodTracking";
 
 type Props = Pick<
   CameraViewProps,
@@ -23,7 +33,8 @@ type Props = Pick<
   | "animateShutter"
   | "onCameraReady"
   | "onMountError"
-> & { ref?: Ref<FoodCameraHandle> };
+> &
+  FoodTrackingProps & { ref?: Ref<FoodCameraHandle> };
 
 // Browser capture always stays in this video element. No capture file input,
 // external camera application, or fullscreen player is involved.
@@ -31,6 +42,9 @@ export function FoodCameraView({
   ref,
   facing = "back",
   style,
+  tracking,
+  onTracking,
+  onTrackingError,
   onCameraReady,
   onMountError,
 }: Props) {
@@ -91,6 +105,73 @@ export function FoodCameraView({
       if (stream.current === session) stream.current = null;
     };
   }, [facing]);
+
+  const tracked = useEffectEvent((bounds: DishBounds) => onTracking?.(bounds));
+  const trackingFailed = useEffectEvent(() =>
+    onTrackingError?.(
+      "Object tracking is unavailable. You can still take a photo.",
+    ),
+  );
+  useEffect(() => {
+    if (!tracking) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    let previous: Detection | undefined;
+    let lastSeen = 0;
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    async function run() {
+      try {
+        const { detectDish } = await import("../services/dishDetector.web");
+        if (cancelled) return;
+        const element = video.current;
+        if (element && element.readyState >= 2 && context) {
+          canvas.width = 640;
+          canvas.height = Math.round(
+            (640 * element.videoHeight) / element.videoWidth,
+          );
+          context.drawImage(element, 0, 0, canvas.width, canvas.height);
+          const detections = await detectDish(
+            context.getImageData(0, 0, canvas.width, canvas.height),
+          );
+          if (cancelled) return;
+          const dish = selectDish(detections, previous);
+          const now = Date.now();
+          if (dish) {
+            previous = dish;
+            lastSeen = now;
+            const bounds = element.getBoundingClientRect();
+            if (bounds.width && bounds.height)
+              tracked(
+                projectDish(
+                  dish.box,
+                  { width: element.videoWidth, height: element.videoHeight },
+                  bounds,
+                  mirrored,
+                ),
+              );
+          } else if (now - lastSeen > 650) {
+            previous = undefined;
+            tracked({ x: 0, y: 0, width: 0, height: 0, visible: false });
+          }
+        }
+        // Sequential inference: never queue frames or upload camera pixels.
+        if (!cancelled) timer = setTimeout(() => void run(), 120);
+      } catch {
+        if (!cancelled) {
+          tracked({ x: 0, y: 0, width: 0, height: 0, visible: false });
+          trackingFailed();
+        }
+      }
+    }
+    void run();
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+      canvas.width = 0;
+      canvas.height = 0;
+    };
+  }, [tracking, mirrored]);
 
   useImperativeHandle(
     ref,

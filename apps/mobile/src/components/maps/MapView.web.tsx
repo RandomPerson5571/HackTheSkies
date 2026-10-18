@@ -24,6 +24,9 @@ import {
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
+// Mapbox paint values are parsed outside the DOM and cannot resolve CSS variables.
+const mapWhite = "#FFFDF5";
+
 type MapPoint = { x: number; y: number };
 type MapFeature = GeoJSON.Feature<
   GeoJSON.Point,
@@ -49,7 +52,8 @@ type WebMap = {
     zoom: number;
     duration: number;
   }) => void;
-  on(event: "load" | "error" | "idle", callback: () => void): void;
+  on(event: "load" | "idle", callback: () => void): void;
+  on(event: "error", callback: (event: { error: Error }) => void): void;
   on(event: "click", callback: (event: { point: MapPoint }) => void): void;
   on(
     event: "mouseenter" | "mouseleave",
@@ -195,7 +199,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
               30,
             ],
             "circle-stroke-width": 2,
-            "circle-stroke-color": colors.white,
+            "circle-stroke-color": mapWhite,
           },
         });
         currentMap.addLayer({
@@ -209,7 +213,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
             "text-allow-overlap": true,
             "text-ignore-placement": true,
           },
-          paint: { "text-color": colors.white },
+          paint: { "text-color": mapWhite },
         });
         currentMap.addLayer({
           id: "place-points",
@@ -220,7 +224,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
             "circle-radius": 7,
             "circle-color": latest.current.themeAccent ?? "#253D6A",
             "circle-stroke-width": 2,
-            "circle-stroke-color": colors.white,
+            "circle-stroke-color": mapWhite,
           },
         });
         currentMap.addLayer({
@@ -239,7 +243,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
           },
           paint: {
             "text-color": latest.current.themeInk ?? "#253D6A",
-            "text-halo-color": colors.white,
+            "text-halo-color": mapWhite,
             "text-halo-width": 2,
           },
         });
@@ -328,10 +332,12 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         });
         latest.current.onReady();
       });
-      currentMap.on("error", () => {
+      currentMap.on("error", ({ error }) => {
+        console.error("Mapbox web map error:", error);
         if (!disposed) latest.current.onError();
       });
-    } catch {
+    } catch (error) {
+      console.error("Mapbox web map initialization failed:", error);
       latest.current.onError();
     }
     return () => {

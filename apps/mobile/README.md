@@ -77,18 +77,25 @@ remote and have unspecified reuse rights; Wikimedia licenses remain attached.
 
 ### Food camera and photo recognition
 
-The camera offers **take a photo** or **choose a photo**. Photo selection is always
-available, including in an iOS simulator without a working camera. A selected or
-captured image is converted to JPEG, resized to at most 1024 px and uploaded once
-to the Worker. Preview frames are never analyzed or uploaded. ML Kit, COCO-SSD,
-TensorFlow, and continuous detection have been removed.
+The camera offers **take a photo**, **choose a photo**, and **Live scan**.
+Live scan starts enabled and sends one preview snapshot after a 1.6-second pause,
+before the user presses the shutter. Toggle it off and on to recognize a new dish.
+YOLOv10n runs locally through ONNX Runtime on browser and native cameras.
+Its bounding boxes stay invisible. Arrows aim at the tracked box perimeter;
+orbiting stars, twinkles, ripples, and drifting labels use Reanimated and respect
+reduced motion. Lost detections fade the arrows and particles. The COCO model
+recognizes common foods and bowls; arbitrary plated meals may not be detected.
+Only the initial identification snapshot is uploaded to Groq; tracking frames stay
+on device. Runtime/model assets download on first use and need network access.
+Browser inference runs in a worker; native inference samples serialized camera
+snapshots and may follow more slowly than a dedicated frame processor.
+Pressing the shutter freezes the photo for review.
 
-The Worker identifies the dish and cuisine through Groq, retrieves up to 12 catalog
-candidates, then verifies a candidate ID or `NO_MATCH` with a second vision call.
-Both calls share one deadline. A recognized dish appears in the frozen photo
-review; the user confirms before adding it to Food Dex. Retry sends another
-request. Retake and navigation cancel requests and ignore late responses. Missing
-configuration and network errors preserve manual entry.
+Native tracking requires rebuilding the development client after installing
+`onnxruntime-react-native`: run `pnpm --filter mobile exec expo prebuild`, then
+`pnpm ios` or `pnpm android`. Reloading JavaScript cannot add this module.
+The model is [YOLOv10n](https://huggingface.co/onnx-community/YOLOv10)
+(AGPL-3.0); review its license before distributing a closed-source app.
 
 ### Separate Cloudflare API
 
@@ -109,11 +116,9 @@ They indicate possible ingredients, never allergy safety. A rare find means an
 uncollected dish from a cuisine with fewer than two discoveries. Unknown matches
 remain readable discoveries without a canonical badge or fabricated catalog photo.
 
-This first release analyzes a single compressed capture, not video frames. Boxes
-are model estimates anchored to the frozen image, with a list alternative for
-missing or imprecise positions. Live tracking, on-device ML Kit OCR, embeddings,
-and Skia rendering are not part of this photo-first implementation. The camera
-uses the existing Expo dependency; no new native modules are required.
+Recognition analyzes a single compressed snapshot. YOLO tracking processes preview
+frames locally and does not upload them. On-device OCR, embeddings, and Skia
+rendering are not included.
 
 ### Cibo Quests
 

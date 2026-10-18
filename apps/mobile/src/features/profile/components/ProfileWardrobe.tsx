@@ -28,7 +28,7 @@ export function ProfileWardrobe({
     <View style={s.card}>
       <Text style={s.title}>Make it yours</Text>
       <Text style={s.copy}>
-        A little flavor for your passport. Your choices save automatically.
+        Personalize your profile. Your choices save automatically.
       </Text>
       <Text accessibilityRole="header" style={s.label}>
         AVATAR DECORATION

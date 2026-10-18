@@ -41,7 +41,7 @@ export const BADGES: Badge[] = [
   { id: "wanderer", name: "Wanderer", description: "Save 25 restaurants.", icon: "map" },
   { id: "streak-3", name: "On a Roll", description: "3-day discovery streak.", icon: "flame" },
   { id: "streak-7", name: "Week Warrior", description: "7-day discovery streak.", icon: "flash" },
-  { id: "passport-pro", name: "Passport Pro", description: "Explore 8 different cuisines.", icon: "map" },
+  { id: "passport-pro", name: "Cuisine Expert", description: "Explore 8 different cuisines.", icon: "globe" },
   { id: "menu-maestro", name: "Menu Maestro", description: "Log 75 dishes.", icon: "restaurant" },
   { id: "century-supper", name: "Century Supper Club", description: "Log 100 dishes.", icon: "trophy" },
   { id: "curator", name: "Curator", description: "Save 10 restaurants.", icon: "bookmark" },

@@ -37,10 +37,6 @@ type PlaceSource = {
     callback: (error: Error | null, zoom: number) => void,
   ) => void;
 };
-type WebGeolocateControl = {
-  _container: HTMLElement;
-  trigger: () => void;
-};
 type WebMap = {
   flyTo: (options: {
     center: number[];
@@ -80,14 +76,12 @@ type WebMap = {
   ): MapFeature[];
   queryRenderedFeatures(options: { layers: string[] }): MapFeature[];
   getCanvas: () => HTMLCanvasElement;
-  addControl: (control: WebGeolocateControl) => void;
   remove: () => void;
 };
 
 export default memo(function MapView({ ref, ...props }: MapProps) {
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<WebMap | null>(null);
-  const geolocateControl = useRef<WebGeolocateControl | null>(null);
   const latest = useRef(props);
   const data = useMemo(() => createPlaceFeatures(props.places), [props.places]);
   const placeIndex = useMemo(
@@ -119,7 +113,6 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
           zoom: settings.zoomLevel,
           duration: settings.animationDuration,
         }),
-      centerOnUserLocation: () => geolocateControl.current?.trigger(),
     }),
     [],
   );
@@ -144,18 +137,6 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       map.current = currentMap;
       currentMap.on("load", () => {
         if (disposed) return;
-        const locationControl = new mapboxgl.GeolocateControl({
-          positionOptions: { enableHighAccuracy: true, timeout: 10000 },
-          trackUserLocation: false,
-          showUserLocation: true,
-          showAccuracyCircle: true,
-        });
-        geolocateControl.current = locationControl;
-        currentMap.addControl(locationControl);
-        // Keep Mapbox's control mounted so trigger() can request and update GPS,
-        // while the app's own locate button remains the only visible control.
-        locationControl._container.style.display = "none";
-        locationControl.trigger();
         currentMap.addSource("places", {
           type: "geojson",
           data: currentData.current.data,
@@ -309,7 +290,6 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     return () => {
       disposed = true;
       map.current = null;
-      geolocateControl.current = null;
       instance?.remove();
     };
   }, [props.token]);

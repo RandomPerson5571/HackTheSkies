@@ -3,7 +3,6 @@ import type { Place } from "../../features/restaurants/data/places";
 import type { Recommendations } from "../../features/restaurants/models/recommendations";
 
 export type MapCamera = {
-  centerOnUserLocation: () => void;
   setCamera: (settings: {
     centerCoordinate: number[];
     zoomLevel: number;

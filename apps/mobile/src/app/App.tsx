@@ -5,7 +5,6 @@ import {
   useCallback,
   useDeferredValue,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -27,6 +26,7 @@ import {
   TextInput,
   View,
   useWindowDimensions,
+  type ViewStyle,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { migrateWebBookmarks } from "../lib/migrateWebBookmarks";
@@ -58,12 +58,8 @@ import {
 import { SettingsScreen } from "../features/profile/screens/SettingsScreen";
 
 const token = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
-import {
-  colors,
-  frostedGlass,
-  frostedGlassSelected,
-  frostedGlassTint,
-} from "../theme/index";
+import { colors } from "../theme/index";
+import { SavedScreen } from "../features/saved/screens/SavedScreen";
 import { RestaurantsScreen } from "../features/restaurants/screens/RestaurantsScreen";
 import { useRestaurantCollection } from "../features/restaurants/hooks/useRestaurantCollection";
 import {
@@ -141,6 +137,15 @@ function Icon({
 }) {
   return <Ionicons name={name} size={size} color={color} accessible={false} />;
 }
+
+const webGlassBlur = (
+  Platform.OS === "web"
+    ? {
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+      }
+    : {}
+) as ViewStyle;
 
 function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const { places, error: backendError } = useBackend();
@@ -245,8 +250,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [recommenderVisible, setRecommenderVisible] = useState(false);
   const [cameraMenuOpen, setCameraMenuOpen] = useState(false);
   const [nfcScanOpen, setNfcScanOpen] = useState(false);
-  const cameraMenuProgress = useRef(new Animated.Value(0)).current;
-  const tabTransitionProgress = useRef(new Animated.Value(1)).current;
+  const [cameraMenuProgress] = useState(() => new Animated.Value(0));
   const [foodCapture, setFoodCapture] = useState<FoodCapture | null>(null);
   const [listVisible, setListVisible] = useState(false);
   const [plusMenuOpen, setPlusMenuOpen] = useState(false);
@@ -273,17 +277,28 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     animation.start();
     return () => animation.stop();
   }, [cameraMenuOpen, cameraMenuProgress]);
-  useLayoutEffect(() => {
-    tabTransitionProgress.setValue(0);
-    const animation = Animated.timing(tabTransitionProgress, {
-      toValue: 1,
-      duration: 210,
-      easing: Easing.out(Easing.cubic),
+  useEffect(() => {
+    if (plusMenuOpen) {
+      const animation = Animated.timing(plusMenuProgress, {
+        toValue: 1,
+        duration: reduceMotion ? 0 : 220,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      });
+      animation.start();
+      return () => animation.stop();
+    }
+    const animation = Animated.timing(plusMenuProgress, {
+      toValue: 0,
+      duration: reduceMotion ? 0 : 180,
+      easing: Easing.in(Easing.cubic),
       useNativeDriver: true,
     });
-    animation.start();
+    animation.start(({ finished }) => {
+      if (finished) setPlusMenuVisible(false);
+    });
     return () => animation.stop();
-  }, [tab, tabTransitionProgress]);
+  }, [plusMenuOpen, plusMenuProgress, reduceMotion]);
   const deferredQuery = useDeferredValue(query);
   const savedFilter = tab === "explore" ? null : saved;
   const visible = useMemo(() => {
@@ -404,9 +419,40 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     setSelected(null);
     setListVisible(false);
   }
-  function centerOnUserLocation() {
+  async function uploadPhoto() {
+    setPlusMenuOpen(false);
+    Keyboard.dismiss();
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        base64: true,
+        quality: 0.5,
+        allowsEditing: true,
+        aspect: [1, 1],
+      });
+      if (result.canceled || !result.assets[0]) return;
+      setFoodCapture({
+        id: Date.now(),
+        photo: result.assets[0],
+        error: "",
+        recognition: null,
+      });
+      setTab("dex");
+    } catch {
+      Alert.alert("Upload failed", "Couldn’t open your photo library.");
+    }
+  }
+  function writeBlog() {
+    setPlusMenuOpen(false);
+    Alert.alert("Write a blog", "Blog editor coming soon.");
+  }
+  function resetMap() {
     setSelected(null);
-    camera.current?.centerOnUserLocation();
+    camera.current?.setCamera({
+      centerCoordinate: mapCenter,
+      zoomLevel: 10.5,
+      animationDuration: 0,
+    });
   }
   function selectedFilterLabel(dimension: FilterDimension) {
     if (dimension === "rating") {
@@ -473,24 +519,25 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   return (
     <View style={styles.screen}>
       <StatusBar style={tab === "camera" ? "light" : "dark"} />
-      <Animated.View
-        style={[
-          styles.tabContent,
-          {
-            opacity: tabTransitionProgress,
-            transform: [
-              {
-                translateY: tabTransitionProgress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [8, 0],
-                }),
-              },
-            ],
-          },
-        ]}
-      >
-        {tab === "camera" ? (
+      <View style={{ flex: 1 }}>
+        {tab === "lens" ? (
+          <MenuLensScreen
+            diet={profile.diet}
+            initialPhoto={menuPhoto}
+            onOpenCamera={() => openFoodCamera("menu")}
+            onClose={() => setTab(cameraReturnTab.current)}
+          />
+        ) : tab === "camera" ? (
           <FoodCameraScreen
+            initialMode={cameraMode}
+            onMenuCapture={(photo) => {
+              setMenuPhoto(photo);
+              setTab("lens");
+            }}
+            onMenuExplore={() => {
+              setMenuPhoto(null);
+              setTab("lens");
+            }}
             onClose={() => setTab(cameraReturnTab.current)}
             onCapture={(capture) => {
               setFoodCapture(capture);
@@ -500,8 +547,17 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         ) : tab === "dex" ? (
           <FoodDexScreen
             key={foodCapture?.id ?? "dex"}
+            dex={foodDex}
+            onOpenQuests={() => setTab("challenges")}
             capture={foodCapture}
             onOpenCamera={openFoodCamera}
+            onDiscover={(cuisine) => {
+              const count = new Set([
+                ...foodDex.entries.map((entry) => entry.cuisine),
+                cuisine,
+              ]).size;
+              gamification.onDiscovery(count);
+            }}
           />
         ) : tab === "favorites" ? (
           <CommunityScreen
@@ -515,17 +571,68 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               choose(place);
             }}
           />
+        ) : tab === "saved" ? (
+          <SavedScreen
+            places={places}
+            collection={collection}
+            dispatch={dispatch}
+            storageError={migrationError || storageError || backendError}
+            onBack={() => setTab(savedReturnTab)}
+            onDiscover={() => setTab("restaurants")}
+            onOpenQuests={() => setTab("challenges")}
+            onShowMap={(place) => {
+              setTab("explore");
+              setCategory("All");
+              setQuery("");
+              setRatingFilter(null);
+              setRestaurantTypeFilter(null);
+              setFoodTypeFilter(null);
+              setCuisineFilter(null);
+              choose(place);
+            }}
+          />
         ) : tab === "profile" ? (
           <ProfileScreen
+            game={gamification.state}
+            ratingsCount={Object.keys(collection.ratings).length}
             saved={saved}
+            onOpenSaved={() => {
+              setSavedReturnTab("profile");
+              setTab("saved");
+            }}
             profile={profile}
             onSave={setProfile}
             storageError={migrationError || profileError}
             topInset={insets.top}
             bottomInset={insets.bottom}
+            onOpenQuests={() => setTab("challenges")}
+            onOpenSettings={() => setTab("settings")}
+            onOpenDex={() => setTab("dex")}
+            onOpenAtlas={() => setTab("dex")}
           />
-        ) : tab === "restaurants" ? (
+        ) : tab === "settings" ? (
+          <SettingsScreen
+            profile={profile}
+            onSave={setProfile}
+            storageError={migrationError || profileError}
+            topInset={insets.top}
+            bottomInset={insets.bottom}
+            onBack={() => setTab("profile")}
+          />
+        ) : tab === "restaurants" || tab === "journal" ? (
           <RestaurantsScreen
+            key={tab}
+            mode={tab === "journal" ? "journal" : "discover"}
+            onOpenSaved={() => {
+              setSavedReturnTab(tab);
+              setTab("saved");
+            }}
+            onOpenMap={() => {
+              setSelected(null);
+              setTab("explore");
+            }}
+            onOpenDex={() => setTab("dex")}
+            onOpenCommunity={() => setTab("favorites")}
             collection={collection}
             dispatch={dispatch}
             storageError={migrationError || storageError || backendError}
@@ -534,6 +641,21 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setCategory("All");
               setQuery("");
               choose(place);
+            }}
+          />
+        ) : tab === "challenges" ? (
+          <QuestsScreen
+            profile={profile}
+            entries={foodDex.entries}
+            places={places}
+            onBack={() => setTab("explore")}
+            onOpenDex={() => setTab("dex")}
+            onOpenCamera={openFoodCamera}
+            onExplore={(cuisine) => {
+              setCategory("All");
+              setQuery("");
+              setCuisineFilter(cuisine);
+              setTab("explore");
             }}
           />
         ) : (
@@ -557,7 +679,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             ) : (
               <View style={styles.emptyMap}>
                 <Icon name="map-outline" size={46} color={colors.accent} />
-                <Text style={styles.emptyTitle}>Your next bite starts here</Text>
+                <Text style={styles.emptyTitle}>
+                  Your next bite starts here
+                </Text>
                 <Text style={styles.emptyCopy}>
                   Add your Mapbox public token to load the map. You can explore
                   the restaurants below.
@@ -585,37 +709,55 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 )}
               </View>
             )}
-  
+
+            <View
+              pointerEvents="none"
+              style={[
+                styles.topBlur,
+                { height: insets.top + 205 },
+                Platform.OS === "web"
+                  ? ({
+                      backdropFilter: "blur(4px)",
+                      WebkitBackdropFilter: "blur(4px)",
+                      maskImage:
+                        "linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
+                      WebkitMaskImage:
+                        "linear-gradient(to bottom, black 0%, black 55%, transparent 100%)",
+                    } as never)
+                  : null,
+              ]}
+            />
             <View
               pointerEvents="box-none"
               style={[styles.top, { top: insets.top + 12 }]}
             >
               <View style={styles.headingRow}>
                 <View>
-                  <Image
-                    accessibilityLabel="Cibo"
-                    source={require("../../../../assets/cibo.png")}
-                    resizeMode="contain"
-                    style={styles.wordmark}
-                  />
+                  <CiboLogo />
                   <Text style={styles.eyebrow}>GOOD FOOD. GREAT FINDS.</Text>
                 </View>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="Open AI food recommender"
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    setRecommenderVisible(true);
-                  }}
-                  style={({ pressed }) => [
-                    styles.brand,
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <Icon name="sparkles-outline" size={23} color={colors.accent} />
-                </Pressable>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Open challenges"
+                    onPress={() => setTab("challenges")}
+                    style={({ pressed }) => [
+                      styles.brand,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <MaterialCommunityIcons
+                      name="flag-checkered"
+                      size={23}
+                      color={colors.accent}
+                      accessible={false}
+                    />
+                  </Pressable>
+                </View>
               </View>
-              <View style={styles.search}>
+              <View
+                style={[styles.search, searchFocused && styles.searchActive]}
+              >
                 <Icon name="search-outline" color={colors.muted} />
                 <TextInput
                   accessibilityLabel="Search restaurants"
@@ -623,6 +765,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   placeholderTextColor={colors.muted}
                   value={query}
                   onChangeText={setQuery}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
                   style={styles.input}
                   returnKeyType="search"
                 />
@@ -643,12 +787,15 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 contentContainerStyle={styles.chips}
                 keyboardShouldPersistTaps="handled"
               >
-                {!filtersExpanded ? (
+                {!filtersVisible ? (
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel="Show search filters"
                     accessibilityState={{ expanded: false }}
-                    onPress={() => setFiltersExpanded(true)}
+                    onPress={() => {
+                      setFiltersVisible(true);
+                      setFiltersExpanded(true);
+                    }}
                     style={({ pressed }) => [
                       styles.chip,
                       pressed && styles.pressed,
@@ -658,14 +805,27 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     <Text style={styles.chipText}>Filters</Text>
                   </Pressable>
                 ) : (
-                  <>
+                  <Animated.View
+                    style={{
+                      flexDirection: "row",
+                      gap: 8,
+                      opacity: filtersProgress,
+                      transform: [
+                        {
+                          translateX: filtersProgress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [reduceMotion ? 0 : -12, 0],
+                          }),
+                        },
+                      ],
+                    }}
+                  >
                     <Pressable
                       accessibilityRole="button"
                       accessibilityLabel="Hide search filters"
                       accessibilityState={{ expanded: true }}
                       onPress={() => {
                         setFiltersExpanded(false);
-                        setOpenFilter(null);
                       }}
                       style={({ pressed }) => [
                         styles.chip,
@@ -708,7 +868,10 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                               filterButtonRefs.current[
                                 dimension
                               ]?.measureInWindow((x, y, _width, height) =>
-                                setFilterAnchor({ left: x, top: y + height + 6 }),
+                                setFilterAnchor({
+                                  left: x,
+                                  top: y + height + 6,
+                                }),
                               );
                             }}
                             style={({ pressed }) => [
@@ -747,7 +910,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                         );
                       })(),
                     )}
-                  </>
+                  </Animated.View>
                 )}
               </ScrollView>
               {filtersExpanded && openFilter && filterAnchor && (
@@ -822,23 +985,25 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                         ))}
                       </View>
                     ) : openFilter === "restaurantType" ? (
-                      ["Any restaurant type", ...restaurantTypes].map((value) => (
-                        <Pressable
-                          key={value}
-                          onPress={() => {
-                            setRestaurantTypeFilter(
-                              value === "Any restaurant type" ? null : value,
-                            );
-                            setCategory("All");
-                            closeFilterDropdown();
-                          }}
-                          style={styles.filterDropdownOption}
-                        >
-                          <Text style={styles.filterDropdownOptionText}>
-                            {value}
-                          </Text>
-                        </Pressable>
-                      ))
+                      ["Any restaurant type", ...restaurantTypes].map(
+                        (value) => (
+                          <Pressable
+                            key={value}
+                            onPress={() => {
+                              setRestaurantTypeFilter(
+                                value === "Any restaurant type" ? null : value,
+                              );
+                              setCategory("All");
+                              closeFilterDropdown();
+                            }}
+                            style={styles.filterDropdownOption}
+                          >
+                            <Text style={styles.filterDropdownOptionText}>
+                              {value}
+                            </Text>
+                          </Pressable>
+                        ),
+                      )
                     ) : openFilter === "foodType" ? (
                       ["Any food type", ...foodSpecialties].map((value) => (
                         <Pressable
@@ -857,10 +1022,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                         </Pressable>
                       ))
                     ) : openFilter === "cuisine" ? (
-                      [
-                        "Any cuisine",
-                        ...cuisines.filter((value) => value !== "Bakery"),
-                      ].map((value) => (
+                      ["Any cuisine", ...cuisines].map((value) => (
                         <Pressable
                           key={value}
                           onPress={() => {
@@ -894,7 +1056,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 </View>
               )}
             </View>
-  
+
             <View
               pointerEvents="box-none"
               style={[styles.bottom, { bottom: insets.bottom + 90 }]}
@@ -903,8 +1065,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 {token && (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel="Center on my current location"
-                    onPress={centerOnUserLocation}
+                    accessibilityLabel="Show all Toronto restaurants"
+                    onPress={resetMap}
                     style={({ pressed }) => [
                       styles.roundButton,
                       pressed && styles.pressed,
@@ -915,7 +1077,18 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 )}
               </View>
               {active ? (
-                <View style={styles.placeCard}>
+                <Animated.View
+                  style={[
+                    styles.placeCard,
+                    {
+                      opacity: cardOpacity,
+                      transform: [
+                        { scale: cardScale },
+                        { translateY: cardTranslateY },
+                      ],
+                    },
+                  ]}
+                >
                   <View style={styles.cardTop}>
                     <RestaurantPhoto
                       eager
@@ -930,7 +1103,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       </Text>
                       <Text style={styles.placeName}>{active.name}</Text>
                       <Text style={styles.small}>{active.note}</Text>
-                      <RestaurantPhotoCredit place={active} />
                     </View>
                     <Pressable
                       accessibilityRole="button"
@@ -943,8 +1115,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   </View>
                   <Text style={styles.address}>{active.address}</Text>
                   <Text style={styles.small}>
-                    {recommendationLabel(recommendations.get(active.id))} · Sample
-                    community reviews
+                    {recommendationLabel(recommendations.get(active.id))} ·
+                    Sample community reviews
                   </Text>
                   <View style={styles.ratingRow}>
                     <Text style={styles.small}>Your rating</Text>
@@ -962,7 +1134,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                             type: "rate",
                             placeId: active.id,
                             rating:
-                              collection.ratings[active.id] === value ? 0 : value,
+                              collection.ratings[active.id] === value
+                                ? 0
+                                : value,
                           })
                         }
                         style={({ pressed }) => [
@@ -1005,9 +1179,13 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     <Pressable
                       accessibilityRole="button"
                       accessibilityLabel={
-                        saved.includes(active.id) ? "Unsave place" : "Save place"
+                        saved.includes(active.id)
+                          ? "Unsave place"
+                          : "Save place"
                       }
-                      accessibilityState={{ selected: saved.includes(active.id) }}
+                      accessibilityState={{
+                        selected: saved.includes(active.id),
+                      }}
                       onPress={() => toggleSave(active)}
                       style={({ pressed }) => [
                         styles.saveButton,
@@ -1047,49 +1225,13 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       Couldn’t open this link. Please try again.
                     </Text>
                   )}
-                </View>
-              ) : tab === "saved" ? (
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() => setListVisible(true)}
-                  style={({ pressed }) => [
-                    styles.browseCard,
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <View style={styles.browseIcon}>
-                    <Icon
-                      name={
-                        tab === "saved"
-                          ? "bookmark-outline"
-                          : "restaurant-outline"
-                      }
-                      color={colors.white}
-                      size={24}
-                    />
-                  </View>
-                  <View style={styles.flex}>
-                    <Text style={styles.browseTitle}>
-                      {visible.length
-                        ? `${visible.length} spots to come back to`
-                        : "No spots here yet"}
-                    </Text>
-                    <Text style={styles.small}>
-                      {visible.length
-                        ? "Suggestions favor high ratings and fewer reviews."
-                        : tab === "saved"
-                          ? "Save a place from Explore to find it here."
-                          : "Try another category or search."}
-                    </Text>
-                  </View>
-                  <Icon name="chevron-up" size={18} />
-                </Pressable>
+                </Animated.View>
               ) : null}
             </View>
           </>
         )}
-      </Animated.View>
-      {tab !== "camera" && cameraMenuOpen && (
+      </View>
+      {tab !== "camera" && tab !== "lens" && cameraMenuOpen && (
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Close camera options"
@@ -1451,7 +1593,6 @@ export default function App() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.blue },
-  tabContent: { flex: 1 },
   flex: { flex: 1 },
   pressed: { opacity: 0.65 },
   top: {
@@ -1484,27 +1625,26 @@ const styles = StyleSheet.create({
     color: colors.muted,
   },
   brand: {
-    ...frostedGlassTint,
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: "rgba(234,243,178,0.11)",
+    backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
+    borderColor: colors.border,
   },
   search: {
-    ...frostedGlass,
+    ...webGlassBlur,
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 16,
     paddingRight: 6,
     minHeight: 52,
-    backgroundColor: "rgba(255,253,245,0.05)",
+    backgroundColor: "rgba(255,253,245,0.50)",
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.26)",
+    borderColor: "rgba(255,255,255,0.68)",
     boxShadow: "0 8px 26px #3D568F20",
     gap: 10,
   },
@@ -1522,15 +1662,14 @@ const styles = StyleSheet.create({
   },
   chips: { gap: 8, paddingBottom: 5 },
   filterDropdown: {
-    ...frostedGlass,
     position: "absolute",
     alignSelf: "flex-start",
-    backgroundColor: "rgba(255,253,245,0.07)",
-    borderRadius: 16,
+    backgroundColor: colors.white,
+    borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.26)",
+    borderColor: colors.border,
     boxShadow: "0 4px 14px #00000030",
     zIndex: 40,
     elevation: 40,
@@ -1560,20 +1699,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   chip: {
-    ...frostedGlass,
+    ...webGlassBlur,
     minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingHorizontal: 15,
     borderRadius: 24,
-    backgroundColor: "rgba(255,253,245,0.05)",
+    backgroundColor: "rgba(255,253,245,0.46)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
+    borderColor: "rgba(255,255,255,0.68)",
     boxShadow: "0 4px 16px #3D568F14",
   },
   selectedFilterChip: {
-    ...frostedGlassSelected,
+    backgroundColor: "rgba(234,243,178,0.64)",
+    borderColor: "rgba(61,86,143,0.42)",
   },
   chipActive: { backgroundColor: colors.ink, borderColor: colors.ink },
   chipText: { fontSize: 12, fontWeight: "600", color: colors.ink },
@@ -1633,13 +1773,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   areaPill: {
-    ...frostedGlass,
     flexDirection: "row",
     alignItems: "center",
     gap: 7,
-    backgroundColor: "rgba(255,253,245,0.05)",
+    backgroundColor: colors.paper,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.24)",
+    borderColor: colors.border,
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: 20,
@@ -1647,24 +1786,22 @@ const styles = StyleSheet.create({
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.accent },
   small: { fontSize: 12, lineHeight: 18, color: colors.muted },
   roundButton: {
-    ...frostedGlass,
     width: 46,
     height: 46,
     borderRadius: 23,
-    backgroundColor: "rgba(255,253,245,0.05)",
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
   },
   browseCard: {
-    ...frostedGlass,
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     padding: 18,
     borderRadius: 24,
-    backgroundColor: "rgba(255,253,245,0.06)",
+    backgroundColor: colors.paper,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.24)",
+    borderColor: colors.border,
     boxShadow: "0 4px 24px #3D568F12",
   },
   browseIcon: {
@@ -1707,16 +1844,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cameraMenu: {
-    ...frostedGlass,
+    ...webGlassBlur,
     position: "absolute",
     bottom: 70,
     left: 2,
     width: 60,
     padding: 5,
     borderRadius: 30,
-    backgroundColor: "rgba(255,253,245,0.05)",
+    backgroundColor: "rgba(255,253,245,0.90)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.22)",
+    borderColor: "rgba(255,255,255,0.82)",
     boxShadow: "0 10px 30px #3D568F2A",
     zIndex: 60,
     elevation: 60,
@@ -1733,7 +1870,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: "rgba(61,86,143,0.06)",
+    backgroundColor: "rgba(61,86,143,0.10)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -1750,14 +1887,14 @@ const styles = StyleSheet.create({
     boxShadow: "0 4px 12px #364C8433",
   },
   navGroup: {
-    ...frostedGlass,
+    ...webGlassBlur,
     flex: 1,
     flexDirection: "row",
     padding: 4,
     borderRadius: 32,
-    backgroundColor: "rgba(255,253,245,0.05)",
+    backgroundColor: "rgba(255,253,245,0.50)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.24)",
+    borderColor: "rgba(255,255,255,0.62)",
     boxShadow: "0 8px 22px #3D568F1A",
   },
   navItem: {
@@ -1773,12 +1910,10 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     minHeight: 48,
   },
-  navActive: frostedGlassSelected,
+  navItems: { flex: 1, flexDirection: "row" },
+  navActive: { backgroundColor: "rgba(234,243,178,0.66)" },
   placeCard: {
-    ...frostedGlass,
-    backgroundColor: "rgba(255,253,245,0.12)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.28)",
+    backgroundColor: colors.paper,
     borderRadius: 24,
     padding: 16,
     gap: 12,
@@ -1851,8 +1986,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     padding: 18,
-    ...frostedGlass,
-    backgroundColor: "rgba(255,253,245,0.09)",
+    backgroundColor: colors.paper,
     borderRadius: 18,
     maxWidth: "85%",
   },
@@ -1866,8 +2000,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.scrim,
   },
   sheet: {
-    ...frostedGlass,
-    backgroundColor: "rgba(255,253,245,0.30)",
+    backgroundColor: colors.paper,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 22,

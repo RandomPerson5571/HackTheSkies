@@ -25,22 +25,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { type Place } from "../../restaurants/data/places";
 import { buildRecommendations } from "../../restaurants/models/recommendations";
 import { RestaurantPhoto } from "../../restaurants/components/RestaurantPhoto";
-import {
-  colors,
-  frostedGlass,
-  frostedGlassSelected,
-  frostedGlassTint,
-} from "../../../theme/index";
+import { colors } from "../../../theme/index";
 import type {
   CollectionAction,
   RestaurantCollection,
 } from "../../restaurants/models/restaurantCollection";
-import {
-  badgeProgress,
-  calculatePoints,
-  cuisineBadges,
-  pointPolicy,
-} from "../models/community";
+import { badgeProgress, cuisineBadges } from "../models/community";
 
 import { useBackend } from "../../../lib/BackendProvider";
 
@@ -614,7 +604,6 @@ export function AchievementsScreen({
     count: badgeProgress(badge.category, collection.visited, places),
   }));
   const earned = badges.filter((badge) => badge.count >= badge.goal).length;
-  const points = calculatePoints(collection.visited, places);
   const visible = badges.filter(
     (badge) =>
       filter === "all" ||
@@ -634,17 +623,16 @@ export function AchievementsScreen({
         <TrophyArt id="gourmet" size={64} />
         <View style={s.flex}>
           <Text style={s.heroNumber}>
-            {points.toLocaleString()} points
+            {earned} of {badges.length} badges earned
           </Text>
           <Text style={s.small}>
-            {earned} of {badges.length} badges earned ·{" "}
-            {collection.visited.length} spots visited
+            {collection.visited.length} spots visited · Plenty more to taste
           </Text>
         </View>
       </View>
       <Text style={s.small}>
-        Earn {pointPolicy.perVisit} points per unique visit and{" "}
-        {pointPolicy.perBadge} bonus points per badge. Ratings count as visits.
+        Each different restaurant counts once. Mark it Visited in Restaurants or
+        give it a rating to earn progress.
       </Text>
       <View style={s.actions}>
         {(["all", "earned", "progress"] as const).map((item) => (
@@ -705,11 +693,6 @@ export function AchievementsScreen({
             <Text style={s.buttonText}>
               {Math.min(badge.count, badge.goal)} / {badge.goal} different spots
               visited
-            </Text>
-            <Text style={s.small}>
-              {unlocked
-                ? `Badge bonus earned: +${pointPolicy.perBadge} points`
-                : `Earn +${pointPolicy.perBadge} points when complete`}
             </Text>
             {unlocked ? (
               <Text style={s.small}>One for the passport. Keep exploring!</Text>
@@ -778,19 +761,17 @@ const s = StyleSheet.create({
   },
   intro: { fontSize: 14, lineHeight: 22, color: colors.muted, maxWidth: 520 },
   brand: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
-    ...frostedGlassTint,
-    backgroundColor: "rgba(234,243,178,0.14)",
+    width: 44,
+    height: 44,
+    borderRadius: 16,
+    backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
   },
   section: { fontSize: 20, fontWeight: "600", color: colors.ink, marginTop: 8 },
   row: { flexDirection: "row", alignItems: "center", gap: 12 },
   hero: {
-    ...frostedGlassTint,
-    backgroundColor: "rgba(234,243,178,0.14)",
+    backgroundColor: colors.tint,
     borderRadius: 22,
     padding: 22,
     flexDirection: "row",
@@ -804,10 +785,9 @@ const s = StyleSheet.create({
     marginBottom: 5,
   },
   card: {
-    ...frostedGlass,
     borderRadius: 22,
-    backgroundColor: "rgba(255,253,245,0.07)",
-    borderColor: "rgba(255,255,255,0.28)",
+    backgroundColor: colors.white,
+    borderColor: colors.border,
     borderWidth: 1,
     padding: 16,
     gap: 12,
@@ -868,7 +848,6 @@ const s = StyleSheet.create({
   },
   actions: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   button: {
-    ...frostedGlass,
     minHeight: 48,
     paddingVertical: 10,
     paddingHorizontal: 12,
@@ -879,11 +858,9 @@ const s = StyleSheet.create({
     gap: 6,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,253,245,0.06)",
+    backgroundColor: colors.white,
   },
-  selectedButton: {
-    ...frostedGlassSelected,
-  },
+  selectedButton: { backgroundColor: colors.tint, borderColor: colors.accent },
   buttonText: {
     fontSize: 12,
     fontWeight: "600",
@@ -892,7 +869,6 @@ const s = StyleSheet.create({
   },
   dim: { opacity: 0.45 },
   input: {
-    ...frostedGlass,
     minHeight: 52,
     borderWidth: 1,
     borderColor: colors.border,
@@ -900,17 +876,16 @@ const s = StyleSheet.create({
     padding: 15,
     fontSize: 14,
     color: colors.ink,
-    backgroundColor: "rgba(255,253,245,0.07)",
+    backgroundColor: colors.white,
   },
   searchActive: {
     borderColor: colors.accent,
     backgroundColor: colors.tint,
   },
   notice: {
-    ...frostedGlassTint,
     borderRadius: 14,
     padding: 14,
-    backgroundColor: "rgba(234,243,178,0.14)",
+    backgroundColor: colors.tint,
     fontSize: 12,
     lineHeight: 19,
     color: colors.muted,
@@ -920,8 +895,7 @@ const s = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    ...frostedGlassTint,
-    backgroundColor: "rgba(234,243,178,0.14)",
+    backgroundColor: colors.tint,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -931,8 +905,7 @@ const s = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 22,
-    ...frostedGlassTint,
-    backgroundColor: "rgba(234,243,178,0.14)",
+    backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
   },

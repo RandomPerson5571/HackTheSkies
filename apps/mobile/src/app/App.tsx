@@ -1,4 +1,6 @@
-import { playSound, hapticLight, hapticSelection } from "../lib/sensory";
+import { useMenuSound } from "../hooks/useMenuSound";
+import { FeedbackPressable as Pressable } from "../components/FeedbackPressable";
+import { playFeedback, prepareFeedback } from "../lib/sensory";
 import {
   useCallback,
   useDeferredValue,
@@ -18,7 +20,6 @@ import {
   Linking,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -258,6 +259,14 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
   const [linkError, setLinkError] = useState(false);
+  useMenuSound(cameraMenuOpen);
+  useMenuSound(plusMenuOpen);
+  useMenuSound(listVisible);
+  useMenuSound(nfcScanOpen);
+  useMenuSound(recommenderVisible);
+  useMenuSound(filtersExpanded);
+  useMenuSound(openFilter !== null);
+
   useEffect(() => {
     const animation = Animated.timing(cameraMenuProgress, {
       toValue: cameraMenuOpen ? 1 : 0,
@@ -376,6 +385,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   }, []);
 
   const choose = useCallback((place: Place) => {
+    void playFeedback("select");
     Keyboard.dismiss();
     setSelected(place);
     setLinkError(false);
@@ -395,8 +405,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     setMapReady(false);
   }, []);
   function toggleSave(place: Place) {
-    hapticLight();
-    void playSound("tap");
+    void playFeedback(saved.includes(place.id) ? "remove" : "save");
     dispatch({ type: "save", placeId: place.id });
   }
   function openFoodCamera(mode: "food" | "menu" = "food") {
@@ -1328,8 +1337,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       onPress={() => {
                         setCameraMenuOpen(false);
                         if (!navigationSelected(item.id)) {
-                          hapticSelection();
-                          void playSound("click");
+                          void playFeedback("select");
                         }
                         setTab(item.id);
                         setFoodCapture(null);
@@ -1537,6 +1545,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   );
 }
 export default function App() {
+  useEffect(() => { prepareFeedback(); }, []);
   const [ready, setReady] = useState(Platform.OS !== "web");
   const [migrationError, setMigrationError] = useState("");
   useEffect(() => {
@@ -1676,8 +1685,6 @@ const styles = StyleSheet.create({
   filterDropdownOption: {
     minHeight: 38,
     justifyContent: "center",
-    borderTopWidth: 1,
-    borderColor: colors.border,
   },
   filterDropdownOptionText: {
     fontSize: 14,

@@ -1,3 +1,4 @@
+import { playFeedback } from "../../../lib/sensory";
 import { useCallback, useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -39,6 +40,12 @@ export function useGamification() {
   }, []);
 
   const persist = useCallback((next: GamificationState) => {
+    const previous = stateRef.current;
+    if (next.level > previous.level) {
+      void playFeedback("levelup");
+    } else if (next.badges.some((badge) => !previous.badges.includes(badge))) {
+      void playFeedback("badge");
+    }
     stateRef.current = next;
     setState(next);
     void AsyncStorage.setItem(KEY, JSON.stringify(next));

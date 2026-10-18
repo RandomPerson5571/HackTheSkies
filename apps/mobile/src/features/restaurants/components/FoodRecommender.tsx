@@ -1,3 +1,4 @@
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useEffect, useRef, useState } from "react";
 import { apiEndpoint } from "../../../lib/api";
 import {
@@ -5,7 +6,6 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,

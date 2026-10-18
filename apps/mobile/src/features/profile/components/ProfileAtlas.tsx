@@ -1,10 +1,10 @@
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useEffect, useMemo, useState } from "react";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Animated,
   Modal,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,

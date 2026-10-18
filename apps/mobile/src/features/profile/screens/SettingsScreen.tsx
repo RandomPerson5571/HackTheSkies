@@ -1,7 +1,7 @@
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { CiboLogo } from "../../../components/CiboLogo";
 import { useEffect, useRef, useState } from "react";
 import {
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -11,7 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import { colors } from "../../../theme/index";
-import { playSound, hapticSuccess, hapticLight } from "../../../lib/sensory";
+import { playFeedback } from "../../../lib/sensory";
 import type { Profile } from "../models/profile";
 
 const diets = ["No preference", "Vegetarian", "Vegan", "Pescatarian"] as const;
@@ -57,8 +57,7 @@ export function SettingsScreen({
     edited.current = false;
     onSave(next);
     setMessage("Settings saved.");
-    void playSound("success");
-    hapticSuccess();
+    void playFeedback("success");
   }
 
   return (
@@ -122,8 +121,7 @@ export function SettingsScreen({
               accessibilityState={{ checked: draft.diet === diet }}
               onPress={() => {
                 update({ diet });
-                void playSound("tap");
-                hapticLight();
+                void playFeedback("tap");
               }}
               style={({ pressed }) => [
                 styles.choice,

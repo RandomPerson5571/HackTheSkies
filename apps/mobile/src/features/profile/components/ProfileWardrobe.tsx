@@ -1,4 +1,5 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../../theme/index";
 import { BADGES, type BadgeId } from "../../gamification/models/gamification";

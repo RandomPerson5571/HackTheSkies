@@ -1,8 +1,9 @@
+import { useMenuSound } from "../../../hooks/useMenuSound";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useMemo, useState } from "react";
 import {
   FlatList,
   Platform,
-  Pressable,
   Share,
   ScrollView,
   StyleSheet,
@@ -91,6 +92,10 @@ export function SavedScreen({
   const [map, setMap] = useState(false);
   const [mapFailed, setMapFailed] = useState(false);
   const [pickedId, setPickedId] = useState<string | null>(null);
+  useMenuSound(creating);
+  useMenuSound(editing !== null);
+  useMenuSound(map);
+
   const quests = useQuests();
   const activeQuest = quests.ready
     ? questsFor(quests.state.selectedCuisine).find(

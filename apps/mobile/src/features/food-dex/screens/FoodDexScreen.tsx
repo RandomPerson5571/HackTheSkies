@@ -1,3 +1,5 @@
+import { useMenuSound } from "../../../hooks/useMenuSound";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { CiboLogo } from "../../../components/CiboLogo";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -7,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -38,7 +39,7 @@ import {
 import { CulinaryAtlas } from "../components/CulinaryAtlas";
 import { CollectionProgress } from "../components/CollectionProgress";
 import { collectionProgress, cardTier, nextDiscoveryMilestone, cuisineMastery, cuisineMasteryTarget } from "../models/discovery";
-import { hapticSuccess, playSound } from "../../../lib/sensory";
+import { playFeedback } from "../../../lib/sensory";
 import { catalogPhoto } from "../services/catalogPhotos";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
 import type { useFoodDex } from "../hooks/useFoodDex";
@@ -135,6 +136,10 @@ export function FoodDexScreen({
   const [view, setView] = useState<"collection" | "atlas">("collection");
   const [detailView, setDetailView] = useState<"grid" | "list">("grid");
   const [atlasFocus, setAtlasFocus] = useState<Cuisine | null>(null);
+  useMenuSound(scanOpen);
+  useMenuSound(detail !== null);
+  useMenuSound(cuisine !== null);
+
   const request = useRef<AbortController | null>(null);
   const pickerActive = useRef(false);
   const session = useRef(0);
@@ -256,8 +261,8 @@ export function FoodDexScreen({
       },
       before: entries,
     });
-    hapticSuccess();
-    void playSound("discover");
+    const newCuisine = !entries.some((entry) => entry.cuisine === scanCuisine);
+    void playFeedback(newCuisine ? "sparkle" : "discover");
     setNotice("");
     closeScan();
   }

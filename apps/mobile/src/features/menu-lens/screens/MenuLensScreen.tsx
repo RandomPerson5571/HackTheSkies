@@ -1,3 +1,6 @@
+import { useMenuSound } from "../../../hooks/useMenuSound";
+import { playFeedback } from "../../../lib/sensory";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -5,7 +8,6 @@ import {
   Image,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -100,9 +102,14 @@ export function MenuLensScreen({
   const [demo, setDemo] = useState(false);
   const [results, setResults] = useState<MenuDish[]>([]);
   const [selected, setSelected] = useState<MenuDish | null>(null);
+  useMenuSound(selected !== null);
+
   const [failedPhotoId, setFailedPhotoId] = useState<string | null>(null);
   const [busy, setBusy] = useState(!!initialPhoto);
   const [error, setError] = useState("");
+  useEffect(() => {
+    if (error) void playFeedback("error");
+  }, [error]);
   const [scanned, setScanned] = useState(false);
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
   const generation = useRef(0);
@@ -150,6 +157,7 @@ export function MenuLensScreen({
     setPhoto(null);
   }
   async function analyze(image: Photo, version: number) {
+    void playFeedback("scan");
     const controller = new AbortController();
     request.current = controller;
     const timeout = setTimeout(() => controller.abort(), 45_000);
@@ -162,6 +170,7 @@ export function MenuLensScreen({
       if (version === generation.current) {
         setResults(dishes);
         setScanned(true);
+        void playFeedback("success");
       }
     } catch (cause) {
       if (version === generation.current)

@@ -1,3 +1,4 @@
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { TrophyArt } from "../../profile/components/RewardArt";
 import { CiboLogo } from "../../../components/CiboLogo";
 import {
@@ -12,7 +13,6 @@ import {
 } from "react";
 import {
   Animated,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,

@@ -154,3 +154,27 @@ Dietary preferences enforce learning objectives without requiring a purchase or
 meal. Menus, dietary suitability, restaurant availability, and prices are not
 verified by the picker. An unavailable AI service leaves the full curated journey
 playable. A personalized quest awards 60 XP once per cuisine.
+
+
+### Haptics and game feedback
+
+`src/lib/sensory.ts` owns feedback events. Use `playFeedback(name)` for one
+coordinated sound and haptic response; shared `FeedbackPressable` controls provide
+quiet click/selection feedback automatically. Avoid pairing a feedback event with
+an extra Expo vibration.
+
+Basic taps, selections, confirmations and errors use `expo-haptics`. Android uses
+`performAndroidHapticsAsync`; iOS and supported browsers use Expo's impact,
+selection and notification methods. Hardware and OS settings can suppress haptics,
+including while the iOS camera is active.
+
+Native game effects use `react-native-pulsar`: reward → CoinDrop, chest → Unfurl,
+new cuisine → Pip, badge → Fanfare, level up → Ascent, discovery → Sonar,
+and capture → CameraShutter. Presets are preloaded, with generated sound enabled.
+The stable Pulsar 1.7 API does not support custom synchronized audio files yet.
+Web, Expo Go and clients without Pulsar use Expo haptics plus bundled WAVs.
+
+After installing dependencies, rebuild the native development client with
+`pnpm ios` or `pnpm android` from the repository root. Reloading JavaScript alone
+cannot add Pulsar or Worklets to an existing native client. Worklets is aligned
+with Expo SDK 57's bundled version; Expo's Babel preset enables its plugin.

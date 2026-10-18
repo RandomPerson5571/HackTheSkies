@@ -1,8 +1,8 @@
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useEffect, useState } from "react";
 import {
   Animated,
   Modal,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,7 +15,7 @@ import { catalogPhoto } from "../../food-dex/services/catalogPhotos";
 import { useReducedMotion } from "../../food-dex/hooks/useReducedMotion";
 import { hasDish, lessonFor, pathDishes, type Quest } from "../models/quests";
 import type { FoodEntry } from "../../food-dex/models/foodDex";
-import { hapticSuccess, playSound } from "../../../lib/sensory";
+import { playFeedback } from "../../../lib/sensory";
 import { questColors as c } from "../../../theme";
 
 export function QuestButton({
@@ -95,8 +95,11 @@ export function QuestDialog({
     return () => animation.stop();
   }, [stage, reduced, scale]);
   function finish() {
-    hapticSuccess();
-    void playSound(isBoss ? "levelup" : "success");
+    void playFeedback(
+      isBoss ? "levelup"
+        : quest.type === "bonus" || quest.type === "mystery" ? "chest"
+        : "reward",
+    );
     onComplete();
     setStage("reward");
   }
@@ -228,7 +231,15 @@ export function QuestDialog({
                         key={option.id}
                         accessibilityRole="radio"
                         accessibilityState={{ selected: answer === option.id }}
-                        onPress={() => setAnswer(option.id)}
+                        onPress={() => {
+                          if (answer === option.id) return;
+                          setAnswer(option.id);
+                          if (option.id === quizDish.id) {
+                            void playFeedback("success");
+                          } else {
+                            void playFeedback("error");
+                          }
+                        }}
                         style={({ pressed }) => [
                           s.option,
                           answer === option.id && s.selectedOption,

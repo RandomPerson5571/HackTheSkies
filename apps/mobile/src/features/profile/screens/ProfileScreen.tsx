@@ -1,11 +1,13 @@
+import { useMenuSound } from "../../../hooks/useMenuSound";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useState } from "react";
 import { CiboLogo } from "../../../components/CiboLogo";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ProfileAtlas } from "../components/ProfileAtlas";
 
 import { colors } from "../../../theme/index";
-import { playSound, hapticLight } from "../../../lib/sensory";
+import { playFeedback } from "../../../lib/sensory";
 import type { Profile } from "../models/profile";
 export type { Profile } from "../models/profile";
 
@@ -104,6 +106,9 @@ export function ProfileScreen({
   const { state: quests, error: questError } = useQuests();
   const [customizing, setCustomizing] = useState(false);
   const [showAllBadges, setShowAllBadges] = useState(false);
+  useMenuSound(customizing);
+  useMenuSound(showAllBadges);
+
 
   const foodsCount = entries.length;
   const cuisinesCount = new Set(entries.map((entry) => entry.cuisine)).size;
@@ -146,8 +151,7 @@ export function ProfileScreen({
       ...profile,
       customization: { ...appearance.selected, ...change },
     });
-    void playSound("tap");
-    hapticLight();
+    void playFeedback("tap");
   };
 
   const featuredBadges = [
@@ -170,18 +174,15 @@ export function ProfileScreen({
   const recent = entries.slice(0, 8);
 
   const handleOpenQuests = () => {
-    void playSound("tap");
-    hapticLight();
+    void playFeedback("tap");
     onOpenQuests?.();
   };
   const handleOpenSettings = () => {
-    void playSound("tap");
-    hapticLight();
+    void playFeedback("tap");
     onOpenSettings?.();
   };
   const handleOpenDex = () => {
-    void playSound("tap");
-    hapticLight();
+    void playFeedback("tap");
     onOpenDex?.();
   };
 
@@ -299,7 +300,6 @@ export function ProfileScreen({
         accessibilityState={{ expanded: customizing }}
         onPress={() => {
           setCustomizing(!customizing);
-          hapticLight();
         }}
         style={({ pressed }) => [
           styles.customizeButton,

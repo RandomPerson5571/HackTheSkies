@@ -1,10 +1,12 @@
+import { playFeedback } from "../../../lib/sensory";
+import { useMenuSound } from "../../../hooks/useMenuSound";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { CiboLogo } from "../../../components/CiboLogo";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
   Modal,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -215,6 +217,10 @@ export function QuestsScreen({
   const [generating, setGenerating] = useState(false);
   const [aiError, setAiError] = useState("");
   const [showPersonal, setShowPersonal] = useState(false);
+  useMenuSound(selected !== null);
+  useMenuSound(bonusId !== null);
+  useMenuSound(showPersonal);
+
   const controller = useRef<AbortController | null>(null);
   const reduced = useReducedMotion();
   const insets = useSafeAreaInsets();
@@ -991,9 +997,10 @@ export function QuestsScreen({
                     {bonusCount(bonus.id, run) >= bonusTargets[bonus.id]! ? (
                       <QuestButton
                         title={`Claim ${bonus.points} XP`}
-                        onPress={() =>
-                          update((previous) => claimBonus(previous, bonus.id))
-                        }
+                        onPress={() => {
+                          update((previous) => claimBonus(previous, bonus.id));
+                          void playFeedback("chest");
+                        }}
                       />
                     ) : (
                       <>

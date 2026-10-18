@@ -1,3 +1,5 @@
+import { useMenuSound } from "../../../hooks/useMenuSound";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { CiboLogo } from "../../../components/CiboLogo";
 import {
   useMemo,
@@ -11,7 +13,6 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Switch,
@@ -104,6 +105,11 @@ export function RestaurantsScreen({
   const [actionPlace, setActionPlace] = useState<Place | null>(null);
   const [filterSheetVisible, setFilterSheetVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
+  useMenuSound(creating);
+  useMenuSound(managing !== null);
+  useMenuSound(actionPlace !== null);
+  useMenuSound(filterSheetVisible);
+  useMenuSound(infoVisible);
 
   const cuisineOptions = useMemo(
     () => [

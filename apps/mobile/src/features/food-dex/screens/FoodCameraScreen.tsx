@@ -1,4 +1,5 @@
-import { playSound, hapticMedium, hapticSuccess, hapticError } from "../../../lib/sensory";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { playFeedback } from "../../../lib/sensory";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -7,7 +8,6 @@ import {
   Image,
   Linking,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -133,11 +133,9 @@ export function FoodCameraScreen({
       if (mounted.current && generation.current === current) {
         setRecognition(result);
         if (result) {
-          hapticSuccess();
-          void playSound("success");
+          void playFeedback("success");
         } else {
-          hapticError();
-          void playSound("error");
+          void playFeedback("error");
         }
         if (!result)
           setError(
@@ -146,8 +144,7 @@ export function FoodCameraScreen({
       }
     } catch (cause) {
       if (mounted.current && generation.current === current) {
-        hapticError();
-        void playSound("error");
+        void playFeedback("error");
         setError(
           controller.signal.aborted
             ? "Recognition timed out. Retry or add the meal by hand."
@@ -168,8 +165,7 @@ export function FoodCameraScreen({
   async function snap() {
     if (!camera.current || !ready || capturing.current) return;
     capturing.current = true;
-    hapticMedium();
-    void playSound("scan");
+    void playFeedback("scan");
     setBusy(true);
     setError("");
     const current = generation.current;
@@ -206,8 +202,7 @@ export function FoodCameraScreen({
   async function selectPhoto() {
     if (capturing.current) return;
     capturing.current = true;
-    hapticMedium();
-    void playSound("scan");
+    void playFeedback("scan");
     setBusy(true);
     setError("");
     const current = generation.current;

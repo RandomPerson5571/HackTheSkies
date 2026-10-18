@@ -1,9 +1,9 @@
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Animated,
   Easing,
   PanResponder,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,

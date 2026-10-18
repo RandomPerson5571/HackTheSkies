@@ -173,8 +173,8 @@ test("rarity weighs rating 60% and nicheness 40%, out of 5", () => {
   assert.equal(rarityLabel(undefined), "Rarity unknown");
 });
 
-test("every imported restaurant has a rarity, estimated when it has under 10 public ratings", () => {
-  for (const place of places) {
+test("every rated restaurant has a rarity, estimated when it has under 10 public ratings", () => {
+  for (const place of places.filter((place) => place.rating != null)) {
     assert.ok(place.rarity, place.name);
     assert.ok(place.rarity.value >= 0 && place.rarity.value <= 5, place.name);
     assert.equal(

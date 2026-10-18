@@ -7,7 +7,9 @@ import {
   useState,
 } from "react";
 import {
+  Animated,
   ActivityIndicator,
+  Easing,
   FlatList,
   Keyboard,
   Linking,
@@ -64,6 +66,8 @@ import {
   FoodDexScreen,
   type FoodCapture,
 } from "../features/food-dex/screens/FoodDexScreen";
+import { NfcScanScreen } from "../features/food-dex/screens/NfcScanScreen";
+import type { NfcFoodItem } from "../features/food-dex/services/nfcFood";
 import { BackendProvider, useBackend } from "../lib/BackendProvider";
 import { useGuestDocument } from "../hooks/useGuestDocument";
 import { parseProfile } from "../features/profile/models/profile";
@@ -303,6 +307,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     parseProfile,
   );
   const [recommenderVisible, setRecommenderVisible] = useState(false);
+  const [cameraMenuOpen, setCameraMenuOpen] = useState(false);
+  const [nfcScanOpen, setNfcScanOpen] = useState(false);
+  const cameraMenuProgress = useRef(new Animated.Value(0)).current;
   const [foodCapture, setFoodCapture] = useState<FoodCapture | null>(null);
   const [selectedChallenge, setSelectedChallenge] = useState<(typeof challenges)[number] | null>(null);
   const [joinedChallenges, setJoinedChallenges] = useState<string[]>([]);
@@ -311,6 +318,16 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
   const [linkError, setLinkError] = useState(false);
+  useEffect(() => {
+    const animation = Animated.timing(cameraMenuProgress, {
+      toValue: cameraMenuOpen ? 1 : 0,
+      duration: 220,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [cameraMenuOpen, cameraMenuProgress]);
   const deferredQuery = useDeferredValue(query);
   const savedFilter = tab === "explore" ? null : saved;
   const visible = useMemo(() => {
@@ -354,6 +371,17 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       ? selected
       : null;
 
+  const acceptNfcFood = useCallback((food: NfcFoodItem) => {
+    setNfcScanOpen(false);
+    setFoodCapture({
+      id: Date.now(),
+      recognition: { ...food, catalogId: null },
+      photo: null,
+      error: "",
+    });
+    setTab("dex");
+  }, []);
+
   const choose = useCallback((place: Place) => {
     Keyboard.dismiss();
     setSelected(place);
@@ -378,6 +406,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   }
   function openFoodCamera() {
     Keyboard.dismiss();
+    setCameraMenuOpen(false);
     if (tab !== "camera") cameraReturnTab.current = tab;
     setTab("camera");
     setFoodCapture(null);
@@ -1266,6 +1295,14 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           </View>
         </>
       )}
+      {tab !== "camera" && cameraMenuOpen && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Close camera options"
+          onPress={() => setCameraMenuOpen(false)}
+          style={styles.cameraMenuScrim}
+        />
+      )}
       {tab !== "camera" && (
         <View
           style={[
@@ -1284,9 +1321,10 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               <View key="camera" style={styles.cameraSlot}>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Take a food photo"
-                  accessibilityHint="Opens the camera to photograph food for your Food Dex"
-                  onPress={openFoodCamera}
+                  accessibilityLabel="Open camera and NFC options"
+                  accessibilityHint="Shows food capture options"
+                  accessibilityState={{ expanded: cameraMenuOpen }}
+                  onPress={() => setCameraMenuOpen((open) => !open)}
                   style={({ pressed }) => [
                     styles.cameraButton,
                     pressed && styles.pressed,
@@ -1294,6 +1332,57 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 >
                   <Icon name="camera" size={28} color={colors.white} />
                 </Pressable>
+                <Animated.View
+                  pointerEvents={cameraMenuOpen ? "auto" : "none"}
+                  accessibilityElementsHidden={!cameraMenuOpen}
+                  importantForAccessibility={
+                    cameraMenuOpen ? "auto" : "no-hide-descendants"
+                  }
+                  style={[
+                    styles.cameraMenu,
+                    {
+                      opacity: cameraMenuProgress,
+                      transform: [
+                        {
+                          translateY: cameraMenuProgress.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [24, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Take a food photo with the camera"
+                    onPress={openFoodCamera}
+                    style={({ pressed }) => [
+                      styles.cameraMenuItem,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <View style={styles.cameraMenuIcon}>
+                      <Icon name="camera-outline" size={20} />
+                    </View>
+                  </Pressable>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel="Use NFC to scan a food tag"
+                    onPress={() => {
+                      setCameraMenuOpen(false);
+                      setNfcScanOpen(true);
+                    }}
+                    style={({ pressed }) => [
+                      styles.cameraMenuItem,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <View style={styles.cameraMenuIcon}>
+                      <Icon name="scan-outline" size={20} />
+                    </View>
+                  </Pressable>
+                </Animated.View>
               </View>
             ) : (
               <View key={index} style={styles.navGroup}>
@@ -1316,6 +1405,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     }
                     accessibilityState={{ selected: tab === item }}
                     onPress={() => {
+                      setCameraMenuOpen(false);
                       setTab(item);
                       setFoodCapture(null);
                       setSelected(null);
@@ -1349,6 +1439,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           )}
         </View>
       )}
+
+      <NfcScanScreen
+        visible={nfcScanOpen}
+        onCancel={() => setNfcScanOpen(false)}
+        onRead={acceptNfcFood}
+      />
 
       {recommenderVisible && (
         <FoodRecommender
@@ -1923,9 +2019,51 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 32,
     alignItems: "center",
+    zIndex: 50,
+    elevation: 50,
+  },
+  cameraMenuScrim: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 40,
   },
   cameraSlot: {
+    position: "relative",
     width: 64,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cameraMenu: {
+    ...webGlassBlur,
+    position: "absolute",
+    bottom: 70,
+    left: 2,
+    width: 60,
+    padding: 5,
+    borderRadius: 30,
+    backgroundColor: "rgba(255,253,245,0.90)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.82)",
+    boxShadow: "0 10px 30px #3D568F2A",
+    zIndex: 60,
+    elevation: 60,
+  },
+  cameraMenuItem: {
+    width: 48,
+    minHeight: 48,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 24,
+  },
+  cameraMenuIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "rgba(61,86,143,0.10)",
     alignItems: "center",
     justifyContent: "center",
   },

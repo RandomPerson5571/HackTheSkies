@@ -23,6 +23,7 @@ import {
   normalizeCuisine,
   cuisines,
   dishes,
+  dishNumber,
   foodKey,
   type Cuisine,
   type FoodEntry,
@@ -738,11 +739,11 @@ export function FoodDexScreen({
                   </View>
                 </View>
               }
-              renderItem={({ item: dish, index }) => (
+              renderItem={({ item: dish }) => (
                 <View key={dish.id} style={s.dishGroup}>
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel={`${dish.name}, ${dish.entry ? "collected, view discovery" : "not collected, add food"}`}
+                    accessibilityLabel={`${dish.catalogDish ? `number ${dishNumber(dish.catalogDish)}, ` : "custom, "}${dish.name}, ${dish.entry ? "collected, view discovery" : "not collected, add food"}`}
                     onPress={() =>
                       dish.entry
                         ? setDetail(dish.entry)
@@ -761,8 +762,10 @@ export function FoodDexScreen({
                     />
                     <View style={s.flex}>
                       <Text style={s.eyebrow}>
-                        #{String(index + 1).padStart(3, "0")} ·{" "}
-                        {dish.entry ? "COLLECTED" : "UNDISCOVERED"}
+                        {dish.catalogDish
+                          ? `#${String(dishNumber(dish.catalogDish)).padStart(3, "0")}`
+                          : "CUSTOM"}{" "}
+                        · {dish.entry ? "COLLECTED" : "UNDISCOVERED"}
                       </Text>
                       <Text style={s.cardTitle}>{dish.name}</Text>
                       <Text style={s.meta}>{dish.note}</Text>

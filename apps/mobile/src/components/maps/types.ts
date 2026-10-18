@@ -17,6 +17,10 @@ export type MapProps = {
   topInset: number;
   bottomInset: number;
   places: Place[];
+  onViewportChange?: (
+    bounds: [west: number, south: number, east: number, north: number],
+    zoom: number,
+  ) => void;
   currentLocation?: [number, number] | null;
   profilePictureUri?: string;
   themeAccent?: string;

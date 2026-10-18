@@ -1,4 +1,5 @@
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { playFeedback } from "../../../lib/sensory";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -109,6 +110,7 @@ export function NfcScanScreen({
           accessibilityViewIsModal
           style={[s.sheet, { paddingBottom: insets.bottom + 24 }]}
         >
+          <SheetDragHandle onDismiss={onCancel} />
           <View style={s.heading}>
             <Text style={[s.eyebrow, s.flex]}>FOOD DEX</Text>
             <Pressable

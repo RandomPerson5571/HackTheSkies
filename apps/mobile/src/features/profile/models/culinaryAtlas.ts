@@ -90,16 +90,48 @@ function contains(ring: number[][], x: number, y: number) {
   }
   return inside;
 }
+const cuisineAnchors: Partial<Record<Cuisine, readonly [number, number]>> = {
+  Chinese: [105, 35],
+  Korean: [127, 37],
+  Japanese: [138, 36],
+  Vietnamese: [108, 16],
+  Thai: [101, 16],
+  "South Asian": [78, 22],
+  Levant: [36, 32],
+  Greek: [22, 39],
+  Persian: [54, 32],
+  French: [2, 47],
+  Italian: [12, 42],
+  Latin: [-70, -10],
+  Caribbean: [-75, 19],
+  American: [-100, 39],
+};
 export function cuisineAtPoint(x: number, y: number): Cuisine | undefined {
-  const country = atlasCountries.find((country) =>
+  const country = countryAtPoint(x, y);
+  if (!country) return undefined;
+  const exact = atlasCuisines.find((cuisine) =>
+    cuisineCountries[cuisine]?.includes(country),
+  );
+  if (exact) return exact;
+
+  // Every country remains explorable, even when it has no dedicated cuisine group.
+  return atlasCuisines.reduce<Cuisine | undefined>((closest, cuisine) => {
+    const anchor = cuisineAnchors[cuisine];
+    if (!anchor) return closest;
+    const point = atlasPoint(anchor[0], anchor[1]);
+    const distance = (point.x - x) ** 2 + (point.y - y) ** 2;
+    if (!closest) return cuisine;
+    const closestAnchor = cuisineAnchors[closest]!;
+    const closestPoint = atlasPoint(closestAnchor[0], closestAnchor[1]);
+    return distance < (closestPoint.x - x) ** 2 + (closestPoint.y - y) ** 2
+      ? cuisine
+      : closest;
+  }, undefined);
+}
+export function countryAtPoint(x: number, y: number): string | undefined {
+  return atlasCountries.find((country) =>
     country.rings.some((ring) => contains(ring, x, y)),
-  );
-  return (
-    country &&
-    atlasCuisines.find((cuisine) =>
-      cuisineCountries[cuisine]?.includes(country.code),
-    )
-  );
+  )?.code;
 }
 const paths = atlasCountries.map((country) => ({
   code: country.code,
@@ -107,7 +139,11 @@ const paths = atlasCountries.map((country) => ({
     .map((ring) => `M${ring.map((point) => point.join(",")).join("L")}Z`)
     .join(""),
 }));
-export function atlasSvg(entries: FoodEntry[]) {
+export function atlasSvg(
+  entries: FoodEntry[],
+  selectedCountry?: string | null,
+  selectedCuisine?: Cuisine | null,
+) {
   const progress = atlasCuisines.map((cuisine) =>
     atlasProgress(entries, cuisine),
   );
@@ -118,14 +154,18 @@ export function atlasSvg(entries: FoodEntry[]) {
           row.discoveries > 0 &&
           cuisineCountries[row.cuisine]?.includes(country.code),
       );
-      const fill = !row
+      const selected = country.code === selectedCountry ||
+        (selectedCuisine && cuisineCountries[selectedCuisine]?.includes(country.code));
+      const fill = selected
+        ? "#E56B72"
+        : !row
         ? "#DCE2D5"
         : row.fraction >= 0.5
           ? "#3D568F"
           : row.fraction >= 0.15
             ? "#7C9A70"
             : "#BCD379";
-      return `<path fill="${fill}" d="${country.path}"/>`;
+      return `<path fill="${fill}" stroke="${selected ? "#9D3946" : "#FFFDF5"}" stroke-width="${selected ? 1.8 : 0.65}" d="${country.path}"/>`;
     })
     .join("")}</g></svg>`;
 }

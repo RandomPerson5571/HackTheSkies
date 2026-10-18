@@ -1,5 +1,6 @@
 import { useMenuSound } from "../hooks/useMenuSound";
 import { FeedbackPressable as Pressable } from "../components/FeedbackPressable";
+import { SheetDragHandle } from "../components/SheetDragHandle";
 import { playFeedback, prepareFeedback } from "../lib/sensory";
 import {
   useCallback,
@@ -19,6 +20,7 @@ import {
   Keyboard,
   Linking,
   Modal,
+  PanResponder,
   Platform,
   ScrollView,
   StyleSheet,
@@ -49,6 +51,8 @@ import {
   restaurantTypes,
   mapCenter,
   type Category,
+  priceLevels,
+  type PriceLevel,
   type Place,
 } from "../features/restaurants/data/places";
 
@@ -91,7 +95,7 @@ const navigationItems = [
   { id: "restaurants", label: "Restaurants", icon: "restaurant-outline" },
   { id: "challenges", label: "Quests", icon: "flag-outline" },
   { id: "favorites", label: "Favourites", icon: "heart-outline" },
-  { id: "journal", label: "Journal", icon: "book-outline" },
+  { id: "dex", label: "Food Dex", icon: "book-outline" },
   { id: "profile", label: "Profile", icon: "person-outline" },
 ] as const satisfies ReadonlyArray<{
   id: string;
@@ -150,7 +154,14 @@ const webGlassBlur = (
 ) as ViewStyle;
 
 function FoodMap({ migrationError = "" }: { migrationError?: string }) {
-  const { places, error: backendError } = useBackend();
+  const {
+    places,
+    mapPlaces,
+    mapCount,
+    mapNeedsZoom,
+    loadMapViewport,
+    error: backendError,
+  } = useBackend();
   const insets = useSafeAreaInsets();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const camera = useRef<MapCamera>(null);
@@ -166,6 +177,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   >(null);
   const [foodTypeFilter, setFoodTypeFilter] = useState<string | null>(null);
   const [cuisineFilter, setCuisineFilter] = useState<string | null>(null);
+  const [priceFilter, setPriceFilter] = useState<PriceLevel | null>(null);
   const [filtersExpanded, setFiltersExpanded] = useState(false);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [filtersProgress] = useState(() => new Animated.Value(0));
@@ -173,6 +185,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [cardScale] = useState(() => new Animated.Value(1));
   const [cardOpacity] = useState(() => new Animated.Value(1));
   const [cardTranslateY] = useState(() => new Animated.Value(0));
+  const [cardDragY] = useState(() => new Animated.Value(0));
   useEffect(() => {
     let active = true;
     void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
@@ -326,6 +339,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           (place.type ?? place.category) === restaurantTypeFilter) &&
         (!foodTypeFilter || matchesTypeFilter(place, foodTypeFilter)) &&
         (!cuisineFilter || place.cuisine === cuisineFilter) &&
+        (!priceFilter || place.priceLevel === priceFilter) &&
         (!savedIds || savedIds.has(place.id)) &&
         `${place.name} ${place.category} ${place.cuisine ?? ""} ${place.neighborhood} ${place.address}`
           .toLowerCase()
@@ -341,6 +355,37 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     restaurantTypeFilter,
     foodTypeFilter,
     cuisineFilter,
+    priceFilter,
+  ]);
+  const mapVisible = useMemo(() => {
+    const normalizedQuery = deferredQuery.toLowerCase().trim();
+    const savedIds = savedFilter ? new Set(savedFilter) : null;
+    return mapPlaces.filter(
+      (place) =>
+        (category === "All" || place.category === category) &&
+        (!ratingFilter ||
+          (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
+        (!restaurantTypeFilter ||
+          (place.type ?? place.category) === restaurantTypeFilter) &&
+        (!foodTypeFilter || matchesTypeFilter(place, foodTypeFilter)) &&
+        (!cuisineFilter || place.cuisine === cuisineFilter) &&
+        (!priceFilter || place.priceLevel === priceFilter) &&
+        (!savedIds || savedIds.has(place.id)) &&
+        `${place.name} ${place.category} ${place.cuisine ?? ""} ${place.neighborhood} ${place.address}`
+          .toLowerCase()
+          .includes(normalizedQuery),
+    );
+  }, [
+    mapPlaces,
+    category,
+    deferredQuery,
+    savedFilter,
+    collection.ratings,
+    ratingFilter,
+    restaurantTypeFilter,
+    foodTypeFilter,
+    cuisineFilter,
+    priceFilter,
   ]);
   const rankedVisible = useMemo(
     () =>
@@ -357,10 +402,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       : null;
   useEffect(() => {
     if (!active) return;
+    cardDragY.setValue(0);
     if (reduceMotion) {
       cardScale.setValue(1);
       cardOpacity.setValue(1);
       cardTranslateY.setValue(0);
+      cardDragY.setValue(0);
       return;
     }
     cardScale.setValue(0.9);
@@ -385,7 +432,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [active, reduceMotion, cardScale, cardOpacity, cardTranslateY]);
+  }, [active, reduceMotion, cardScale, cardOpacity, cardTranslateY, cardDragY]);
   const acceptNfcFood = useCallback((food: NfcFoodItem) => {
     setNfcScanOpen(false);
     setFoodCapture({
@@ -410,6 +457,44 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     });
   }, []);
   const dismissSelection = useCallback(() => setSelected(null), []);
+  const cardDragResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: (_, gesture) =>
+          gesture.dy > 8 && Math.abs(gesture.dy) > Math.abs(gesture.dx),
+        onPanResponderMove: (_, gesture) =>
+          cardDragY.setValue(Math.max(0, gesture.dy)),
+        onPanResponderRelease: (_, gesture) => {
+          if (gesture.dy > 100 || (gesture.dy > 45 && gesture.vy > 0.85)) {
+            Animated.timing(cardDragY, {
+              toValue: 320,
+              duration: 160,
+              useNativeDriver: true,
+            }).start(({ finished }) => {
+              if (!finished) return;
+              dismissSelection();
+              cardDragY.setValue(0);
+            });
+            return;
+          }
+          Animated.spring(cardDragY, {
+            toValue: 0,
+            speed: 22,
+            bounciness: 2,
+            useNativeDriver: true,
+          }).start();
+        },
+        onPanResponderTerminate: () => {
+          Animated.spring(cardDragY, {
+            toValue: 0,
+            speed: 22,
+            bounciness: 2,
+            useNativeDriver: true,
+          }).start();
+        },
+      }),
+    [cardDragY, dismissSelection],
+  );
   const onMapReady = useCallback(() => {
     setMapReady(true);
     setMapError(false);
@@ -516,6 +601,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     if (dimension === "restaurantType") return restaurantTypeFilter;
     if (dimension === "foodType") return foodTypeFilter;
     if (dimension === "cuisine") return cuisineFilter;
+    if (dimension === "price") return priceFilter;
     return null;
   }
   function closeFilterDropdown() {
@@ -566,7 +652,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     }
     return (
       tab === id ||
-      (id === "journal" && tab === "dex") ||
+      (id === "dex" && (tab === "dex" || tab === "journal")) ||
       (id === "profile" && tab === "settings")
     );
   }
@@ -604,6 +690,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             key={foodCapture?.id ?? "dex"}
             dex={foodDex}
             onOpenQuests={() => setTab("challenges")}
+            onOpenJournal={() => setTab("journal")}
             capture={foodCapture}
             onOpenCamera={openFoodCamera}
             onDiscover={(cuisine) => {
@@ -618,6 +705,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           <CommunityScreen
             collection={collection}
             dispatch={dispatch}
+            currentLocation={currentLocation}
             storageError={migrationError || storageError || backendError}
             onOpenSettings={() => {
               setSettingsReturnTab("favorites");
@@ -647,6 +735,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setRestaurantTypeFilter(null);
               setFoodTypeFilter(null);
               setCuisineFilter(null);
+              setPriceFilter(null);
               choose(place);
             }}
           />
@@ -731,7 +820,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 zoom={10.5}
                 topInset={insets.top}
                 bottomInset={insets.bottom}
-                places={visible}
+                places={mapVisible}
+                onViewportChange={loadMapViewport}
                 currentLocation={currentLocation}
                 profilePictureUri={profile.avatarUri}
                 themeAccent={appTheme.foreground}
@@ -775,6 +865,17 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     <Text style={styles.small}>Loading your neighborhood…</Text>
                   </>
                 )}
+              </View>
+            )}
+            {token && mapReady && !mapError && !mapVisible.length && mapCount !== null && !active && (
+              <View
+                pointerEvents="none"
+                style={[styles.mapCountHint, { bottom: insets.bottom + 100 }]}
+              >
+                <Text style={styles.mapCountText}>
+                  {mapCount} {mapCount === 1 ? "place" : "places"} in this area
+                  {mapCount > 0 && mapNeedsZoom && " · zoom in to explore"}
+                </Text>
               </View>
             )}
 
@@ -1042,6 +1143,32 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                           </Pressable>
                         ))}
                       </View>
+                    ) : openFilter === "price" ? (
+                      ["Any price", ...priceLevels].map((value) => (
+                        <Pressable
+                          key={value}
+                          accessibilityRole="button"
+                          accessibilityState={{
+                            selected:
+                              value === "Any price"
+                                ? priceFilter === null
+                                : priceFilter === value,
+                          }}
+                          onPress={() => {
+                            setPriceFilter(
+                              value === "Any price"
+                                ? null
+                                : (value as PriceLevel),
+                            );
+                            closeFilterDropdown();
+                          }}
+                          style={styles.filterDropdownOption}
+                        >
+                          <Text style={styles.filterDropdownOptionText}>
+                            {value}
+                          </Text>
+                        </Pressable>
+                      ))
                     ) : openFilter === "restaurantType" ? (
                       ["Any restaurant type", ...restaurantTypes].map(
                         (value) => (
@@ -1096,15 +1223,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                           </Text>
                         </Pressable>
                       ))
-                    ) : openFilter === "price" ? (
-                      <View style={styles.priceFilterOptions}>
-                        <Text style={styles.filterDropdownOptionText}>
-                          $ · $$ · $$$ · $$$$
-                        </Text>
-                        <Text style={styles.small}>
-                          Price data isn’t available for these listings yet.
-                        </Text>
-                      </View>
                     ) : (
                       <Text style={styles.small}>
                         Rarity data isn’t available for these listings yet.
@@ -1143,10 +1261,13 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       transform: [
                         { scale: cardScale },
                         { translateY: cardTranslateY },
+                        { translateY: cardDragY },
                       ],
                     },
                   ]}
+                  {...cardDragResponder.panHandlers}
                 >
+                  <SheetDragHandle onDismiss={dismissSelection} />
                   <View style={styles.cardTop}>
                     <RestaurantPhoto
                       eager
@@ -1465,7 +1586,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               { paddingBottom: insets.bottom + 16, maxHeight: "75%" },
             ]}
           >
-            <View style={styles.sheetHandle} />
+            <SheetDragHandle onDismiss={() => setListVisible(false)} />
             <View style={styles.sheetHeading}>
               <View style={styles.flex}>
                 <Text style={styles.placeName}>
@@ -1570,6 +1691,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             },
           ]}
         >
+          <SheetDragHandle onDismiss={() => setPlusMenuOpen(false)} />
           <Pressable
             style={styles.plusMenuItem}
             accessibilityRole="button"
@@ -1739,7 +1861,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   filterDropdownList: { flexGrow: 0 },
-  priceFilterOptions: { gap: 2, paddingVertical: 4 },
   filterDropdownOption: {
     minHeight: 38,
     justifyContent: "center",
@@ -2052,6 +2173,17 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     maxWidth: "85%",
   },
+  mapCountHint: {
+    position: "absolute",
+    alignSelf: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 18,
+    backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  mapCountText: { color: colors.ink, fontSize: 12, fontWeight: "600" },
   modal: { flex: 1, justifyContent: "flex-end" },
   scrim: {
     position: "absolute",
@@ -2067,14 +2199,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 22,
     paddingTop: 10,
-  },
-  sheetHandle: {
-    width: 34,
-    height: 4,
-    borderRadius: 3,
-    backgroundColor: colors.border,
-    alignSelf: "center",
-    marginBottom: 14,
   },
   sheetHeading: {
     flexDirection: "row",
@@ -2102,13 +2226,16 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.25)",
   },
   plusMenu: {
+    ...webGlassBlur,
     position: "absolute",
     bottom: 110,
     alignSelf: "center",
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.72)",
     borderRadius: 16,
     paddingVertical: 6,
     minWidth: 56,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.78)",
     shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 12,

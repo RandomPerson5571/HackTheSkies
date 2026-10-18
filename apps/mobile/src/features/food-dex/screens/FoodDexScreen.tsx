@@ -1,5 +1,6 @@
 import { useMenuSound } from "../../../hooks/useMenuSound";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { CiboLogo } from "../../../components/CiboLogo";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -106,12 +107,14 @@ export function FoodDexScreen({
   onOpenCamera,
   dex,
   onOpenQuests,
+  onOpenJournal,
   onDiscover,
 }: {
   dex: ReturnType<typeof useFoodDex>;
   capture?: FoodCapture | null;
   onOpenCamera?: () => void;
   onOpenQuests?: () => void;
+  onOpenJournal?: () => void;
   onDiscover?: (cuisine: Cuisine) => void;
 }) {
   const insets = useSafeAreaInsets();
@@ -328,6 +331,14 @@ export function FoodDexScreen({
         </View>
         {onOpenQuests && (
           <Button title="Continue my cuisine quests" icon="flag-outline" onPress={onOpenQuests} secondary />
+        )}
+        {onOpenJournal && (
+          <Button
+            title="Restaurant journal"
+            icon="restaurant-outline"
+            onPress={onOpenJournal}
+            secondary
+          />
         )}
         <View style={s.viewTabs}>
           {(["collection", "atlas"] as const).map((item) => (
@@ -603,6 +614,7 @@ export function FoodDexScreen({
                 { paddingBottom: insets.bottom + 24 },
               ]}
             >
+              <SheetDragHandle onDismiss={() => setDetail(null)} />
               {detail && (
                 <>
                   <View style={s.row}>
@@ -636,6 +648,7 @@ export function FoodDexScreen({
             style={[s.screen, { paddingTop: insets.top }]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
+            <SheetDragHandle onDismiss={closeScan} />
             <View style={s.modalHeading}>
               <Text style={[s.sectionTitle, s.flex]}>A new discovery</Text>
               <Pressable

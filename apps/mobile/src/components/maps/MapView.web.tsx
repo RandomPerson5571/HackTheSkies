@@ -43,6 +43,7 @@ type PlaceSource = {
 type WebMap = {
   isStyleLoaded: () => boolean;
   getZoom: () => number;
+  getBounds: () => { toArray: () => number[][] };
   flyTo: (options: {
     center: number[];
     zoom: number;
@@ -277,7 +278,14 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         }
         currentMap.on("idle", () => {
           if (disposed) return;
-          setZoom(currentMap.getZoom());
+          const currentZoom = currentMap.getZoom();
+          setZoom(currentZoom);
+          const bounds = currentMap.getBounds().toArray();
+          if (bounds.length === 2)
+            latest.current.onViewportChange?.(
+              [bounds[0]![0]!, bounds[0]![1]!, bounds[1]![0]!, bounds[1]![1]!],
+              currentZoom,
+            );
           const features = currentMap.queryRenderedFeatures({
             layers: ["place-points"],
           });

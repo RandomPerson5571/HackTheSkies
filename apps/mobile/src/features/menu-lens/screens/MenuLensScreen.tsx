@@ -1,6 +1,7 @@
 import { useMenuSound } from "../../../hooks/useMenuSound";
 import { playFeedback } from "../../../lib/sensory";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -594,6 +595,7 @@ export function MenuLensScreen({
         >
           <View style={styles.card} accessibilityViewIsModal>
             <ScrollView contentContainerStyle={styles.cardContent}>
+              <SheetDragHandle onDismiss={() => setSelected(null)} />
               <View style={styles.sectionHeading}>
                 <Text style={styles.cardEyebrow}>CIBO · FOOD DEX</Text>
                 <Pressable

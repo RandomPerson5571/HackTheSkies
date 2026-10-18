@@ -219,6 +219,15 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       ref={mapView}
       onMapIdle={(state) => {
         setZoom(state.properties.zoom);
+        props.onViewportChange?.(
+          [
+            state.properties.bounds.sw[0]!,
+            state.properties.bounds.sw[1]!,
+            state.properties.bounds.ne[0]!,
+            state.properties.bounds.ne[1]!,
+          ],
+          state.properties.zoom,
+        );
         refreshPhotoPins();
       }}
       style={StyleSheet.absoluteFill}

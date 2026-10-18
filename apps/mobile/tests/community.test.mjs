@@ -31,12 +31,15 @@ test("badges count distinct visited places in their own category", () => {
   );
   assert.equal(badgeProgress("Ramen", [], fixtures), 0);
   for (const badge of cuisineBadges) {
+    const badgePlaces = Array.from({ length: badge.goal }, (_, index) => ({
+      ...places[0],
+      id: `${badge.id}-${index}`,
+      category: badge.cuisine ? "Restaurant" : badge.category,
+      cuisine: badge.cuisine ? badge.category : places[0].cuisine,
+    }));
     assert.ok(
-      badgeProgress(
-        badge.category,
-        fixtures.map((place) => place.id),
-        fixtures,
-      ) >= badge.goal,
+      badgeProgress(badge, badgePlaces.map((place) => place.id), badgePlaces) >=
+        badge.goal,
     );
   }
 });

@@ -1,4 +1,5 @@
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { useEffect, useMemo, useState } from "react";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,6 +30,7 @@ import { useReducedMotion } from "../../food-dex/hooks/useReducedMotion";
 import {
   atlasProgress,
   atlasSvg,
+  countryAtPoint,
   cuisineAtPoint,
 } from "../models/culinaryAtlas";
 
@@ -42,7 +44,9 @@ export function ProfileAtlas({
   onOpenQuests?: () => void;
 }) {
   const [selected, setSelected] = useState<Cuisine | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [mapWidth, setMapWidth] = useState(0);
+  const [mapHeight, setMapHeight] = useState(0);
   const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
   const rows = useMemo(
@@ -56,9 +60,9 @@ export function ProfileAtlas({
     rows[0]!;
   const svg = useMemo(
     () => ({
-      uri: `data:image/svg+xml;utf8,${encodeURIComponent(atlasSvg(entries))}`,
+      uri: `data:image/svg+xml;utf8,${encodeURIComponent(atlasSvg(entries, selectedCountry, selected))}`,
     }),
-    [entries],
+    [entries, selectedCountry, selected],
   );
   const [mapOpacity] = useState(() => new Animated.Value(1));
   useEffect(() => {
@@ -104,17 +108,23 @@ export function ProfileAtlas({
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Interactive culinary world map"
-          accessibilityHint="Tap a country to view its cuisines and your discoveries."
-          onLayout={(event) => setMapWidth(event.nativeEvent.layout.width)}
-          onPress={(event) => {
-            if (!mapWidth) return;
-            const cuisine = cuisineAtPoint(
-              (event.nativeEvent.locationX / mapWidth) * 720,
-              (event.nativeEvent.locationY / mapWidth) * 720,
-            );
-            if (cuisine) setSelected(cuisine);
+          accessibilityHint="Tap a country to explore its closest cuisine and your discoveries."
+          onLayout={(event) => {
+            setMapWidth(event.nativeEvent.layout.width);
+            setMapHeight(event.nativeEvent.layout.height);
           }}
-          style={s.map}
+          onPress={(event) => {
+            if (!mapWidth || !mapHeight) return;
+            const x = (event.nativeEvent.locationX / mapWidth) * 720;
+            const y = (event.nativeEvent.locationY / mapHeight) * 390;
+            const country = countryAtPoint(x, y);
+            const cuisine = cuisineAtPoint(x, y);
+            if (country && cuisine) {
+              setSelectedCountry(country);
+              setSelected(cuisine);
+            }
+          }}
+          style={({ pressed }) => [s.map, pressed && s.mapPressed]}
         >
           <Image
             source={svg}
@@ -157,7 +167,10 @@ export function ProfileAtlas({
             key={row.cuisine}
             accessibilityRole="button"
             accessibilityLabel={`${row.cuisine}, ${row.discoveries ? `${row.discoveries} discoveries` : "undiscovered"}`}
-            onPress={() => setSelected(row.cuisine)}
+            onPress={() => {
+              setSelectedCountry(null);
+              setSelected(row.cuisine);
+            }}
             style={({ pressed }) => [
               s.chip,
               row.discoveries > 0 && s.unlockedChip,
@@ -176,7 +189,10 @@ export function ProfileAtlas({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`Next adventure: explore ${next.cuisine} cuisine`}
-        onPress={() => setSelected(next.cuisine)}
+        onPress={() => {
+          setSelectedCountry(null);
+          setSelected(next.cuisine);
+        }}
         style={({ pressed }) => [s.adventure, pressed && s.pressed]}
       >
         <Text style={s.adventureTitle}>Explore {next.cuisine}</Text>
@@ -200,7 +216,7 @@ export function ProfileAtlas({
               accessibilityViewIsModal
               style={[s.sheet, { paddingBottom: Math.max(insets.bottom, 20) }]}
             >
-              <View style={s.handle} />
+              <SheetDragHandle onDismiss={() => setSelected(null)} />
               <View style={s.heading}>
                 <CatalogPhoto
                   source={catalogPhoto(cuisineCovers[selected])}
@@ -339,12 +355,12 @@ export function ProfileAtlas({
 }
 const s = StyleSheet.create({
   card: {
-    padding: 12,
-    borderRadius: 20,
+    padding: 10,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.white,
-    gap: 8,
+    gap: 6,
     overflow: "hidden",
   },
   heading: { flexDirection: "row", alignItems: "center", gap: 8 },
@@ -356,16 +372,16 @@ const s = StyleSheet.create({
     color: colors.muted,
   },
   title: {
-    fontSize: 21,
+    fontSize: 18,
     fontWeight: "700",
     letterSpacing: -0.8,
     color: colors.ink,
     marginTop: 0,
   },
   compass: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
@@ -376,11 +392,12 @@ const s = StyleSheet.create({
     backgroundColor: "#F1F4EB",
     borderRadius: 14,
     width: "100%",
-    maxWidth: 460,
+    maxWidth: 360,
     alignSelf: "center",
     overflow: "hidden",
   },
   map: { width: "100%", aspectRatio: 720 / 390 },
+  mapPressed: { opacity: 0.78 },
   marker: {
     position: "absolute",
     width: 44,
@@ -472,13 +489,6 @@ const s = StyleSheet.create({
     borderTopRightRadius: 30,
     padding: 20,
     gap: 16,
-  },
-  handle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.border,
-    alignSelf: "center",
   },
   cover: { width: 58, height: 64, borderRadius: 16 },
   detailTitle: { fontSize: 22, fontWeight: "700", color: colors.ink },

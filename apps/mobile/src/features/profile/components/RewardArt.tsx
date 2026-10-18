@@ -28,8 +28,32 @@ const trophies = {
   bakery: require("../../../../assets/rewards/trophy-bakery.svg"),
   coffee: require("../../../../assets/rewards/trophy-coffee.svg"),
   pizza: require("../../../../assets/rewards/trophy-pizza.svg"),
+  korean: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  chinese: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  thai: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  south_asian: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  italian: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  latin: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  french: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  caribbean: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  greek: require("../../../../assets/rewards/trophy-cuisine.svg"),
+  restaurant_regular: require("../../../../assets/rewards/trophy-cuisine.svg"),
 } satisfies Record<
-  BadgeId | "japanese" | "bakery" | "coffee" | "pizza",
+  | BadgeId
+  | "japanese"
+  | "bakery"
+  | "coffee"
+  | "pizza"
+  | "korean"
+  | "chinese"
+  | "thai"
+  | "south_asian"
+  | "italian"
+  | "latin"
+  | "french"
+  | "caribbean"
+  | "greek"
+  | "restaurant_regular",
   number
 >;
 

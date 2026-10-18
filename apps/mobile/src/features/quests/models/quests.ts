@@ -1,8 +1,17 @@
 import { catalogDishes } from "../../../../../../packages/food-catalog/data/catalog.ts";
 import { challenges } from "../data/challenges.ts";
 import type { FoodEntry } from "../../food-dex/models/foodDex.ts";
+import { places } from "../../restaurants/data/places.ts";
 
-export const pathCuisines = ["Japanese", "Italian", "Korean"] as const;
+export const pathCuisines = [
+  "Japanese",
+  "Italian",
+  "Korean",
+  "Chinese",
+  "French",
+  "Vietnamese",
+  "South Asian",
+] as const;
 export type PathCuisine = (typeof pathCuisines)[number];
 export type QuestType =
   | "knowledge"
@@ -40,6 +49,10 @@ export const pathDishIds: Record<PathCuisine, string[]> = {
   Japanese: ["ramen", "sushi", "tempura", "okonomiyaki"],
   Italian: ["pizza", "carbonara", "risotto", "tiramisu"],
   Korean: ["bibimbap", "bulgogi", "kimchi-jjigae", "naengmyeon"],
+  Chinese: ["dumplings", "mapo-tofu", "peking-duck", "chow-mein"],
+  French: ["ratatouille", "coq-au-vin", "croissant", "crepe"],
+  Vietnamese: ["pho", "banh-mi", "goi-cuon", "bun-cha"],
+  "South Asian": ["biryani", "dosa", "chana-masala", "samosa"],
 };
 export function pathDishes(cuisine: PathCuisine) {
   return pathDishIds[cuisine].map((id) =>
@@ -87,7 +100,12 @@ export function questsFor(cuisine: PathCuisine): Quest[] {
 export const allQuests = pathCuisines.flatMap(questsFor);
 export type BonusRun = {
   startedAt: string;
-  visits: { id: string; cuisine: string; neighborhood: string }[];
+  visits: {
+    id: string;
+    cuisine: string;
+    neighborhood: string;
+    category: string;
+  }[];
   claimed: boolean;
 };
 export type PersonalizedQuest = {
@@ -183,7 +201,21 @@ export function parseQuests(value: unknown): QuestState {
       );
       initial.bonus[challenge.id] = {
         startedAt: run.startedAt,
-        visits: [...new Map(visits.map((visit) => [visit.id, visit])).values()],
+        visits: [
+          ...new Map(
+            visits.map((visit) => [
+              visit.id,
+              {
+                ...visit,
+                category:
+                  typeof visit.category === "string" && visit.category
+                    ? visit.category
+                    : places.find((place) => place.id === visit.id)?.category ??
+                      "",
+              },
+            ]),
+          ).values(),
+        ],
         claimed: run.claimed === true,
       };
     }
@@ -252,22 +284,32 @@ export const bonusTargets: Record<string, number> = {
   "local-regular": 4,
   "coffee-break": 3,
   "sweet-tooth": 2,
-  "breakfast-club": 2,
-  "plant-powered": 4,
+  "breakfast-club": 3,
+  "plant-powered": 3,
   "pizza-tour": 3,
-  "lunch-break": 5,
+  "lunch-break": 3,
   "new-flavours": 4,
   "dessert-month": 3,
 };
 export function bonusCount(id: string, run?: BonusRun) {
   if (!run) return 0;
-  if (id === "neighbourhood-explorer")
+  const challenge = challenges.find((item) => item.id === id);
+  if (challenge?.metric === "neighbourhoods")
     return new Set(
       run.visits.map((visit) => visit.neighborhood).filter(Boolean),
     ).size;
-  if (id === "cuisine-collector")
+  if (challenge?.metric === "cuisines")
     return new Set(run.visits.map((visit) => visit.cuisine).filter(Boolean))
       .size;
+  if (challenge?.metric === "categories")
+    return new Set(run.visits.map((visit) => visit.category).filter(Boolean))
+      .size;
+  if (challenge?.category)
+    return new Set(
+      run.visits
+        .filter((visit) => visit.category === challenge.category)
+        .map((visit) => visit.id),
+    ).size;
   return new Set(run.visits.map((visit) => visit.id)).size;
 }
 export function bonusExpired(id: string, run: BonusRun, now = Date.now()) {

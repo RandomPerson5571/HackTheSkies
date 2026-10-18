@@ -2,6 +2,7 @@ import { playFeedback } from "../../../lib/sensory";
 import { useMenuSound } from "../../../hooks/useMenuSound";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { CiboLogo } from "../../../components/CiboLogo";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -40,6 +41,7 @@ import {
   questStatus,
   type Quest,
   type QuestType,
+  type PathCuisine,
 } from "../models/quests";
 import { generateQuest } from "../services/personalizedQuest";
 import { QuestButton, QuestDialog } from "./QuestDialog";
@@ -55,10 +57,14 @@ const questIcons: Record<QuestType, IconName> = {
   bonus: "gift-outline",
   boss: "trophy-outline",
 };
-const cuisineLabels = {
+const cuisineLabels: Record<PathCuisine, string> = {
   Japanese: "A TASTE OF JAPAN",
   Italian: "A TASTE OF ITALY",
   Korean: "A TASTE OF KOREA",
+  Chinese: "A TASTE OF CHINA",
+  French: "A TASTE OF FRANCE",
+  Vietnamese: "A TASTE OF VIETNAM",
+  "South Asian": "A TASTE OF SOUTH ASIA",
 };
 
 function Meter({
@@ -378,7 +384,9 @@ export function QuestsScreen({
         <View>
           <Text style={s.statNumber}>
             {stamps}
-            <Text style={s.statSmall}> / 12</Text>
+            <Text style={s.statSmall}>
+              / {pathCuisines.length * chapters.length}
+            </Text>
           </Text>
           <Text style={s.small}>chapter stamps</Text>
         </View>
@@ -801,12 +809,10 @@ export function QuestsScreen({
           <>
             <View style={s.bonusIntro}>
               <Text accessibilityRole="header" style={s.chapterTitle}>
-                A little extra adventure.
+                Choose your challenge
               </Text>
               <Text style={s.copy}>
-                Your original 12 challenges, with saved check-ins and XP
-                rewards. Weekly adventures last 7 days; monthly adventures last
-                30 days from joining. These outings are optional.
+                Check in at qualifying spots before time runs out to earn XP.
               </Text>
             </View>
             <View style={s.cardGrid}>
@@ -911,6 +917,7 @@ export function QuestsScreen({
             ]}
           >
             <View accessibilityViewIsModal style={s.bonusDialog}>
+              <SheetDragHandle onDismiss={() => setBonusId(null)} />
               <ScrollView contentContainerStyle={s.bonusDialogContent}>
                 <View style={s.rowBetween}>
                   <Text style={s.eyebrow}>
@@ -972,12 +979,15 @@ export function QuestsScreen({
                   <>
                     <Text style={s.cardTitle}>
                       {bonusCount(bonus.id, run)} / {bonusTargets[bonus.id]}{" "}
-                      qualifying{" "}
-                      {bonus.id === "cuisine-collector"
+                      {bonus.metric === "cuisines"
                         ? "cuisines"
-                        : bonus.id === "neighbourhood-explorer"
+                        : bonus.metric === "neighbourhoods"
                           ? "neighbourhoods"
-                          : "visits"}
+                          : bonus.metric === "categories"
+                            ? "categories"
+                            : bonus.category
+                              ? `${bonus.category} spots`
+                              : "spots"}
                     </Text>
                     <Text style={s.small}>
                       Ends{" "}
@@ -1004,10 +1014,8 @@ export function QuestsScreen({
                       />
                     ) : (
                       <>
-                        <Text style={s.copy}>
-                          Log a restaurant you visited. By choosing a place, you
-                          confirm that this visit meets the challenge above.
-                          Each place counts once per adventure.
+                        <Text style={s.small}>
+                          Choose a spot that fits. Each spot counts once.
                         </Text>
                         <TextInput
                           accessibilityLabel="Search restaurants for a qualifying visit"
@@ -1023,6 +1031,22 @@ export function QuestsScreen({
                               `${place.name} ${place.neighborhood}`
                                 .toLowerCase()
                                 .includes(search.toLowerCase()) &&
+                              (!bonus.category ||
+                                place.category === bonus.category) &&
+                              (bonus.metric !== "categories" ||
+                                !run.visits.some(
+                                  (visit) => visit.category === place.category,
+                                )) &&
+                              (bonus.metric !== "cuisines" ||
+                                (!!place.cuisine &&
+                                  !run.visits.some(
+                                    (visit) => visit.cuisine === place.cuisine,
+                                  ))) &&
+                              (bonus.metric !== "neighbourhoods" ||
+                                !run.visits.some(
+                                  (visit) =>
+                                    visit.neighborhood === place.neighborhood,
+                                )) &&
                               !run.visits.some(
                                 (visit) => visit.id === place.id,
                               ),
@@ -1057,6 +1081,7 @@ export function QuestsScreen({
                                             id: place.id,
                                             cuisine: place.cuisine ?? "",
                                             neighborhood: place.neighborhood,
+                                            category: place.category,
                                           },
                                         ],
                                       },

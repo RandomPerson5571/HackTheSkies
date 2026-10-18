@@ -1,4 +1,5 @@
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { useEffect, useRef, useState } from "react";
 import { apiEndpoint } from "../../../lib/api";
 import {
@@ -137,6 +138,7 @@ export function FoodRecommender({
             },
           ]}
         >
+          <SheetDragHandle onDismiss={onClose} />
           <View style={styles.heading}>
             <View style={styles.titleRow}>
               <Ionicons

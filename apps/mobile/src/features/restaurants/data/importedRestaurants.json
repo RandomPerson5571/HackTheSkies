@@ -27,7 +27,8 @@
       "postcode": "M5T 2G6",
       "countrycode": "CA"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Asian Legend",
@@ -63,7 +64,8 @@
         43.6536448
       ]
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "August 8 AYCE Dimsum & Sushi",
@@ -99,7 +101,8 @@
         43.6546327
       ]
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Banbudian Bistro",
@@ -129,7 +132,8 @@
       "postcode": "M5T 2E4",
       "countrycode": "CA"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Banh Mi Ba Le",
@@ -159,7 +163,8 @@
       "postcode": "M5T 1H3",
       "countrycode": "CA"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Banh Mi Nguyen Huong",
@@ -189,7 +194,8 @@
       "postcode": "M5T 2E7",
       "countrycode": "CA"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "BAO Goubuli",
@@ -219,7 +225,8 @@
       "postcode": "M5T 2E4",
       "countrycode": "CA"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Bitter Melon",
@@ -249,7 +256,8 @@
       "postcode": "M5T 2G6",
       "countrycode": "CA"
     },
-    "rating": 2.6
+    "rating": 2.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Biwon Korean Restaurant",
@@ -279,7 +287,8 @@
       "postcode": "M5T 1G8",
       "countrycode": "CA"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Bun Saigon Vietnamese Restaurant",
@@ -309,7 +318,8 @@
       "postcode": "M5T 3A8",
       "countrycode": "CA"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Canteen Restaurant",
@@ -339,7 +349,8 @@
       "postcode": "M5T 2E4",
       "countrycode": "CA"
     },
-    "rating": 2.9
+    "rating": 2.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Canton Chilli",
@@ -369,7 +380,8 @@
       "postcode": "M5T 2G7",
       "countrycode": "CA"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Chat Bar",
@@ -399,7 +411,8 @@
       "postcode": "M5T 2E6",
       "countrycode": "CA"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cheng Du Street Food",
@@ -430,7 +443,8 @@
       "postcode": "M5T 1G6",
       "countrycode": "CA"
     },
-    "rating": 4.7
+    "rating": 4.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Chine Legendary Hot Pot & Noodles",
@@ -466,7 +480,8 @@
         43.6545481
       ]
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Chinese Traditional Buns",
@@ -496,7 +511,8 @@
       "postcode": "M5T 1H3",
       "countrycode": "CA"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "ChongQing Chicken Hotpot",
@@ -526,7 +542,8 @@
       "postcode": "M5T 2G7",
       "countrycode": "CA"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Crimson Teas",
@@ -562,7 +579,8 @@
         43.6569266
       ]
     },
-    "rating": 2.8
+    "rating": 2.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Dim Sum King",
@@ -592,7 +610,8 @@
       "postcode": "M5T 1G7",
       "countrycode": "CA"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Dumpling & More",
@@ -628,7 +647,8 @@
         43.6535028
       ]
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Dumpling House Restaurant",
@@ -658,7 +678,8 @@
       "postcode": "M5T 2E7",
       "countrycode": "CA"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Dundas Spring Garden",
@@ -694,7 +715,8 @@
         43.6535543
       ]
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Eat Yet Big Rice Bowls",
@@ -724,7 +746,8 @@
       "postcode": "M5T 2G6",
       "countrycode": "CA"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Fudao Noodle House",
@@ -760,7 +783,8 @@
         43.6544894
       ]
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Good Brother BBQ",
@@ -791,7 +815,8 @@
       "postcode": "M5T 1G7",
       "countrycode": "CA"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Grandma Kitchens",
@@ -821,7 +846,8 @@
       "postcode": "M5T 2G7",
       "countrycode": "CA"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Han's Stir Fry & BBQ",
@@ -851,7 +877,8 @@
       "postcode": "M5T 2G3",
       "countrycode": "CA"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Happy Lamb Hot Pot",
@@ -881,7 +908,8 @@
       "postcode": "M5T 1G7",
       "countrycode": "CA"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hey Noodles",
@@ -917,7 +945,8 @@
         43.653275
       ]
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Homemade Ramen",
@@ -947,7 +976,8 @@
       "postcode": "M5T 2E4",
       "countrycode": "CA"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Hong Kong Bistro Cafe",
@@ -978,7 +1008,8 @@
       "postcode": "M5T 1G7",
       "countrycode": "CA"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Hong Kong Island Bakery",
@@ -1008,7 +1039,8 @@
       "postcode": "M5T 2C2",
       "countrycode": "CA"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "House of Gourmet",
@@ -1044,7 +1076,8 @@
         43.6532197
       ]
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Jian Bing Club",
@@ -1074,7 +1107,8 @@
       "postcode": "M5T 2G6",
       "countrycode": "CA"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Juicy Dumpling",
@@ -1104,7 +1138,8 @@
       "postcode": "M5T 2E4",
       "countrycode": "CA"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Kim Vietnamese Restaurant",
@@ -1134,7 +1169,8 @@
       "postcode": "M5T 1H3",
       "countrycode": "CA"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "King's Noodle",
@@ -1170,7 +1206,8 @@
         43.653031
       ]
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "KL Kitchen Seafood Cuisine",
@@ -1200,7 +1237,8 @@
       "postcode": "M5T 1H3",
       "countrycode": "CA"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Kokumi Mini Hot Pot",
@@ -1236,7 +1274,8 @@
         43.6567897
       ]
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Kung Fu Beer Chinese BBQ",
@@ -1272,7 +1311,8 @@
         43.6532858
       ]
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Kung Fu Duck",
@@ -1308,7 +1348,8 @@
         43.6569266
       ]
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Liuyishou Hotpot",
@@ -1338,7 +1379,8 @@
       "postcode": "M5T 3A8",
       "countrycode": "CA"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Magical Taste of China",
@@ -1368,7 +1410,8 @@
       "postcode": "M5T 2G6",
       "countrycode": "CA"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Master Pot",
@@ -1398,7 +1441,8 @@
       "postcode": "M5T 2E4",
       "countrycode": "CA"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Matsutei Sukiyaki",
@@ -1434,7 +1478,8 @@
         43.653456
       ]
     },
-    "rating": 4.7
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Mix 2 Grill & Hot Pot",
@@ -1465,7 +1510,8 @@
       "postcode": "M6P 1W7",
       "countrycode": "CA"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Mother's Dumplings",
@@ -1501,7 +1547,8 @@
         43.6569266
       ]
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "New Ho King",
@@ -1532,7 +1579,8 @@
       "postcode": "M5T 2G7",
       "countrycode": "CA"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "New Hong Fatt BBQ Restaurant",
@@ -1562,7 +1610,8 @@
       "postcode": "M5T 1G7",
       "countrycode": "CA"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "New Sky Restaurant",
@@ -1592,7 +1641,8 @@
       "postcode": "M5T 2G3",
       "countrycode": "CA"
     },
-    "rating": 3
+    "rating": 3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "North-East Chinese Restaurant",
@@ -1628,7 +1678,8 @@
         43.6532858
       ]
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Owl of Minerva Korean Restaurant",
@@ -1658,7 +1709,8 @@
       "postcode": "M5T 2E4",
       "countrycode": "CA"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Papa Spicy",
@@ -1688,7 +1740,8 @@
       "postcode": "M5T 2G3",
       "countrycode": "CA"
     },
-    "rating": 3.1
+    "rating": 3.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Pho Hung",
@@ -1718,7 +1771,8 @@
       "postcode": "M5T 2G7",
       "countrycode": "CA"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Pho Pasteur Vietnamese Cuisine",
@@ -1748,7 +1802,8 @@
       "postcode": "M5T 1H3",
       "countrycode": "CA"
     },
-    "rating": 4.7
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Pho Xe Lua",
@@ -1778,7 +1833,8 @@
       "postcode": "M5T 2E4",
       "countrycode": "CA"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Qin's Garden",
@@ -1814,7 +1870,8 @@
         43.6569266
       ]
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Ramen Station",
@@ -1844,7 +1901,8 @@
       "postcode": "M5T 2G3",
       "countrycode": "CA"
     },
-    "rating": 3
+    "rating": 3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "R&D",
@@ -1880,7 +1938,8 @@
         43.6514085
       ]
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Rol San Restaurant",
@@ -1910,7 +1969,8 @@
       "postcode": "M5T 2G7",
       "countrycode": "CA"
     },
-    "rating": 4.7
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Rosewood Chinese Cuisine",
@@ -1940,7 +2000,8 @@
       "postcode": "M5T 1G7",
       "countrycode": "CA"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Rua De Macau",
@@ -1971,7 +2032,8 @@
       "postcode": "M5T 1H1",
       "countrycode": "CA"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Sang's Great Seafood",
@@ -2001,7 +2063,8 @@
       "postcode": "M5T 2G3",
       "countrycode": "CA"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Shi Miao Dao Yunnan Rice Noodle",
@@ -2031,7 +2094,8 @@
       "postcode": "M5T 2E7",
       "countrycode": "CA"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Sichuan Garden Restaurant",
@@ -2061,7 +2125,8 @@
       "postcode": "M5T 2G3",
       "countrycode": "CA"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Simmer Huang",
@@ -2091,7 +2156,8 @@
       "postcode": "M5T 2G7",
       "countrycode": "CA"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Sky Dragon Chinese Restaurant",
@@ -2121,7 +2187,8 @@
       "postcode": "M5T 2E4",
       "countrycode": "CA"
     },
-    "rating": 2.9
+    "rating": 2.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Spice and Aroma",
@@ -2151,7 +2218,8 @@
       "postcode": "M5T 2G6",
       "countrycode": "CA"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Swatow Cantonese Restaurant",
@@ -2187,7 +2255,8 @@
         43.6537168
       ]
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Taste of Alley",
@@ -2223,7 +2292,8 @@
         43.6535837
       ]
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Taste of China Seafood Restaurant",
@@ -2253,7 +2323,8 @@
       "postcode": "M5T 2E7",
       "countrycode": "CA"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Ten Miles BBQ",
@@ -2283,7 +2354,8 @@
       "postcode": "M5T 2G3",
       "countrycode": "CA"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Thai Country Kitchen",
@@ -2313,7 +2385,8 @@
       "postcode": "M5T 2G7",
       "countrycode": "CA"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Wok Theory",
@@ -2344,7 +2417,8 @@
       "postcode": "M5T 1H3",
       "countrycode": "CA"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Xiao Bian Dan",
@@ -2374,7 +2448,8 @@
       "postcode": "M5T 2G7",
       "countrycode": "CA"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Yeah Yeah Thai",
@@ -2403,7 +2478,8 @@
       "country_code": "ca",
       "housenumber": "382"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Yin Ji Chang Fen",
@@ -2439,7 +2515,8 @@
         43.6553523
       ]
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Yummy Yummy Dumplings",
@@ -2475,7 +2552,8 @@
         43.6466112
       ]
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Yunshang Rice Noodle House",
@@ -2511,7 +2589,8 @@
         43.6535935
       ]
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Zao Bar & Grill",
@@ -2539,7 +2618,8 @@
       "country_code": "ca",
       "housenumber": "421"
     },
-    "rating": 3.1
+    "rating": 3.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "1 Kitchen",
@@ -2567,7 +2647,8 @@
       "country_code": "ca",
       "housenumber": "550"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Alo",
@@ -2596,7 +2677,8 @@
       "country_code": "ca",
       "housenumber": "163"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Amal",
@@ -2625,7 +2707,8 @@
       "country_code": "ca",
       "housenumber": "131"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Baro",
@@ -2654,7 +2737,8 @@
       "country_code": "ca",
       "housenumber": "485"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Byblos Downtown",
@@ -2683,7 +2767,8 @@
       "country_code": "ca",
       "housenumber": "11"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Bymark",
@@ -2711,7 +2796,8 @@
       "country_code": "ca",
       "housenumber": "66"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Canoe",
@@ -2739,7 +2825,8 @@
       "country_code": "ca",
       "housenumber": "66"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Campechano",
@@ -2767,7 +2854,8 @@
       "country_code": "ca",
       "housenumber": "504"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Chubby's Jamaican Kitchen",
@@ -2795,7 +2883,8 @@
       "country_code": "ca",
       "housenumber": "104"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cluny Bistro",
@@ -2823,7 +2912,8 @@
       "country_code": "ca",
       "housenumber": "35"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Don Alfonso 1890",
@@ -2852,7 +2942,8 @@
       "country_code": "ca",
       "housenumber": "1"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Donatello Restaurant",
@@ -2880,7 +2971,8 @@
       "country_code": "ca",
       "housenumber": "37"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "El Catrin Destileria",
@@ -2909,7 +3001,8 @@
       "country_code": "ca",
       "housenumber": "18"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "GEORGE Restaurant",
@@ -2937,7 +3030,8 @@
       "country_code": "ca",
       "housenumber": "111C"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "KŌST",
@@ -2965,7 +3059,8 @@
       "country_code": "ca",
       "housenumber": "80"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "La Fenice",
@@ -2993,7 +3088,8 @@
       "country_code": "ca",
       "housenumber": "319"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Leña Restaurante",
@@ -3022,7 +3118,8 @@
       "country_code": "ca",
       "housenumber": "176"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Luma",
@@ -3051,7 +3148,8 @@
       "country_code": "ca",
       "housenumber": "350"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Milagro Cantina",
@@ -3079,7 +3177,8 @@
       "country_code": "ca",
       "housenumber": "5"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Minami Toronto",
@@ -3107,7 +3206,8 @@
       "country_code": "ca",
       "housenumber": "225"
     },
-    "rating": 4.8
+    "rating": 4.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "PAI",
@@ -3136,7 +3236,8 @@
       "country_code": "ca",
       "housenumber": "18"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Petros82",
@@ -3164,7 +3265,8 @@
       "country_code": "ca",
       "housenumber": "299"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Quetzal",
@@ -3193,7 +3295,8 @@
       "country_code": "ca",
       "housenumber": "419"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Richmond Station",
@@ -3222,7 +3325,8 @@
       "country_code": "ca",
       "housenumber": "1"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Restaurant 20 Victoria",
@@ -3251,7 +3355,8 @@
       "country_code": "ca",
       "housenumber": "20"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "TOCA",
@@ -3280,7 +3385,8 @@
       "country_code": "ca",
       "housenumber": "181"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Abrielle",
@@ -3309,7 +3415,8 @@
       "country_code": "ca",
       "housenumber": "355"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Alforat",
@@ -3338,7 +3445,8 @@
       "country_code": "ca",
       "housenumber": "271"
     },
-    "rating": 3.1
+    "rating": 3.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Alpha's Shawarma",
@@ -3367,7 +3475,8 @@
       "country_code": "ca",
       "housenumber": "245"
     },
-    "rating": 4.8
+    "rating": 4.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "BeLeaf Vietnamese Cuisine",
@@ -3396,7 +3505,8 @@
       "country_code": "ca",
       "housenumber": "45"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Konjiki Ramen",
@@ -3424,7 +3534,8 @@
       "country_code": "ca",
       "housenumber": "41"
     },
-    "rating": 3.1
+    "rating": 3.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Le Gourmand",
@@ -3453,7 +3564,8 @@
       "country_code": "ca",
       "housenumber": "152"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Little Sister",
@@ -3482,7 +3594,8 @@
       "country_code": "ca",
       "housenumber": "102"
     },
-    "rating": 4.7
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Matagali Indian & Thai Cuisine",
@@ -3511,7 +3624,8 @@
       "country_code": "ca",
       "housenumber": "69"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Mieluna Cafe",
@@ -3540,7 +3654,8 @@
       "country_code": "ca",
       "housenumber": "483"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Neo Coffee Bar",
@@ -3569,7 +3684,8 @@
       "country_code": "ca",
       "housenumber": "161"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Oretta",
@@ -3598,7 +3714,8 @@
       "country_code": "ca",
       "housenumber": "633"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Reyna on King",
@@ -3627,7 +3744,8 @@
       "country_code": "ca",
       "housenumber": "354"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Salad King",
@@ -3655,7 +3773,8 @@
       "country_code": "ca",
       "housenumber": "340"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Sukho Thai",
@@ -3683,7 +3802,8 @@
       "country_code": "ca",
       "housenumber": "274"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Keg Steakhouse + Bar - Esplanade",
@@ -3712,7 +3832,8 @@
       "country_code": "ca",
       "housenumber": "26"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Dolyang Love&Fire Momo",
@@ -3740,7 +3861,8 @@
       "country_code": "ca",
       "housenumber": "249"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Jesmin Foods",
@@ -3768,7 +3890,8 @@
       "country_code": "ca",
       "housenumber": "403"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Cmt8",
@@ -3796,7 +3919,8 @@
       "country_code": "ca",
       "housenumber": "81"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Seoul Gamjatang Baldwin",
@@ -3825,7 +3949,8 @@
       "country_code": "ca",
       "housenumber": "3"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Toupie Premium Acai",
@@ -3853,7 +3978,8 @@
       "country_code": "ca",
       "housenumber": "298"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Shree Swami Samartha Vadapav Harborfront",
@@ -3881,7 +4007,8 @@
       "country_code": "ca",
       "housenumber": "8"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Siempre Breakfast & Lunch Restaurant",
@@ -3909,7 +4036,8 @@
       "country_code": "ca",
       "housenumber": "330"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Evana Cafe & Lounge",
@@ -3937,7 +4065,8 @@
       "country_code": "ca",
       "housenumber": "334"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Lhao",
@@ -3965,7 +4094,8 @@
       "country_code": "ca",
       "housenumber": "39"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Vero Italian Sandwich",
@@ -3994,7 +4124,8 @@
       "country_code": "ca",
       "housenumber": "477"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Shinji",
@@ -4023,7 +4154,8 @@
       "country_code": "ca",
       "housenumber": "333"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Chai Town",
@@ -4052,7 +4184,8 @@
       "country_code": "ca",
       "housenumber": "335"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Teow Tem Toh",
@@ -4080,7 +4213,8 @@
       "country_code": "ca",
       "housenumber": "237"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cafe Negin",
@@ -4109,7 +4243,8 @@
       "country_code": "ca",
       "housenumber": "787"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Som Tum Jinda",
@@ -4137,7 +4272,8 @@
       "country_code": "ca",
       "housenumber": "356"
     },
-    "rating": 3.1
+    "rating": 3.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Merkato Eri-Ethio Cafe & Restaurant",
@@ -4165,7 +4301,8 @@
       "country_code": "ca",
       "housenumber": "436"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Royal Karahi",
@@ -4193,7 +4330,8 @@
       "country_code": "ca",
       "housenumber": "348"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Tongdak",
@@ -4222,7 +4360,8 @@
       "country_code": "ca",
       "housenumber": "50"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Myungrang Hotdog",
@@ -4250,7 +4389,8 @@
       "country_code": "ca",
       "housenumber": "648"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "And Banh Mi",
@@ -4278,7 +4418,8 @@
       "country_code": "ca",
       "housenumber": "13"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Chungneon Cupbap Spadina",
@@ -4307,7 +4448,8 @@
       "country_code": "ca",
       "housenumber": "398"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Chilakillers",
@@ -4335,7 +4477,8 @@
       "country_code": "ca",
       "housenumber": "181"
     },
-    "rating": 2.9
+    "rating": 2.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Sushi Yeon",
@@ -4363,7 +4506,8 @@
       "country_code": "ca",
       "housenumber": "59"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Frenchy Bar et Brasserie",
@@ -4392,7 +4536,8 @@
       "country_code": "ca",
       "housenumber": "145"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Chase",
@@ -4421,7 +4566,8 @@
       "country_code": "ca",
       "housenumber": "10"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Alobar Downtown",
@@ -4449,7 +4595,8 @@
       "country_code": "ca",
       "housenumber": "150"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "LOUIX LOUIS",
@@ -4478,7 +4625,8 @@
       "country_code": "ca",
       "housenumber": "325"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "JaBistro",
@@ -4507,7 +4655,8 @@
       "country_code": "ca",
       "housenumber": "222"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Hy's Steakhouse & Cocktail Bar",
@@ -4536,7 +4685,8 @@
       "country_code": "ca",
       "housenumber": "365"
     },
-    "rating": 4.7
+    "rating": 4.7,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Daphne",
@@ -4564,7 +4714,8 @@
       "country_code": "ca",
       "housenumber": "67"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Kimchi Korea House",
@@ -4593,7 +4744,8 @@
       "country_code": "ca",
       "housenumber": "149"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Don Don Izakaya",
@@ -4622,7 +4774,8 @@
       "country_code": "ca",
       "housenumber": "130"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Japango Sushi & Noodle Restaurant",
@@ -4651,7 +4804,8 @@
       "country_code": "ca",
       "housenumber": "122"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "NAMI Japanese Seafood Restaurant",
@@ -4679,7 +4833,8 @@
       "country_code": "ca",
       "housenumber": "55"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Nom Nom Nom Poutine",
@@ -4708,7 +4863,8 @@
       "country_code": "ca",
       "housenumber": "707"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Nantana Thai Food & Desserts",
@@ -4737,7 +4893,8 @@
       "country_code": "ca",
       "housenumber": "707"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "A Szechuan Restaurant",
@@ -4766,7 +4923,8 @@
       "country_code": "ca",
       "housenumber": "440"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Owl of Minerva",
@@ -4794,7 +4952,8 @@
       "country_code": "ca",
       "housenumber": "280"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Rebels & Demons",
@@ -4822,7 +4981,8 @@
       "country_code": "ca",
       "housenumber": "241"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Shi Miao Dao Yunan Rice Noodle",
@@ -4851,7 +5011,8 @@
       "country_code": "ca",
       "housenumber": "318"
     },
-    "rating": 3.1
+    "rating": 3.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Adega Restaurante",
@@ -4879,7 +5040,8 @@
       "country_code": "ca",
       "housenumber": "33"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Ahmetzade Traditionaltaste",
@@ -4908,7 +5070,8 @@
       "country_code": "ca",
       "housenumber": "330"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Akashiro by Sushi Q",
@@ -4937,7 +5100,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "9 Sips Tea Shoppe",
@@ -4966,7 +5130,8 @@
       "country_code": "ca",
       "housenumber": "32"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "3 Brewers",
@@ -4995,7 +5160,8 @@
       "country_code": "ca",
       "housenumber": "275"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "001 Grillz",
@@ -5024,7 +5190,8 @@
       "country_code": "ca",
       "housenumber": "335"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "A&W Eaton Centre",
@@ -5053,7 +5220,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Jollibee",
@@ -5082,7 +5250,8 @@
       "country_code": "ca",
       "housenumber": "334"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Gyubee Japanese Grill",
@@ -5111,7 +5280,8 @@
       "country_code": "ca",
       "housenumber": "157"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hwaro Korean BBQ",
@@ -5139,7 +5309,8 @@
       "country_code": "ca",
       "housenumber": "332"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "MIA Brunch Bar",
@@ -5168,7 +5339,8 @@
       "country_code": "ca",
       "housenumber": "21"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Mary Brown's Chicken",
@@ -5197,7 +5369,8 @@
       "country_code": "ca",
       "housenumber": "10"
     },
-    "rating": 4.7
+    "rating": 4.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Qishr Coffee House",
@@ -5225,7 +5398,8 @@
       "country_code": "ca",
       "housenumber": "21"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "TRE Viet Heritage Kitchen & Bar",
@@ -5253,7 +5427,8 @@
       "country_code": "ca",
       "housenumber": "31"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Pot Time Hot Pot",
@@ -5282,7 +5457,8 @@
       "country_code": "ca",
       "housenumber": "45"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Senator Restaurant",
@@ -5311,7 +5487,8 @@
       "country_code": "ca",
       "housenumber": "249"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Fran's Restaurant",
@@ -5340,7 +5517,8 @@
       "country_code": "ca",
       "housenumber": "200"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Queen Mother Cafe",
@@ -5369,7 +5547,8 @@
       "country_code": "ca",
       "housenumber": "208"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "The Rivoli",
@@ -5397,7 +5576,8 @@
       "country_code": "ca",
       "housenumber": "332"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Epicure Cafe & Grill",
@@ -5426,7 +5606,8 @@
       "country_code": "ca",
       "housenumber": "502"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Fressen",
@@ -5455,7 +5636,8 @@
       "country_code": "ca",
       "housenumber": "478"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Shanghai Cowgirl",
@@ -5484,7 +5666,8 @@
       "country_code": "ca",
       "housenumber": "538"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Barchef",
@@ -5513,7 +5696,8 @@
       "country_code": "ca",
       "housenumber": "472"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Peter Pan Bistro",
@@ -5542,7 +5726,8 @@
       "country_code": "ca",
       "housenumber": "373"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Cafe Crepe",
@@ -5571,7 +5756,8 @@
       "country_code": "ca",
       "housenumber": "246"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Black Bull Hotel & Tavern",
@@ -5599,7 +5785,8 @@
       "country_code": "ca",
       "housenumber": "298"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hot Wings Grill & Rib House",
@@ -5628,7 +5815,8 @@
       "country_code": "ca",
       "housenumber": "563"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Rex Hotel Jazz & Blues Bar",
@@ -5657,7 +5845,8 @@
       "country_code": "ca",
       "housenumber": "194"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Aji Sai Japanese Restaurant",
@@ -5685,7 +5874,8 @@
       "country_code": "ca",
       "housenumber": "467"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Arepa",
@@ -5714,7 +5904,8 @@
       "country_code": "ca",
       "housenumber": "490"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "BQM Diner",
@@ -5743,7 +5934,8 @@
       "country_code": "ca",
       "housenumber": "354"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Falafel Queen",
@@ -5772,7 +5964,8 @@
       "country_code": "ca",
       "housenumber": "576"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Famous BBQ Express",
@@ -5800,7 +5993,8 @@
       "country_code": "ca",
       "housenumber": "385"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Ginger",
@@ -5829,7 +6023,8 @@
       "country_code": "ca",
       "housenumber": "212"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hosu Bistro",
@@ -5858,7 +6053,8 @@
       "country_code": "ca",
       "housenumber": "254"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "East!",
@@ -5886,7 +6082,8 @@
       "country_code": "ca",
       "housenumber": "240"
     },
-    "rating": 3
+    "rating": 3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Everest",
@@ -5914,7 +6111,8 @@
       "country_code": "ca",
       "housenumber": "232"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Java House",
@@ -5943,7 +6141,8 @@
       "country_code": "ca",
       "housenumber": "537"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Blackbird Baking Co.",
@@ -5972,7 +6171,8 @@
       "country_code": "ca",
       "housenumber": "95"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Stack'd Deli Kitchen",
@@ -6001,7 +6201,8 @@
       "country_code": "ca",
       "housenumber": "95"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Notte Ristorante",
@@ -6028,7 +6229,8 @@
       "country_code": "ca",
       "housenumber": ""
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Buster's Sea Cove Commerce Court",
@@ -6057,7 +6259,8 @@
       "country_code": "ca",
       "housenumber": "199"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Assembly Chef's Hall",
@@ -6086,7 +6289,8 @@
       "country_code": "ca",
       "housenumber": "111"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Ramen Isshin Assembly Chef's Hall",
@@ -6115,7 +6319,8 @@
       "country_code": "ca",
       "housenumber": "111"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "The Red Eye Diner",
@@ -6144,7 +6349,8 @@
       "country_code": "ca",
       "housenumber": "111"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Sushi Yugen",
@@ -6172,7 +6378,8 @@
       "country_code": "ca",
       "housenumber": "150"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Jump Restaurant",
@@ -6200,7 +6407,8 @@
       "country_code": "ca",
       "housenumber": "18"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "P.J. O'Brien Irish Pub",
@@ -6229,7 +6437,8 @@
       "country_code": "ca",
       "housenumber": "39"
     },
-    "rating": 3
+    "rating": 3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Bardi's Steak House",
@@ -6258,7 +6467,8 @@
       "country_code": "ca",
       "housenumber": "56"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "The George Street Diner",
@@ -6287,7 +6497,8 @@
       "country_code": "ca",
       "housenumber": "129"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Patrician Grill",
@@ -6315,7 +6526,8 @@
       "country_code": "ca",
       "housenumber": "219"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Le Petit Dejeuner",
@@ -6344,7 +6556,8 @@
       "country_code": "ca",
       "housenumber": "191"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Bombay Palace Downtown Toronto",
@@ -6372,7 +6585,8 @@
       "country_code": "ca",
       "housenumber": "71"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Berkeley Cafe",
@@ -6400,7 +6614,8 @@
       "country_code": "ca",
       "housenumber": "141"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Mengrai Gourmet Thai",
@@ -6428,7 +6643,8 @@
       "country_code": "ca",
       "housenumber": "82"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Ueno Market",
@@ -6456,7 +6672,8 @@
       "country_code": "ca",
       "housenumber": "75"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Il Re",
@@ -6484,7 +6701,8 @@
       "country_code": "ca",
       "housenumber": "246"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "La Bettola Di Terroni",
@@ -6513,7 +6731,8 @@
       "country_code": "ca",
       "housenumber": "106"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Terroni Adelaide",
@@ -6541,7 +6760,8 @@
       "country_code": "ca",
       "housenumber": "57"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "C'est What",
@@ -6570,7 +6790,8 @@
       "country_code": "ca",
       "housenumber": "67"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Keg Steakhouse + Bar Esplanade",
@@ -6599,7 +6820,8 @@
       "country_code": "ca",
       "housenumber": "26"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Biff's Bistro",
@@ -6627,7 +6849,8 @@
       "country_code": "ca",
       "housenumber": "4"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "The Sultan's Tent",
@@ -6656,7 +6879,8 @@
       "country_code": "ca",
       "housenumber": "49"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hothouse Restaurant",
@@ -6685,7 +6909,8 @@
       "country_code": "ca",
       "housenumber": "35"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cluny Bistro & Boulangerie",
@@ -6713,7 +6938,8 @@
       "country_code": "ca",
       "housenumber": "35"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Madrina Bar y Tapas",
@@ -6741,7 +6967,8 @@
       "country_code": "ca",
       "housenumber": "2"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Mill Street Brewpub",
@@ -6770,7 +6997,8 @@
       "country_code": "ca",
       "housenumber": "21"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "SOMA Chocolatemaker",
@@ -6798,7 +7026,8 @@
       "country_code": "ca",
       "housenumber": "32"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Gusto 501",
@@ -6826,7 +7055,8 @@
       "country_code": "ca",
       "housenumber": "501"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Tosca",
@@ -6854,7 +7084,8 @@
       "country_code": "ca",
       "housenumber": "20"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Sukhothai",
@@ -6883,7 +7114,8 @@
       "country_code": "ca",
       "housenumber": "52"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Keg Mansion",
@@ -6912,7 +7144,8 @@
       "country_code": "ca",
       "housenumber": "515"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Pilot",
@@ -6941,7 +7174,8 @@
       "country_code": "ca",
       "housenumber": "22"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cibo Wine Bar Yorkville",
@@ -6970,7 +7204,8 @@
       "country_code": "ca",
       "housenumber": "133"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Eataly Toronto",
@@ -6999,7 +7234,8 @@
       "country_code": "ca",
       "housenumber": "55"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Trattoria Nervosa",
@@ -7027,7 +7263,8 @@
       "country_code": "ca",
       "housenumber": "75"
     },
-    "rating": 2.9
+    "rating": 2.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cafe Boulud",
@@ -7056,7 +7293,8 @@
       "country_code": "ca",
       "housenumber": "60"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Sassafraz",
@@ -7085,7 +7323,8 @@
       "country_code": "ca",
       "housenumber": "100"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hemingway's Restaurant",
@@ -7113,7 +7352,8 @@
       "country_code": "ca",
       "housenumber": "142"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cactus Club Cafe",
@@ -7142,7 +7382,8 @@
       "country_code": "ca",
       "housenumber": "77"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Earls Kitchen + Bar",
@@ -7171,7 +7412,8 @@
       "country_code": "ca",
       "housenumber": "150"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Moxies Toronto Downtown",
@@ -7199,7 +7441,8 @@
       "country_code": "ca",
       "housenumber": "70"
     },
-    "rating": 3.1
+    "rating": 3.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Jack Astor's Bar & Grill",
@@ -7228,7 +7471,8 @@
       "country_code": "ca",
       "housenumber": "144"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Milestones Grill + Bar",
@@ -7257,7 +7501,8 @@
       "country_code": "ca",
       "housenumber": "100"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Scaddabush Italian Kitchen & Bar",
@@ -7285,7 +7530,8 @@
       "country_code": "ca",
       "housenumber": "382"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Kinka Izakaya",
@@ -7314,7 +7560,8 @@
       "country_code": "ca",
       "housenumber": "398"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Katsuya",
@@ -7341,7 +7588,8 @@
       "country_code": "ca",
       "housenumber": ""
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Sushi Shop Eaton Centre",
@@ -7370,7 +7618,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Sushi Q Eaton Centre",
@@ -7399,7 +7648,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Miku Toronto",
@@ -7428,7 +7678,8 @@
       "country_code": "ca",
       "housenumber": "10"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Pizzeria Libretto University",
@@ -7456,7 +7707,8 @@
       "country_code": "ca",
       "housenumber": "155"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Khao San Road",
@@ -7484,7 +7736,8 @@
       "country_code": "ca",
       "housenumber": "11"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Ballroom Bowl",
@@ -7512,7 +7765,8 @@
       "country_code": "ca",
       "housenumber": "145"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "W Burger Bar",
@@ -7541,7 +7795,8 @@
       "country_code": "ca",
       "housenumber": "10"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pita Pit",
@@ -7568,7 +7823,8 @@
       "country_code": "ca",
       "housenumber": ""
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Osmow's Shawarma",
@@ -7597,7 +7853,8 @@
       "country_code": "ca",
       "housenumber": "245"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Aloette",
@@ -7626,7 +7883,8 @@
       "country_code": "ca",
       "housenumber": "163"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Maman Toronto",
@@ -7655,7 +7913,8 @@
       "country_code": "ca",
       "housenumber": "100"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Dineen Coffee Co.",
@@ -7683,7 +7942,8 @@
       "country_code": "ca",
       "housenumber": "140"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Balzac's Coffee Roasters",
@@ -7711,7 +7971,8 @@
       "country_code": "ca",
       "housenumber": "1"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Starbucks Eaton Centre",
@@ -7740,7 +8001,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Tim Hortons Eaton Centre",
@@ -7769,7 +8031,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Second Cup Cafe",
@@ -7798,7 +8061,8 @@
       "country_code": "ca",
       "housenumber": "700"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "D Spot Dessert Cafe",
@@ -7827,7 +8091,8 @@
       "country_code": "ca",
       "housenumber": "607"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Nadege Patisserie",
@@ -7855,7 +8120,8 @@
       "country_code": "ca",
       "housenumber": "780"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Delysées Luxury Desserts",
@@ -7884,7 +8150,8 @@
       "country_code": "ca",
       "housenumber": "131"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Butter Baker",
@@ -7912,7 +8179,8 @@
       "country_code": "ca",
       "housenumber": "120"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Uncle Tetsu Japanese Cheesecake",
@@ -7940,7 +8208,8 @@
       "country_code": "ca",
       "housenumber": "598"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "The Old Spaghetti Factory",
@@ -7968,7 +8237,8 @@
       "country_code": "ca",
       "housenumber": "54"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Pasta Mia",
@@ -7996,7 +8266,8 @@
       "country_code": "ca",
       "housenumber": "15"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cora Breakfast and Lunch",
@@ -8025,7 +8296,8 @@
       "country_code": "ca",
       "housenumber": "277"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "OEB Breakfast Co.",
@@ -8053,7 +8325,8 @@
       "country_code": "ca",
       "housenumber": "330"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Bar Pompette",
@@ -8082,7 +8355,8 @@
       "country_code": "ca",
       "housenumber": "607"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Rasa",
@@ -8110,7 +8384,8 @@
       "country_code": "ca",
       "housenumber": "196"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Grey Gardens",
@@ -8138,7 +8413,8 @@
       "country_code": "ca",
       "housenumber": "199"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Seven Lives Tacos y Mariscos",
@@ -8167,7 +8443,8 @@
       "country_code": "ca",
       "housenumber": "72"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "El Rey Mezcal Bar",
@@ -8195,7 +8472,8 @@
       "country_code": "ca",
       "housenumber": "2A"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Wanda's Pie in the Sky",
@@ -8223,7 +8501,8 @@
       "country_code": "ca",
       "housenumber": "287"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Kensington Brewing Company",
@@ -8251,7 +8530,8 @@
       "country_code": "ca",
       "housenumber": "299"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Patois Toronto",
@@ -8280,7 +8560,8 @@
       "country_code": "ca",
       "housenumber": "794"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Carbon Bar",
@@ -8309,7 +8590,8 @@
       "country_code": "ca",
       "housenumber": "99"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Tacos 101",
@@ -8338,7 +8620,8 @@
       "country_code": "ca",
       "housenumber": "101"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "TacoTaco",
@@ -8366,7 +8649,8 @@
       "country_code": "ca",
       "housenumber": "319"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Burrito Boyz",
@@ -8394,7 +8678,8 @@
       "country_code": "ca",
       "housenumber": "74"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Freshii",
@@ -8422,7 +8707,8 @@
       "country_code": "ca",
       "housenumber": "110"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pita Lite",
@@ -8451,7 +8737,8 @@
       "country_code": "ca",
       "housenumber": "100"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Paramount Fine Foods Brookfield Place",
@@ -8480,7 +8767,8 @@
       "country_code": "ca",
       "housenumber": "181"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Kibo Sushi House",
@@ -8509,7 +8797,8 @@
       "country_code": "ca",
       "housenumber": "123"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Saku Sushi",
@@ -8538,7 +8827,8 @@
       "country_code": "ca",
       "housenumber": "478"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Tora Toronto",
@@ -8567,7 +8857,8 @@
       "country_code": "ca",
       "housenumber": "77"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Tachi",
@@ -8596,7 +8887,8 @@
       "country_code": "ca",
       "housenumber": "111"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Kibo Sushi House Commerce Court",
@@ -8625,7 +8917,8 @@
       "country_code": "ca",
       "housenumber": "199"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Fresh Burger",
@@ -8653,7 +8946,8 @@
       "country_code": "ca",
       "housenumber": "120"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Five Guys",
@@ -8682,7 +8976,8 @@
       "country_code": "ca",
       "housenumber": "329"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Shake Shack",
@@ -8709,7 +9004,8 @@
       "country_code": "ca",
       "housenumber": ""
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Chick-fil-A Eaton Centre",
@@ -8738,7 +9034,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Dave's Hot Chicken",
@@ -8767,7 +9064,8 @@
       "country_code": "ca",
       "housenumber": "336"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Taco Bell Yonge-Dundas",
@@ -8796,7 +9094,8 @@
       "country_code": "ca",
       "housenumber": "10"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Chipotle Mexican Grill",
@@ -8824,7 +9123,8 @@
       "country_code": "ca",
       "housenumber": "323"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Hero Certified Burgers",
@@ -8853,7 +9153,8 @@
       "country_code": "ca",
       "housenumber": "70"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "A&W Queen West",
@@ -8882,7 +9183,8 @@
       "country_code": "ca",
       "housenumber": "400"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pita Land",
@@ -8911,7 +9213,8 @@
       "country_code": "ca",
       "housenumber": "10"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pizzaiolo",
@@ -8940,7 +9243,8 @@
       "country_code": "ca",
       "housenumber": "420"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pizza Pizza Queen West",
@@ -8969,7 +9273,8 @@
       "country_code": "ca",
       "housenumber": "360"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pizza Nova",
@@ -8997,7 +9302,8 @@
       "country_code": "ca",
       "housenumber": "550"
     },
-    "rating": 3
+    "rating": 3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pizzeria Libretto Ossington",
@@ -9025,7 +9331,8 @@
       "country_code": "ca",
       "housenumber": "221"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Domino's Pizza Yonge",
@@ -9053,7 +9360,8 @@
       "country_code": "ca",
       "housenumber": "452"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pizza Hut Yonge-Dundas",
@@ -9082,7 +9390,8 @@
       "country_code": "ca",
       "housenumber": "10"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Paris Baguette",
@@ -9111,7 +9420,8 @@
       "country_code": "ca",
       "housenumber": "620"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Bake Code Croissanterie",
@@ -9139,7 +9449,8 @@
       "country_code": "ca",
       "housenumber": "589"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Jimmy's Coffee",
@@ -9168,7 +9479,8 @@
       "country_code": "ca",
       "housenumber": "107"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Fahrenheit Coffee",
@@ -9197,7 +9509,8 @@
       "country_code": "ca",
       "housenumber": "120"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "The Library Specialty Coffee",
@@ -9225,7 +9538,8 @@
       "country_code": "ca",
       "housenumber": "281"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Balzac's Coffee Roasters Market",
@@ -9254,7 +9568,8 @@
       "country_code": "ca",
       "housenumber": "93"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Mos Mos Coffee",
@@ -9283,7 +9598,8 @@
       "country_code": "ca",
       "housenumber": "25"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Cafe Fiorentina",
@@ -9312,7 +9628,8 @@
       "country_code": "ca",
       "housenumber": "463"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "The Danish Pastry House",
@@ -9341,7 +9658,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Kettleman's Bagel Co.",
@@ -9368,7 +9686,8 @@
       "country_code": "ca",
       "housenumber": ""
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Cobs Bread",
@@ -9397,7 +9716,8 @@
       "country_code": "ca",
       "housenumber": "370"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Nord Lyon",
@@ -9426,7 +9746,8 @@
       "country_code": "ca",
       "housenumber": "111"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Miller Tavern",
@@ -9454,7 +9775,8 @@
       "country_code": "ca",
       "housenumber": "31"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Rabbit Hole",
@@ -9483,7 +9805,8 @@
       "country_code": "ca",
       "housenumber": "21"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Woods Restaurant & Bar",
@@ -9512,7 +9835,8 @@
       "country_code": "ca",
       "housenumber": "45"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Butcher Chef",
@@ -9541,7 +9865,8 @@
       "country_code": "ca",
       "housenumber": "8"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Gusto 101",
@@ -9570,7 +9895,8 @@
       "country_code": "ca",
       "housenumber": "101"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Lee Restaurant",
@@ -9598,7 +9924,8 @@
       "country_code": "ca",
       "housenumber": "601"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "SARA Restaurant",
@@ -9626,7 +9953,8 @@
       "country_code": "ca",
       "housenumber": "98"
     },
-    "rating": 3.1
+    "rating": 3.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Vela",
@@ -9654,7 +9982,8 @@
       "country_code": "ca",
       "housenumber": "90"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Maxime's",
@@ -9682,7 +10011,8 @@
       "country_code": "ca",
       "housenumber": "77"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Aera",
@@ -9709,7 +10039,8 @@
       "country_code": "ca",
       "housenumber": ""
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Drom Taberna",
@@ -9738,7 +10069,8 @@
       "country_code": "ca",
       "housenumber": "458"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "416 Snack Bar",
@@ -9766,7 +10098,8 @@
       "country_code": "ca",
       "housenumber": "181"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "KOST",
@@ -9794,7 +10127,8 @@
       "country_code": "ca",
       "housenumber": "80"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Bar Mordecai",
@@ -9822,7 +10156,8 @@
       "country_code": "ca",
       "housenumber": "1272"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Wheat Sheaf Tavern",
@@ -9851,7 +10186,8 @@
       "country_code": "ca",
       "housenumber": "667"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Weslodge Saloon",
@@ -9880,7 +10216,8 @@
       "country_code": "ca",
       "housenumber": "480"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Bar Hop Brewco",
@@ -9908,7 +10245,8 @@
       "country_code": "ca",
       "housenumber": "137"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Pint Public House",
@@ -9936,7 +10274,8 @@
       "country_code": "ca",
       "housenumber": "277"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Mascot Brewery",
@@ -9964,7 +10303,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Steam Whistle Biergarten",
@@ -9993,7 +10333,8 @@
       "country_code": "ca",
       "housenumber": "255"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Amsterdam Brewhouse",
@@ -10021,7 +10362,8 @@
       "country_code": "ca",
       "housenumber": "245"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Fionn MacCool's",
@@ -10050,7 +10392,8 @@
       "country_code": "ca",
       "housenumber": "181"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "St Lawrence Pizza and Pasta",
@@ -10079,7 +10422,8 @@
       "country_code": "ca",
       "housenumber": "93"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Carousel Bakery",
@@ -10108,7 +10452,8 @@
       "country_code": "ca",
       "housenumber": "93"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Buster's Sea Cove Market",
@@ -10137,7 +10482,8 @@
       "country_code": "ca",
       "housenumber": "93"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Churrasco of St Lawrence",
@@ -10166,7 +10512,8 @@
       "country_code": "ca",
       "housenumber": "93"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Mustachio Sandwich",
@@ -10195,7 +10542,8 @@
       "country_code": "ca",
       "housenumber": "93"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Paddington's Pump",
@@ -10224,7 +10572,8 @@
       "country_code": "ca",
       "housenumber": "93"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "St Urbain Bagel",
@@ -10253,7 +10602,8 @@
       "country_code": "ca",
       "housenumber": "93"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Yianni's Kitchen",
@@ -10282,7 +10632,8 @@
       "country_code": "ca",
       "housenumber": "93"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pumpernickel's",
@@ -10310,7 +10661,8 @@
       "country_code": "ca",
       "housenumber": "55"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "The Burger's Priest",
@@ -10339,7 +10691,8 @@
       "country_code": "ca",
       "housenumber": "463"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Craig's Cookies",
@@ -10367,7 +10720,8 @@
       "country_code": "ca",
       "housenumber": "1450"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Bindia Indian Bistro",
@@ -10396,7 +10750,8 @@
       "country_code": "ca",
       "housenumber": "16"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Kothur Indian Cuisine",
@@ -10425,7 +10780,8 @@
       "country_code": "ca",
       "housenumber": "649"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Indian Biriyani House",
@@ -10454,7 +10810,8 @@
       "country_code": "ca",
       "housenumber": "181"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Little India Restaurant",
@@ -10483,7 +10840,8 @@
       "country_code": "ca",
       "housenumber": "255"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Amaya Express",
@@ -10512,7 +10870,8 @@
       "country_code": "ca",
       "housenumber": "220"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Gandhi Cuisine",
@@ -10541,7 +10900,8 @@
       "country_code": "ca",
       "housenumber": "554"
     },
-    "rating": 4.7
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Saffron Spice Kitchen",
@@ -10570,7 +10930,8 @@
       "country_code": "ca",
       "housenumber": "459"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Exotic Tandoori Restaurant",
@@ -10598,7 +10959,8 @@
       "country_code": "ca",
       "housenumber": "11"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Butter Chicken Factory",
@@ -10626,7 +10988,8 @@
       "country_code": "ca",
       "housenumber": "560"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Aanch Modernist Indian Cuisine",
@@ -10654,7 +11017,8 @@
       "country_code": "ca",
       "housenumber": "259"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Poopathy Mess",
@@ -10682,7 +11046,8 @@
       "country_code": "ca",
       "housenumber": "585"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Urban Maharajas",
@@ -10710,7 +11075,8 @@
       "country_code": "ca",
       "housenumber": "22"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Bar Goa",
@@ -10738,7 +11104,8 @@
       "country_code": "ca",
       "housenumber": "36"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Dil Tak Indian Cuisine and Bar",
@@ -10767,7 +11134,8 @@
       "country_code": "ca",
       "housenumber": "8"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Kathi Roll Express",
@@ -10796,7 +11164,8 @@
       "country_code": "ca",
       "housenumber": "692"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Hawa Beirut",
@@ -10824,7 +11193,8 @@
       "country_code": "ca",
       "housenumber": "466"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Shawarma West - Queen Street",
@@ -10853,7 +11223,8 @@
       "country_code": "ca",
       "housenumber": "746"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Tahini's Church & Dundas",
@@ -10883,7 +11254,8 @@
       "country_code": "ca",
       "housenumber": "215"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "M'Zaar Lebanese",
@@ -10911,7 +11283,8 @@
       "country_code": "ca",
       "housenumber": "668"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Lebanon Express",
@@ -10940,7 +11313,8 @@
       "country_code": "ca",
       "housenumber": "439"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Daymi",
@@ -10968,7 +11342,8 @@
       "country_code": "ca",
       "housenumber": "586"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Sultan Ahmet Turkish Cuisine",
@@ -10996,7 +11371,8 @@
       "country_code": "ca",
       "housenumber": "26"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Turquoise Restaurant",
@@ -11024,7 +11400,8 @@
       "country_code": "ca",
       "housenumber": "431"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Sumaq Iraqi Charcoal Grill - Downtown",
@@ -11052,7 +11429,8 @@
       "country_code": "ca",
       "housenumber": "467"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Paramount Fine Foods - Yonge & Dundas",
@@ -11081,7 +11459,8 @@
       "country_code": "ca",
       "housenumber": "253"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Volos Greek Cuisine",
@@ -11109,7 +11488,8 @@
       "country_code": "ca",
       "housenumber": "133"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Estiatorio Milos Toronto",
@@ -11138,7 +11518,8 @@
       "country_code": "ca",
       "housenumber": "330"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Agora Yorkville",
@@ -11166,7 +11547,8 @@
       "country_code": "ca",
       "housenumber": "105"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Agora Queen West",
@@ -11195,7 +11577,8 @@
       "country_code": "ca",
       "housenumber": "921"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Jimmy The Greek - Commerce Court",
@@ -11224,7 +11607,8 @@
       "country_code": "ca",
       "housenumber": "199"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Jimmy The Greek - First Canadian Place",
@@ -11253,7 +11637,8 @@
       "country_code": "ca",
       "housenumber": "100"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Mandarin Restaurant",
@@ -11283,7 +11668,8 @@
       "country_code": "ca",
       "housenumber": "1255"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cha Lau: The Dim Sum Emporium",
@@ -11313,7 +11699,8 @@
       "country_code": "ca",
       "housenumber": "5096"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Master Cooking House",
@@ -11343,7 +11730,8 @@
       "country_code": "ca",
       "housenumber": "5555"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Golden Stove",
@@ -11373,7 +11761,8 @@
       "country_code": "ca",
       "housenumber": "2418"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Gourmet Express",
@@ -11403,7 +11792,8 @@
       "country_code": "ca",
       "housenumber": "1735"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Koshaa Fine Indian Cuisine",
@@ -11433,7 +11823,8 @@
       "country_code": "ca",
       "housenumber": "2314"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Chutneys",
@@ -11463,7 +11854,8 @@
       "country_code": "ca",
       "housenumber": "3077"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Tandoori Time",
@@ -11493,7 +11885,8 @@
       "country_code": "ca",
       "housenumber": "1727"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Angara Indian and Hakka Cuisine",
@@ -11523,7 +11916,8 @@
       "country_code": "ca",
       "housenumber": "5555"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Food Mantra",
@@ -11550,7 +11944,8 @@
       "country_code": "ca",
       "housenumber": ""
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "KarachiXpress",
@@ -11579,7 +11974,8 @@
       "country_code": "ca",
       "housenumber": "133"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Mehfill Indian Cuisine",
@@ -11608,7 +12004,8 @@
       "country_code": "ca",
       "housenumber": "2687"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Feast of Dilli",
@@ -11638,7 +12035,8 @@
       "country_code": "ca",
       "housenumber": "378"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The King's Kurry",
@@ -11667,7 +12065,8 @@
       "country_code": "ca",
       "housenumber": "3038"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Kothur Indian Cuisine",
@@ -11696,7 +12095,8 @@
       "country_code": "ca",
       "housenumber": "2403"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Dosa Twist",
@@ -11726,7 +12126,8 @@
       "country_code": "ca",
       "housenumber": "827"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Parantha Palace",
@@ -11755,7 +12156,8 @@
       "country_code": "ca",
       "housenumber": "345"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Eggholic - Indian Street Food",
@@ -11784,7 +12186,8 @@
       "country_code": "ca",
       "housenumber": "2687"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Curry and Chutney By Gopal's",
@@ -11814,7 +12217,8 @@
       "country_code": "ca",
       "housenumber": "317"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Shelby's Legendary Shawarma",
@@ -11843,7 +12247,8 @@
       "country_code": "ca",
       "housenumber": "2140"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Kebab 49 - Turkish Restaurant",
@@ -11873,7 +12278,8 @@
       "country_code": "ca",
       "housenumber": "5308"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Olive Kebab",
@@ -11903,7 +12309,8 @@
       "country_code": "ca",
       "housenumber": "2836"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Oasis Shawarma and Wings",
@@ -11932,7 +12339,8 @@
       "country_code": "ca",
       "housenumber": "3308"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Shawarma Club",
@@ -11962,7 +12370,8 @@
       "country_code": "ca",
       "housenumber": "323"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Three Brothers Restaurant",
@@ -11992,7 +12401,8 @@
       "country_code": "ca",
       "housenumber": "657"
     },
-    "rating": 2.9
+    "rating": 2.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Armenian Bistro",
@@ -12021,7 +12431,8 @@
       "country_code": "ca",
       "housenumber": "5487"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Thammada Thai Cuisine",
@@ -12051,7 +12462,8 @@
       "country_code": "ca",
       "housenumber": "2888"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Nimman Thai Cuisine",
@@ -12081,7 +12493,8 @@
       "country_code": "ca",
       "housenumber": "2451"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Chiang Mai Thai Kitchen",
@@ -12110,7 +12523,8 @@
       "country_code": "ca",
       "housenumber": "84"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Thairoomgrand Etobicoke",
@@ -12140,7 +12554,8 @@
       "country_code": "ca",
       "housenumber": "5112"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Taste Of Thailand Cuisine",
@@ -12170,7 +12585,8 @@
       "country_code": "ca",
       "housenumber": "5310"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "BuaThai",
@@ -12199,7 +12615,8 @@
       "country_code": "ca",
       "housenumber": "743"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Insadong Korean Restaurant",
@@ -12229,7 +12646,8 @@
       "country_code": "ca",
       "housenumber": "4941"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Nobuya",
@@ -12259,7 +12677,8 @@
       "country_code": "ca",
       "housenumber": "285"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "KIBO Sushi House - Humber",
@@ -12288,7 +12707,8 @@
       "country_code": "ca",
       "housenumber": "106"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Sushi Kaji Restaurant",
@@ -12318,7 +12738,8 @@
       "country_code": "ca",
       "housenumber": "860"
     },
-    "rating": 2.5
+    "rating": 2.5,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Sushi Run",
@@ -12348,7 +12769,8 @@
       "country_code": "ca",
       "housenumber": "3351"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Sushi-Ya Japan",
@@ -12377,7 +12799,8 @@
       "country_code": "ca",
       "housenumber": "621"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Momiji Japanese Restaurant",
@@ -12407,7 +12830,8 @@
       "country_code": "ca",
       "housenumber": "2955"
     },
-    "rating": 4.8
+    "rating": 4.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Ikkoi Sushi & Ramen Japanese Cuisine",
@@ -12437,7 +12861,8 @@
       "country_code": "ca",
       "housenumber": "5084"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Toji Sushi",
@@ -12467,7 +12892,8 @@
       "country_code": "ca",
       "housenumber": "5088"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Shin Ramen and Sushi",
@@ -12497,7 +12923,8 @@
       "country_code": "ca",
       "housenumber": "3106"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "PHO NGOC YEN 2 Etobicoke",
@@ -12527,7 +12954,8 @@
       "country_code": "ca",
       "housenumber": "1596"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Greek Taverna",
@@ -12556,7 +12984,8 @@
       "country_code": "ca",
       "housenumber": "3080"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Via Allegro Ristorante",
@@ -12585,7 +13014,8 @@
       "country_code": "ca",
       "housenumber": "1750"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Scaddabush Italian Kitchen & Bar Sherway",
@@ -12614,7 +13044,8 @@
       "country_code": "ca",
       "housenumber": "1900"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "FiAMMA Restaurant",
@@ -12644,7 +13075,8 @@
       "country_code": "ca",
       "housenumber": "5555"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Sorsi e Morsi",
@@ -12674,7 +13106,8 @@
       "country_code": "ca",
       "housenumber": "4900"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "ViBo Restaurant",
@@ -12704,7 +13137,8 @@
       "country_code": "ca",
       "housenumber": "2995"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Mamma Martino's Restaurant",
@@ -12733,7 +13167,8 @@
       "country_code": "ca",
       "housenumber": "624B"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Pulcinella Ristorante",
@@ -12763,7 +13198,8 @@
       "country_code": "ca",
       "housenumber": "3687"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "La Vecchia Restaurant Lakeshore",
@@ -12792,7 +13228,8 @@
       "country_code": "ca",
       "housenumber": "90"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Buon Giorno Cafe",
@@ -12822,7 +13259,8 @@
       "country_code": "ca",
       "housenumber": "1134"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Panettorino Forno Italiano",
@@ -12852,7 +13290,8 @@
       "country_code": "ca",
       "housenumber": "3797"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Cora",
@@ -12881,7 +13320,8 @@
       "country_code": "ca",
       "housenumber": "1555"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Pür & Simple",
@@ -12910,7 +13350,8 @@
       "country_code": "ca",
       "housenumber": "181"
     },
-    "rating": 3.1
+    "rating": 3.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Swiss Chalet",
@@ -12939,7 +13380,8 @@
       "country_code": "ca",
       "housenumber": "642"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Harry's Steak House",
@@ -12969,7 +13411,8 @@
       "country_code": "ca",
       "housenumber": "3277"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Chop Steakhouse & Bar",
@@ -12999,7 +13442,8 @@
       "country_code": "ca",
       "housenumber": "801"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Moxies Dixon Road Restaurant",
@@ -13029,7 +13473,8 @@
       "country_code": "ca",
       "housenumber": "55"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Lone Star Texas Grill",
@@ -13059,7 +13504,8 @@
       "country_code": "ca",
       "housenumber": "930"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Cannery Kitchen and Social",
@@ -13089,7 +13535,8 @@
       "country_code": "ca",
       "housenumber": "33"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Henry VIII Ale House",
@@ -13119,7 +13566,8 @@
       "country_code": "ca",
       "housenumber": "3078"
     },
-    "rating": 3
+    "rating": 3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "South Shore Bar & Grill",
@@ -13148,7 +13596,8 @@
       "country_code": "ca",
       "housenumber": "264"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Toast On Bloor",
@@ -13178,7 +13627,8 @@
       "country_code": "ca",
       "housenumber": "3317"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Sanremo Bakery",
@@ -13208,7 +13658,8 @@
       "country_code": "ca",
       "housenumber": "374"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Kettlemans Bagel",
@@ -13236,7 +13687,8 @@
       "country_code": "ca",
       "housenumber": ""
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Montesanto Bakery",
@@ -13265,7 +13717,8 @@
       "country_code": "ca",
       "housenumber": "5"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "HV Bakery & Patisserie",
@@ -13295,7 +13748,8 @@
       "country_code": "ca",
       "housenumber": "709"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "The Pie Commission",
@@ -13324,7 +13778,8 @@
       "country_code": "ca",
       "housenumber": "919"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "The Sydney Grind",
@@ -13354,7 +13809,8 @@
       "country_code": "ca",
       "housenumber": "2883"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Mik Cafe and Bakery",
@@ -13383,7 +13839,8 @@
       "country_code": "ca",
       "housenumber": "577"
     },
-    "rating": 2.8
+    "rating": 2.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Attwell Coffee",
@@ -13412,7 +13869,8 @@
       "country_code": "ca",
       "housenumber": "272"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Suvari Coffee",
@@ -13442,7 +13900,8 @@
       "country_code": "ca",
       "housenumber": "3378"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Terminal 3 Coffee Roasters",
@@ -13472,7 +13931,8 @@
       "country_code": "ca",
       "housenumber": "3337"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Real Fruit Bubble Tea",
@@ -13502,7 +13962,8 @@
       "country_code": "ca",
       "housenumber": "1530"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "BOBO Tea & Juice - Long Branch",
@@ -13532,7 +13993,8 @@
       "country_code": "ca",
       "housenumber": "3313"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "CoCo Bubble Tea - CF Sherway Gardens",
@@ -13562,7 +14024,8 @@
       "country_code": "ca",
       "housenumber": "25"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Latin Dough (Empanadas y Tequenos)",
@@ -13591,7 +14054,8 @@
       "country_code": "ca",
       "housenumber": "533"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Amanecer Salvadoreno Restaurant",
@@ -13621,7 +14085,8 @@
       "country_code": "ca",
       "housenumber": "2663"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Corazon Agave - Mexican Cuisine",
@@ -13650,7 +14115,8 @@
       "country_code": "ca",
       "housenumber": "765"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Flava Ceen Inc.",
@@ -13679,7 +14145,8 @@
       "country_code": "ca",
       "housenumber": "106"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Indar's Roti & Doubles",
@@ -13709,7 +14176,8 @@
       "country_code": "ca",
       "housenumber": "1152"
     },
-    "rating": 4.8
+    "rating": 4.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "B's Sizzling Kitchen",
@@ -13738,7 +14206,8 @@
       "country_code": "ca",
       "housenumber": "430"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Popeyes Louisiana Kitchen",
@@ -13768,7 +14237,8 @@
       "country_code": "ca",
       "housenumber": "5306"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Harvey's",
@@ -13798,7 +14268,8 @@
       "country_code": "ca",
       "housenumber": "805"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "RUDY",
@@ -13828,7 +14299,8 @@
       "country_code": "ca",
       "housenumber": "1466"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Taco Bell",
@@ -13857,7 +14329,8 @@
       "country_code": "ca",
       "housenumber": "1610"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Old Mill Toronto Restaurant",
@@ -13887,7 +14360,8 @@
       "country_code": "ca",
       "housenumber": "21"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Great Lakes Brewery",
@@ -13917,7 +14391,8 @@
       "country_code": "ca",
       "housenumber": "30"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Beertown - Etobicoke",
@@ -13947,7 +14422,8 @@
       "country_code": "ca",
       "housenumber": "1020"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "The Galway Arms Irish Pub and Restaurant",
@@ -13977,7 +14453,8 @@
       "country_code": "ca",
       "housenumber": "838"
     },
-    "rating": 4.7
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Bilal Restaurant Somali Cuisine",
@@ -14006,7 +14483,8 @@
       "country_code": "ca",
       "housenumber": "321"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Red Rock Restaurant",
@@ -14035,7 +14513,8 @@
       "country_code": "ca",
       "housenumber": "103"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Asian Buffet",
@@ -14064,7 +14543,8 @@
       "country_code": "ca",
       "housenumber": "161"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hakka Cottage",
@@ -14093,7 +14573,8 @@
       "country_code": "ca",
       "housenumber": "50A"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hamdi Restaurant Somali Cuisine",
@@ -14122,7 +14603,8 @@
       "country_code": "ca",
       "housenumber": "18"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Lola's Kusina",
@@ -14151,7 +14633,8 @@
       "country_code": "ca",
       "housenumber": "96"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Baghlan Kabob & Bakery",
@@ -14180,7 +14663,8 @@
       "country_code": "ca",
       "housenumber": "32"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Shanghai Restaurant",
@@ -14209,7 +14693,8 @@
       "country_code": "ca",
       "housenumber": "106"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Desi Spice - Grand Indian Buffet",
@@ -14238,7 +14723,8 @@
       "country_code": "ca",
       "housenumber": "25"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Golden Asian Cuisine",
@@ -14267,7 +14753,8 @@
       "country_code": "ca",
       "housenumber": "123"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Wally's Grill",
@@ -14296,7 +14783,8 @@
       "country_code": "ca",
       "housenumber": "123"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Sweet Mahal",
@@ -14325,7 +14813,8 @@
       "country_code": "ca",
       "housenumber": "680"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Rexdale Sweets & Restaurant",
@@ -14354,7 +14843,8 @@
       "country_code": "ca",
       "housenumber": "26"
     },
-    "rating": 3.3
+    "rating": 3.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Faley Restaurant",
@@ -14383,7 +14873,8 @@
       "country_code": "ca",
       "housenumber": "42"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Afghan Kebob Cuisine",
@@ -14412,7 +14903,8 @@
       "country_code": "ca",
       "housenumber": "2298"
     },
-    "rating": 4.6
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Mushkaki Restaurants Inc",
@@ -14441,7 +14933,8 @@
       "country_code": "ca",
       "housenumber": "145"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Swiss Pick Restaurant",
@@ -14471,7 +14964,8 @@
       "country_code": "ca",
       "housenumber": "445"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Canosa Bakery",
@@ -14500,7 +14994,8 @@
       "country_code": "ca",
       "housenumber": "21"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Banh Mi Saigon",
@@ -14530,7 +15025,8 @@
       "country_code": "ca",
       "housenumber": "2267"
     },
-    "rating": 4.5
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Brazilian Express",
@@ -14560,7 +15056,8 @@
       "country_code": "ca",
       "housenumber": "500"
     },
-    "rating": 3.2
+    "rating": 3.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Royal Paan",
@@ -14590,7 +15087,8 @@
       "country_code": "ca",
       "housenumber": "2654"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Kashmir Curry & Biryani House",
@@ -14620,7 +15118,8 @@
       "country_code": "ca",
       "housenumber": "1530"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hamar Weyne Somali Cuisine",
@@ -14649,7 +15148,8 @@
       "country_code": "ca",
       "housenumber": "296"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Samosa And Sweet Factory",
@@ -14678,7 +15178,8 @@
       "country_code": "ca",
       "housenumber": "1850"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Madras Dosa Hut",
@@ -14708,7 +15209,8 @@
       "country_code": "ca",
       "housenumber": "1123"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Rajdhani Sweets & Restaurant",
@@ -14738,7 +15240,8 @@
       "country_code": "ca",
       "housenumber": "2658"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Brar Sweets & Restaurant",
@@ -14767,7 +15270,8 @@
       "country_code": "ca",
       "housenumber": "2646"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Best Portuguese Chicken",
@@ -14797,7 +15301,8 @@
       "country_code": "ca",
       "housenumber": "942"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Sushi 2go Catering",
@@ -14827,7 +15332,8 @@
       "country_code": "ca",
       "housenumber": "976"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "MR.SUB",
@@ -14857,7 +15363,8 @@
       "country_code": "ca",
       "housenumber": "702"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Dino's Wood Burning Pizza",
@@ -14887,7 +15394,8 @@
       "country_code": "ca",
       "housenumber": "820"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pazzia Osteria",
@@ -14917,7 +15425,8 @@
       "country_code": "ca",
       "housenumber": "848"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Izba Restaurant",
@@ -14946,7 +15455,8 @@
       "country_code": "ca",
       "housenumber": "648"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Posticino Ristorante",
@@ -14975,7 +15485,8 @@
       "country_code": "ca",
       "housenumber": "755"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Trini Gardens Restaurant",
@@ -15005,7 +15516,8 @@
       "country_code": "ca",
       "housenumber": "3266"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Rocco's Plum Tomato",
@@ -15035,7 +15547,8 @@
       "country_code": "ca",
       "housenumber": "164"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "U-Know Sushi",
@@ -15065,7 +15578,8 @@
       "country_code": "ca",
       "housenumber": "170"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Cafe Mimico",
@@ -15094,7 +15608,8 @@
       "country_code": "ca",
       "housenumber": "264"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Birds & Beans Cafe",
@@ -15124,7 +15639,8 @@
       "country_code": "ca",
       "housenumber": "2413"
     },
-    "rating": 4.4
+    "rating": 4.4,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Mimico Bagel and Coffee",
@@ -15153,7 +15669,8 @@
       "country_code": "ca",
       "housenumber": "2391"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Gud Daae",
@@ -15183,7 +15700,8 @@
       "country_code": "ca",
       "housenumber": "2461"
     },
-    "rating": 4.2
+    "rating": 4.2,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Black Goat Cafe",
@@ -15213,7 +15731,8 @@
       "country_code": "ca",
       "housenumber": "3261"
     },
-    "rating": 3.6
+    "rating": 3.6,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Galata Cafe",
@@ -15243,7 +15762,8 @@
       "country_code": "ca",
       "housenumber": "5122"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Pizzeria Via Napoli",
@@ -15273,7 +15793,8 @@
       "country_code": "ca",
       "housenumber": "4923"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Thai Jalearn",
@@ -15303,7 +15824,8 @@
       "country_code": "ca",
       "housenumber": "4911"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Fire Wings Bar & Grill",
@@ -15333,7 +15855,8 @@
       "country_code": "ca",
       "housenumber": "4903"
     },
-    "rating": 3.5
+    "rating": 3.5,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Mai Bistro",
@@ -15363,7 +15886,8 @@
       "country_code": "ca",
       "housenumber": "4906"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Espresso Bakery & Deli",
@@ -15393,7 +15917,8 @@
       "country_code": "ca",
       "housenumber": "4980"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Traditional Korean Bakery",
@@ -15423,7 +15948,8 @@
       "country_code": "ca",
       "housenumber": "4992"
     },
-    "rating": 4.9
+    "rating": 4.9,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "John's Fish & Seafood Grill",
@@ -15453,7 +15979,8 @@
       "country_code": "ca",
       "housenumber": "5090"
     },
-    "rating": 4.8
+    "rating": 4.8,
+    "estimated_price_range": "$30-$60"
   },
   {
     "restaurant_name": "Miss Natalie's Tropical Cuisine",
@@ -15483,7 +16010,8 @@
       "country_code": "ca",
       "housenumber": "5118"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Hyderabad Spices South Indian Cuisine",
@@ -15513,7 +16041,8 @@
       "country_code": "ca",
       "housenumber": "3391"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Vintage Thai",
@@ -15543,7 +16072,8 @@
       "country_code": "ca",
       "housenumber": "3369"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Fit Cake",
@@ -15573,7 +16103,8 @@
       "country_code": "ca",
       "housenumber": "3367"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Paparikoo Mediterranean Cuisine",
@@ -15603,7 +16134,8 @@
       "country_code": "ca",
       "housenumber": "1176"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Elijah's Automatic Flame Broiled",
@@ -15633,7 +16165,8 @@
       "country_code": "ca",
       "housenumber": "821"
     },
-    "rating": 3.8
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Bun-Mi",
@@ -15663,7 +16196,8 @@
       "country_code": "ca",
       "housenumber": "822"
     },
-    "rating": 3.7
+    "rating": 3.7,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Don Chon",
@@ -15693,7 +16227,8 @@
       "country_code": "ca",
       "housenumber": "834"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "K&B Sushi",
@@ -15723,7 +16258,8 @@
       "country_code": "ca",
       "housenumber": "1184"
     },
-    "rating": 3.9
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "New Flower Drum",
@@ -15753,7 +16289,8 @@
       "country_code": "ca",
       "housenumber": "2428"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Revolver Pizza Co.",
@@ -15783,7 +16320,8 @@
       "country_code": "ca",
       "housenumber": "388"
     },
-    "rating": 4.3
+    "rating": 4.3,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "The Lime Viet & Thai Cuisine",
@@ -15812,7 +16350,8 @@
       "country_code": "ca",
       "housenumber": "562"
     },
-    "rating": 3.4
+    "rating": 3.4,
+    "estimated_price_range": "$15-$30"
   },
   {
     "restaurant_name": "Viva Sub",
@@ -15841,7 +16380,8 @@
       "country_code": "ca",
       "housenumber": "1178"
     },
-    "rating": 4.1
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15"
   },
   {
     "restaurant_name": "Xawaash",
@@ -15870,6 +16410,7 @@
       "country_code": "ca",
       "housenumber": "130"
     },
-    "rating": 4
+    "rating": 4,
+    "estimated_price_range": "$15-$30"
   }
 ]

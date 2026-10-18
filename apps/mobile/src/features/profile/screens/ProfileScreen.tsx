@@ -1,5 +1,6 @@
 import { useMenuSound } from "../../../hooks/useMenuSound";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { useState } from "react";
 import { CiboLogo } from "../../../components/CiboLogo";
 import { Modal, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -708,6 +709,7 @@ export function ProfileScreen({
           style={StyleSheet.absoluteFill}
         />
         <View style={styles.avatarModal}>
+          <SheetDragHandle onDismiss={() => setAvatarPickerVisible(false)} />
           <View style={styles.avatarModalHeader}>
             <View style={styles.flex}>
               <Text style={styles.sectionTitle}>Profile picture</Text>

@@ -16412,5 +16412,972 @@
     },
     "rating": 4,
     "estimated_price_range": "$15-$30"
+  },
+  {
+    "restaurant_name": "Sushi-Q",
+    "address": "4841 Yonge St",
+    "cuisine": "Japanese",
+    "category": "Dine-in",
+    "neighbourhood": "Willowdale",
+    "source_url": "https://www.restaurantji.com/on/north-york/sushi-q-/",
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-e875bc00296be5d1",
+    "coordinate": [
+      -79.410105,
+      43.7630649
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "Thaï Express",
+      "house_number": "4841",
+      "road": "Yonge Street",
+      "neighbourhood": "Yonge-Doris",
+      "suburb": "North York",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M2N 5N2",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "4841"
+    }
+  },
+  {
+    "restaurant_name": "Atria Sushi",
+    "address": "2235 Sheppard Ave E Suite 103",
+    "cuisine": "Japanese",
+    "category": "Fast Food/QSR",
+    "neighbourhood": "Don Valley Village",
+    "source_url": "https://www.restaurantji.com/on/north-york/ichiban-sushi-express-/",
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-d7e04140e69d41fe",
+    "coordinate": [
+      -79.3278348,
+      43.7728044
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "LASIK MD",
+      "house_number": "2235",
+      "road": "Sheppard Avenue East",
+      "neighbourhood": "Pleasant View",
+      "quarter": "Don Valley North",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M2J 5B5",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "2235"
+    }
+  },
+  {
+    "restaurant_name": "J&Y Chinese Cuisine",
+    "address": "1108 Sheppard Ave E",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "Don Valley Village",
+    "source_url": "https://www.restaurantji.com/on/north-york/j-y-chinese-cuisine-/",
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-bc49ba3bd7df7a3c",
+    "coordinate": [
+      -79.3694781,
+      43.7712661
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "1108",
+      "road": "Sheppard Avenue East",
+      "neighbourhood": "Bayview Village",
+      "quarter": "Don Valley North",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M2K 0B6",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "1108"
+    }
+  },
+  {
+    "restaurant_name": "Hou Kee Chinese Bistro",
+    "address": "5 Northtown Way Suite 7",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "Willowdale",
+    "source_url": "https://www.restaurantji.com/on/north-york/hou-kee-chinese-bistro-/",
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-7b122f0101d32020",
+    "coordinate": [
+      -79.413873,
+      43.7749378
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "5",
+      "road": "Northtown Way",
+      "neighbourhood": "Yonge-Doris",
+      "suburb": "North York",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M2N 7A1",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "5"
+    }
+  },
+  {
+    "restaurant_name": "Tin Tin Congee Chinese Restaurant",
+    "address": "4205 Keele St",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "Downsview",
+    "source_url": "https://www.restaurantji.com/on/north-york/tin-tin-congee-chinese-restaurant-/",
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-c8f1f95f24674afd",
+    "coordinate": [
+      -79.4920327,
+      43.7734613
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "Bosphorus",
+      "house_number": "4205",
+      "road": "Keele Street",
+      "neighbourhood": "York University Heights",
+      "quarter": "York Centre",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M3J 3T8",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "4205"
+    }
+  },
+  {
+    "restaurant_name": "Sun Star Chinese Cuisine",
+    "address": "636 Finch Ave E",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "Don Valley Village",
+    "source_url": "https://www.restaurantji.com/on/north-york/sun-star-chinese-cuisine-/",
+    "rating": 4.2,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-0e882311f8c040b9",
+    "coordinate": [
+      -79.3806353,
+      43.7874595
+    ],
+    "locationAccuracy": "approximate",
+    "geocodedAddress": {
+      "highway": "636 Finch Avenue East",
+      "road": "Finch Avenue East",
+      "neighbourhood": "Bayview Village",
+      "quarter": "Don Valley North",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M2K 2E6",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": ""
+    }
+  },
+  {
+    "restaurant_name": "Mandarin Restaurant",
+    "address": "1027 Finch Ave W",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "Downsview",
+    "source_url": "https://www.restaurantji.com/on/north-york/mandarin-restaurant-/",
+    "rating": 4.8,
+    "estimated_price_range": "$30-$60",
+    "id": "csv-9f26f54f75206610",
+    "coordinate": [
+      -79.4697966,
+      43.7674399
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "L&P Village Green Jamaican Restaurant",
+      "house_number": "1027",
+      "road": "Finch Avenue West",
+      "neighbourhood": "York University Heights",
+      "quarter": "York Centre",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M3H 5Y2",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "1027"
+    }
+  },
+  {
+    "restaurant_name": "Sang-Ji Fried Bao (North York)",
+    "address": "4841 Yonge St",
+    "cuisine": "Chinese",
+    "category": "Fast Food/QSR",
+    "neighbourhood": "Willowdale",
+    "source_url": "https://www.restaurantji.com/on/north-york/sang-ji-fried-bao-north-york-/",
+    "rating": 4.6,
+    "estimated_price_range": "$0-$15",
+    "id": "csv-56d6365f6dd0a503",
+    "coordinate": [
+      -79.410105,
+      43.7630649
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "Thaï Express",
+      "house_number": "4841",
+      "road": "Yonge Street",
+      "neighbourhood": "Yonge-Doris",
+      "suburb": "North York",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M2N 5N2",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "4841"
+    }
+  },
+  {
+    "restaurant_name": "Perfect Meat Bowl",
+    "address": "5418 Yonge St #3",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "Willowdale",
+    "source_url": "https://www.restaurantji.com/on/north-york/perfect-meat-bowl-/",
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-bf2bd1fc6bf2b309",
+    "coordinate": [
+      -79.4147333,
+      43.7755817
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "shop": "Pumpkin Clothing and Accessories",
+      "house_number": "5418",
+      "road": "Yonge Street",
+      "neighbourhood": "Willowdale West",
+      "quarter": "Willowdale",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M2N 7L5",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "5418"
+    }
+  },
+  {
+    "restaurant_name": "Street Grill",
+    "address": "3555 Don Mills Rd Unit 11",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "Don Mills",
+    "source_url": "https://www.restaurantji.com/on/north-york/street-grill-/",
+    "rating": 4.4,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-bc789d4dc2ada90d",
+    "coordinate": [
+      -79.3543818,
+      43.7942937
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "building": "Skymark Place",
+      "house_number": "3555",
+      "road": "Don Mills Road",
+      "neighbourhood": "Hillcrest Village",
+      "quarter": "Don Valley North",
+      "city_district": "North York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M2J 4X9",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "3555"
+    }
+  },
+  {
+    "restaurant_name": "Saravanaa Bhavan",
+    "address": "1571 Sandhurst Circle Unit 153",
+    "cuisine": "South Asian",
+    "category": "Dine-in",
+    "neighbourhood": "Agincourt",
+    "source_url": "https://www.restaurantji.com/on/scarborough/saravanaa-bhavan-/",
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-2386665456ca8abb",
+    "coordinate": [
+      -79.2674218,
+      43.8083505
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "McDonald's",
+      "house_number": "1571",
+      "road": "Sandhurst Circle",
+      "neighbourhood": "Agincourt North",
+      "quarter": "Scarborough North",
+      "suburb": "Scarborough",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M1V 1V2",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "1571"
+    }
+  },
+  {
+    "restaurant_name": "Unplugged Cafe & Bar",
+    "address": "4271 Sheppard Ave E Unit 11",
+    "cuisine": "South Asian",
+    "category": "Dine-in",
+    "neighbourhood": "Agincourt",
+    "source_url": "https://www.restaurantji.com/on/scarborough/unplugged-cafe-and-bar-authentic-indian-and-hakka-restaurant-in-scarborough-/",
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-74309bc15162492d",
+    "coordinate": [
+      -79.2760428,
+      43.7857792
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "4271",
+      "road": "Sheppard Avenue East",
+      "city_block": "Agincourt South-Malvern West",
+      "quarter": "Scarborough North",
+      "suburb": "Scarborough",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M1S 1T6",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "4271"
+    }
+  },
+  {
+    "restaurant_name": "Chola Indian Cuisine",
+    "address": "3551 Sheppard Ave E Unit 1",
+    "cuisine": "South Asian",
+    "category": "Dine-in",
+    "neighbourhood": "Agincourt",
+    "source_url": "https://www.restaurantji.com/on/scarborough/chola-indian-cuisine-/",
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-11726b789e0d02ff",
+    "coordinate": [
+      -79.3001541,
+      43.7804199
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "3551",
+      "road": "Sheppard Avenue East",
+      "neighbourhood": "Tam O'Shanter-Sullivan",
+      "quarter": "Scarborough—Agincourt",
+      "suburb": "Scarborough",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M3A 2H7",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "3551"
+    }
+  },
+  {
+    "restaurant_name": "Dosa Kitchen",
+    "address": "3380 Midland Ave Unit 20",
+    "cuisine": "South Asian",
+    "category": "Dine-in",
+    "neighbourhood": "Agincourt",
+    "source_url": "https://www.restaurantji.com/on/scarborough/dosa-kitchen-/",
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-3332062d7ca96aa1",
+    "coordinate": [
+      -79.2901047,
+      43.8095232
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "3380",
+      "road": "Midland Avenue",
+      "city_block": "Milliken",
+      "quarter": "Scarborough—Agincourt",
+      "suburb": "Scarborough",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M1V 3Z9",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "3380"
+    }
+  },
+  {
+    "restaurant_name": "Nian Yi Kuai Zi",
+    "address": "4186 Finch Ave E Unit 26",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "Agincourt",
+    "source_url": "https://www.restaurantji.com/on/scarborough/nian-yi-kuai-zi-scarborough-/",
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-06ff7dbfa473d659",
+    "coordinate": [
+      -79.2867313,
+      43.8037831
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "4186",
+      "road": "Finch Avenue East",
+      "city_block": "Milliken",
+      "quarter": "Scarborough—Agincourt",
+      "suburb": "Scarborough",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M1S 4T0",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "4186"
+    }
+  },
+  {
+    "restaurant_name": "Koh Lipe Thai Kitchen Scarborough",
+    "address": "Unit 5 2030 Ellesmere Rd",
+    "cuisine": "Thai",
+    "category": "Dine-in",
+    "neighbourhood": "Agincourt",
+    "source_url": "https://www.restaurantji.com/on/scarborough/koh-lipe-thai-kitchen-scarborough-/",
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-ab2ae8f7203b11c1",
+    "coordinate": [
+      -79.3839347,
+      43.6534817
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": ""
+    }
+  },
+  {
+    "restaurant_name": "Nakamori Japanese Restaurant",
+    "address": "2558 Eglinton Ave E",
+    "cuisine": "Japanese",
+    "category": "Dine-in",
+    "neighbourhood": "Cliffcrest",
+    "source_url": "https://www.restaurantji.com/on/scarborough/nakamori-japanese-restaurant-/",
+    "rating": 4.6,
+    "estimated_price_range": "$30-$60",
+    "id": "csv-3db451421afca63c",
+    "coordinate": [
+      -79.2660195,
+      43.7327612
+    ],
+    "locationAccuracy": "approximate",
+    "geocodedAddress": {
+      "road": "Eglinton Avenue East",
+      "neighbourhood": "Ionview",
+      "quarter": "Scarborough Centre",
+      "suburb": "Scarborough",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M1K 2P8",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": ""
+    }
+  },
+  {
+    "restaurant_name": "Darna Middle Eastern Kitchen",
+    "address": "1330 Danforth Ave",
+    "cuisine": "Levant",
+    "category": "Dine-in",
+    "neighbourhood": "East York",
+    "source_url": "https://www.restaurantji.com/on/east-york/darna-middle-eastern-kitchen-/",
+    "rating": 4.8,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-2802da664df0d641",
+    "coordinate": [
+      -79.32928,
+      43.68236
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "1330",
+      "road": "Danforth Avenue",
+      "city_block": "Danforth",
+      "quarter": "Toronto—Danforth",
+      "suburb": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4J 1M9",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "1330"
+    }
+  },
+  {
+    "restaurant_name": "LOCAL Public Eatery Leaside",
+    "address": "180 Laird Dr",
+    "cuisine": "American",
+    "category": "Dine-in",
+    "neighbourhood": "Leaside",
+    "source_url": "https://www.restaurantji.com/on/east-york/local-public-eatery-leaside-/",
+    "rating": 4.7,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-974e288788b8fe29",
+    "coordinate": [
+      -79.3635478,
+      43.7098947
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "Local Public Eatery",
+      "house_number": "180",
+      "road": "Laird Drive",
+      "city_block": "Leaside-Bennington",
+      "quarter": "Don Valley West",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4G 3V7",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "180"
+    }
+  },
+  {
+    "restaurant_name": "Dhillon’s Karahi",
+    "address": "1450 O’Connor Dr",
+    "cuisine": "South Asian",
+    "category": "Dine-in",
+    "neighbourhood": "East York",
+    "source_url": "https://www.restaurantji.com/on/east-york/dhillons-karahi-/",
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-04e79e30082708fa",
+    "coordinate": [
+      -79.30725,
+      43.7137915
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "1450",
+      "road": "O'Connor Drive",
+      "city_block": "O'Connor-Parkview",
+      "quarter": "Beaches—East York",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4B 3J7",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "1450"
+    }
+  },
+  {
+    "restaurant_name": "Olde Yorke Fish & Chips",
+    "address": "96 Laird Dr",
+    "cuisine": "American",
+    "category": "Dine-in",
+    "neighbourhood": "Leaside",
+    "source_url": "https://www.restaurantji.com/on/east-york/olde-yorke-fish-and-chips-/",
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-83803d2bf1126efa",
+    "coordinate": [
+      -79.3620344,
+      43.7062029
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "96",
+      "road": "Laird Drive",
+      "city_block": "Leaside-Bennington",
+      "quarter": "Don Valley West",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4G 3V2",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "96"
+    }
+  },
+  {
+    "restaurant_name": "The Donlands Diner",
+    "address": "417 Donlands Ave",
+    "cuisine": "American",
+    "category": "Dine-in",
+    "neighbourhood": "East York",
+    "source_url": "https://www.restaurantji.com/on/east-york/the-donlands-diner-/",
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-724182fc0c8f3559",
+    "coordinate": [
+      -79.34269,
+      43.69439
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "417",
+      "road": "Donlands Avenue",
+      "city_block": "Old East York",
+      "quarter": "Toronto—Danforth",
+      "suburb": "East York",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4J 3S1",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "417"
+    }
+  },
+  {
+    "restaurant_name": "China Food",
+    "address": "854 Millwood Rd",
+    "cuisine": "Chinese",
+    "category": "Fast Food/QSR",
+    "neighbourhood": "Leaside",
+    "source_url": "https://www.restaurantji.com/on/east-york/china-food-/",
+    "rating": 4.5,
+    "estimated_price_range": "$0-$15",
+    "id": "csv-af2a4e39f0a29767",
+    "coordinate": [
+      -79.3663881,
+      43.7045944
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "854",
+      "road": "Millwood Road",
+      "city_block": "Leaside-Bennington",
+      "quarter": "Don Valley West",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4G 1X2",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "854"
+    }
+  },
+  {
+    "restaurant_name": "China Work Restaurant",
+    "address": "468 Dawes Rd",
+    "cuisine": "Chinese",
+    "category": "Fast Food/QSR",
+    "neighbourhood": "East York",
+    "source_url": "https://www.restaurantji.com/on/east-york/china-work-restaurant-/",
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15",
+    "id": "csv-dff1ac131ed13762",
+    "coordinate": [
+      -79.2970698,
+      43.702934
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "468",
+      "road": "Dawes Road",
+      "city_block": "O'Connor-Parkview",
+      "quarter": "Beaches—East York",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4B 2E6",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "468"
+    }
+  },
+  {
+    "restaurant_name": "Wok and Grill",
+    "address": "1085 O’Connor Dr",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "East York",
+    "source_url": "https://www.restaurantji.com/on/east-york/wok-and-grill-/",
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-6fd89b0e0446575d",
+    "coordinate": [
+      -79.30882,
+      43.71001
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "1085",
+      "road": "O'Connor Drive",
+      "city_block": "O'Connor-Parkview",
+      "quarter": "Beaches—East York",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4B 2T8",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "1085"
+    }
+  },
+  {
+    "restaurant_name": "Pho Lady",
+    "address": "220 Laird Dr",
+    "cuisine": "Vietnamese",
+    "category": "Dine-in",
+    "neighbourhood": "Leaside",
+    "source_url": "https://www.restaurantji.com/on/east-york/pho-lady-/",
+    "rating": 3.9,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-7fd980e5bb432494",
+    "coordinate": [
+      -79.3644901,
+      43.7123119
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "220",
+      "road": "Laird Drive",
+      "neighbourhood": "Thorncliffe Park",
+      "quarter": "Don Valley West",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4G 3W2",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "220"
+    }
+  },
+  {
+    "restaurant_name": "Number One Chinese Restaurant",
+    "address": "897 Pape Ave",
+    "cuisine": "Chinese",
+    "category": "Fast Food/QSR",
+    "neighbourhood": "East York",
+    "source_url": "https://www.restaurantji.com/on/east-york/number-one-chinese-restaurant-/",
+    "rating": 4.1,
+    "estimated_price_range": "$0-$15",
+    "id": "csv-689738dda363da41",
+    "coordinate": [
+      -79.34666,
+      43.68468
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "897",
+      "road": "Pape Avenue",
+      "city_block": "Danforth East York",
+      "quarter": "Toronto—Danforth",
+      "suburb": "East York",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4K 3W3",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "897"
+    }
+  },
+  {
+    "restaurant_name": "Sandy’s Restaurant",
+    "address": "2093 Danforth Ave",
+    "cuisine": "Chinese",
+    "category": "Fast Food/QSR",
+    "neighbourhood": "East York",
+    "source_url": "https://www.restaurantji.com/on/east-york/sandys-restaurant-/",
+    "rating": 3.8,
+    "estimated_price_range": "$0-$15",
+    "id": "csv-ff89ad1fe45f7b95",
+    "coordinate": [
+      -79.3122955,
+      43.6856361
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "Sandy's Resturaunt",
+      "house_number": "2093",
+      "road": "Danforth Avenue",
+      "city_block": "East End-Danforth",
+      "quarter": "Beaches—East York",
+      "suburb": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4C 1J9",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "2093"
+    }
+  },
+  {
+    "restaurant_name": "Pii Nong Thai",
+    "address": "1677 Bayview Ave",
+    "cuisine": "Thai",
+    "category": "Dine-in",
+    "neighbourhood": "Leaside",
+    "source_url": "https://www.restaurantji.com/on/east-york/buabua-thai-/",
+    "rating": 4.5,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-bdd31ad11c4964f6",
+    "coordinate": [
+      -79.3756826,
+      43.7075993
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "Chon Modern Thai Cuisine",
+      "house_number": "1677",
+      "road": "Bayview Avenue",
+      "city_block": "Leaside-Bennington",
+      "quarter": "Don Valley West",
+      "city_district": "East York",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M4G 3C1",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "1677"
+    }
+  },
+  {
+    "restaurant_name": "5 Spice Dining",
+    "address": "2826 Markham Rd",
+    "cuisine": "South Asian",
+    "category": "Dine-in",
+    "neighbourhood": "Agincourt",
+    "source_url": "https://www.restaurantji.com/on/scarborough/5-spice-dining-/",
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-028b8341a859931f",
+    "coordinate": [
+      -79.24859,
+      43.82317
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "2826",
+      "road": "Markham Road",
+      "city_block": "Milliken",
+      "quarter": "Scarborough North",
+      "suburb": "Scarborough",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M1V 2W2",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "2826"
+    }
+  },
+  {
+    "restaurant_name": "Wok and Fortune Family Restaurant",
+    "address": "2900 Eglinton Ave E Unit 7",
+    "cuisine": "Chinese",
+    "category": "Dine-in",
+    "neighbourhood": "Cliffcrest",
+    "source_url": "https://www.restaurantji.com/on/scarborough/wok-and-fortune-family-restaurant-/",
+    "rating": 4.6,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-9dc1e83f3e84cdcc",
+    "coordinate": [
+      -79.2378568,
+      43.7393425
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "amenity": "Wok and Fortune",
+      "house_number": "2900",
+      "road": "Eglinton Avenue East",
+      "city_block": "Eglinton East",
+      "quarter": "Scarborough Centre",
+      "suburb": "Scarborough",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M1J 2E4",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "2900"
+    }
+  },
+  {
+    "restaurant_name": "SumiLicious Smoked Meat & Deli",
+    "address": "1200 Markham Rd",
+    "cuisine": "Canadian",
+    "category": "Dine-in",
+    "neighbourhood": "Woburn",
+    "source_url": "https://www.restaurantji.com/on/scarborough/sumilicious-smoked-meat-and-deli-/",
+    "rating": 4.3,
+    "estimated_price_range": "$15-$30",
+    "id": "csv-a61cbf733fbf7302",
+    "coordinate": [
+      -79.2321905,
+      43.776656
+    ],
+    "locationAccuracy": "address",
+    "geocodedAddress": {
+      "house_number": "1200",
+      "road": "Markham Road",
+      "city_block": "Woburn North",
+      "quarter": "Scarborough—Guildwood",
+      "suburb": "Scarborough",
+      "city": "Toronto",
+      "state": "Ontario",
+      "ISO3166-2-lvl4": "CA-ON",
+      "postcode": "M1H 3B7",
+      "country": "Canada",
+      "country_code": "ca",
+      "housenumber": "1200"
+    }
   }
 ]

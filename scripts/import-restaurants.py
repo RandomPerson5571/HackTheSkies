@@ -16,7 +16,13 @@ import urllib.request
 OUTPUT = Path('apps/mobile/src/features/restaurants/data/importedRestaurants.json')
 cache = {row['id']: row for row in json.loads(OUTPUT.read_text())} if OUTPUT.exists() else {}
 rows = []
-for filename in ['downtown_toronto_restaurants.csv', 'etobicoke_restaurants.csv']:
+for filename in [
+    'downtown_toronto_restaurants.csv',
+    'etobicoke_restaurants.csv',
+    'north_york_restaurants.csv',
+    'scarborough_restaurants.csv',
+    'east_york_restaurants.csv',
+]:
     with open(Path('data') / filename, encoding='utf-8-sig', newline='') as source:
         for row in csv.DictReader(source):
             row['rating'] = float(row['rating'])
@@ -34,7 +40,7 @@ def locate(query):
             time.sleep(1.1)
             for feature in features:
                 lon, lat = float(feature['lon']), float(feature['lat'])
-                if -79.65 < lon < -79.25 and 43.58 < lat < 43.85:
+                if -79.65 < lon < -79.08 and 43.58 < lat < 43.85:
                     properties = feature.get('address', {})
                     properties['housenumber'] = properties.get('house_number', '')
                     return {'properties': properties, 'geometry': {'coordinates': [lon, lat]}}

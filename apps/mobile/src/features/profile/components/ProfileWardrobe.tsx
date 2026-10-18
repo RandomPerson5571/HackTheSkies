@@ -113,18 +113,18 @@ export function ProfileWardrobe({
         })}
       </ScrollView>
       <Text accessibilityRole="header" style={s.label}>
-        AVATAR COLOR
+        THEME
       </Text>
       <View
         accessibilityRole="radiogroup"
-        accessibilityLabel="Avatar color"
+        accessibilityLabel="App theme"
         style={s.paletteRow}
       >
         {avatarPalettes.map((item) => (
           <Pressable
             key={item.id}
             accessibilityRole="radio"
-            accessibilityLabel={`${item.name} avatar color`}
+            accessibilityLabel={`${item.name} app theme`}
             aria-checked={selected.palette === item.id}
             accessibilityState={{ checked: selected.palette === item.id }}
             onPress={() => onChange({ palette: item.id })}

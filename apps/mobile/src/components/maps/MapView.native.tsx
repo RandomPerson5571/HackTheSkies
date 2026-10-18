@@ -28,8 +28,12 @@ const PlaceLayers = memo(function PlaceLayers({
   places,
   onSelect,
   camera,
+  themeAccent,
+  themeInk,
 }: Pick<MapProps, "places" | "onSelect"> & {
   camera: RefObject<Mapbox.Camera | null>;
+  themeAccent?: string;
+  themeInk?: string;
 }) {
   const source = useRef<Mapbox.ShapeSource>(null);
   const clusterRequest = useRef(0);
@@ -94,7 +98,7 @@ const PlaceLayers = memo(function PlaceLayers({
         id="place-clusters"
         filter={["has", "point_count"]}
         style={{
-          circleColor: colors.accent,
+          circleColor: themeAccent ?? colors.accent,
           circleRadius: ["step", ["get", "point_count"], 19, 50, 24, 200, 30],
           circleStrokeWidth: 2,
           circleStrokeColor: colors.white,
@@ -131,7 +135,7 @@ const PlaceLayers = memo(function PlaceLayers({
           textAnchor: "top",
           textOffset: [0, 1],
           textMaxWidth: 10,
-          textColor: colors.ink,
+          textColor: themeInk ?? themeAccent ?? colors.ink,
           textHaloColor: colors.white,
           textHaloWidth: 2,
           textAllowOverlap: false,
@@ -145,6 +149,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
   const camera = useRef<Mapbox.Camera>(null);
   const mapView = useRef<Mapbox.MapView>(null);
   const queryVersion = useRef(0);
+  const [zoom, setZoom] = useState(props.zoom);
   const [visibleIds, setVisibleIds] = useState<ReadonlySet<string>>(new Set());
   const refreshPhotoPins = useCallback(async () => {
     const version = ++queryVersion.current;
@@ -184,8 +189,9 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         visibleIds,
         props.recommendations,
         props.selectedId,
+        zoom,
       ),
-    [props.places, visibleIds, props.recommendations, props.selectedId],
+    [props.places, visibleIds, props.recommendations, props.selectedId, zoom],
   );
   const defaultSettings = useMemo(
     () => ({ centerCoordinate: props.center, zoomLevel: props.zoom }),
@@ -211,7 +217,10 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
   return (
     <Mapbox.MapView
       ref={mapView}
-      onMapIdle={refreshPhotoPins}
+      onMapIdle={(state) => {
+        setZoom(state.properties.zoom);
+        refreshPhotoPins();
+      }}
       style={StyleSheet.absoluteFill}
       styleURL={
         process.env.EXPO_PUBLIC_MAPBOX_STYLE_URL || Mapbox.StyleURL.Light
@@ -220,6 +229,25 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       logoEnabled={false}
       scaleBarEnabled={false}
       compassEnabled={false}
+      onPress={(event) => {
+        const { screenPointX, screenPointY } = event.properties;
+        void mapView.current
+          ?.queryRenderedFeaturesInRect(
+            [
+              screenPointY - 22,
+              screenPointX - 22,
+              screenPointY + 22,
+              screenPointX + 22,
+            ],
+            [],
+            ["place-points"],
+          )
+          .then((result) => {
+            if (!result?.features.some((feature) => feature.properties?.placeId))
+              props.onMapPress?.();
+          })
+          .catch(() => props.onMapPress?.());
+      }}
       onDidFinishLoadingMap={props.onReady}
       onMapLoadingError={props.onError}
     >
@@ -232,6 +260,8 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         places={props.places}
         onSelect={props.onSelect}
         camera={camera}
+        themeAccent={props.themeAccent}
+        themeInk={props.themeInk}
       />
       {markers.map((place) => (
         <Mapbox.MarkerView

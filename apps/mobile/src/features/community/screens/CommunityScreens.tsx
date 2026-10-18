@@ -39,12 +39,14 @@ type Props = {
   collection: RestaurantCollection;
   dispatch: Dispatch<CollectionAction>;
   storageError: string;
+  onOpenSettings: () => void;
   onShowMap: (place: Place) => void;
 };
 type Section = "favorites" | "friends" | "badges";
 const Navigation = createContext<{
   section: Section;
   setSection: (section: Section) => void;
+  onOpenSettings: () => void;
 } | null>(null);
 
 const sections: Section[] = ["favorites", "friends", "badges"];
@@ -66,7 +68,9 @@ export function CommunityScreen(props: Props) {
     outputRange: [0, -width, -2 * width],
   });
   return (
-    <Navigation.Provider value={{ section, setSection }}>
+    <Navigation.Provider
+      value={{ section, setSection, onOpenSettings: props.onOpenSettings }}
+    >
       <View style={{ flex: 1, overflow: "hidden" }}>
         <Animated.View
           style={{
@@ -163,8 +167,20 @@ function Page({
     >
       <View style={s.brandHeader}>
         <CiboLogo />
-        <View style={s.brand}>
-          <Icon name={icon} size={26} />
+        <View style={s.headerActions}>
+          <View style={s.brand}>
+            <Icon name={icon} size={26} />
+          </View>
+          {navigation && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open settings"
+              onPress={navigation.onOpenSettings}
+              style={({ pressed }) => [s.brand, pressed && s.dim]}
+            >
+              <Icon name="settings-outline" size={22} />
+            </Pressable>
+          )}
         </View>
       </View>
       <View style={s.heading}>
@@ -744,6 +760,7 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 4,
   },
+  headerActions: { flexDirection: "row", alignItems: "center", gap: 8 },
   heading: { gap: 10 },
   eyebrow: {
     fontSize: 10,

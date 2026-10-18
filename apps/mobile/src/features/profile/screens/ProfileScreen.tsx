@@ -2,7 +2,7 @@ import { useMenuSound } from "../../../hooks/useMenuSound";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useState } from "react";
 import { CiboLogo } from "../../../components/CiboLogo";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ProfileAtlas } from "../components/ProfileAtlas";
 
@@ -30,6 +30,7 @@ import { useQuests } from "../../quests/hooks/useQuests";
 import { pathCuisines, pathProgress } from "../../quests/models/quests";
 import {
   BADGES,
+  evaluateBadges,
   xpToNextLevel,
   type BadgeId,
   type GamificationState,
@@ -42,6 +43,7 @@ const badgeProgress = (
   savedCount: number,
   streak: number,
   ratings: number,
+  xp: number,
 ): { current: number; target: number } => {
   switch (badge.id) {
     case "first-bite":
@@ -68,6 +70,22 @@ const badgeProgress = (
       return { current: streak, target: 3 };
     case "streak-7":
       return { current: streak, target: 7 };
+    case "passport-pro":
+      return { current: cuisinesCount, target: 8 };
+    case "menu-maestro":
+      return { current: entriesCount, target: 75 };
+    case "century-supper":
+      return { current: entriesCount, target: 100 };
+    case "curator":
+      return { current: savedCount, target: 10 };
+    case "pin-collector":
+      return { current: savedCount, target: 50 };
+    case "peoples-palate":
+      return { current: ratings, target: 50 };
+    case "two-week-taster":
+      return { current: streak, target: 14 };
+    case "xp-legend":
+      return { current: xp, target: 2000 };
     default:
       return { current: 0, target: 1 };
   }
@@ -76,6 +94,7 @@ const badgeProgress = (
 export function ProfileScreen({
   profile,
   onSave,
+  onUploadAvatar,
   game,
   ratingsCount = 0,
   topInset,
@@ -91,6 +110,7 @@ export function ProfileScreen({
   saved?: string[];
   profile: Profile;
   onSave: (profile: Profile) => void;
+  onUploadAvatar?: () => void;
   game: GamificationState;
   ratingsCount?: number;
   topInset: number;
@@ -105,8 +125,10 @@ export function ProfileScreen({
   const { entries } = useFoodDex();
   const { state: quests, error: questError } = useQuests();
   const [customizing, setCustomizing] = useState(false);
+  const [avatarPickerVisible, setAvatarPickerVisible] = useState(false);
   const [showAllBadges, setShowAllBadges] = useState(false);
   useMenuSound(customizing);
+  useMenuSound(avatarPickerVisible);
   useMenuSound(showAllBadges);
 
 
@@ -123,7 +145,10 @@ export function ProfileScreen({
   const xp = xpToNextLevel(totalXp);
   const xpPercent = Math.round((xp.current / xp.needed) * 100);
 
-  const earnedBadgeIds = new Set<BadgeId>(game.badges);
+  const earnedBadgeIds = new Set<BadgeId>([
+    ...game.badges,
+    ...evaluateBadges(game),
+  ]);
   if (foodsCount >= 1) earnedBadgeIds.add("first-bite");
   if (cuisinesCount >= 5) earnedBadgeIds.add("cuisine-explorer");
   if (cuisinesCount >= 14) earnedBadgeIds.add("world-taster");
@@ -159,6 +184,49 @@ export function ProfileScreen({
     ...BADGES.filter((badge) => !earnedBadgeIds.has(badge.id as BadgeId)),
   ].slice(0, showAllBadges ? BADGES.length : 4);
 
+  const renderBadge = (badge: (typeof BADGES)[number]) => {
+    const earned = earnedBadgeIds.has(badge.id);
+    const progress = badgeProgress(
+      badge,
+      foodsCount,
+      cuisinesCount,
+      saved.length,
+      streak,
+      Math.max(ratingsCount, game.ratings),
+      game.xp,
+    );
+    const pinned = featuredBadge?.id === badge.id;
+    return (
+      <Pressable
+        key={badge.id}
+        accessibilityRole="button"
+        disabled={!earned}
+        accessibilityLabel={`${badge.name}. ${badge.description} ${earned ? (pinned ? "Featured trophy" : "Earned. Tap to feature on your profile") : `Locked. ${Math.min(progress.current, progress.target)} of ${progress.target}`}`}
+        aria-pressed={pinned}
+        accessibilityState={{ disabled: !earned, selected: pinned }}
+        onPress={() => changeCustomization({ featuredBadge: badge.id })}
+        style={({ pressed }) => [
+          styles.badge,
+          showAllBadges && styles.badgeGridItem,
+          !earned && styles.badgeLocked,
+          pinned && styles.badgePinned,
+          pressed && styles.pressed,
+        ]}
+      >
+        <TrophyArt id={badge.id} size={88} locked={!earned} />
+        <Text style={styles.badgeName}>{badge.name}</Text>
+        <Text style={styles.badgeDescription}>{badge.description}</Text>
+        <Text style={earned ? styles.badgeEarned : styles.badgeProgress}>
+          {earned
+            ? pinned
+              ? "Featured"
+              : "Earned Â· Tap to feature"
+            : `Locked Â· ${Math.min(progress.current, progress.target)}/${progress.target}`}
+        </Text>
+      </Pressable>
+    );
+  };
+
   const cuisineStats = cuisines
     .map((cuisine) => ({
       cuisine,
@@ -187,6 +255,7 @@ export function ProfileScreen({
   };
 
   return (
+    <>
     <ScrollView
       style={styles.screen}
       contentContainerStyle={[
@@ -217,11 +286,26 @@ export function ProfileScreen({
         </View>
         <View style={styles.identityRow}>
           <View style={styles.avatarFrame}>
-            <DecoratedAvatar
-              name={profile.name}
-              frame={appearance.frame}
-              palette={appearance.palette}
-            />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={
+                profile.avatarUri
+                  ? "Change profile picture"
+                  : "Upload profile picture"
+              }
+              onPress={() => setAvatarPickerVisible(true)}
+              style={({ pressed }) => pressed && styles.avatarPressed}
+            >
+              <DecoratedAvatar
+                name={profile.name}
+                frame={appearance.frame}
+                palette={appearance.palette}
+                imageUri={profile.avatarUri}
+              />
+            </Pressable>
+            <View pointerEvents="none" style={styles.avatarCamera}>
+              <Ionicons name="camera" color={colors.white} size={13} />
+            </View>
             <View style={styles.levelPill}>
               <Text style={styles.levelPillText}>Lv {level}</Text>
             </View>
@@ -537,54 +621,19 @@ export function ProfileScreen({
           {earnedBadgeIds.size} of {BADGES.length} trophies earned · A reward
           for every kind of appetite.
         </Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.badgeRow}
-        >
-          {featuredBadges.map((badge) => {
-            const earned = earnedBadgeIds.has(badge.id);
-            const progress = badgeProgress(
-              badge,
-              foodsCount,
-              cuisinesCount,
-              saved.length,
-              streak,
-              Math.max(ratingsCount, game.ratings),
-            );
-            const pinned = featuredBadge?.id === badge.id;
-            return (
-              <Pressable
-                key={badge.id}
-                accessibilityRole="button"
-                disabled={!earned}
-                accessibilityLabel={`${badge.name}. ${badge.description} ${earned ? (pinned ? "Featured trophy" : "Earned. Tap to feature on your profile") : `Locked. ${Math.min(progress.current, progress.target)} of ${progress.target}`}`}
-                aria-pressed={pinned}
-                accessibilityState={{ disabled: !earned, selected: pinned }}
-                onPress={() => changeCustomization({ featuredBadge: badge.id })}
-                style={({ pressed }) => [
-                  styles.badge,
-                  !earned && styles.badgeLocked,
-                  pinned && styles.badgePinned,
-                  pressed && styles.pressed,
-                ]}
-              >
-                <TrophyArt id={badge.id} size={88} locked={!earned} />
-                <Text style={styles.badgeName}>{badge.name}</Text>
-                <Text style={styles.badgeDescription}>{badge.description}</Text>
-                <Text
-                  style={earned ? styles.badgeEarned : styles.badgeProgress}
-                >
-                  {earned
-                    ? pinned
-                      ? "Featured"
-                      : "Earned · Tap to feature"
-                    : `Locked · ${Math.min(progress.current, progress.target)}/${progress.target}`}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
+        {showAllBadges ? (
+          <View style={styles.badgeGrid}>
+            {featuredBadges.map(renderBadge)}
+          </View>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.badgeRow}
+          >
+            {featuredBadges.map(renderBadge)}
+          </ScrollView>
+        )}
       </View>
 
       <View style={styles.section}>
@@ -645,6 +694,83 @@ export function ProfileScreen({
         </Text>
       ) : null}
     </ScrollView>
+    <Modal
+      visible={avatarPickerVisible}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setAvatarPickerVisible(false)}
+    >
+      <View style={styles.avatarModalOverlay}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Close profile photo options"
+          onPress={() => setAvatarPickerVisible(false)}
+          style={StyleSheet.absoluteFill}
+        />
+        <View style={styles.avatarModal}>
+          <View style={styles.avatarModalHeader}>
+            <View style={styles.flex}>
+              <Text style={styles.sectionTitle}>Profile picture</Text>
+              <Text style={styles.hint}>
+                Choose a photo for your profile and map marker.
+              </Text>
+            </View>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Close profile photo options"
+              onPress={() => setAvatarPickerVisible(false)}
+              style={styles.avatarModalClose}
+            >
+              <Ionicons name="close" color={colors.ink} size={20} />
+            </Pressable>
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => {
+              setAvatarPickerVisible(false);
+              onUploadAvatar?.();
+            }}
+            style={({ pressed }) => [
+              styles.avatarModalAction,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Ionicons name="images-outline" color={colors.accent} size={20} />
+            <Text style={styles.avatarModalActionText}>
+              {profile.avatarUri ? "Choose a new photo" : "Upload a photo"}
+            </Text>
+          </Pressable>
+          {profile.avatarUri ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                onSave({ ...profile, avatarUri: undefined });
+                setAvatarPickerVisible(false);
+              }}
+              style={({ pressed }) => [
+                styles.avatarModalAction,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Ionicons name="trash-outline" color={colors.coral} size={20} />
+              <Text
+                style={[styles.avatarModalActionText, { color: colors.coral }]}
+              >
+                Remove photo
+              </Text>
+            </Pressable>
+          ) : null}
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setAvatarPickerVisible(false)}
+            style={styles.avatarModalCancel}
+          >
+            <Text style={styles.link}>Cancel</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
+    </>
   );
 }
 
@@ -700,6 +826,68 @@ const styles = StyleSheet.create({
   },
   identityRow: { flexDirection: "row", alignItems: "center", gap: 16 },
   avatarFrame: { position: "relative" },
+  avatarPressed: { opacity: 0.75 },
+  avatarCamera: {
+    position: "absolute",
+    left: 2,
+    bottom: 2,
+    width: 25,
+    height: 25,
+    borderRadius: 13,
+    backgroundColor: colors.accent,
+    borderWidth: 2,
+    borderColor: colors.paper,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarModalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+    backgroundColor: "rgba(15,27,49,0.48)",
+  },
+  avatarModal: {
+    width: "100%",
+    maxWidth: 420,
+    padding: 20,
+    gap: 10,
+    borderRadius: 24,
+    backgroundColor: colors.paper,
+  },
+  avatarModalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 4,
+  },
+  avatarModalClose: {
+    width: 42,
+    height: 42,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 21,
+    backgroundColor: colors.tint,
+  },
+  avatarModalAction: {
+    minHeight: 54,
+    paddingHorizontal: 14,
+    borderRadius: 15,
+    backgroundColor: colors.tint,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  avatarModalActionText: {
+    color: colors.ink,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  avatarModalCancel: {
+    minHeight: 44,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   levelPill: {
     position: "absolute",
     bottom: -1,
@@ -843,6 +1031,13 @@ const styles = StyleSheet.create({
   passportCount: { color: colors.muted, fontSize: 11, fontWeight: "600" },
   passportStatus: { color: colors.muted, fontSize: 11, fontWeight: "700" },
   badgeRow: { gap: 12, paddingVertical: 2 },
+  badgeGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  badgeGridItem: { width: "47%" },
   badge: {
     width: 160,
     borderRadius: 20,

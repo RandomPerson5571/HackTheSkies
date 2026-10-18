@@ -6,7 +6,10 @@ export const recommendationPolicy = {
   popularityCeiling: 10_000,
   minimumRating: 4,
   minimumScore: 75,
-  maxPhotoPins: 8,
+  overviewPhotoPins: 8,
+  maxPhotoPins: 32,
+  photoPinZoomThreshold: 11,
+  photoPinsPerZoomLevel: 4,
 } as const;
 
 export type Recommendation = {
@@ -116,6 +119,7 @@ export function getMapMarkerPlaces(
   visibleIds: ReadonlySet<string>,
   ratings: Recommendations,
   selectedId?: string,
+  zoom = 10.5,
 ): Place[] {
   const selected = places.find((place) => place.id === selectedId);
   const suggested = places
@@ -130,8 +134,33 @@ export function getMapMarkerPlaces(
         (ratings.get(b.id)?.score ?? 0) - (ratings.get(a.id)?.score ?? 0) ||
         a.id.localeCompare(b.id),
     );
+  const suggestedIds = new Set(suggested.map((place) => place.id));
+  const additional =
+    zoom >= recommendationPolicy.photoPinZoomThreshold
+      ? places
+          .filter(
+            (place) =>
+              place.id !== selectedId &&
+              visibleIds.has(place.id) &&
+              !suggestedIds.has(place.id),
+          )
+          .sort(
+            (a, b) =>
+              (ratings.get(b.id)?.score ?? 0) -
+                (ratings.get(a.id)?.score ?? 0) ||
+              a.id.localeCompare(b.id),
+          )
+      : [];
+  const zoomLevels = Math.floor(
+    Math.max(0, zoom - recommendationPolicy.photoPinZoomThreshold + 1),
+  );
+  const pinLimit = Math.min(
+    recommendationPolicy.maxPhotoPins,
+    recommendationPolicy.overviewPhotoPins +
+      zoomLevels * recommendationPolicy.photoPinsPerZoomLevel,
+  );
   return (selected ? [selected, ...suggested] : suggested).slice(
     0,
-    recommendationPolicy.maxPhotoPins,
-  );
+    pinLimit,
+  ).concat(additional).slice(0, pinLimit);
 }

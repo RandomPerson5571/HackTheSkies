@@ -297,21 +297,15 @@ export function FavoritesScreen({
   const { width } = useWindowDimensions();
   const scrollRef = useRef<ScrollView>(null);
   const nearbyY = useRef(0);
-  const [filter, setFilter] = useState("ranked");
+  const [filter, setFilter] = useState<"ranked" | "saved">("ranked");
   const [sort, setSort] = useState<"ranking" | "rating" | "recent">("ranking");
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const [creatingList, setCreatingList] = useState(false);
-  const [listName, setListName] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
-  const [covers, setCovers] = useState<Place[]>([]);
   const filteredIds = useMemo(() => {
     const ids =
       filter === "ranked"
         ? collection.favorites
-        : filter === "saved"
-          ? collection.saved.filter((id) => !collection.visited.includes(id))
-          : (collection.lists.find((list) => list.id === filter)?.placeIds ??
-            []);
+        : collection.saved.filter((id) => !collection.visited.includes(id));
     return sort === "rating"
       ? [...ids].sort(
           (a, b) => (collection.ratings[b] ?? 0) - (collection.ratings[a] ?? 0),
@@ -327,7 +321,6 @@ export function FavoritesScreen({
     collection.favorites,
     collection.saved,
     collection.visited,
-    collection.lists,
     collection.ratings,
   ]);
   const [query, setQuery] = useState("");
@@ -355,7 +348,7 @@ export function FavoritesScreen({
     1,
     Math.ceil(filteredIds.length / FAVORITES_PAGE_SIZE),
   );
-  if (rankedPage >= rankedPageCount) setRankedPage(rankedPageCount - 1);
+  const rankedPageSafe = Math.min(rankedPage, rankedPageCount - 1);
   const unratedPageCount = Math.max(
     1,
     Math.ceil(Math.min(unratedTotal, NEARBY_PAGE_LIMIT) / NEARBY_PAGE_SIZE),
@@ -365,19 +358,6 @@ export function FavoritesScreen({
     (unratedPage + 1) * NEARBY_PAGE_SIZE,
   );
   useEffect(() => {
-    let active = true;
-    const ids = [
-      ...new Set(collection.lists.flatMap((list) => list.placeIds.slice(0, 4))),
-    ];
-    void loadPlacesByIds(ids).then((places) => {
-      if (active) setCovers(places);
-    });
-    return () => {
-      active = false;
-    };
-  }, [collection.lists, loadPlacesByIds, refreshKey]);
-
-  useEffect(() => {
     const timer = setTimeout(() => setPageQuery(query), 250);
     return () => clearTimeout(timer);
   }, [query]);
@@ -385,8 +365,8 @@ export function FavoritesScreen({
   useEffect(() => {
     let active = true;
     const ids = filteredIds.slice(
-      rankedPage * FAVORITES_PAGE_SIZE,
-      (rankedPage + 1) * FAVORITES_PAGE_SIZE,
+      rankedPageSafe * FAVORITES_PAGE_SIZE,
+      (rankedPageSafe + 1) * FAVORITES_PAGE_SIZE,
     );
     // Start the loading indicator when synchronizing a new remote page.
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -401,7 +381,7 @@ export function FavoritesScreen({
     return () => {
       active = false;
     };
-  }, [filteredIds, rankedPage, loadPlacesByIds, refreshKey]);
+  }, [filteredIds, rankedPageSafe, loadPlacesByIds, refreshKey]);
 
   useEffect(() => {
     let active = true;
@@ -508,21 +488,6 @@ export function FavoritesScreen({
               icon="checkmark-circle-outline"
               onPress={() => dispatch({ type: "visit", placeId: place.id })}
             />
-            {collection.lists.map((list) => (
-              <Action
-                key={list.id}
-                label={list.name}
-                icon="albums-outline"
-                selected={list.placeIds.includes(place.id)}
-                onPress={() =>
-                  dispatch({
-                    type: "membership",
-                    listId: list.id,
-                    placeId: place.id,
-                  })
-                }
-              />
-            ))}
           </View>
         )}
         <View style={fs.tools}>
@@ -564,20 +529,14 @@ export function FavoritesScreen({
       </View>
     );
   }
-  function chooseFilter(value: string) {
+  function chooseFilter(value: "ranked" | "saved") {
     setFilter(value);
     setRankedPage(0);
   }
   const wantToTryCount = collection.saved.filter(
     (id) => !collection.visited.includes(id),
   ).length;
-  const activeTitle =
-    filter === "ranked"
-      ? "Your favourites"
-      : filter === "saved"
-        ? "Want to try"
-        : (collection.lists.find((list) => list.id === filter)?.name ??
-          "Your collection");
+  const activeTitle = filter === "ranked" ? "Your favourites" : "Want to try";
   const gridWidth = Math.min(width, 720) - 40;
   const cardWidth = gridWidth < 300 ? gridWidth : (gridWidth - 12) / 2;
   return (
@@ -597,20 +556,22 @@ export function FavoritesScreen({
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={fs.chips}
           >
-            {[
-              {
-                id: "ranked",
-                name: "Favourites",
-                count: collection.favorites.length,
-                icon: "heart-outline" as const,
-              },
-              {
-                id: "saved",
-                name: "Want to try",
-                count: wantToTryCount,
-                icon: "bookmark-outline" as const,
-              },
-            ].map((item) => (
+            {(
+              [
+                {
+                  id: "ranked",
+                  name: "Favourites",
+                  count: collection.favorites.length,
+                  icon: "heart-outline" as const,
+                },
+                {
+                  id: "saved",
+                  name: "Want to try",
+                  count: wantToTryCount,
+                  icon: "bookmark-outline" as const,
+                },
+              ] as const
+            ).map((item) => (
               <Pressable
                 key={item.id}
                 accessibilityRole="button"
@@ -646,76 +607,6 @@ export function FavoritesScreen({
     >
       <View style={fs.sectionHeading}>
         <View style={s.flex}>
-          <Text style={s.section}>Made for your cravings</Text>
-          <Text style={s.small}>Little collections. Big plans.</Text>
-        </View>
-        <ToolButton
-          icon="add"
-          label="Create a collection"
-          onPress={() => setCreatingList(true)}
-        />
-      </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={fs.collections}
-      >
-        {collection.lists.map((list) => (
-          <Pressable
-            key={list.id}
-            accessibilityRole="button"
-            accessibilityLabel={`${list.name}, ${list.placeIds.length} places`}
-            accessibilityState={{ selected: filter === list.id }}
-            onPress={() => chooseFilter(list.id)}
-            style={[
-              fs.collectionCard,
-              filter === list.id && fs.collectionActive,
-            ]}
-          >
-            <View style={fs.mosaic}>
-              {[0, 1, 2, 3].map((index) => {
-                const place = covers.find(
-                  (item) => item.id === list.placeIds[index],
-                );
-                return place ? (
-                  <RestaurantPhoto
-                    key={index}
-                    place={place}
-                    showAll
-                    recommendation={undefined}
-                    style={fs.mosaicTile}
-                  />
-                ) : (
-                  <View key={index} style={fs.mosaicBlank}>
-                    <Icon name="restaurant-outline" size={19} />
-                  </View>
-                );
-              })}
-            </View>
-            <Text numberOfLines={1} style={fs.collectionName}>
-              {list.name}
-            </Text>
-            <Text style={s.small}>
-              {list.placeIds.length}{" "}
-              {list.placeIds.length === 1 ? "place" : "places"}
-            </Text>
-          </Pressable>
-        ))}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Create a new collection"
-          onPress={() => setCreatingList(true)}
-          style={fs.newCollection}
-        >
-          <View style={fs.newCollectionIcon}>
-            <Icon name="add" size={28} />
-          </View>
-          <Text style={fs.collectionName}>A list for every mood</Text>
-          <Text style={s.small}>Create a collection</Text>
-        </Pressable>
-      </ScrollView>
-      <View style={fs.sectionHeading}>
-        <View style={s.flex}>
           <Text accessibilityRole="header" style={s.section}>
             {activeTitle}
           </Text>
@@ -723,13 +614,6 @@ export function FavoritesScreen({
             {filteredIds.length} places worth keeping close
           </Text>
         </View>
-        {filter !== "ranked" && filter !== "saved" && (
-          <ToolButton
-            icon="close"
-            label="Show all favourites"
-            onPress={() => chooseFilter("ranked")}
-          />
-        )}
       </View>
       <View style={fs.sortRow}>
         <Icon name="swap-vertical-outline" size={16} />
@@ -769,8 +653,8 @@ export function FavoritesScreen({
           </Text>
           <Text style={fs.emptyCopy}>
             {filter === "ranked"
-              ? "Rate a place you’ve tried to start a collection of bites worth coming back for."
-              : "Explore the nearby picks below. Open a place to save it or add it to this collection."}
+              ? "Rate a place you’ve tried to start a ranking of bites worth coming back for."
+              : "Explore the nearby picks below. Open a place to save it for later."}
           </Text>
           <Action
             label="Explore nearby picks"
@@ -838,15 +722,15 @@ export function FavoritesScreen({
         <View style={s.actions}>
           <Action
             label="Previous"
-            disabled={rankedPage === 0}
+            disabled={rankedPageSafe === 0}
             onPress={() => setRankedPage((page) => Math.max(0, page - 1))}
           />
           <Text style={s.small}>
-            Page {rankedPage + 1} of {rankedPageCount}
+            Page {rankedPageSafe + 1} of {rankedPageCount}
           </Text>
           <Action
             label="Next"
-            disabled={rankedPage >= rankedPageCount - 1}
+            disabled={rankedPageSafe >= rankedPageCount - 1}
             onPress={() =>
               setRankedPage((page) => Math.min(rankedPageCount - 1, page + 1))
             }
@@ -854,83 +738,32 @@ export function FavoritesScreen({
         </View>
       )}
       <Modal
-        visible={selectedPlace !== null || creatingList}
+        visible={selectedPlace !== null}
         transparent
         animationType="fade"
-        onRequestClose={() => {
-          setSelectedPlace(null);
-          setCreatingList(false);
-        }}
+        onRequestClose={() => setSelectedPlace(null)}
       >
         <View style={fs.modalBackdrop}>
           <View style={fs.sheet} accessibilityViewIsModal>
             <View style={fs.sectionHeading}>
               <Text accessibilityRole="header" style={s.name}>
-                {creatingList ? "A new collection" : "Make it yours"}
+                Make it yours
               </Text>
               <ToolButton
                 icon="close"
                 label="Close place actions"
-                onPress={() => {
-                  setSelectedPlace(null);
-                  setCreatingList(false);
-                }}
+                onPress={() => setSelectedPlace(null)}
               />
             </View>
             <ScrollView
               keyboardShouldPersistTaps="handled"
               contentContainerStyle={fs.sheetContent}
             >
-              {creatingList ? (
-                <>
-                  <Text style={s.small}>
-                    Weekend brunches, date nights, or the best noodles in town.
-                  </Text>
-                  <TextInput
-                    accessibilityLabel="Collection name"
-                    autoFocus
-                    value={listName}
-                    onChangeText={setListName}
-                    maxLength={40}
-                    placeholder="Give your collection a name"
-                    placeholderTextColor={colors.muted}
-                    style={s.input}
-                  />
-                  {collection.lists.some(
-                    (list) =>
-                      list.name.toLowerCase() === listName.trim().toLowerCase(),
-                  ) && (
-                    <Text style={s.small}>
-                      You already have a collection with this name.
-                    </Text>
-                  )}
-                  <Action
-                    label="Create collection"
-                    icon="add"
-                    disabled={
-                      !listName.trim() ||
-                      collection.lists.some(
-                        (list) =>
-                          list.name.toLowerCase() ===
-                          listName.trim().toLowerCase(),
-                      )
-                    }
-                    onPress={() => {
-                      const id = `list-${Date.now()}`;
-                      dispatch({ type: "create-list", id, name: listName });
-                      setListName("");
-                      setCreatingList(false);
-                      chooseFilter(id);
-                    }}
-                  />
-                </>
-              ) : (
-                selectedPlace &&
+              {selectedPlace &&
                 ratingCard(
                   selectedPlace,
                   collection.favorites.indexOf(selectedPlace.id),
-                )
-              )}
+                )}
             </ScrollView>
           </View>
         </View>
@@ -1616,63 +1449,6 @@ const fs = StyleSheet.create({
   countActive: { backgroundColor: colors.scrim },
   countText: { fontSize: 11, fontWeight: "700", color: colors.accent },
   sectionHeading: { flexDirection: "row", alignItems: "center", gap: 12 },
-  collections: { gap: 12, paddingBottom: 4 },
-  collectionCard: {
-    width: 170,
-    borderRadius: 20,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.white,
-    gap: 4,
-  },
-  collectionActive: {
-    borderColor: colors.accent,
-    backgroundColor: colors.tint,
-  },
-  mosaic: {
-    height: 112,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 3,
-    borderRadius: 13,
-    overflow: "hidden",
-    marginBottom: 6,
-  },
-  mosaicTile: { width: "49%", height: 55, backgroundColor: colors.tint },
-  mosaicBlank: {
-    width: "49%",
-    height: 55,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.tint,
-  },
-  collectionName: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: colors.ink,
-    paddingHorizontal: 3,
-  },
-  newCollection: {
-    width: 170,
-    minHeight: 178,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderStyle: "dashed",
-    borderColor: colors.accent,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 12,
-    gap: 8,
-  },
-  newCollectionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.tint,
-  },
   sortRow: {
     flexDirection: "row",
     alignItems: "center",

@@ -29,9 +29,20 @@ import { resizeScanImage, deleteScanImage } from "../services/scanImages";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
 import { useFoodDex } from "../hooks/useFoodDex";
 import { foodKey } from "../models/foodDex";
-import type { DishBounds } from "../models/foodTracking";
+import {
+  normalizedBoxToDetection,
+  projectDish,
+  type DishBounds,
+} from "../models/foodTracking";
 import { DishOverlay } from "../components/DishOverlay";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+
+// The Groq estimate backs up YOLO when tracking misses: wait out bursts of
+// misses (debounce), then probe with full frames spaced by a cooldown so a
+// bad angle cannot flood the recognition server. One probe runs at a time.
+const FALLBACK_DEBOUNCE_MS = 800;
+const FALLBACK_COOLDOWN_MS = 7_000;
+const FALLBACK_MAX_ATTEMPTS = 2;
 
 export function FoodCameraScreen({
   onCapture,
@@ -44,6 +55,7 @@ export function FoodCameraScreen({
   const reduced = useReducedMotion();
   const [live, setLive] = useState(true);
   const [catching, setCatching] = useState(false);
+  const retainedPhoto = useRef<string | null>(null);
   const catchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const camera = useRef<FoodCameraHandle>(null);
@@ -61,6 +73,7 @@ export function FoodCameraScreen({
   const [active, setActive] = useState(AppState.currentState === "active");
   const [attempt, setAttempt] = useState(0);
   const [preview, setPreview] = useState({ width: 0, height: 0 });
+  const [noFood, setNoFood] = useState(false);
   const [recognition, setRecognition] = useState<FoodRecognition | null>(null);
   const [anchor, setAnchor] = useState<DishBounds>({
     x: 0.3,
@@ -69,11 +82,28 @@ export function FoodCameraScreen({
     height: 0.24,
     visible: false,
   });
+  // Coordinates for hidden boxes are always the last meaningful fractions,
+  // never (0, 0); only `visible` drops when a detection leaves the frame.
+  const anchorRef = useRef(anchor);
+  function hideAnchor() {
+    anchorRef.current = { ...anchorRef.current, visible: false };
+    setAnchor(anchorRef.current);
+  }
+  function showAnchor(bounds: DishBounds) {
+    anchorRef.current = bounds;
+    setAnchor(bounds);
+  }
   const [trackingError, setTrackingError] = useState("");
   const scanned = useRef(false);
+  const trackingActive = useRef(false);
   const [identifying, setIdentifying] = useState(false);
   const request = useRef<AbortController | null>(null);
   const generation = useRef(0);
+  // Groq fallback budget: the vision estimate backs up YOLO when it misses,
+  // debounced after misses, cooled down between requests, one in flight.
+  const fallbackLeft = useRef(FALLBACK_MAX_ATTEMPTS);
+  const fallbackLast = useRef(0);
+  const fallbackMissing = useRef(0);
   const { entries } = useFoodDex();
   const collected =
     recognition &&
@@ -87,6 +117,13 @@ export function FoodCameraScreen({
     : recognition
       ? `${recognition.name} · ${collected ? "Collected" : recognition.catalogId ? "New badge" : "New discovery"}`
       : "Food detected";
+  // The overlay persists through the post-photo identify, so the box and
+  // award cards never flicker off while the scan is running.
+  const foodInFrame =
+    !!recognition ||
+    !!catching ||
+    (!noFood && anchor.visible && live && !photo && ready) ||
+    (!!photo && identifying);
 
   useEffect(() => {
     mounted.current = true;
@@ -108,6 +145,7 @@ export function FoodCameraScreen({
       request.current?.abort();
       if (catchTimer.current) clearTimeout(catchTimer.current);
       subscription.remove();
+      if (retainedPhoto.current) deleteScanImage(retainedPhoto.current);
     };
   }, [refreshPermission]);
 
@@ -140,6 +178,8 @@ export function FoodCameraScreen({
     };
     setLive(false);
     if (!recognition) {
+      if (retainedPhoto.current === capture.photo?.uri)
+        retainedPhoto.current = null;
       onCapture(capture);
       return;
     }
@@ -147,9 +187,13 @@ export function FoodCameraScreen({
     void playFeedback(collected ? "select" : "discover");
     catchTimer.current = setTimeout(
       () => {
-        if (mounted.current) onCapture(capture);
+        if (mounted.current) {
+          if (retainedPhoto.current === capture.photo?.uri)
+            retainedPhoto.current = null;
+          onCapture(capture);
+        }
       },
-      reduced === false ? 700 : 0,
+      reduced ? 0 : 700,
     );
   }
 
@@ -163,7 +207,13 @@ export function FoodCameraScreen({
       );
     }
   }
-  async function identify(image: CameraCapturedPicture) {
+  // `quiet` marks the YOLO-failure fallback probes: they retry on a cooldown
+  // and must not spam errors the user cannot act on.
+  async function identify(
+    image: CameraCapturedPicture,
+    quiet = false,
+    fromPreview = false,
+  ) {
     request.current?.abort();
     const controller = new AbortController();
     request.current = controller;
@@ -172,6 +222,7 @@ export function FoodCameraScreen({
     setRecognition(null);
     setError("");
     let upload: { uri: string } | undefined;
+    let retained = false;
     const timeout = setTimeout(() => controller.abort(), 30_000);
     try {
       const resized = await resizeScanImage(image, 1024, true);
@@ -183,16 +234,43 @@ export function FoodCameraScreen({
         setRecognition(result);
         if (result) {
           void playFeedback("bell");
+          setNoFood(false);
+          // YOLO owns live geometry. Groq localization only belongs to its
+          // frozen source image, and never replaces an active live track.
+          const liveBox =
+            fromPreview &&
+            anchorRef.current.visible &&
+            anchorRef.current.source !== "groq";
+          if (!liveBox) {
+            if (fromPreview) {
+              retained = true;
+              retainedPhoto.current = resized.uri;
+              setPhoto({ ...resized, format: "jpg" });
+            }
+            const box =
+              result.bbox && preview.height
+                ? projectDish(
+                    normalizedBoxToDetection(result.bbox),
+                    resized,
+                    preview,
+                    false,
+                  )
+                : null;
+            if (box) showAnchor({ ...box, source: "groq" });
+            else hideAnchor();
+          }
         } else {
+          setNoFood(true);
           void playFeedback("error");
+          if (!quiet)
+            setError(
+              "No meal was identified. Retake the photo or enter the dish yourself.",
+            );
+          hideAnchor();
         }
-        if (!result)
-          setError(
-            "No meal was identified. Retake the photo or enter the dish yourself.",
-          );
       }
     } catch (cause) {
-      if (mounted.current && generation.current === current) {
+      if (mounted.current && generation.current === current && !quiet) {
         void playFeedback("error");
         setError(
           controller.signal.aborted
@@ -204,15 +282,15 @@ export function FoodCameraScreen({
       }
     } finally {
       clearTimeout(timeout);
-      if (upload) deleteScanImage(upload.uri);
+      if (upload && !retained) deleteScanImage(upload.uri);
       if (mounted.current && generation.current === current) {
         setIdentifying(false);
         request.current = null;
       }
     }
   }
-  async function scanPreview() {
-    if (!camera.current || capturing.current || scanned.current) return;
+  async function scanCapture(quiet: boolean) {
+    if (!camera.current || capturing.current || request.current) return;
     scanned.current = true;
     capturing.current = true;
     let image: CameraCapturedPicture | undefined;
@@ -223,9 +301,9 @@ export function FoodCameraScreen({
         base64: false,
       });
       if (mounted.current && current === generation.current)
-        await identify(image);
+        await identify(image, quiet, true);
     } catch {
-      if (mounted.current && current === generation.current)
+      if (!quiet && mounted.current && current === generation.current)
         setError(
           "Live scan failed. Take a photo or restart Live scan to retry.",
         );
@@ -234,7 +312,13 @@ export function FoodCameraScreen({
       capturing.current = false;
     }
   }
+  async function scanPreview() {
+    if (!camera.current || capturing.current || scanned.current) return;
+    scanned.current = true;
+    await scanCapture(false);
+  }
   const autoSnap = useEffectEvent(() => void scanPreview());
+  const fallbackProbe = useEffectEvent(() => void scanCapture(true));
   // Recognize once per live session; tracking stays entirely on device.
   useEffect(() => {
     if (
@@ -251,6 +335,66 @@ export function FoodCameraScreen({
     const timer = setTimeout(autoSnap, 1600);
     return () => clearTimeout(timer);
   }, [live, ready, active, photo, busy, identifying, error]);
+  // YOLO-miss contingency: when tracking cannot see food (frames keep coming
+  // back invisible), let Groq identify AND approximately locate it from a full
+  // frame. An estimate is only rendered on the captured frame it describes —
+  // never as a live-tracked box.
+  useEffect(() => {
+    const now = Date.now();
+    const eligible =
+      live &&
+      !photo &&
+      ready &&
+      active &&
+      !busy &&
+      !identifying &&
+      !catching &&
+      !recognition &&
+      !error &&
+      !anchor.visible &&
+      fallbackLeft.current > 0 &&
+      trackingActive.current;
+    if (!eligible) {
+      fallbackMissing.current = 0;
+      return;
+    }
+    if (!fallbackMissing.current) fallbackMissing.current = now;
+    const due = Math.max(
+      fallbackMissing.current + FALLBACK_DEBOUNCE_MS,
+      fallbackLast.current + FALLBACK_COOLDOWN_MS,
+    );
+    const timer = setTimeout(
+      () => {
+        if (request.current || capturing.current) return;
+        fallbackMissing.current = 0;
+        fallbackLast.current = Date.now();
+        fallbackLeft.current -= 1;
+        fallbackProbe();
+      },
+      Math.max(0, due - now),
+    );
+    return () => clearTimeout(timer);
+  }, [
+    anchor,
+    live,
+    photo,
+    ready,
+    active,
+    busy,
+    identifying,
+    catching,
+    recognition,
+    error,
+  ]);
+
+  useEffect(() => {
+    if (anchor.source !== "groq" || !anchor.visible || !photo) return;
+    const timer = setTimeout(() => {
+      anchorRef.current = { ...anchorRef.current, visible: false };
+      setAnchor(anchorRef.current);
+    }, 12_000);
+    return () => clearTimeout(timer);
+  }, [anchor.source, anchor.visible, photo]);
 
   async function snap() {
     if (!camera.current || !ready || capturing.current) return;
@@ -274,7 +418,13 @@ export function FoodCameraScreen({
       }
       const captured: CameraCapturedPicture = { ...image, format: "jpg" };
       setPhoto(captured);
-      if (!recognition || !live) void identify(captured);
+      if (!recognition || !live) {
+        void identify(captured);
+      } else {
+        // The live track maps to the preview, not this capture: without a
+        // photographic estimate the floating card stays centered instead.
+        hideAnchor();
+      }
     } catch {
       if (mounted.current)
         setError("We couldn’t take that photo. Please try again.");
@@ -349,12 +499,18 @@ export function FoodCameraScreen({
     request.current?.abort();
     request.current = null;
     if (photo) deleteScanImage(photo.uri);
+    retainedPhoto.current = null;
     setReady(false);
     setAttempt((value) => value + 1);
     setPhoto(null);
+    setNoFood(false);
     scanned.current = false;
     setRecognition(null);
     setIdentifying(false);
+    hideAnchor();
+    fallbackLeft.current = FALLBACK_MAX_ATTEMPTS;
+    fallbackLast.current = 0;
+    fallbackMissing.current = 0;
     setError("");
   }
   const icon = (
@@ -395,8 +551,16 @@ export function FoodCameraScreen({
             animateShutter={false}
             autofocus="on"
             tracking={live && !photo && active && ready}
-            onTracking={setAnchor}
-            onTrackingError={setTrackingError}
+            onTracking={(bounds) => {
+              trackingActive.current = true;
+              if (bounds.visible) setNoFood(false);
+              anchorRef.current = bounds;
+              setAnchor(bounds);
+            }}
+            onTrackingError={(message) => {
+              trackingActive.current = false;
+              setTrackingError(message);
+            }}
             onCameraReady={() => setReady(true)}
             onMountError={({ message }) => {
               setReady(false);
@@ -442,16 +606,33 @@ export function FoodCameraScreen({
           </View>
         )}
       </View>
-      {((live && !photo && ready) || recognition) && (
+      {photo && recognition && !anchor.visible && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Tap the food to place its discovery label"
+          style={StyleSheet.absoluteFill}
+          onPress={(event) => {
+            if (!preview.width || !preview.height) return;
+            const x = event.nativeEvent.locationX / preview.width;
+            const y = event.nativeEvent.locationY / preview.height;
+            showAnchor({
+              x: Math.max(0, Math.min(0.8, x - 0.1)),
+              y: Math.max(0, Math.min(0.8, y - 0.1)),
+              width: 0.2,
+              height: 0.2,
+              visible: true,
+              source: "groq",
+            });
+          }}
+        />
+      )}
+      {foodInFrame && (
         <DishOverlay
-          key={
-            recognition
-              ? `${recognition.name}-${recognition.cuisine}`
-              : "scanning"
-          }
+          key={`${facing}-${attempt}-${live}`}
           preview={preview}
-          anchor={photo && !anchor.visible ? undefined : anchor}
-          scanning={!recognition}
+          anchor={noFood ? { ...anchor, visible: false } : anchor}
+          scanning={live && !photo && !recognition}
+          analyzing={!!photo && identifying}
           recognition={recognition}
           collected={!!collected}
           catching={catching}
@@ -520,7 +701,8 @@ export function FoodCameraScreen({
               request.current?.abort();
               scanned.current = false;
               setTrackingError("");
-              setAnchor((value) => ({ ...value, visible: false }));
+              hideAnchor();
+              setNoFood(false);
               setRecognition(null);
               setIdentifying(false);
               setError("");
@@ -694,11 +876,15 @@ export function FoodCameraScreen({
               accessibilityState={{ disabled: busy || !ready }}
               disabled={busy || !ready}
               onPress={() => {
+                generation.current++;
+                request.current?.abort();
+                request.current = null;
+                setIdentifying(false);
                 setReady(false);
                 setFacing((value) => (value === "back" ? "front" : "back"));
                 scanned.current = false;
                 setTrackingError("");
-                setAnchor((value) => ({ ...value, visible: false }));
+                hideAnchor();
                 setRecognition(null);
               }}
               style={({ pressed }) => [

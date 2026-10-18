@@ -302,6 +302,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [plusMenuProgress] = useState(() => new Animated.Value(0));
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
+  const [mapAttempt, setMapAttempt] = useState(0);
+  const mapSettledRef = useRef(false);
   const [linkError, setLinkError] = useState(false);
   useMenuSound(cameraMenuOpen);
   useMenuSound(plusMenuOpen);
@@ -539,14 +541,37 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       }),
     [cardDragY, dismissSelection],
   );
+  const onMapLoading = useCallback(() => {
+    mapSettledRef.current = false;
+    setMapReady(false);
+    setMapError(false);
+  }, []);
   const onMapReady = useCallback(() => {
+    mapSettledRef.current = true;
     setMapReady(true);
     setMapError(false);
   }, []);
   const onMapError = useCallback(() => {
+    mapSettledRef.current = true;
     setMapError(true);
     setMapReady(false);
   }, []);
+  function retryMap() {
+    mapSettledRef.current = false;
+    setMapError(false);
+    setMapReady(false);
+    setMapAttempt((attempt) => attempt + 1);
+  }
+  // A stalled style load can leave the viewport blank without ever
+  // emitting an error; surface the retry state if ready never arrives.
+  useEffect(() => {
+    if (tab !== "explore" || !token) return;
+    mapSettledRef.current = false;
+    const watchdog = setTimeout(() => {
+      if (!mapSettledRef.current) setMapError(true);
+    }, 12000);
+    return () => clearTimeout(watchdog);
+  }, [mapAttempt, tab]);
   function toggleSave(place: Place) {
     dispatch({ type: "save", placeId: place.id });
   }
@@ -1139,7 +1164,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 ...foodDex.entries.map((entry) => entry.cuisine),
                 cuisine,
               ]).size;
-              gamification.onDiscovery(count);
+              return gamification.onDiscovery(count);
             }}
           />
         ) : tab === "favorites" ? (
@@ -1258,6 +1283,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           <>
             {token ? (
               <MapView
+                key={mapAttempt}
                 ref={camera}
                 token={token}
                 center={mapCenter}
@@ -1273,6 +1299,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 selectedId={active?.id}
                 onSelect={choose}
                 onMapPress={dismissSelection}
+                onLoading={onMapLoading}
                 onReady={onMapReady}
                 onError={onMapError}
                 renderPlaceMarker={renderPlaceMarker}
@@ -1295,7 +1322,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               </View>
             )}
             {token && (!mapReady || mapError) && (
-              <View pointerEvents="none" style={styles.mapStatus}>
+              <View pointerEvents={mapError ? "box-none" : "none"} style={styles.mapStatus}>
                 {mapError ? (
                   <>
                     <Icon name="cloud-offline-outline" />
@@ -1303,6 +1330,14 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       The map couldn’t load. Check your connection and Mapbox
                       token.
                     </Text>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Reload the map"
+                      onPress={retryMap}
+                      style={styles.retryMapButton}
+                    >
+                      <Text style={styles.retryMapText}>Retry</Text>
+                    </Pressable>
                   </>
                 ) : (
                   <>
@@ -1483,7 +1518,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     {activeFriendReviews.length > 0 && (
                       <View style={{ gap: 8, marginTop: 4 }}>
                         <Text style={styles.small}>Friends' reviews</Text>
-                        {activeFriendReviews.map(({ friend, visit }) => {
+                        {activeFriendReviews
+                          .slice(0, Math.ceil(activeFriendReviews.length / 2))
+                          .map(({ friend, visit }) => {
                           const avatarUri =
                             friend.avatarUri ||
                             friend.profilePictureUri ||
@@ -2463,6 +2500,15 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   mapCountText: { color: colors.ink, fontSize: 12, fontWeight: "600" },
+  retryMapButton: {
+    minWidth: 132,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    alignItems: "center",
+    backgroundColor: colors.accent,
+  },
+  retryMapText: { color: colors.white, fontSize: 14, fontWeight: "600" },
   modal: { flex: 1, justifyContent: "flex-end" },
   scrim: {
     position: "absolute",

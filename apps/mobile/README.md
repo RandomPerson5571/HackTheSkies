@@ -81,15 +81,21 @@ The camera offers **take a photo**, **choose a photo**, and **Live scan**.
 Live scan starts enabled and sends one preview snapshot after a 1.6-second pause,
 before the user presses the shutter. Toggle it off and on to recognize a new dish.
 YOLOv10n runs locally through ONNX Runtime on browser and native cameras.
-Its bounding boxes stay invisible. Arrows aim at the tracked box perimeter;
-orbiting stars, twinkles, ripples, and drifting labels use Reanimated and respect
-reduced motion. Lost detections fade the arrows and particles. The COCO model
+Its bounding boxes stay invisible. Label cards hug the tracked box corners and
+move with it; arrows connect them to the tracked box perimeter, using Reanimated
+and respecting reduced motion. Missed detections retain the last valid box for
+700 ms, then stop rendering its arrows and geometry. The COCO model
 recognizes common foods and bowls; arbitrary plated meals may not be detected.
-Only the initial identification snapshot is uploaded to Groq; tracking frames stay
-on device. Runtime/model assets download on first use and need network access.
+Tracking frames stay on device. Initial identification and up to two fallback
+snapshots can be uploaded to Groq per scan session, with an 800 ms debounce,
+7-second cooldown, and one request in flight. Groq identity is independent of
+localization: a valid YOLO track stays live, while Groq-only discoveries freeze
+the exact analyzed frame. Reliable 0–1000 estimates use a dashed amber box for
+12 seconds; missing or expired locations show a discovery card with tap-to-place
+on the frozen photo. Invalid or non-food results never render object boxes. Runtime/model assets download on first use and need network access.
 Browser inference runs in a worker; native inference samples serialized camera
 snapshots and may follow more slowly than a dedicated frame processor.
-Pressing the shutter freezes the photo for review.
+Pressing the shutter also freezes the photo for review.
 
 Native tracking requires rebuilding the development client after installing
 `onnxruntime-react-native`: run `pnpm --filter mobile exec expo prebuild`, then

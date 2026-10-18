@@ -25,16 +25,41 @@ import { XP_PER_DISCOVERY } from "../../gamification/models/gamification";
 import { cameraColors } from "../../../theme";
 
 type Rect = { x: number; y: number; width: number; height: number };
+// Labels hug the tracking box corners; this is the gap between the two edges.
+const GAP = 14;
+
+// Anchor one label card at a corner of the tracked box, clamped inside the
+// preview so food near the frame edge keeps its labels on screen.
+function cardAnchor(
+  corner: number,
+  box: Rect,
+  card: { width: number; height: number },
+  container: { width: number; height: number },
+) {
+  "worklet";
+  const x = corner % 2 ? box.x + box.width : box.x;
+  const y = corner < 2 ? box.y : box.y + box.height;
+  let left = corner % 2 ? x + GAP : x - card.width - GAP;
+  let top = corner < 2 ? y - card.height - GAP : y + GAP;
+  if (container.width - card.width > 16)
+    left = Math.max(8, Math.min(left, container.width - card.width - 8));
+  if (container.height - card.height > 16)
+    top = Math.max(8, Math.min(top, container.height - card.height - 8));
+  return { left, top };
+}
+
 export function DishOverlay({
   recognition,
   collected,
   catching,
   scanning = false,
+  analyzing = false,
   anchor,
   preview,
 }: {
   recognition: FoodRecognition | null;
   scanning?: boolean;
+  analyzing?: boolean;
   preview?: { width: number; height: number };
   anchor?: DishBounds;
   collected: boolean;
@@ -45,6 +70,11 @@ export function DishOverlay({
     ? cardTier(recognition.name, recognition.cuisine)
     : cardTier("", "Other");
   const palette = cardTiers[tier];
+  // A Groq fallback box is an estimate, not a tracked object: it renders with
+  // its own accent and clearly labels itself as approximate.
+  const hasLocation = !!anchor?.visible;
+  const estimated = hasLocation && anchor?.source === "groq";
+  const accent = estimated ? "#F4DB91" : palette.color;
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [cards, setCards] = useState<Record<string, LayoutRectangle>>({});
   const bounds = useSharedValue<Rect>({ x: 0, y: 0, width: 0, height: 0 });
@@ -62,6 +92,14 @@ export function DishOverlay({
     return () => cancelAnimation(clock);
   }, [clock, reduced]);
   useEffect(() => {
+    const w = preview?.width || size.width;
+    const h = preview?.height || size.height;
+    if (anchor && !anchor.visible) {
+      // Unlocalized food gets a discovery card, never an invented object box.
+      bounds.value = { x: w * 0.5, y: h * 0.35, width: 0, height: 0 };
+      visible.value = 1;
+      return;
+    }
     const b = anchor ?? {
       x: 0.28,
       y: 0.3,
@@ -69,28 +107,20 @@ export function DishOverlay({
       height: 0.25,
       visible: true,
     };
-    const w = preview?.width || size.width;
-    const h = preview?.height || size.height;
     bounds.value = withTiming(
       { x: b.x * w, y: b.y * h, width: b.width * w, height: b.height * h },
-      { duration: reduced === false ? 140 : 0 },
+      { duration: reduced === false ? 170 : 0 },
     );
-    visible.value = withTiming(b.visible ? 1 : 0, { duration: 220 });
+    visible.value = withTiming(1, { duration: 220 });
   }, [anchor, bounds, preview, reduced, size, visible]);
   useEffect(() => {
     caught.value = withTiming(catching ? 1 : 0, {
-      duration: reduced === false ? 650 : 0,
+      duration: reduced ? 0 : 650,
     });
   }, [catching, caught, reduced]);
-  const particles = useAnimatedStyle(() => ({
-    opacity: visible.value * (1 - caught.value),
-    left: bounds.value.x + bounds.value.width / 2,
-    top: bounds.value.y + bounds.value.height / 2,
-  }));
   const labels = [
     {
       id: "dish",
-      position: s.topLeft,
       content: (
         <>
           <Text style={s.name}>
@@ -98,41 +128,45 @@ export function DishOverlay({
           </Text>
           <Text style={s.cuisine}>
             {recognition
-              ? `${recognition.cuisine} cuisine`
-              : "Keep your dish in view"}
+              ? `${recognition.cuisine} cuisine${!hasLocation ? " · Tap food to place label" : ""}`
+              : analyzing
+                ? "Matching your photo"
+                : "Keep your dish in view"}
           </Text>
         </>
       ),
     },
     {
       id: "status",
-      position: s.topRight,
       content: (
         <>
           <Ionicons
             name={collected ? "checkmark-circle" : "sparkles"}
             size={18}
-            color={palette.color}
+            color={accent}
             accessible={false}
           />
-          <Text style={[s.status, { color: palette.color }]}>
-            {scanning
-              ? "LIVE SCAN"
-              : collected
-                ? "IN YOUR DEX"
-                : "NEW DISCOVERY!"}
+          <Text style={[s.status, { color: accent }]}>
+            {estimated
+              ? "ESTIMATED · GROQ"
+              : analyzing
+                ? "ANALYZING"
+                : scanning
+                  ? "LIVE SCAN"
+                  : collected
+                    ? "IN YOUR DEX"
+                    : "NEW DISCOVERY!"}
           </Text>
         </>
       ),
     },
     {
       id: "rarity",
-      position: s.bottomLeft,
       content: (
         <>
           <Text style={s.caption}>RARITY</Text>
           <Text style={[s.tier, { color: palette.color }]}>
-            {scanning
+            {scanning || analyzing
               ? "Identifying…"
               : `${tier} · ${"★".repeat(palette.stars)}`}
           </Text>
@@ -141,15 +175,16 @@ export function DishOverlay({
     },
     {
       id: "xp",
-      position: s.bottomRight,
       content: (
         <>
           <Text style={[s.xp, { color: palette.color }]}>
-            {scanning
-              ? "Hold steady"
-              : collected
-                ? "Collected"
-                : `+${XP_PER_DISCOVERY} XP`}
+            {analyzing
+              ? "Checking your dex"
+              : scanning
+                ? "Hold steady"
+                : collected
+                  ? "Collected"
+                  : `+${XP_PER_DISCOVERY} XP`}
           </Text>
           <Text style={s.caption}>
             {scanning ? "A little food magic" : "On discovery"}
@@ -166,98 +201,129 @@ export function DishOverlay({
         setSize({ width: layout.width, height: layout.height })
       }
     >
-      {labels.map(({ id, position, content }, index) => (
-        <View
-          key={id}
-          style={[s.labelSlot, position]}
-          onLayout={({ nativeEvent: { layout } }) =>
-            setCards((old) => ({ ...old, [id]: layout }))
-          }
-        >
-          <FloatingCard
-            index={index}
-            clock={clock}
-            caught={caught}
-            reduced={reduced !== false}
-            color={palette.color}
+      {estimated && <EstimatedBox bounds={bounds} />}
+      {labels
+        .filter(({ id }) => hasLocation || id === "dish")
+        .map(({ id, content }, index) => (
+          <View
+            key={id}
+            style={s.labelSlot}
+            onLayout={({ nativeEvent: { layout } }) =>
+              setCards((old) => ({ ...old, [id]: layout }))
+            }
           >
-            {content}
-          </FloatingCard>
-        </View>
-      ))}
-      {Object.entries(cards).map(([id, card]) => (
-        <TrackingArrow
-          key={id}
-          card={card}
-          index={["dish", "status", "rarity", "xp"].indexOf(id)}
-          clock={clock}
-          caught={caught}
-          bounds={bounds}
-          visible={visible}
-          color={palette.color}
-          reduced={reduced !== false}
-        />
-      ))}
-      <Animated.View style={[s.particles, particles]}>
-        {Array.from({ length: 24 }, (_, index) => (
-          <Spark
-            key={index}
-            index={index}
+            <FloatingCard
+              index={index}
+              card={cards[id]}
+              container={size}
+              clock={clock}
+              caught={caught}
+              bounds={bounds}
+              visible={visible}
+              reduced={reduced !== false}
+              estimated={estimated}
+              color={accent}
+            >
+              {content}
+            </FloatingCard>
+          </View>
+        ))}
+      {hasLocation &&
+        Object.entries(cards).map(([id, card]) => (
+          <TrackingArrow
+            key={id}
+            card={card}
+            index={["dish", "status", "rarity", "xp"].indexOf(id)}
+            container={size}
             clock={clock}
-            bounds={bounds}
             caught={caught}
-            color={palette.color}
-            reduced={reduced !== false}
-          />
-        ))}
-        {[0, 1].map((index) => (
-          <Ripple
-            key={index}
-            index={index}
-            clock={clock}
             bounds={bounds}
-            color={palette.color}
-            reduced={reduced !== false}
+            visible={visible}
+            color={accent}
           />
         ))}
-      </Animated.View>
     </View>
+  );
+}
+
+function EstimatedBox({ bounds }: { bounds: SharedValue<Rect> }) {
+  const style = useAnimatedStyle(() => ({
+    opacity: bounds.value.width > 0 && bounds.value.height > 0 ? 1 : 0,
+    left: bounds.value.x,
+    top: bounds.value.y,
+    width: bounds.value.width,
+    height: bounds.value.height,
+  }));
+  return (
+    <Animated.View
+      style={[
+        {
+          position: "absolute",
+          borderWidth: 1,
+          borderStyle: "dashed",
+          borderColor: "#F4DB91",
+          borderRadius: 16,
+        },
+        style,
+      ]}
+    />
   );
 }
 
 function FloatingCard({
   children,
   index,
+  card,
+  container,
   clock,
   caught,
+  bounds,
+  visible,
   reduced,
+  estimated,
   color,
 }: {
   children: ReactNode;
   index: number;
+  card?: LayoutRectangle;
+  container: { width: number; height: number };
   clock: SharedValue<number>;
   caught: SharedValue<number>;
+  bounds: SharedValue<Rect>;
+  visible: SharedValue<number>;
   reduced: boolean;
+  estimated: boolean;
   color: string;
 }) {
-  const style = useAnimatedStyle(() => ({
-    opacity: 1 - caught.value,
-    transform: [
-      { translateX: reduced ? 0 : Math.cos(clock.value + index * 1.7) * 4 },
-      {
-        translateY:
-          (reduced ? 0 : Math.sin(clock.value * 2 + index * 1.7) * 7) +
-          caught.value * 40,
-      },
-      { scale: 1 - caught.value * 0.6 },
-    ],
-  }));
+  const style = useAnimatedStyle(() => {
+    const size = card ?? { width: 0, height: 0 };
+    const anchor = cardAnchor(index, bounds.value, size, container);
+    return {
+      // Once acquired, labels remain at the last valid position through misses.
+      opacity: visible.value * (1 - caught.value),
+      left: anchor.left,
+      top: anchor.top,
+      transform: [
+        { translateX: reduced ? 0 : Math.cos(clock.value + index * 1.7) * 4 },
+        {
+          translateY:
+            (reduced ? 0 : Math.sin(clock.value * 2 + index * 1.7) * 7) +
+            caught.value * 40,
+        },
+        { scale: 1 - caught.value * 0.6 },
+      ],
+    };
+  });
   return (
     <Animated.View
       entering={
         !reduced ? FadeInDown.delay(index * 100).duration(420) : undefined
       }
-      style={[s.card, { borderColor: color }, style]}
+      style={[
+        s.card,
+        { borderColor: color, borderStyle: estimated ? "dashed" : "solid" },
+        style,
+      ]}
     >
       {children}
     </Animated.View>
@@ -267,28 +333,27 @@ function FloatingCard({
 function TrackingArrow({
   card,
   index,
+  container,
   clock,
   bounds,
   visible,
   caught,
   color,
-  reduced,
 }: {
   card: LayoutRectangle;
   index: number;
+  container: { width: number; height: number };
   clock: SharedValue<number>;
   bounds: SharedValue<Rect>;
   visible: SharedValue<number>;
   caught: SharedValue<number>;
   color: string;
-  reduced: boolean;
 }) {
   const style = useAnimatedStyle(() => {
-    const dx = reduced ? 0 : Math.cos(clock.value + index * 1.7) * 4;
-    const dy = reduced ? 0 : Math.sin(clock.value * 2 + index * 1.7) * 7;
+    const anchor = cardAnchor(index, bounds.value, card, container);
     const center = {
-      x: card.x + card.width / 2 + dx,
-      y: card.y + card.height / 2 + dy,
+      x: anchor.left + card.width / 2,
+      y: anchor.top + card.height / 2,
     };
     const to = arrowToBox(center, bounds.value);
     const vx = to.x - center.x;
@@ -322,82 +387,6 @@ function TrackingArrow({
     </Animated.View>
   );
 }
-
-function Spark({
-  index,
-  clock,
-  bounds,
-  caught,
-  color,
-  reduced,
-}: {
-  index: number;
-  clock: SharedValue<number>;
-  bounds: SharedValue<Rect>;
-  caught: SharedValue<number>;
-  color: string;
-  reduced: boolean;
-}) {
-  const style = useAnimatedStyle(() => {
-    const phase = index * 2.399;
-    const angle = phase + (reduced ? 0 : clock.value * (index % 2 ? 1 : -1));
-    const twinkle = reduced ? 0.5 : (Math.sin(clock.value * 5 + phase) + 1) / 2;
-    const burst = caught.value * 100;
-    return {
-      opacity: 0.15 + twinkle * 0.85,
-      transform: [
-        {
-          translateX:
-            Math.cos(angle) *
-            (bounds.value.width / 2 + 14 + (index % 4) * 8 + burst),
-        },
-        {
-          translateY:
-            Math.sin(angle) *
-            (bounds.value.height / 2 + 12 + (index % 3) * 7 + burst),
-        },
-        { scale: 0.35 + twinkle * 1.1 },
-        { rotate: `${angle + clock.value}rad` },
-      ],
-    };
-  });
-  return (
-    <Animated.View style={[s.spark, style]}>
-      <Ionicons
-        name={index % 3 === 0 ? "sparkles" : "star"}
-        size={index % 3 === 0 ? 17 : 9}
-        color={color}
-      />
-    </Animated.View>
-  );
-}
-
-function Ripple({
-  index,
-  clock,
-  bounds,
-  color,
-  reduced,
-}: {
-  index: number;
-  clock: SharedValue<number>;
-  bounds: SharedValue<Rect>;
-  color: string;
-  reduced: boolean;
-}) {
-  const style = useAnimatedStyle(() => {
-    const progress = ((clock.value / (Math.PI * 2)) * 2 + index / 2) % 1;
-    return {
-      width: bounds.value.width + 24,
-      height: bounds.value.height + 24,
-      left: -(bounds.value.width + 24) / 2,
-      top: -(bounds.value.height + 24) / 2,
-      opacity: reduced ? 0 : (1 - progress) * 0.22,
-      transform: [{ scale: 1 + progress * 0.35 }],
-    };
-  });
-  return <Animated.View style={[s.ripple, { borderColor: color }, style]} />;
-}
 const displayFont = Platform.select({
   ios: "Avenir Next",
   android: "sans-serif-medium",
@@ -405,7 +394,12 @@ const displayFont = Platform.select({
 });
 const s = StyleSheet.create({
   position: { ...StyleSheet.absoluteFill },
-  labelSlot: { position: "absolute", maxWidth: "44%" },
+  labelSlot: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    maxWidth: "44%",
+  },
   card: {
     paddingHorizontal: 12,
     paddingVertical: 10,
@@ -414,10 +408,6 @@ const s = StyleSheet.create({
     borderWidth: 1,
     backgroundColor: cameraColors.surface,
   },
-  topLeft: { left: "5%", top: "20%" },
-  topRight: { right: "5%", top: "20%" },
-  bottomLeft: { left: "5%", top: "51%" },
-  bottomRight: { right: "5%", top: "51%" },
   status: {
     fontFamily: displayFont,
     fontSize: 10,
@@ -446,7 +436,4 @@ const s = StyleSheet.create({
     borderRightWidth: 1.5,
     transform: [{ rotate: "45deg" }],
   },
-  particles: { position: "absolute" },
-  spark: { position: "absolute", left: -7, top: -7 },
-  ripple: { position: "absolute", borderRadius: 999, borderWidth: 1 },
 });

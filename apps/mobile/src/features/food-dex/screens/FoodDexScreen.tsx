@@ -42,6 +42,7 @@ import { CulinaryAtlas } from "../components/CulinaryAtlas";
 import { CollectionProgress } from "../components/CollectionProgress";
 import {
   cardTier,
+  cardTiers,
   cuisineMastery,
   cuisineMasteryTarget,
 } from "../models/discovery";
@@ -50,6 +51,7 @@ import { catalogPhoto } from "../services/catalogPhotos";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
 import { deleteScanImage } from "../services/scanImages";
 import type { useFoodDex } from "../hooks/useFoodDex";
+import type { BadgeId } from "../../gamification/models/gamification";
 import { colors } from "../../../theme/index";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
@@ -121,7 +123,7 @@ export function FoodDexScreen({
   onOpenCamera?: () => void;
   gameXp?: number;
   visited?: string[];
-  onDiscover?: (cuisine: Cuisine) => void;
+  onDiscover?: (cuisine: Cuisine) => BadgeId[] | void;
 }) {
   const insets = useSafeAreaInsets();
   const { entries, error: storageError, discover, remove } = dex;
@@ -182,13 +184,18 @@ export function FoodDexScreen({
     setLocation("");
     setScanOpen(false);
   }
-  function openScan(dishName = "", dishCuisine: Cuisine = cuisine ?? "Other") {
+  function openScan(
+    dishName = "",
+    dishCuisine: Cuisine = cuisine ?? "Other",
+    dishReview = "",
+    dishLocation = "",
+  ) {
     session.current++;
     releaseTempPhoto(photo);
     setPhoto(null);
     setName(dishName);
-    setReview("");
-    setLocation("");
+    setReview(dishReview);
+    setLocation(dishLocation);
     setScanCuisine(dishCuisine);
     setScanError("");
     setNotice("");
@@ -296,22 +303,37 @@ export function FoodDexScreen({
       Platform.OS === "web" && photo?.base64
         ? `data:image/jpeg;base64,${photo.base64}`
         : (photo?.uri ?? "");
-    const savedEntry = discover(name.trim(), scanCuisine, photoUri, review.trim(), location.trim());
-    if (!savedEntry) {
-      setScanError(
-        `${name.trim()} is already in your ${scanCuisine} collection.`,
-      );
+    const saved = discover(
+      name.trim(),
+      scanCuisine,
+      photoUri,
+      review.trim(),
+      location.trim(),
+    );
+    void playFeedback("openBook");
+    if (saved.updated) {
+      setNotice(`Added your review for ${saved.entry.name}.`);
+      closeScan();
       return;
     }
-    onDiscover?.(scanCuisine);
+    const unlocked = onDiscover?.(scanCuisine) ?? [];
     setMoment({
-      entry: savedEntry,
+      entry: saved.entry,
       before: entries,
+      badges: unlocked,
     });
-    void playFeedback("openBook");
     setNotice("");
     closeScan();
   }
+
+  // A scan for a dish that is already collected adds a review to its entry
+  // rather than creating a duplicate discovery.
+  const savedScan = name.trim()
+    ? entries.find(
+        (entry) =>
+          foodKey(entry.name, entry.cuisine) === foodKey(name, scanCuisine),
+      )
+    : undefined;
 
   const cuisinesExplored = new Set(entries.map((entry) => entry.cuisine)).size;
   const collectionForCuisine = entries.filter(
@@ -521,36 +543,59 @@ export function FoodDexScreen({
               </View>
             ) : (
               entries.slice(0, 6).map((entry) => (
-                <Pressable
-                  key={entry.id}
-                  accessibilityRole="button"
-                  onPress={() => setDetail(entry)}
-                  style={({ pressed }) => [s.discovery, pressed && s.dim]}
-                >
-                  <CatalogPhoto
-                    source={entry.photo ? { uri: entry.photo } : catalogPhoto(findCatalogDish(entry.name, entry.cuisine))}
-                    fallbackSource={catalogPhoto(findCatalogDish(entry.name, entry.cuisine))}
-                    style={s.thumbnail}
-                    label={entry.name}
-                  />
-                  <View style={s.flex}>
-                    <Text style={s.cardTitle}>{entry.name}</Text>
-                    <Text style={s.meta}>
-                      {entry.cuisine} ·{" "}
-                      {new Date(entry.discoveredAt).toLocaleDateString(
-                        undefined,
-                        {
-                          month: "short",
-                          day: "numeric",
-                        },
-                      )}
-                    </Text>
-                  </View>
-                  <Text style={s.rarityLabel}>
-                    {cardTier(entry.name, entry.cuisine)}
-                  </Text>
-                  <Icon name="chevron-forward" size={18} />
-                </Pressable>
+                (() => {
+                  const tier = cardTier(entry.name, entry.cuisine);
+                  const tierPalette = cardTiers[tier];
+                  return (
+                    <Pressable
+                      key={entry.id}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${entry.name}, ${tier} rarity`}
+                      onPress={() => setDetail(entry)}
+                      style={({ pressed }) => [s.discovery, pressed && s.dim]}
+                    >
+                      <CatalogPhoto
+                        source={entry.photo ? { uri: entry.photo } : catalogPhoto(findCatalogDish(entry.name, entry.cuisine))}
+                        fallbackSource={catalogPhoto(findCatalogDish(entry.name, entry.cuisine))}
+                        style={s.thumbnail}
+                        label={entry.name}
+                      />
+                      <View style={s.flex}>
+                        <Text style={s.cardTitle}>{entry.name}</Text>
+                        <Text style={s.meta}>
+                          {entry.cuisine} ·{" "}
+                          {new Date(entry.discoveredAt).toLocaleDateString(
+                            undefined,
+                            {
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )}
+                        </Text>
+                      </View>
+                      <View
+                        style={[
+                          s.rarityBadge,
+                          { backgroundColor: tierPalette.color },
+                        ]}
+                      >
+                        <View
+                          accessibilityElementsHidden
+                          style={[
+                            s.rarityDot,
+                            { backgroundColor: tierPalette.ink },
+                          ]}
+                        />
+                        <Text
+                          style={[s.rarityLabel, { color: tierPalette.ink }]}
+                        >
+                          {tier}
+                        </Text>
+                      </View>
+                      <Icon name="chevron-forward" size={18} />
+                    </Pressable>
+                  );
+                })()
               ))
             )}
           </>
@@ -617,6 +662,21 @@ export function FoodDexScreen({
                   </View>
                   <DiscoveryCard key={detail.id} entry={detail} onLight />
                   <Button
+                    title="Write a review"
+                    icon="pencil-outline"
+                    secondary
+                    onPress={() => {
+                      const current = detail;
+                      setDetail(null);
+                      openScan(
+                        current.name,
+                        current.cuisine,
+                        current.review ?? "",
+                        current.location ?? "",
+                      );
+                    }}
+                  />
+                  <Button
                     title="Remove from collection"
                     icon="trash-outline"
                     secondary
@@ -637,7 +697,9 @@ export function FoodDexScreen({
           >
             <SheetDragHandle onDismiss={closeScan} />
             <View style={s.modalHeading}>
-              <Text style={[s.sectionTitle, s.flex]}>A new discovery</Text>
+              <Text style={[s.sectionTitle, s.flex]}>
+                {savedScan ? "Update your discovery" : "A new discovery"}
+              </Text>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Close scanner"
@@ -722,10 +784,16 @@ export function FoodDexScreen({
               ) : null}
               <View style={s.divider} />
               <Text style={s.sectionTitle}>
-                {name ? "Confirm your discovery" : "Or add it yourself"}
+                {savedScan
+                  ? "Add your review"
+                  : name
+                    ? "Confirm your discovery"
+                    : "Or add it yourself"}
               </Text>
               <Text style={s.copy}>
-                Check the name and cuisine before it joins your Dex.
+                {savedScan
+                  ? `You’ve already collected ${savedScan.name}. A fresh review will update its entry.`
+                  : "Check the name and cuisine before it joins your Dex."}
               </Text>
               <Text style={s.label}>DISH NAME</Text>
               <TextInput
@@ -787,7 +855,7 @@ export function FoodDexScreen({
                 textAlignVertical="top"
               />
               <Button
-                title="Add to my Food Dex"
+                title={savedScan ? "Save my review" : "Add to my Food Dex"}
                 icon="checkmark-outline"
                 disabled={!name.trim() || busy || picking}
                 onPress={save}
@@ -1073,7 +1141,16 @@ const s = StyleSheet.create({
   },
   viewTabActive: { backgroundColor: colors.accent },
   viewTabText: { color: colors.ink, fontWeight: "600", fontSize: 12 },
-  rarityLabel: { color: colors.accent, fontSize: 10, fontWeight: "700" },
+  rarityBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 12,
+  },
+  rarityDot: { width: 6, height: 6, borderRadius: 3 },
+  rarityLabel: { fontSize: 10, fontWeight: "700" },
   cardDetailSheet: {
     maxHeight: "90%",
     width: "100%",

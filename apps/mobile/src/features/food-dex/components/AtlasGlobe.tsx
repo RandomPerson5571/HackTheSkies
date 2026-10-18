@@ -64,6 +64,7 @@ function dotPose(
   sinRot: number,
   cosRot: number,
 ) {
+  "worklet";
   const sinLon = lonSin * cosRot - lonCos * sinRot;
   const cosLon = lonCos * cosRot + lonSin * sinRot;
   const x = latCos * sinLon;

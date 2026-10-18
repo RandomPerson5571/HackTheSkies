@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   addFood,
   parseFoodDex,
+  updateFood,
   foodKey,
   dishes,
   cuisines,
@@ -58,6 +59,28 @@ test("restoring preserves photos and dates while deduplicating discoveries", () 
     JSON.stringify([{ ...ramen, discoveredAt: "bad" }]),
   ])
     assert.throws(() => parseFoodDex(value));
+});
+
+test("re-collecting a dish updates its existing entry instead of duplicating it", () => {
+  const state = addFood([], ramen);
+  const reviewed = updateFood(state, {
+    ...ramen,
+    review: "Rich broth, springy noodles.",
+    location: "Ramen House",
+  });
+  assert.deepEqual(reviewed, [
+    {
+      ...ramen,
+      review: "Rich broth, springy noodles.",
+      location: "Ramen House",
+    },
+  ]);
+  const udon = { ...ramen, id: "two", name: "Udon", cuisine: "Japanese" };
+  assert.deepEqual(
+    updateFood([ramen, udon], { ...udon, review: "Great the next day." }),
+    [ramen, { ...udon, review: "Great the next day." }],
+  );
+  assert.equal(parseFoodDex(JSON.stringify(reviewed)).length, 1);
 });
 
 test("starter catalog has unique cuisine keys and supports custom foods", () => {

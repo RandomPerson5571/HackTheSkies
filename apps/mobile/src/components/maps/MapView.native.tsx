@@ -249,15 +249,13 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
   return (
     <Mapbox.MapView
       ref={mapView}
+      surfaceView={false}
       onMapIdle={(state) => {
+        const bounds = state.properties.bounds;
+        if (!bounds?.sw || !bounds.ne) return;
         setZoom(state.properties.zoom);
         props.onViewportChange?.(
-          [
-            state.properties.bounds.sw[0]!,
-            state.properties.bounds.sw[1]!,
-            state.properties.bounds.ne[0]!,
-            state.properties.bounds.ne[1]!,
-          ],
+          [bounds.sw[0]!, bounds.sw[1]!, bounds.ne[0]!, bounds.ne[1]!],
           state.properties.zoom,
         );
         refreshPhotoPins();
@@ -291,8 +289,20 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
           })
           .catch(() => props.onMapPress?.());
       }}
+      onWillStartLoadingMap={props.onLoading}
       onDidFinishLoadingMap={props.onReady}
-      onMapLoadingError={props.onError}
+      onMapLoadingError={(payload) => {
+        // A single tile or glyph request can fail without breaking the map;
+        // only style failures leave the viewport blank, so only those are fatal.
+        const failureType = payload?.type;
+        if (!failureType || failureType === "style") {
+          props.onError?.();
+        } else {
+          console.warn(`Mapbox ${failureType} failed to load; ignoring.`, {
+            tileId: payload?.tileId,
+          });
+        }
+      }}
     >
       <Mapbox.Camera
         ref={camera}
@@ -355,7 +365,13 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
                   style={{ width: 30, height: 30, borderRadius: 15 }}
                 />
               ) : (
-                <Text style={{ fontSize: 11, fontWeight: "700", color: colors.accent }}>
+                <Text
+                  style={{
+                    fontSize: 11,
+                    fontWeight: "700",
+                    color: colors.accent,
+                  }}
+                >
                   {friend.initials}
                 </Text>
               )}

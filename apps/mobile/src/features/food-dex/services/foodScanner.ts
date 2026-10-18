@@ -5,7 +5,40 @@ export type FoodRecognition = {
   name: string;
   cuisine: Cuisine;
   catalogId: string | null;
+  // Estimated location of the dish in the photo that was scanned, normalized
+  // 0-1000 as [left, top, right, bottom]. Estimated by the vision model, not
+  // detected like a YOLO box; never a sentinel such as (0, 0).
+  bbox?: [number, number, number, number];
+  locationConfidence?: "high" | "medium";
 };
+
+// Estimates without solid confidence are not rendered as a box at all.
+export const ESTIMATED_BOX_MIN_UNITS = 80;
+function parseBbox(
+  value: unknown,
+): [number, number, number, number] | undefined {
+  if (
+    !Array.isArray(value) ||
+    value.length !== 4 ||
+    value.some((entry) => !Number.isFinite(entry))
+  )
+    return undefined;
+  const [left, top, right, bottom] = value;
+  const ordered =
+    left! <= right! &&
+    top! <= bottom! &&
+    left! >= 0 &&
+    top! >= 0 &&
+    right! <= 1000 &&
+    bottom! <= 1000;
+  if (
+    !ordered ||
+    right! - left! < ESTIMATED_BOX_MIN_UNITS ||
+    bottom! - top! < ESTIMATED_BOX_MIN_UNITS
+  )
+    return undefined;
+  return [left!, top!, right!, bottom!];
+}
 
 export async function recognizeFood(
   base64: string,
@@ -56,6 +89,7 @@ export async function recognizeFood(
     typeof result.cuisine !== "string"
   )
     return null;
+  if ("foodDetected" in result && result.foodDetected === false) return null;
   const cuisine = normalizeCuisine(result.cuisine);
   if (!result.name.trim() || !cuisine) return null;
   const catalogId =
@@ -66,5 +100,24 @@ export async function recognizeFood(
     )
       ? result.catalogId
       : null;
-  return { name: result.name.trim().slice(0, 80), cuisine, catalogId };
+  const locationConfidence =
+    "locationConfidence" in result &&
+    (result.locationConfidence === "high" ||
+      result.locationConfidence === "medium")
+      ? result.locationConfidence
+      : undefined;
+  return {
+    name: result.name.trim().slice(0, 80),
+    cuisine,
+    catalogId,
+    ...(locationConfidence
+      ? {
+          locationConfidence,
+          bbox:
+            "bbox" in result
+              ? (parseBbox(result.bbox) ?? undefined)
+              : undefined,
+        }
+      : {}),
+  };
 }

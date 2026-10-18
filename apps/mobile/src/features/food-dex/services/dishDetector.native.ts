@@ -29,10 +29,11 @@ export async function detectDish(
     throw error;
   });
   const { session, Tensor } = await detector;
-  const resized = await resizeScanImage(image, 640, true);
+  // Raw bytes skip the base64 encode/decode round trip on the JS thread,
+  // which would otherwise stall every tracking frame on giant image payloads.
+  const resized = await resizeScanImage(image, 640, false);
   try {
-    if (!resized.base64) throw new Error("Missing tracking frame");
-    const bytes = Uint8Array.from(atob(resized.base64), (c) => c.charCodeAt(0));
+    const bytes = await new File(resized.uri).bytes();
     const rgb = decode(bytes, { useTArray: true, formatAsRGBA: true });
     const { data, width, height, offsetX, offsetY } = letterboxRgb(rgb);
     const input = new Tensor("float32", data, [1, 3, 640, 640]);
@@ -47,7 +48,10 @@ export async function detectDish(
         height,
         offsetX,
         offsetY,
-      );
+      ).map((detection) => ({
+        ...detection,
+        frameSize: { width: rgb.width, height: rgb.height },
+      }));
     } finally {
       input.dispose();
       Object.values(output).forEach((value) => value.dispose());

@@ -112,12 +112,25 @@ export function FoodCameraView({
       "Object tracking is unavailable. You can still take a photo.",
     ),
   );
+  // Preprocessing runs on the main thread, so the sampling canvas and cadence
+  // stay small: letterboxing pads to the model's 640px input either way.
+  const FRAME_WIDTH = 480;
+  const MISSES_BEFORE_UNAVAILABLE = 3;
   useEffect(() => {
     if (!tracking) return;
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
     let previous: Detection | undefined;
     let lastSeen = 0;
+    let misses = 0;
+    // Hidden frames keep the last valid geometry; only visibility drops, so a
+    // missing detection is never represented at (0, 0).
+    let lastBounds: DishBounds | undefined;
+    const hidden = () =>
+      ({
+        ...(lastBounds ?? { x: 0.28, y: 0.3, width: 0.44, height: 0.25 }),
+        visible: !!lastBounds && Date.now() - lastSeen <= 700,
+      }) satisfies DishBounds;
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d", { willReadFrequently: true });
     async function run() {
@@ -126,9 +139,9 @@ export function FoodCameraView({
         if (cancelled) return;
         const element = video.current;
         if (element && element.readyState >= 2 && context) {
-          canvas.width = 640;
+          canvas.width = FRAME_WIDTH;
           canvas.height = Math.round(
-            (640 * element.videoHeight) / element.videoWidth,
+            (FRAME_WIDTH * element.videoHeight) / element.videoWidth,
           );
           context.drawImage(element, 0, 0, canvas.width, canvas.height);
           const detections = await detectDish(
@@ -139,29 +152,40 @@ export function FoodCameraView({
           const now = Date.now();
           if (dish) {
             previous = dish;
-            lastSeen = now;
+            misses = 0;
             const bounds = element.getBoundingClientRect();
-            if (bounds.width && bounds.height)
-              tracked(
-                projectDish(
-                  dish.box,
-                  { width: element.videoWidth, height: element.videoHeight },
-                  bounds,
-                  mirrored,
-                ),
+            if (bounds.width && bounds.height) {
+              const projected = projectDish(
+                dish.box,
+                { width: element.videoWidth, height: element.videoHeight },
+                bounds,
+                mirrored,
               );
-          } else if (now - lastSeen > 650) {
-            previous = undefined;
-            tracked({ x: 0, y: 0, width: 0, height: 0, visible: false });
+              if (projected) {
+                lastSeen = now;
+                lastBounds = projected;
+                tracked(projected);
+              } else {
+                lastBounds = undefined;
+                lastSeen = 0;
+                tracked(hidden());
+              }
+            }
+          } else {
+            if (now - lastSeen > 650) previous = undefined;
+            tracked(hidden());
           }
         }
         // Sequential inference: never queue frames or upload camera pixels.
-        if (!cancelled) timer = setTimeout(() => void run(), 120);
+        if (!cancelled) timer = setTimeout(() => void run(), 180);
       } catch {
-        if (!cancelled) {
-          tracked({ x: 0, y: 0, width: 0, height: 0, visible: false });
-          trackingFailed();
-        }
+        if (cancelled) return;
+        tracked(hidden());
+        misses += 1;
+        if (misses === MISSES_BEFORE_UNAVAILABLE) trackingFailed();
+        // A dropped frame or cold runtime download recovers with the next tick
+        // instead of ending tracking on the first error.
+        timer = setTimeout(() => void run(), 800);
       }
     }
     void run();

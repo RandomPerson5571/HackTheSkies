@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  badgeAwards,
   discoveryAwards,
   restaurantQuestAwards,
 } from "../src/features/gamification/models/discoveryAwards.ts";
@@ -61,5 +62,28 @@ test("third unique restaurant triggers completion and repeat visits do not", () 
   assert.deepEqual(
     restaurantQuestAwards(["a", "b", "c"], ["a", "b", "c"], [], 100),
     [],
+  );
+});
+
+test("discovery badges become popup rewards before quest and level awards", () => {
+  const unlock = badgeAwards(["first-bite", "streak-3"], "meal-1");
+  assert.deepEqual(
+    unlock.map((award) => [award.kind, award.title]),
+    [
+      ["badge", "First Bite"],
+      ["badge", "On a Roll"],
+    ],
+  );
+  assert.ok(unlock.every((award) => award.subtitle.length > 0));
+  // Unknown badge ids cannot crash the reveal.
+  assert.deepEqual(badgeAwards(["nope"], "meal-1"), []);
+  // Badges are rewarded first, then quests, then the level-up.
+  const combined = [
+    ...badgeAwards(["first-bite"], "meal-1"),
+    ...discoveryAwards([], [entry("Ramen")], "Ramen", 50),
+  ];
+  assert.deepEqual(
+    combined.map((award) => award.kind),
+    ["badge", "quest"],
   );
 });

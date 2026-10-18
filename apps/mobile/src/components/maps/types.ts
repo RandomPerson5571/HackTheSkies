@@ -31,6 +31,7 @@ export type MapProps = {
   friends?: SampleFriend[];
   onSelect: (place: Place) => void;
   onMapPress?: () => void;
+  onLoading?: () => void;
   onReady: () => void;
   onError: () => void;
   renderPlaceMarker: (place: Place, selected: boolean) => ReactElement;

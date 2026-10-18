@@ -6,9 +6,12 @@ import {
   addFood,
   foodKey,
   parseFoodDex,
+  updateFood,
   type Cuisine,
   type FoodEntry,
 } from "../models/foodDex";
+
+export type FoodDiscoveryResult = { entry: FoodEntry; updated: boolean };
 
 function load() {
   try {
@@ -57,28 +60,42 @@ export function useFoodDex() {
     uri: string,
     review = "",
     location = "",
-  ) {
-    if (
-      entries.some(
-        (entry) =>
-          foodKey(entry.name, entry.cuisine) === foodKey(name, cuisine),
-      )
-    )
-      return false;
+  ): FoodDiscoveryResult {
+    // A dish already in the Dex is re-collected: the new review, location and
+    // photo update its existing entry instead of being blocked as a duplicate.
+    const existing = entries.find(
+      (entry) =>
+        foodKey(entry.name, entry.cuisine) === foodKey(name, cuisine),
+    );
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     let photo = uri;
     let photoError = "";
     if (uri && Platform.OS !== "web") {
       try {
-        const destination = new File(Paths.document, `food-${id}.jpg`);
+        const destination = new File(
+          Paths.document,
+          `food-${existing?.id ?? id}.jpg`,
+        );
         new File(uri).copySync(destination);
         photo = destination.uri;
       } catch {
         // Keep the entry durable even if the temporary photo cannot be copied.
         photo = "";
-        photoError =
-          "Your discovery was added, but its photo couldn’t be saved.";
+        photoError = existing
+          ? "Your review was saved, but the new photo couldn’t be added."
+          : "Your discovery was added, but its photo couldn’t be saved.";
       }
+    }
+    if (existing) {
+      const merged: FoodEntry = {
+        ...existing,
+        photo: photo || existing.photo,
+      };
+      if (location.trim()) merged.location = location.trim().slice(0, 120);
+      if (review.trim()) merged.review = review.trim().slice(0, 480);
+      update(updateFood(entries, merged));
+      setPhotoWarning(photoError);
+      return { entry: merged, updated: true };
     }
     const entry: FoodEntry = {
       id,
@@ -92,7 +109,7 @@ export function useFoodDex() {
     const next = addFood(entries, entry);
     update(next);
     setPhotoWarning(photoError);
-    return entry;
+    return { entry, updated: false };
   }
 
   function remove(id: string) {

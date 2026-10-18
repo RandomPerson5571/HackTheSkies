@@ -88,3 +88,36 @@ test("YOLO preprocessing uses RGB planes and decoder reverses letterboxing", () 
   assert.equal(detections[0].label, "pizza");
   assert.deepEqual(detections[0].box, { xmin: 0, ymin: 0, xmax: 1, ymax: 1 });
 });
+
+test("invalid and cropped-out boxes return null instead of edge coordinates", () => {
+  const source = { width: 1280, height: 960 };
+  const preview = { width: 400, height: 800 };
+  for (const box of [
+    { xmin: 0, ymin: 0, xmax: 0, ymax: 0 },
+    { xmin: 0.8, ymin: 0.2, xmax: 0.2, ymax: 0.8 },
+    { xmin: NaN, ymin: 0.2, xmax: 0.8, ymax: 0.8 },
+    { xmin: 0, ymin: 0.2, xmax: 0.05, ymax: 0.8 },
+    { xmin: -1, ymin: 0.2, xmax: 0.8, ymax: 0.8 },
+  ])
+    assert.equal(projectDish(box, source, preview, false), null);
+  assert.equal(
+    projectDish(
+      { xmin: 0.2, ymin: 0.2, xmax: 0.8, ymax: 0.8 },
+      source,
+      { width: 0, height: 0 },
+      false,
+    ),
+    null,
+  );
+});
+
+test("rotation is applied before cover projection and mirroring", () => {
+  const box = { xmin: 0.1, ymin: 0.2, xmax: 0.4, ymax: 0.6 };
+  const source = { width: 800, height: 400 };
+  const preview = { width: 400, height: 800 };
+  const projected = projectDish(box, source, preview, false, 90);
+  assert.ok(Math.abs(projected.x - 0.4) < 1e-8);
+  assert.ok(Math.abs(projected.y - 0.1) < 1e-8);
+  assert.ok(Math.abs(projected.width - 0.4) < 1e-8);
+  assert.ok(Math.abs(projected.height - 0.3) < 1e-8);
+});

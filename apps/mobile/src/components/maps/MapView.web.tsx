@@ -45,6 +45,7 @@ type PlaceSource = {
 };
 type WebMap = {
   isStyleLoaded: () => boolean;
+  resize: () => void;
   getZoom: () => number;
   getBounds: () => { toArray: () => number[][] };
   flyTo: (options: {
@@ -124,7 +125,12 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       for (const visit of friend.visits ?? []) {
         const place = placeIndex.get(visit.placeId);
         if (!place) continue;
-        pins.push({ key: `${friend.id}-${visit.placeId}-${visit.when}`, friend, place, visit });
+        pins.push({
+          key: `${friend.id}-${visit.placeId}-${visit.when}`,
+          friend,
+          place,
+          visit,
+        });
       }
     }
     // Keep the community layer readable: at most ~6 friend pins per person in
@@ -157,9 +163,11 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
 
   useEffect(() => {
     if (!container.current) return;
+    latest.current.onLoading?.();
     let instance: WebMap | undefined;
     let disposed = false;
     let clusterRequest = 0;
+    let observer: ResizeObserver | undefined;
     try {
       const currentMap: WebMap = new mapboxgl.Map({
         container: container.current,
@@ -173,6 +181,10 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       });
       instance = currentMap;
       map.current = currentMap;
+      observer = new ResizeObserver(() => {
+        if (!disposed) currentMap.resize();
+      });
+      observer.observe(container.current);
       currentMap.on("load", () => {
         if (disposed) return;
         currentMap.addSource("places", {
@@ -333,6 +345,16 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         latest.current.onReady();
       });
       currentMap.on("error", ({ error }) => {
+        const message = String(error?.message ?? error ?? "");
+        // Individual tile/glyph requests can fail without breaking the map;
+        // only errors that leave the style unloaded are worth surfacing.
+        if (
+          currentMap.isStyleLoaded() &&
+          /tile|glyph|sprite|aborted|network/i.test(message)
+        ) {
+          console.warn("Mapbox web tile request failed; ignoring.", message);
+          return;
+        }
         console.error("Mapbox web map error:", error);
         if (!disposed) latest.current.onError();
       });
@@ -343,6 +365,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     return () => {
       disposed = true;
       map.current = null;
+      observer?.disconnect();
       instance?.remove();
     };
   }, [props.token]);
@@ -372,7 +395,8 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       borderRadius: "50%",
       background: "#2878F0",
       border: "4px solid #FFFFFF",
-      boxShadow: "0 0 0 10px rgba(40,120,240,0.24), 0 3px 12px rgba(20,45,90,0.4)",
+      boxShadow:
+        "0 0 0 10px rgba(40,120,240,0.24), 0 3px 12px rgba(20,45,90,0.4)",
       boxSizing: "border-box",
       pointerEvents: "none",
     });
@@ -381,7 +405,10 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       marker.style.backgroundSize = "cover";
       marker.style.backgroundPosition = "center";
     }
-    const currentMarker = new mapboxgl.Marker({ element: marker, anchor: "center" })
+    const currentMarker = new mapboxgl.Marker({
+      element: marker,
+      anchor: "center",
+    })
       .setLngLat(props.currentLocation)
       .addTo(map.current);
     return () => currentMarker.remove();
@@ -401,7 +428,8 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
     const cache = markerCache.current;
     const desired = new Set(
       markers.map((place) => {
-        const suggested = props.recommendations.get(place.id)?.suggested ?? false;
+        const suggested =
+          props.recommendations.get(place.id)?.suggested ?? false;
         const showPhoto =
           suggested || zoom >= recommendationPolicy.photoPinZoomThreshold;
         return `${place.id}:${showPhoto ? "photo" : "plain"}:${place.id === props.selectedId}`;

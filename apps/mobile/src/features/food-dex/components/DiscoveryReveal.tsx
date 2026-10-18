@@ -3,7 +3,11 @@ import {
   AwardPopup,
   type Award,
 } from "../../gamification/components/AwardPopup";
-import { discoveryAwards } from "../../gamification/models/discoveryAwards";
+import {
+  badgeAwards,
+  discoveryAwards,
+} from "../../gamification/models/discoveryAwards";
+import type { BadgeId } from "../../gamification/models/gamification";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -19,7 +23,11 @@ import {
 import type { FoodEntry } from "../models/foodDex";
 import { discoveryColors as c } from "../../../theme";
 
-export type DiscoveryMoment = { entry: FoodEntry; before: FoodEntry[] };
+export type DiscoveryMoment = {
+  entry: FoodEntry;
+  before: FoodEntry[];
+  badges?: BadgeId[];
+};
 export function DiscoveryReveal({
   moment,
   gameXp = 0,
@@ -39,13 +47,10 @@ export function DiscoveryReveal({
     const after = entries.some((item) => item.id === moment.entry.id)
       ? entries
       : [moment.entry, ...entries];
-    return discoveryAwards(
-      moment.before,
-      after,
-      moment.entry.id,
-      gameXp,
-      visited,
-    );
+    return [
+      ...badgeAwards(moment.badges ?? [], moment.entry.id),
+      ...discoveryAwards(moment.before, after, moment.entry.id, gameXp, visited),
+    ];
   });
   const [awardIndex, setAwardIndex] = useState(0);
   const insets = useSafeAreaInsets();

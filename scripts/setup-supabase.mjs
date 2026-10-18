@@ -97,6 +97,7 @@ try {
       "202610170002_device_keys",
       "202610180001_restaurant_map_viewport",
       "202610180002_favorites_pagination",
+      "202610180003_nearby_random_favorites",
       "202610180004_reviewer_avatars",
     ]) {
       const applied =

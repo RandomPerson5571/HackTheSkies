@@ -5,7 +5,12 @@ import {
   collectionQuestXp,
 } from "../../quests/models/collectionQuests.ts";
 import type { FoodEntry } from "../../food-dex/models/foodDex.ts";
-import { levelForXp, XP_PER_DISCOVERY } from "./gamification.ts";
+import {
+  BADGES,
+  levelForXp,
+  XP_PER_DISCOVERY,
+  type BadgeId,
+} from "./gamification.ts";
 
 export type Award = {
   id: string;
@@ -14,6 +19,23 @@ export type Award = {
   subtitle: string;
   xp?: number;
 };
+
+// Badges unlocked by the discovery itself (first bite, streaks, collectors)
+// become rewards too; otherwise they would be applied without any popup.
+export function badgeAwards(ids: readonly BadgeId[], entryId: string): Award[] {
+  return ids
+    .map((id, index) => {
+      const badge = BADGES.find((candidate) => candidate.id === id);
+      if (!badge) return null;
+      return {
+        id: `${entryId}-badge-${badge.id}-${index}`,
+        kind: "badge",
+        title: badge.name,
+        subtitle: badge.description,
+      } as Award;
+    })
+    .filter((award) => award !== null);
+}
 
 // Compare the two confirmed collections; opening the quests screen never earns an award.
 export function discoveryAwards(

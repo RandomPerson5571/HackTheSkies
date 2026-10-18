@@ -132,6 +132,9 @@ test("vision identifies first, then verifies only candidates retrieved from that
     return answer({ catalogId: "ramen" });
   };
   assert.deepEqual(await (await POST(request({ image: jpeg }))).json(), {
+    foodDetected: true,
+    foodName: "Ramen",
+    foodId: "ramen",
     name: "Ramen",
     cuisine: "Japanese",
     catalogId: "ramen",
@@ -172,6 +175,9 @@ test("NO_MATCH preserves a custom discovery without awarding a catalog badge", a
         ? answer(observation("Custom dish", cuisine, "Unknown preparation"))
         : answer({ catalogId: "NO_MATCH" });
     assert.deepEqual(await (await POST(request({ image: jpeg }))).json(), {
+      foodDetected: true,
+      foodName: "Custom dish",
+      foodId: null,
       name: "Custom dish",
       cuisine,
       catalogId: null,
@@ -194,6 +200,9 @@ test("an exact canonical name corrects a mistaken category before verification",
     return answer({ catalogId: "spanakopita" });
   };
   assert.deepEqual(await (await POST(request({ image: jpeg }))).json(), {
+    foodDetected: true,
+    foodName: "Spanakopita",
+    foodId: "spanakopita",
     name: "Spanakopita",
     cuisine: "Greek",
     catalogId: "spanakopita",
@@ -216,6 +225,9 @@ test("non-food images never fabricate a discovery or trigger verification", asyn
     return answer(observation("", "Other", ""));
   };
   assert.deepEqual(await (await POST(request({ image: jpeg }))).json(), {
+    foodDetected: false,
+    foodName: "",
+    foodId: null,
     name: "",
     cuisine: "Other",
     catalogId: null,
@@ -235,6 +247,9 @@ test("configured vision models keep JSON-object compatibility and server validat
       : answer({ catalogId: "spanakopita" });
   };
   assert.deepEqual(await (await POST(request({ image: jpeg }))).json(), {
+    foodDetected: true,
+    foodName: "Spanakopita",
+    foodId: "spanakopita",
     name: "Spanakopita",
     cuisine: "Greek",
     catalogId: "spanakopita",
@@ -330,3 +345,33 @@ test("cancellation after observation prevents starting the verifier", async () =
 });
 
 const POST = (request) => post(request, process.env);
+
+test("Groq-only localization validates coordinates and confidence independently of identity", async () => {
+  process.env.GROQ_API_KEY = "test-only";
+  for (const [bbox, locationConfidence, expected] of [
+    [[180, 220, 820, 780], "medium", true],
+    [[180, 220, 820, 780], "low", false],
+    [[0, 0, 0, 0], "high", false],
+    [[820, 220, 180, 780], "high", false],
+    [[-1, 220, 820, 780], "medium", false],
+    [["180", 220, 820, 780], "medium", false],
+    [null, "high", false],
+  ]) {
+    globalThis.fetch = async () =>
+      answer({
+        ...observation("Unknown meal", "Other", ""),
+        foodDetected: true,
+        bbox,
+        locationConfidence,
+      });
+    const response = await post(request({ image: jpeg }), {
+      GROQ_API_KEY: "test-only",
+    });
+    const value = await response.json();
+    assert.equal(value.foodDetected, true);
+    assert.equal(value.foodName, "Unknown meal");
+    assert.equal(value.foodId, null);
+    assert.equal("bbox" in value, expected);
+    if (expected) assert.deepEqual(value.bbox, bbox);
+  }
+});

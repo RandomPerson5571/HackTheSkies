@@ -89,6 +89,13 @@ export function addFood(entries: FoodEntry[], entry: FoodEntry): FoodEntry[] {
   return [{ ...entry, name: entry.name.trim() }, ...entries];
 }
 
+export function updateFood(
+  entries: FoodEntry[],
+  next: FoodEntry,
+): FoodEntry[] {
+  return entries.map((item) => (item.id === next.id ? next : item));
+}
+
 export function parseFoodDex(raw: string): FoodEntry[] {
   const value: unknown = JSON.parse(raw);
   if (!Array.isArray(value)) throw new Error("Invalid food collection");

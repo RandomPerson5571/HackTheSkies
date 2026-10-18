@@ -129,6 +129,7 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         style:
           process.env.EXPO_PUBLIC_MAPBOX_STYLE_URL ||
           "mapbox://styles/mapbox/light-v11",
+        attributionControl: false,
         center: latest.current.center,
         zoom: latest.current.zoom,
       });
@@ -350,7 +351,6 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
         image.src = place.image;
         image.onerror = () => image.remove();
         image.alt = "";
-        if (place.photo) image.title = `${place.photo.kind === "illustration" ? `Food illustration: ${place.photo.dishName}; not photographed at this restaurant. ` : ""}${place.photo.photographer || "Source website"} · ${place.photo.licenseName || "Rights not specified"} (credits in restaurant details)`;
         image.width = 58;
         image.height = 58;
         image.decoding = "async";

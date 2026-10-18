@@ -25,7 +25,6 @@ import {
   buildRecommendations,
   recommendationLabel,
 } from "../models/recommendations";
-import { RestaurantPhotoCredit } from "../components/RestaurantPhotoCredit";
 import { RestaurantPhoto } from "../components/RestaurantPhoto";
 import {
   browseRestaurants,
@@ -531,7 +530,6 @@ export function RestaurantsScreen({
                 <Icon name="chevron-forward" size={18} color={colors.muted} />
               </Pressable>
               <Text style={styles.note}>{item.note}</Text>
-              <RestaurantPhotoCredit place={item} />
               <View style={styles.cardActions}>
                 <Pressable
                   accessibilityRole="button"

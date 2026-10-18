@@ -28,7 +28,6 @@ import {
   type FoodEntry,
 } from "../models/foodDex";
 import { CatalogPhoto } from "../components/CatalogPhoto";
-import { PhotoCredit } from "../components/PhotoCredit";
 import { catalogPhoto } from "../services/catalogPhotos";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
 import { useFoodDex } from "../hooks/useFoodDex";
@@ -386,7 +385,6 @@ export function FoodDexScreen({
                     </Text>
                   </View>
                 </Pressable>
-                <PhotoCredit dish={cuisineCovers[item]} />
               </View>
             );
           })}
@@ -492,11 +490,6 @@ export function FoodDexScreen({
                     style={s.banner}
                     label={detail.name}
                   />
-                  {!detail.photo && (
-                    <PhotoCredit
-                      dish={findCatalogDish(detail.name, detail.cuisine)}
-                    />
-                  )}
                   <Text style={s.title}>{detail.name}</Text>
                   <Text style={s.copy}>
                     {detail.cuisine} · Discovered{" "}
@@ -701,7 +694,6 @@ export function FoodDexScreen({
                             : "Other cuisines"
                         }
                       />
-                      <PhotoCredit dish={cuisineCovers[cuisine]} />
                     </>
                   )}
                   <Text style={s.title}>A taste of {cuisine}.</Text>
@@ -780,9 +772,6 @@ export function FoodDexScreen({
                       size={20}
                     />
                   </Pressable>
-                  {!dish.entry?.photo && (
-                    <PhotoCredit dish={dish.catalogDish} />
-                  )}
                 </View>
               )}
               ListEmptyComponent={

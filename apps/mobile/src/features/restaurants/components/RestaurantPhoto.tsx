@@ -31,11 +31,7 @@ export function RestaurantPhoto({
       eager={eager}
       onError={() => setFailedUrl(place.image)}
       source={{ uri: place.image }}
-      accessibilityLabel={
-        place.photo
-          ? `${place.name}${place.photo.kind === "illustration" ? `. Food illustration: ${place.photo.dishName}, not photographed at this restaurant` : ""}. Photo: ${place.photo.photographer || "source website"}${place.photo.licenseName ? `, ${place.photo.licenseName}` : ""}. Credits in restaurant details.`
-          : `${place.name} placeholder photo`
-      }
+      accessibilityLabel={place.name}
       style={style}
     />
   );

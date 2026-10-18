@@ -260,6 +260,12 @@ export function DiscoveryCard({
               />
               <Text style={s.small}>BEHIND THE BITE</Text>
               <Text style={s.name}>{entry.name}</Text>
+              {entry.review ? (
+                <>
+                  <Text style={[s.small, s.plainText]}>YOUR REVIEW</Text>
+                  <Text style={s.review}>{`“${entry.review}”`}</Text>
+                </>
+              ) : null}
               <Text style={s.story}>
                 {dish?.note ??
                   "A discovery of your own. Every meal adds a new chapter to your culinary story."}
@@ -393,6 +399,14 @@ const s = StyleSheet.create({
     color: c.light,
   },
   story: { color: c.light, fontSize: 15, lineHeight: 23, textAlign: "center" },
+  review: {
+    color: c.light,
+    fontSize: 15,
+    lineHeight: 23,
+    textAlign: "center",
+    fontStyle: "italic",
+  },
+  plainText: { color: c.muted },
   rule: { height: 1, width: "100%", backgroundColor: c.line },
   tierNote: {
     color: c.muted,

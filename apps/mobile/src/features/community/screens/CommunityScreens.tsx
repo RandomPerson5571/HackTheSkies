@@ -43,6 +43,8 @@ import {
 } from "../models/community";
 
 import { useBackend } from "../../../lib/BackendProvider";
+import { usePagedList } from "../../../hooks/usePagedList";
+import { PagedListFooter } from "../../../components/PagedListFooter";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
 type Props = {
@@ -51,6 +53,12 @@ type Props = {
   storageError: string;
   onShowMap: (place: Place) => void;
 };
+// Card batches per page: small enough to keep first paint snappy even with the
+// full 500+ catalog loaded, large enough to avoid a button on every screenful.
+const RANKED_PAGE_SIZE = 30;
+const RATE_PAGE_SIZE = 12;
+const FRIENDS_PAGE_SIZE = 20;
+const FEED_PAGE_SIZE = 10;
 type Section = "favorites" | "friends" | "badges";
 const Navigation = createContext<{
   section: Section;
@@ -255,6 +263,8 @@ export function FavoritesScreen({
         .toLowerCase()
         .includes(query.toLowerCase().trim()),
   );
+  const rankedPage = usePagedList(ranked, RANKED_PAGE_SIZE);
+  const unratedPage = usePagedList(unrated, RATE_PAGE_SIZE, query);
 
   function ratingCard(place: Place, rank?: number) {
     const rating = collection.ratings[place.id] ?? 0;
@@ -372,7 +382,17 @@ export function FavoritesScreen({
           <Text style={s.small}>Rate a spot below to start your ranking.</Text>
         </View>
       )}
-      {ranked.map((place, rank) => ratingCard(place, rank))}
+      {rankedPage.visible.map((place, index) =>
+        ratingCard(place, rankedPage.offset + index),
+      )}
+      <PagedListFooter
+        noun="ranked spots"
+        hasMore={rankedPage.hasMore}
+        shown={rankedPage.shown}
+        total={rankedPage.total}
+        remaining={rankedPage.remaining}
+        onLoadMore={rankedPage.loadMore}
+      />
       <Text accessibilityRole="header" style={s.section}>
         Tried something good?
       </Text>
@@ -389,7 +409,15 @@ export function FavoritesScreen({
         onBlur={() => setSearchFocused(false)}
         style={[s.input, searchFocused && s.searchActive]}
       />
-      {unrated.map((place) => ratingCard(place))}
+      {unratedPage.visible.map((place) => ratingCard(place))}
+      <PagedListFooter
+        noun="spots"
+        hasMore={unratedPage.hasMore}
+        shown={unratedPage.shown}
+        total={unratedPage.total}
+        remaining={unratedPage.remaining}
+        onLoadMore={unratedPage.loadMore}
+      />
       {!unrated.length && (
         <Text style={s.notice}>
           {query
@@ -427,6 +455,19 @@ export function FriendsScreen({
       .toLowerCase()
       .includes(query.toLowerCase().trim()),
   );
+  const matchesPage = usePagedList(matches, FRIENDS_PAGE_SIZE, query);
+  const feed = activeFriends.flatMap((friend) =>
+    friend.visits.flatMap((visit) => {
+      const place = places.find((item) => item.id === visit.placeId);
+      if (!place) return [];
+      return [{ key: `${friend.id}-${visit.placeId}`, friend, place, visit }];
+    }),
+  );
+  const feedPage = usePagedList(
+    feed,
+    FEED_PAGE_SIZE,
+    `${filter ?? "everyone"}:${friends.length}`,
+  );
   return (
     <Page
       title="Better with friends."
@@ -455,22 +496,22 @@ export function FriendsScreen({
       </View>
       {mode === "find" ? (
         <>
-           <TextInput
-             accessibilityLabel="Search sample friends by name or handle"
-             placeholder="Search a name or handle…"
-             placeholderTextColor={colors.muted}
-             value={query}
-             onChangeText={setQuery}
-             onFocus={() => setSearchFocused(true)}
-             onBlur={() => setSearchFocused(false)}
-             style={[s.input, searchFocused && s.searchActive]}
-             autoCapitalize="none"
-           />
+          <TextInput
+            accessibilityLabel="Search sample friends by name or handle"
+            placeholder="Search a name or handle…"
+            placeholderTextColor={colors.muted}
+            value={query}
+            onChangeText={setQuery}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            style={[s.input, searchFocused && s.searchActive]}
+            autoCapitalize="none"
+          />
 
           <Text accessibilityRole="header" style={s.section}>
             Find your food people
           </Text>
-          {matches.map((friend) => {
+          {matchesPage.visible.map((friend) => {
             const added = collection.friendIds.includes(friend.id);
             return (
               <View key={friend.id} style={s.card}>
@@ -503,6 +544,14 @@ export function FriendsScreen({
               No sample profiles match. Try Maya, Alex, or Sam.
             </Text>
           )}
+          <PagedListFooter
+            noun="friends"
+            hasMore={matchesPage.hasMore}
+            shown={matchesPage.shown}
+            total={matchesPage.total}
+            remaining={matchesPage.remaining}
+            onLoadMore={matchesPage.loadMore}
+          />
         </>
       ) : (
         <>
@@ -542,60 +591,64 @@ export function FriendsScreen({
               />
             </View>
           )}
-          {activeFriends.flatMap((friend) =>
-            friend.visits.map((visit) => {
-              const place = places.find((item) => item.id === visit.placeId);
-              if (!place) return null;
-              return (
-                <View key={`${friend.id}-${place.id}`} style={s.card}>
-                  <View style={s.row}>
-                    <View style={s.avatar}>
-                      <Text style={s.avatarText}>{friend.initials}</Text>
-                    </View>
-                    <View style={s.flex}>
-                      <Text style={s.name}>{friend.name}</Text>
-                      <Text style={s.small}>
-                        Visited · {visit.when} · Sample activity
-                      </Text>
-                    </View>
+          {feedPage.visible.map(({ key, friend, place, visit }) => {
+            return (
+              <View key={key} style={s.card}>
+                <View style={s.row}>
+                  <View style={s.avatar}>
+                    <Text style={s.avatarText}>{friend.initials}</Text>
                   </View>
-                  <RestaurantPhoto
-                    place={place}
-                    recommendation={recommendations.get(place.id)}
-                    style={s.feedPhoto}
-                  />
-                  <View style={s.row}>
-                    <Text style={[s.name, s.flex]}>{place.name}</Text>
-                    <Icon name="star" size={16} />
-                    <Text style={s.buttonText}>{visit.rating}/5</Text>
-                  </View>
-                  <Text style={s.small}>
-                    {place.category} · {place.neighborhood}
-                  </Text>
-                  <Text style={s.quote}>“{visit.note}”</Text>
-                  <View style={s.actions}>
-                    <Action
-                      label="View on map"
-                      icon="map-outline"
-                      onPress={() => onShowMap(place)}
-                    />
-                    <Action
-                      label={
-                        collection.saved.includes(place.id)
-                          ? "Saved"
-                          : "Want to try"
-                      }
-                      selected={collection.saved.includes(place.id)}
-                      icon="bookmark-outline"
-                      onPress={() =>
-                        dispatch({ type: "save", placeId: place.id })
-                      }
-                    />
+                  <View style={s.flex}>
+                    <Text style={s.name}>{friend.name}</Text>
+                    <Text style={s.small}>
+                      Visited · {visit.when} · Sample activity
+                    </Text>
                   </View>
                 </View>
-              );
-            }),
-          )}
+                <RestaurantPhoto
+                  place={place}
+                  recommendation={recommendations.get(place.id)}
+                  style={s.feedPhoto}
+                />
+                <View style={s.row}>
+                  <Text style={[s.name, s.flex]}>{place.name}</Text>
+                  <Icon name="star" size={16} />
+                  <Text style={s.buttonText}>{visit.rating}/5</Text>
+                </View>
+                <Text style={s.small}>
+                  {place.category} · {place.neighborhood}
+                </Text>
+                <Text style={s.quote}>“{visit.note}”</Text>
+                <View style={s.actions}>
+                  <Action
+                    label="View on map"
+                    icon="map-outline"
+                    onPress={() => onShowMap(place)}
+                  />
+                  <Action
+                    label={
+                      collection.saved.includes(place.id)
+                        ? "Saved"
+                        : "Want to try"
+                    }
+                    selected={collection.saved.includes(place.id)}
+                    icon="bookmark-outline"
+                    onPress={() =>
+                      dispatch({ type: "save", placeId: place.id })
+                    }
+                  />
+                </View>
+              </View>
+            );
+          })}
+          <PagedListFooter
+            noun="visits"
+            hasMore={feedPage.hasMore}
+            shown={feedPage.shown}
+            total={feedPage.total}
+            remaining={feedPage.remaining}
+            onLoadMore={feedPage.loadMore}
+          />
         </>
       )}
     </Page>
@@ -633,9 +686,7 @@ export function AchievementsScreen({
       <View style={s.hero}>
         <TrophyArt id="gourmet" size={64} />
         <View style={s.flex}>
-          <Text style={s.heroNumber}>
-            {points.toLocaleString()} points
-          </Text>
+          <Text style={s.heroNumber}>{points.toLocaleString()} points</Text>
           <Text style={s.small}>
             {earned} of {badges.length} badges earned ·{" "}
             {collection.visited.length} spots visited

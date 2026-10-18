@@ -51,7 +51,12 @@ export function useFoodDex() {
     },
   );
 
-  function discover(name: string, cuisine: Cuisine, uri: string) {
+  function discover(
+    name: string,
+    cuisine: Cuisine,
+    uri: string,
+    review = "",
+  ) {
     if (
       entries.some(
         (entry) =>
@@ -74,13 +79,15 @@ export function useFoodDex() {
           "Your discovery was added, but its photo couldn’t be saved.";
       }
     }
-    const next = addFood(entries, {
+    const entry: FoodEntry = {
       id,
       name,
       cuisine,
       photo,
       discoveredAt: new Date().toISOString(),
-    });
+    };
+    if (review.trim()) entry.review = review.trim().slice(0, 480);
+    const next = addFood(entries, entry);
     update(next);
     setPhotoWarning(photoError);
     return true;

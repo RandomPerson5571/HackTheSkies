@@ -17,6 +17,7 @@ import {
   Animated,
   Easing,
   FlatList,
+  Image,
   Keyboard,
   Linking,
   Modal,
@@ -154,11 +155,11 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     left: number;
     top: number;
   } | null>(null);
-  const [restaurantTypeFilter, setRestaurantTypeFilter] = useState<
-    string | null
-  >(null);
-  const [foodTypeFilter, setFoodTypeFilter] = useState<string | null>(null);
-  const [cuisineFilter, setCuisineFilter] = useState<string | null>(null);
+  const [restaurantTypeFilter, setRestaurantTypeFilter] = useState<string[]>(
+    [],
+  );
+  const [foodTypeFilter, setFoodTypeFilter] = useState<string[]>([]);
+  const [cuisineFilter, setCuisineFilter] = useState<string[]>([]);
   const [filtersExpanded, setFiltersExpanded] = useState(false);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [filtersProgress] = useState(() => new Animated.Value(0));
@@ -294,10 +295,11 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         (category === "All" || place.category === category) &&
         (!ratingFilter ||
           (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
-        (!restaurantTypeFilter ||
-          (place.type ?? place.category) === restaurantTypeFilter) &&
-        (!foodTypeFilter || matchesTypeFilter(place, foodTypeFilter)) &&
-        (!cuisineFilter || place.cuisine === cuisineFilter) &&
+        (!restaurantTypeFilter.length ||
+          restaurantTypeFilter.includes(place.type ?? place.category)) &&
+        (!foodTypeFilter.length ||
+          foodTypeFilter.some((value) => matchesTypeFilter(place, value))) &&
+        (!cuisineFilter.length || cuisineFilter.includes(place.cuisine ?? "")) &&
         (!savedIds || savedIds.has(place.id)) &&
         `${place.name} ${place.category} ${place.cuisine ?? ""} ${place.neighborhood} ${place.address}`
           .toLowerCase()
@@ -323,6 +325,11 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       ),
     [visible, recommendations],
   );
+  const activeFilterCount =
+    (ratingFilter ? 1 : 0) +
+    (restaurantTypeFilter.length ? 1 : 0) +
+    (foodTypeFilter.length ? 1 : 0) +
+    (cuisineFilter.length ? 1 : 0);
   const active =
     selected && visible.some((place) => place.id === selected.id)
       ? selected
@@ -404,22 +411,155 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     setSelected(null);
     setListVisible(false);
   }
+  async function uploadPhoto() {
+    setPlusMenuOpen(false);
+    setPlusMenuVisible(false);
+    Keyboard.dismiss();
+    try {
+      if (Platform.OS !== "web") {
+        const mediaLibrary =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!mediaLibrary.granted) {
+          if (!mediaLibrary.canAskAgain)
+            void Linking.openSettings().catch(() => {});
+          Alert.alert(
+            "Photo access needed",
+            "Cibo needs photo access to choose a picture from your library. Allow it in Settings, then try again.",
+          );
+          return;
+        }
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        base64: true,
+        quality: 0.5,
+        allowsEditing: true,
+        aspect: [1, 1],
+      });
+      const asset = result.assets?.[0];
+      if (result.canceled || !asset) return;
+      setPlusMenuOpen(false);
+      setPlusMenuVisible(false);
+      setFoodCapture({
+        id: Date.now(),
+        recognition: null,
+        photo: asset,
+        error: "",
+      });
+      setTab("dex");
+    } catch {
+      Alert.alert(
+        "Couldn’t open that photo",
+        "Try picking the picture again, or add the dish by hand in your Food Dex.",
+      );
+    }
+  }
+  function writeBlog() {
+    setPlusMenuOpen(false);
+    setPlusMenuVisible(false);
+    Keyboard.dismiss();
+    setFoodCapture(null);
+    setTab("dex");
+  }
   function centerOnUserLocation() {
     setSelected(null);
     camera.current?.centerOnUserLocation();
+  }
+  function multiSelectLabel(list: string[]) {
+    if (!list.length) return null;
+    return list.length === 1 ? list[0] : `${list.length} selected`;
   }
   function selectedFilterLabel(dimension: FilterDimension) {
     if (dimension === "rating") {
       return ratingFilter ? `${ratingFilter}+ stars` : null;
     }
-    if (dimension === "restaurantType") return restaurantTypeFilter;
-    if (dimension === "foodType") return foodTypeFilter;
-    if (dimension === "cuisine") return cuisineFilter;
+    if (dimension === "restaurantType")
+      return multiSelectLabel(restaurantTypeFilter);
+    if (dimension === "foodType") return multiSelectLabel(foodTypeFilter);
+    if (dimension === "cuisine") return multiSelectLabel(cuisineFilter);
     return null;
+  }
+  function toggleFilterValue(
+    list: string[],
+    value: string,
+    setter: (values: string[]) => void,
+  ) {
+    setter(
+      list.includes(value)
+        ? list.filter((item) => item !== value)
+        : [...list, value],
+    );
+  }
+  function clearAllFilters() {
+    setRatingFilter(null);
+    setRestaurantTypeFilter([]);
+    setFoodTypeFilter([]);
+    setCuisineFilter([]);
+    closeFilterDropdown();
   }
   function closeFilterDropdown() {
     setOpenFilter(null);
     setFilterAnchor(null);
+  }
+  function renderMultiSelectDropdown(
+    options: readonly string[],
+    selected: string[],
+    setter: (values: string[]) => void,
+    onFirstSelection?: () => void,
+  ) {
+    return (
+      <>
+        {options.map((value) => {
+          const checked = selected.includes(value);
+          return (
+            <Pressable
+              key={value}
+              accessibilityRole="checkbox"
+              accessibilityLabel={`Filter by ${value}`}
+              accessibilityState={{ checked }}
+              onPress={() => {
+                if (!selected.length) onFirstSelection?.();
+                toggleFilterValue(selected, value, setter);
+              }}
+              style={styles.filterDropdownOption}
+            >
+              <View
+                style={[styles.checkbox, checked && styles.checkboxChecked]}
+              >
+                {checked && (
+                  <Icon name="checkmark" size={13} color={colors.white} />
+                )}
+              </View>
+              <Text style={styles.filterDropdownOptionText}>{value}</Text>
+            </Pressable>
+          );
+        })}
+        <View style={styles.filterDropdownActions}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Clear ${selected.length ? "all" : "this"} filter selections`}
+            onPress={() => setter([])}
+            style={({ pressed }) => [
+              styles.filterDropdownActionButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text style={styles.filterDropdownAuxText}>Clear</Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Apply filter selections"
+            onPress={closeFilterDropdown}
+            style={({ pressed }) => [
+              styles.filterDropdownActionButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text style={styles.filterDropdownDoneText}>Done</Text>
+          </Pressable>
+        </View>
+      </>
+    );
   }
 
   const renderPlaceMarker = useCallback(
@@ -491,16 +631,33 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       >
         {tab === "camera" ? (
           <FoodCameraScreen
+            initialMode={cameraMode}
             onClose={() => setTab(cameraReturnTab.current)}
             onCapture={(capture) => {
               setFoodCapture(capture);
               setTab("dex");
+            }}
+            onMenuCapture={(photo) => {
+              setMenuPhoto(photo);
+              setTab("lens");
+            }}
+            onMenuExplore={() => setTab("lens")}
+          />
+        ) : tab === "lens" ? (
+          <MenuLensScreen
+            diet={profile.diet}
+            initialPhoto={menuPhoto}
+            onOpenCamera={() => openFoodCamera("menu")}
+            onClose={() => {
+              setMenuPhoto(null);
+              setTab(cameraReturnTab.current);
             }}
           />
         ) : tab === "dex" ? (
           <FoodDexScreen
             key={foodCapture?.id ?? "dex"}
             capture={foodCapture}
+            dex={foodDex}
             onOpenCamera={openFoodCamera}
           />
         ) : tab === "favorites" ? (
@@ -520,6 +677,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             saved={saved}
             profile={profile}
             onSave={setProfile}
+            game={gamification.state}
             storageError={migrationError || profileError}
             topInset={insets.top}
             bottomInset={insets.bottom}
@@ -647,15 +805,21 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel="Show search filters"
-                    accessibilityState={{ expanded: false }}
+                    accessibilityState={{
+                      expanded: false,
+                      selected: activeFilterCount > 0,
+                    }}
                     onPress={() => setFiltersExpanded(true)}
                     style={({ pressed }) => [
                       styles.chip,
+                      activeFilterCount > 0 && styles.selectedFilterChip,
                       pressed && styles.pressed,
                     ]}
                   >
                     <Icon name="options-outline" size={17} />
-                    <Text style={styles.chipText}>Filters</Text>
+                    <Text style={styles.chipText}>
+                      {activeFilterCount ? `Filters (${activeFilterCount})` : "Filters"}
+                    </Text>
                   </Pressable>
                 ) : (
                   <>
@@ -675,6 +839,21 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       <Icon name="options-outline" size={17} />
                       <Text style={styles.chipText}>Filters ×</Text>
                     </Pressable>
+                    {activeFilterCount > 0 && (
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel="Clear all filters"
+                        onPress={clearAllFilters}
+                        style={({ pressed }) => [
+                          styles.chip,
+                          styles.clearChip,
+                          pressed && styles.pressed,
+                        ]}
+                      >
+                        <Icon name="close-circle-outline" size={17} />
+                        <Text style={styles.chipText}>Clear filters</Text>
+                      </Pressable>
+                    )}
                     {(
                       [
                         "price",
@@ -822,60 +1001,24 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                         ))}
                       </View>
                     ) : openFilter === "restaurantType" ? (
-                      ["Any restaurant type", ...restaurantTypes].map((value) => (
-                        <Pressable
-                          key={value}
-                          onPress={() => {
-                            setRestaurantTypeFilter(
-                              value === "Any restaurant type" ? null : value,
-                            );
-                            setCategory("All");
-                            closeFilterDropdown();
-                          }}
-                          style={styles.filterDropdownOption}
-                        >
-                          <Text style={styles.filterDropdownOptionText}>
-                            {value}
-                          </Text>
-                        </Pressable>
-                      ))
+                      renderMultiSelectDropdown(
+                        restaurantTypes,
+                        restaurantTypeFilter,
+                        setRestaurantTypeFilter,
+                        () => setCategory("All"),
+                      )
                     ) : openFilter === "foodType" ? (
-                      ["Any food type", ...foodSpecialties].map((value) => (
-                        <Pressable
-                          key={value}
-                          onPress={() => {
-                            setFoodTypeFilter(
-                              value === "Any food type" ? null : value,
-                            );
-                            closeFilterDropdown();
-                          }}
-                          style={styles.filterDropdownOption}
-                        >
-                          <Text style={styles.filterDropdownOptionText}>
-                            {value}
-                          </Text>
-                        </Pressable>
-                      ))
+                      renderMultiSelectDropdown(
+                        foodSpecialties,
+                        foodTypeFilter,
+                        setFoodTypeFilter,
+                      )
                     ) : openFilter === "cuisine" ? (
-                      [
-                        "Any cuisine",
-                        ...cuisines.filter((value) => value !== "Bakery"),
-                      ].map((value) => (
-                        <Pressable
-                          key={value}
-                          onPress={() => {
-                            setCuisineFilter(
-                              value === "Any cuisine" ? null : value,
-                            );
-                            closeFilterDropdown();
-                          }}
-                          style={styles.filterDropdownOption}
-                        >
-                          <Text style={styles.filterDropdownOptionText}>
-                            {value}
-                          </Text>
-                        </Pressable>
-                      ))
+                      renderMultiSelectDropdown(
+                        cuisines.filter((value) => value !== "Bakery"),
+                        cuisineFilter,
+                        setCuisineFilter,
+                      )
                     ) : openFilter === "price" ? (
                       <View style={styles.priceFilterOptions}>
                         <Text style={styles.filterDropdownOptionText}>
@@ -1545,7 +1688,48 @@ const styles = StyleSheet.create({
   priceFilterOptions: { gap: 2, paddingVertical: 4 },
   filterDropdownOption: {
     minHeight: 38,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingRight: 6,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: colors.muted,
+    backgroundColor: "rgba(255,253,245,0.08)",
+    alignItems: "center",
     justifyContent: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  filterDropdownActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "rgba(255,255,255,0.26)",
+    marginTop: 2,
+  },
+  filterDropdownActionButton: {
+    flex: 1,
+    minHeight: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  filterDropdownAuxText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.muted,
+  },
+  filterDropdownDoneText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: colors.accent,
   },
   filterDropdownOptionText: {
     fontSize: 14,
@@ -1574,6 +1758,9 @@ const styles = StyleSheet.create({
   },
   selectedFilterChip: {
     ...frostedGlassSelected,
+  },
+  clearChip: {
+    borderColor: colors.accent,
   },
   chipActive: { backgroundColor: colors.ink, borderColor: colors.ink },
   chipText: { fontSize: 12, fontWeight: "600", color: colors.ink },

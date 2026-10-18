@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   KeyboardAvoidingView,
+  Linking,
   Modal,
   Platform,
   ScrollView,
@@ -42,6 +43,7 @@ import { collectionProgress, cardTier, nextDiscoveryMilestone, cuisineMastery, c
 import { playFeedback } from "../../../lib/sensory";
 import { catalogPhoto } from "../services/catalogPhotos";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
+import { deleteScanImage } from "../services/scanImages";
 import { useFoodDex } from "../hooks/useFoodDex";
 import {
   colors,
@@ -125,10 +127,12 @@ export function FoodDexScreen({
   const [filter, setFilter] = useState<"all" | "collected" | "untried">("all");
   const [query, setQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
-  const [scanOpen, setScanOpen] = useState(Boolean(capture));  const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset | null>(
+  const [scanOpen, setScanOpen] = useState(Boolean(capture));
+  const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset | null>(
     capture?.photo ?? null,
   );
   const [name, setName] = useState(capture?.recognition?.name ?? "");
+  const [review, setReview] = useState("");
   const [scanCuisine, setScanCuisine] = useState<Cuisine>(
     capture?.recognition?.cuisine ?? "Other",
   );
@@ -148,6 +152,14 @@ export function FoodDexScreen({
   const request = useRef<AbortController | null>(null);
   const pickerActive = useRef(false);
   const session = useRef(0);
+
+  // Photos are temporary: the original stays in the picker/manipulator cache and
+  // only the saved copy (or base64 data on web) belongs to the collection.
+  function releaseTempPhoto(asset: ImagePicker.ImagePickerAsset | null) {
+    if (!asset || !asset.uri) return;
+    if (Platform.OS === "web" && !asset.base64) return;
+    deleteScanImage(asset.uri);
+  }
   useEffect(
     () => () => {
       session.current++;
@@ -161,12 +173,16 @@ export function FoodDexScreen({
     request.current?.abort();
     request.current = null;
     setBusy(false);
+    releaseTempPhoto(photo);
+    setReview("");
     setScanOpen(false);
   }
   function openScan(dishName = "", dishCuisine: Cuisine = cuisine ?? "Other") {
     session.current++;
+    releaseTempPhoto(photo);
     setPhoto(null);
     setName(dishName);
+    setReview("");
     setScanCuisine(dishCuisine);
     setScanError("");
     setNotice("");
@@ -181,6 +197,27 @@ export function FoodDexScreen({
     request.current?.abort();
     setBusy(false);
     try {
+      // The photo roll picker needs explicit permission before it can open;
+      // requesting it up front keeps a denied/limited library from silently
+      // returning "canceled".
+      if (Platform.OS !== "web") {
+        const mediaLibrary =
+          await ImagePicker.requestMediaLibraryPermissionsAsync().catch(
+            () => null,
+          );
+        if (!mediaLibrary?.granted) {
+          if (mediaLibrary && !mediaLibrary.canAskAgain) {
+            void Linking.openSettings().catch(() => {});
+            setScanError(
+              "Cibo needs photo access to pick from your library. Allow it in Settings and try again.",
+            );
+          } else
+            setScanError(
+              "Cibo needs photo access to pick from your library. Try again and choose Allow.",
+            );
+          return;
+        }
+      }
       const options: ImagePicker.ImagePickerOptions = {
         mediaTypes: ["images"],
         base64: true,
@@ -195,8 +232,11 @@ export function FoodDexScreen({
         !result.assets[0]
       )
         return;
-      setPhoto(result.assets[0]);
+      const picked = result.assets[0];
+      releaseTempPhoto(photo);
+      setPhoto(picked);
       setName("");
+      setReview("");
       setScanCuisine(cuisine ?? "Other");
     } catch {
       if (currentSession === session.current)
@@ -249,7 +289,7 @@ export function FoodDexScreen({
       Platform.OS === "web" && photo?.base64
         ? `data:image/jpeg;base64,${photo.base64}`
         : (photo?.uri ?? "");
-    if (!discover(name.trim(), scanCuisine, photoUri)) {
+    if (!discover(name.trim(), scanCuisine, photoUri, review.trim())) {
       setScanError(
         `${name.trim()} is already in your ${scanCuisine} collection.`,
       );
@@ -263,6 +303,7 @@ export function FoodDexScreen({
         cuisine: scanCuisine,
         photo: photoUri,
         discoveredAt: new Date().toISOString(),
+        review: review.trim().slice(0, 480) || undefined,
       },
       before: entries,
     });
@@ -772,6 +813,19 @@ export function FoodDexScreen({
                   </Pressable>
                 ))}
               </View>
+              <Text style={s.label}>YOUR REVIEW</Text>
+              <TextInput
+                accessibilityLabel="Written food review"
+                placeholder="What made that bite worth remembering? Flavor, texture, the whole story…"
+                placeholderTextColor={colors.muted}
+                value={review}
+                editable={!busy}
+                multiline
+                maxLength={480}
+                onChangeText={setReview}
+                style={[s.field, s.reviewField]}
+                textAlignVertical="top"
+              />
               <Button
                 title="Add to my Food Dex"
                 icon="checkmark-outline"
@@ -1322,6 +1376,7 @@ const s = StyleSheet.create({
   },
   chipText: { color: colors.ink, fontSize: 13, fontWeight: "600" },
   chipTextActive: { color: colors.ink },
+  white: { color: colors.white },
   dishGroup: {
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -1339,7 +1394,6 @@ const s = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     alignItems: "center",
-    borderColor: colors.border,
   },
   preview: {
     height: 240,
@@ -1377,6 +1431,11 @@ const s = StyleSheet.create({
     padding: 14,
     color: colors.ink,
     fontSize: 16,
+  },
+  reviewField: {
+    minHeight: 110,
+    lineHeight: 22,
+    paddingTop: 14,
   },
   cuisineChips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   collectionCard: {

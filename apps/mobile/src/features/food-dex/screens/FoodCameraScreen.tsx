@@ -207,6 +207,29 @@ export function FoodCameraScreen({
     setError("");
     const current = generation.current;
     try {
+      // With editing enabled the picker uses the photo roll, which requires
+      // explicit permission; requesting it first keeps a denied library from
+      // silently canceling the selection.
+      if (Platform.OS !== "web") {
+        const mediaLibrary =
+          await ImagePicker.requestMediaLibraryPermissionsAsync().catch(
+            () => null,
+          );
+        if (!mediaLibrary?.granted) {
+          if (mediaLibrary && !mediaLibrary.canAskAgain) {
+            void Linking.openSettings().catch(() =>
+              setError("Open device settings to allow photo access."),
+            );
+            setError(
+              "Cibo needs photo access to choose from your library. Allow it in Settings, then try again.",
+            );
+          } else
+            setError(
+              "Cibo needs photo access to choose from your library. Try again and choose Allow.",
+            );
+          return;
+        }
+      }
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
         quality: 0.8,

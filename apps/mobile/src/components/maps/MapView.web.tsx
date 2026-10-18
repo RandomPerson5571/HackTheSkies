@@ -108,6 +108,31 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       ),
     [props.places, visibleIds, props.recommendations, props.selectedId, zoom],
   );
+  const friendPins = useMemo(() => {
+    const placeIndex = new Map(props.places.map((place) => [place.id, place]));
+    const pins: {
+      key: string;
+      friend: NonNullable<typeof props.friends>[number];
+      place: (typeof props.places)[number];
+      visit: NonNullable<typeof props.friends>[number]["visits"][number];
+    }[] = [];
+    for (const friend of props.friends ?? []) {
+      for (const visit of friend.visits ?? []) {
+        const place = placeIndex.get(visit.placeId);
+        if (!place) continue;
+        pins.push({ key: `${friend.id}-${visit.placeId}-${visit.when}`, friend, place, visit });
+      }
+    }
+    // Keep the community layer readable: at most ~6 friend pins per person in
+    // the current viewport.
+    const perFriend = new Map<string, number>();
+    return pins.filter((pin) => {
+      const shown = perFriend.get(pin.friend.id) ?? 0;
+      if (shown >= 6) return false;
+      perFriend.set(pin.friend.id, shown + 1);
+      return true;
+    });
+  }, [props.friends, props.places]);
   const currentData = useRef({ data, placeIndex });
   useEffect(() => {
     latest.current = props;
@@ -438,6 +463,84 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       cache.set(key, marker);
     }
   }, [markers, props.recommendations, props.selectedId, props.token, zoom]);
+
+  const friendMarkerCache = useRef(new Map<string, { remove: () => void }>());
+  useEffect(() => {
+    const cache = friendMarkerCache.current;
+    return () => {
+      cache.forEach((marker) => marker.remove());
+      cache.clear();
+    };
+  }, [props.token]);
+  useEffect(() => {
+    if (!map.current) return;
+    const cache = friendMarkerCache.current;
+    const desired = new Set(friendPins.map((pin) => pin.key));
+    for (const [key, marker] of cache) {
+      if (!desired.has(key)) {
+        marker.remove();
+        cache.delete(key);
+      }
+    }
+    for (const pin of friendPins) {
+      if (cache.has(pin.key)) continue;
+      const avatarUri =
+        pin.friend.avatarUri ||
+        pin.friend.profilePictureUri ||
+        pin.friend.profilePicture ||
+        pin.friend.avatarUrl ||
+        pin.friend.photoUrl ||
+        pin.friend.imageUrl ||
+        pin.friend.imageUri;
+      const element = document.createElement("button");
+      element.type = "button";
+      element.setAttribute(
+        "aria-label",
+        `${pin.friend.name} rated ${pin.place.name} ${pin.visit.rating} of 5`,
+      );
+      Object.assign(element.style, {
+        width: "34px",
+        height: "34px",
+        borderRadius: "50%",
+        border: `2px solid ${colors.white}`,
+        padding: "0",
+        overflow: "hidden",
+        cursor: "pointer",
+        background: colors.tint,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      });
+      if (avatarUri) {
+        const image = document.createElement("img");
+        image.src = avatarUri;
+        image.alt = "";
+        image.width = 30;
+        image.height = 30;
+        Object.assign(image.style, {
+          width: "30px",
+          height: "30px",
+          borderRadius: "50%",
+          objectFit: "cover",
+        });
+        image.onerror = () => {
+          image.remove();
+          element.textContent = pin.friend.initials;
+        };
+        element.append(image);
+      } else {
+        element.textContent = pin.friend.initials;
+      }
+      element.onclick = (event) => {
+        event.stopPropagation();
+        latest.current.onSelect(pin.place);
+      };
+      const marker = new mapboxgl.Marker({ element })
+        .setLngLat(pin.place.coordinate)
+        .addTo(map.current);
+      cache.set(pin.key, marker);
+    }
+  }, [friendPins, props.token]);
 
   return <div ref={container} style={{ position: "absolute", inset: 0 }} />;
 });

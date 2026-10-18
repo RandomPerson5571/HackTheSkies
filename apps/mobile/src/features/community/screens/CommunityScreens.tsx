@@ -11,7 +11,7 @@ import {
   type Dispatch,
   type ReactNode,
 } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { mapCenter, type Place } from "../../restaurants/data/places";
@@ -123,6 +123,31 @@ function Action({
     >
       {icon && <Icon name={icon} size={18} />}
       <Text style={s.buttonText}>{label}</Text>
+    </Pressable>
+  );
+}
+
+function ToolButton({
+  icon,
+  label,
+  onPress,
+  disabled = false,
+}: {
+  icon: IconName;
+  label: string;
+  onPress: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      style={({ pressed }) => [fs.tool, (pressed || disabled) && s.dim]}
+    >
+      <Icon name={icon} size={18} />
     </Pressable>
   );
 }
@@ -264,6 +289,18 @@ export function FavoritesScreen({
     unratedPage * NEARBY_PAGE_SIZE,
     (unratedPage + 1) * NEARBY_PAGE_SIZE,
   );
+  const favoriteStats = useMemo(() => {
+    const ratings = collection.favorites
+      .map((id) => collection.ratings[id] ?? 0)
+      .filter((value) => value > 0);
+    const average = ratings.length
+      ? Math.round(
+          (ratings.reduce((sum, value) => sum + value, 0) / ratings.length) *
+            10,
+        ) / 10
+      : 0;
+    return { average, topPick: ranked[0]?.name ?? null };
+  }, [collection.favorites, collection.ratings, ranked]);
 
   useEffect(() => {
     const timer = setTimeout(() => setPageQuery(query), 250);
@@ -324,29 +361,35 @@ export function FavoritesScreen({
     return (
       <View key={place.id} style={fs.card}>
         <View style={s.row}>
-          {isRanked && (
-            <View style={fs.rankBadge}>
-              <Text style={fs.rankText}>#{rank + 1}</Text>
-            </View>
-          )}
-          <RestaurantPhoto
-            place={place}
-            recommendation={recommendations.get(place.id)}
-            style={fs.photo}
-          />
+          <View>
+            <RestaurantPhoto
+              place={place}
+              recommendation={recommendations.get(place.id)}
+              style={fs.photo}
+            />
+            {isRanked && (
+              <View style={fs.rankChip}>
+                <Text style={fs.rankChipText}>#{rank + 1}</Text>
+              </View>
+            )}
+          </View>
           <View style={s.flex}>
             <Text style={s.eyebrow}>{place.category.toUpperCase()}</Text>
-            <Text style={s.name}>{place.name}</Text>
-            <Text style={s.small}>{place.neighborhood}</Text>
+            <Text numberOfLines={1} style={s.name}>
+              {place.name}
+            </Text>
+            <Text numberOfLines={1} style={s.small}>
+              {place.neighborhood}
+            </Text>
           </View>
-          {isRanked ? (
-            <View style={fs.ratingPill}>
-              <Icon name={rating ? "star" : "star-outline"} size={15} />
-              <Text style={fs.ratingPillText}>
-                {rating ? `${rating}/5` : "Unrated"}
-              </Text>
-            </View>
-          ) : null}
+          <View
+            accessibilityLabel={rating ? `Rated ${rating} of 5` : "Not rated"}
+            style={[fs.score, !rating && fs.scoreEmpty]}
+          >
+            <Text style={[fs.scoreText, !rating && fs.scoreEmptyText]}>
+              {rating ? `${rating}/5` : "—"}
+            </Text>
+          </View>
         </View>
         <View style={fs.stars}>
           {[1, 2, 3, 4, 5].map((value) => (
@@ -364,30 +407,34 @@ export function FavoritesScreen({
               />
             </Pressable>
           ))}
-          <Text style={s.small}>{rating ? `${rating}/5` : "Unrated"}</Text>
         </View>
-        <View style={s.actions}>
+        <View style={fs.tools}>
           {isRanked && (
             <>
-              <Action
-                label="Up"
+              <ToolButton
                 icon="arrow-up"
+                label={`Move ${place.name} up`}
                 disabled={rank === 0}
                 onPress={() =>
                   dispatch({ type: "rank", placeId: place.id, direction: -1 })
                 }
               />
-              <Action
-                label="Down"
+              <ToolButton
                 icon="arrow-down"
+                label={`Move ${place.name} down`}
                 disabled={rank === collection.favorites.length - 1}
                 onPress={() =>
                   dispatch({ type: "rank", placeId: place.id, direction: 1 })
                 }
               />
-              <Action label="Clear" onPress={() => ratePlace(place.id, 0)} />
+              <ToolButton
+                icon="close-circle-outline"
+                label={`Clear rating for ${place.name}`}
+                onPress={() => ratePlace(place.id, 0)}
+              />
             </>
           )}
+          <View style={fs.gap} />
           <Action
             label="Map"
             icon="map-outline"
@@ -413,7 +460,13 @@ export function FavoritesScreen({
           <Text style={fs.heroNumber}>
             {collection.favorites.length} ranked
           </Text>
-          <Text style={s.small}>Your personal leaderboard.</Text>
+          <Text style={s.small}>
+            {collection.favorites.length
+              ? favoriteStats.topPick
+                ? `Top pick: ${favoriteStats.topPick} · ${favoriteStats.average}/5 average`
+                : "Your personal leaderboard."
+              : "Rate a spot below to start your leaderboard."}
+          </Text>
         </View>
       </View>
       <Text accessibilityRole="header" style={s.section}>
@@ -423,10 +476,14 @@ export function FavoritesScreen({
         Use the arrows to rank independently of your star ratings.
       </Text>
       {!collection.favorites.length && (
-        <View style={s.empty}>
-          <Icon name="heart-outline" size={32} />
-          <Text style={s.name}>Every favorite starts with a bite.</Text>
-          <Text style={s.small}>Rate a spot below to start your ranking.</Text>
+        <View style={fs.empty}>
+          <View style={fs.emptyArt}>
+            <Icon name="heart-outline" size={30} />
+          </View>
+          <Text style={fs.emptyTitle}>Every favorite starts with a bite.</Text>
+          <Text style={fs.emptyCopy}>
+            Rate a nearby spot below and it joins your personal leaderboard.
+          </Text>
         </View>
       )}
       {rankedLoading && <Text style={s.notice}>Loading your favorites…</Text>}
@@ -603,9 +660,26 @@ export function FriendsScreen({
             return (
               <View key={friend.id} style={s.card}>
                 <View style={s.row}>
-                  <View style={s.avatar}>
-                    <Text style={s.avatarText}>{friend.initials}</Text>
-                  </View>
+                  {(() => {
+                    const avatarUri =
+                      friend.avatarUri ||
+                      friend.profilePictureUri ||
+                      friend.profilePicture ||
+                      friend.avatarUrl ||
+                      friend.photoUrl ||
+                      friend.imageUrl ||
+                      friend.imageUri;
+                    return avatarUri ? (
+                      <Image
+                        source={{ uri: avatarUri }}
+                        style={s.avatar}
+                      />
+                    ) : (
+                      <View style={s.avatar}>
+                        <Text style={s.avatarText}>{friend.initials}</Text>
+                      </View>
+                    );
+                  })()}
                   <View style={s.flex}>
                     <Text style={s.name}>{friend.name}</Text>
                     <Text style={s.small}>{friend.handle}</Text>
@@ -682,9 +756,26 @@ export function FriendsScreen({
             return (
               <View key={key} style={s.card}>
                 <View style={s.row}>
-                  <View style={s.avatar}>
-                    <Text style={s.avatarText}>{friend.initials}</Text>
-                  </View>
+                  {(() => {
+                    const avatarUri =
+                      friend.avatarUri ||
+                      friend.profilePictureUri ||
+                      friend.profilePicture ||
+                      friend.avatarUrl ||
+                      friend.photoUrl ||
+                      friend.imageUrl ||
+                      friend.imageUri;
+                    return avatarUri ? (
+                      <Image
+                        source={{ uri: avatarUri }}
+                        style={s.avatar}
+                      />
+                    ) : (
+                      <View style={s.avatar}>
+                        <Text style={s.avatarText}>{friend.initials}</Text>
+                      </View>
+                    );
+                  })()}
                   <View style={s.flex}>
                     <Text style={s.name}>{friend.name}</Text>
                     <Text style={s.small}>
@@ -1078,44 +1169,75 @@ const fs = StyleSheet.create({
     borderColor: colors.border,
     borderWidth: 1,
     padding: 14,
-    gap: 12,
+    gap: 10,
   },
-  rankBadge: {
-    width: 42,
-    height: 42,
-    borderRadius: 14,
+  photo: {
+    width: 74,
+    height: 74,
+    borderRadius: 18,
     backgroundColor: colors.tint,
+  },
+  rankChip: {
+    position: "absolute",
+    left: -6,
+    bottom: -6,
+    backgroundColor: colors.accent,
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+  },
+  rankChipText: { fontSize: 11, fontWeight: "700", color: colors.paper },
+  score: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: colors.accent,
     alignItems: "center",
     justifyContent: "center",
   },
-  rankText: { fontSize: 15, fontWeight: "700", color: colors.accent },
-  photo: {
-    width: 56,
-    height: 62,
-    borderRadius: 12,
-    backgroundColor: colors.tint,
-  },
-  ratingPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    backgroundColor: colors.tint,
-  },
-  ratingPillText: { fontSize: 12, fontWeight: "700", color: colors.accent },
+  scoreText: { fontSize: 12, fontWeight: "700", color: colors.paper },
+  scoreEmpty: { backgroundColor: colors.tint },
+  scoreEmptyText: { color: colors.muted },
   stars: {
     flexDirection: "row",
     alignItems: "center",
-    flexWrap: "wrap",
     gap: 2,
+    marginLeft: -6,
   },
   star: {
-    minWidth: 40,
-    minHeight: 40,
+    width: 44,
+    height: 40,
     alignItems: "center",
     justifyContent: "center",
+  },
+  tools: { flexDirection: "row", alignItems: "center", gap: 8 },
+  tool: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  gap: { flex: 1 },
+  empty: { alignItems: "center", paddingVertical: 24, gap: 8 },
+  emptyArt: {
+    width: 74,
+    height: 74,
+    borderRadius: 24,
+    backgroundColor: colors.tint,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emptyTitle: { fontSize: 17, fontWeight: "600", color: colors.ink, textAlign: "center" },
+  emptyCopy: {
+    fontSize: 12,
+    lineHeight: 19,
+    color: colors.muted,
+    textAlign: "center",
+    maxWidth: 260,
   },
   hero: {
     backgroundColor: colors.tint,

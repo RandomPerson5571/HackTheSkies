@@ -20,6 +20,7 @@ import {
   Animated,
   Easing,
   FlatList,
+  Image,
   Keyboard,
   Linking,
   Modal,
@@ -75,6 +76,8 @@ import { RestaurantsScreen } from "../features/restaurants/screens/RestaurantsSc
 import { useRestaurantCollection } from "../features/restaurants/hooks/useRestaurantCollection";
 import {
   buildRecommendations,
+  rarityFilterOptions,
+  rarityLabel,
   recommendationLabel,
 } from "../features/restaurants/models/recommendations";
 import { FoodRecommender } from "../features/restaurants/components/FoodRecommender";
@@ -168,6 +171,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     mapCount,
     mapNeedsZoom,
     loadMapViewport,
+    friends,
     error: backendError,
   } = useBackend();
   const insets = useSafeAreaInsets();
@@ -233,6 +237,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     return () => animation.stop();
   }, [filtersExpanded, filtersProgress, reduceMotion]);
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
+  const [rarityFilter, setRarityFilter] = useState<number | null>(null);
   const [query, setQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
   const [selected, setSelected] = useState<Place | null>(null);
@@ -363,6 +368,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         (category === "All" || place.category === category) &&
         (!ratingFilter ||
           (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
+        (!rarityFilter ||
+          (place.rarity?.value ?? 0) >= rarityFilter) &&
         (!restaurantTypeFilter.length ||
           restaurantTypeFilter.includes(place.type ?? place.category)) &&
         (!foodTypeFilter.length ||
@@ -384,6 +391,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     savedFilter,
     collection.ratings,
     ratingFilter,
+    rarityFilter,
     restaurantTypeFilter,
     foodTypeFilter,
     cuisineFilter,
@@ -398,6 +406,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         (category === "All" || place.category === category) &&
         (!ratingFilter ||
           (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
+        (!rarityFilter ||
+          (place.rarity?.value ?? 0) >= rarityFilter) &&
         (!restaurantTypeFilter.length ||
           restaurantTypeFilter.includes(place.type ?? place.category)) &&
         (!foodTypeFilter.length ||
@@ -419,6 +429,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     savedFilter,
     collection.ratings,
     ratingFilter,
+    rarityFilter,
     restaurantTypeFilter,
     foodTypeFilter,
     cuisineFilter,
@@ -435,6 +446,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   );
   const activeFilterCount =
     (ratingFilter ? 1 : 0) +
+    (rarityFilter ? 1 : 0) +
     (restaurantTypeFilter.length ? 1 : 0) +
     (foodTypeFilter.length ? 1 : 0) +
     (cuisineFilter.length ? 1 : 0) +
@@ -443,6 +455,16 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     selected && visible.some((place) => place.id === selected.id)
       ? selected
       : null;
+  const activeFriendReviews = useMemo(() => {
+    if (!active) return [];
+    const result: { friend: (typeof friends)[number]; visit: (typeof friends)[number]["visits"][number] }[] = [];
+    for (const friend of friends ?? []) {
+      for (const visit of friend.visits ?? []) {
+        if (visit.placeId === active.id) result.push({ friend, visit });
+      }
+    }
+    return result;
+  }, [active, friends]);
   useEffect(() => {
     if (!active) return;
     cardDragY.setValue(0);
@@ -671,6 +693,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     if (dimension === "rating") {
       return ratingFilter ? `${ratingFilter}+ stars` : null;
     }
+    if (dimension === "rarity")
+      return rarityFilter ? `${rarityFilter}+ rarity` : null;
     if (dimension === "restaurantType")
       return multiSelectLabel(restaurantTypeFilter);
     if (dimension === "foodType") return multiSelectLabel(foodTypeFilter);
@@ -691,6 +715,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   }
   function clearAllFilters() {
     setRatingFilter(null);
+    setRarityFilter(null);
     setRestaurantTypeFilter([]);
     setFoodTypeFilter([]);
     setCuisineFilter([]);
@@ -1069,9 +1094,34 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   </Pressable>
                 ))
               ) : (
-                <Text style={styles.small}>
-                  Rarity data isn’t available for these listings yet.
-                </Text>
+                ["Any rarity", ...rarityFilterOptions].map((value) => (
+                  <Pressable
+                    key={value}
+                    accessibilityRole="button"
+                    accessibilityLabel={
+                      value === "Any rarity"
+                        ? "Show any rarity"
+                        : `Filter rarity ${value} out of 5 and up`
+                    }
+                    accessibilityState={{
+                      selected:
+                        value === "Any rarity"
+                          ? rarityFilter === null
+                          : rarityFilter === value,
+                    }}
+                    onPress={() => {
+                      setRarityFilter(
+                        value === "Any rarity" ? null : (value as number),
+                      );
+                      closeFilterDropdown();
+                    }}
+                    style={styles.filterDropdownOption}
+                  >
+                    <Text style={styles.filterDropdownOptionText}>
+                      {value === "Any rarity" ? value : `${value}+ out of 5`}
+                    </Text>
+                  </Pressable>
+                ))
               )}
             </ScrollView>
             {(openFilter === "cuisine" ||
@@ -1131,8 +1181,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             dex={foodDex}
             gameXp={gamification.state.xp}
             visited={collection.visited}
-            onOpenQuests={() => setTab("challenges")}
-            onOpenJournal={() => setTab("journal")}
             capture={foodCapture}
             onOpenCamera={openFoodCamera}
             onDiscover={(cuisine) => {
@@ -1157,7 +1205,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setTab("explore");
               setCategory("All");
               setQuery("");
-              choose(place);
+              requestAnimationFrame(() => choose(place));
             }}
           />
         ) : tab === "saved" ? (
@@ -1173,11 +1221,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setCategory("All");
               setQuery("");
               setRatingFilter(null);
+              setRarityFilter(null);
               setRestaurantTypeFilter([]);
               setFoodTypeFilter([]);
               setCuisineFilter([]);
               setPriceFilter(null);
-              choose(place);
+              requestAnimationFrame(() => choose(place));
             }}
           />
         ) : tab === "profile" ? (
@@ -1244,7 +1293,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setTab("explore");
               setCategory("All");
               setQuery("");
-              choose(place);
+              requestAnimationFrame(() => choose(place));
             }}
           />
         ) : tab === "challenges" ? (
@@ -1286,6 +1335,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 onError={onMapError}
                 renderPlaceMarker={renderPlaceMarker}
                 recommendations={recommendations}
+                friends={friends}
               />
             ) : (
               <View style={styles.emptyMap}>
@@ -1484,6 +1534,46 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       {recommendationLabel(recommendations.get(active.id))} ·
                       Sample community reviews
                     </Text>
+                    <Text style={styles.small}>
+                      {rarityLabel(active.rarity)}
+                    </Text>
+                    {activeFriendReviews.length > 0 && (
+                      <View style={{ gap: 8, marginTop: 4 }}>
+                        <Text style={styles.small}>Friends' reviews</Text>
+                        {activeFriendReviews.map(({ friend, visit }) => {
+                          const avatarUri =
+                            friend.avatarUri ||
+                            friend.profilePictureUri ||
+                            friend.profilePicture ||
+                            friend.avatarUrl ||
+                            friend.photoUrl ||
+                            friend.imageUrl ||
+                            friend.imageUri;
+                          return (
+                            <View key={`${friend.id}-${visit.when}`} style={{ flexDirection: "row", gap: 8, alignItems: "flex-start" }}>
+                              {avatarUri ? (
+                                <Image
+                                  source={{ uri: avatarUri }}
+                                  style={{ width: 28, height: 28, borderRadius: 14 }}
+                                />
+                              ) : (
+                                <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: colors.tint, alignItems: "center", justifyContent: "center" }}>
+                                  <Text style={{ fontSize: 10, fontWeight: "700", color: colors.accent }}>
+                                    {friend.initials}
+                                  </Text>
+                                </View>
+                              )}
+                              <View style={{ flex: 1, gap: 2 }}>
+                                <Text style={{ fontSize: 12, fontWeight: "600", color: colors.ink }}>
+                                  {friend.name} · {visit.rating}/5
+                                </Text>
+                                <Text style={styles.small}>{visit.note || visit.comment}</Text>
+                              </View>
+                            </View>
+                          );
+                        })}
+                      </View>
+                    )}
                     <View style={styles.ratingRow}>
                       <Text style={styles.small}>Your rating</Text>
                       {[1, 2, 3, 4, 5].map((value) => (
@@ -1752,7 +1842,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             setTab("explore");
             setCategory("All");
             setQuery("");
-            choose(place);
+            requestAnimationFrame(() => choose(place));
           }}
         />
       )}
@@ -1834,6 +1924,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       </Text>
                       <Text style={styles.small}>
                         {recommendationLabel(recommendations.get(item.id))}
+                      </Text>
+                      <Text style={styles.small}>
+                        {rarityLabel(item.rarity)}
                       </Text>
                     </View>
                     <Icon name="chevron-forward" size={18} />
@@ -2348,8 +2441,7 @@ const styles = StyleSheet.create({
   navItems: { flex: 1, flexDirection: "row" },
   navActive: { backgroundColor: "rgba(234,243,178,0.66)" },
   placeCard: {
-    ...webGlassBlur,
-    backgroundColor: "rgba(255,253,245,0.72)",
+    backgroundColor: colors.paper,
     borderRadius: 24,
     padding: 16,
     gap: 12,

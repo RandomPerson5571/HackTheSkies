@@ -33,9 +33,9 @@ try {
     (select count(*)::int from public.cibo_restaurants) restaurants,
     (select count(*)::int from public.cibo_reviews) reviews,
     (select count(*)::int from public.cibo_reviewers) reviewers`;
-  assert.equal(counts[0].restaurants, 541);
+  assert.equal(counts[0].restaurants, 573);
   assert.equal(counts[0].reviewers, 12);
-  assert.equal(counts[0].reviews, 3783);
+  assert.equal(counts[0].reviews, 4002);
   const restaurants = await request("cibo_restaurants?select=id,data&limit=1");
   assert.equal(restaurants.status, 200);
   assert.equal(restaurants.data[0].id, restaurants.data[0].data.id);

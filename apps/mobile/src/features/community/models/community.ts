@@ -1,10 +1,13 @@
-import type { Place } from "../../restaurants/data/places";
+import { places as catalogPlaces, type Place } from "../../restaurants/data/places.ts";
 
 // Fictional profiles for the local prototype; no requests are sent to real people.
 type SampleVisit = {
   placeId: string;
   rating: number;
   note: string;
+  comment: string;
+  review: string;
+  text: string;
   when: string;
 };
 export type SampleFriend = {
@@ -13,6 +16,13 @@ export type SampleFriend = {
   handle: string;
   initials: string;
   bio: string;
+  avatarUri?: string;
+  profilePictureUri?: string;
+  profilePicture?: string;
+  avatarUrl?: string;
+  photoUrl?: string;
+  imageUrl?: string;
+  imageUri?: string;
   visits: SampleVisit[];
 };
 
@@ -23,7 +33,26 @@ export const sampleFriends: SampleFriend[] = [
     handle: "@mayatastes",
     initials: "MC",
     bio: "Always room for ramen.",
-    visits: [],
+    avatarUri: "https://i.pravatar.cc/150?u=maya",
+    profilePictureUri: "https://i.pravatar.cc/150?u=maya",
+    profilePicture: "https://i.pravatar.cc/150?u=maya",
+    avatarUrl: "https://i.pravatar.cc/150?u=maya",
+    photoUrl: "https://i.pravatar.cc/150?u=maya",
+    imageUrl: "https://i.pravatar.cc/150?u=maya",
+    imageUri: "https://i.pravatar.cc/150?u=maya",
+    visits: catalogPlaces.slice(0, 5).map((place, index) => {
+      const rating = [5, 4, 5, 4, 3][index % 5]!;
+      const note = `Loved the ${place.cuisine!.toLowerCase()} flavors at ${place.name}; would happily come back with friends.`;
+      return {
+        placeId: place.id,
+        rating,
+        note,
+        comment: note,
+        review: note,
+        text: note,
+        when: `2026-09-${String(10 + index).padStart(2, "0")}`,
+      };
+    }),
   },
   {
     id: "alex",
@@ -31,7 +60,26 @@ export const sampleFriends: SampleFriend[] = [
     handle: "@alexaftercoffee",
     initials: "AR",
     bio: "Coffee first. Everything else later.",
-    visits: [],
+    avatarUri: "https://i.pravatar.cc/150?u=alex",
+    profilePictureUri: "https://i.pravatar.cc/150?u=alex",
+    profilePicture: "https://i.pravatar.cc/150?u=alex",
+    avatarUrl: "https://i.pravatar.cc/150?u=alex",
+    photoUrl: "https://i.pravatar.cc/150?u=alex",
+    imageUrl: "https://i.pravatar.cc/150?u=alex",
+    imageUri: "https://i.pravatar.cc/150?u=alex",
+    visits: catalogPlaces.slice(12, 17).map((place, index) => {
+      const rating = [4, 5, 4, 5, 4][index % 5]!;
+      const note = `Great stop for ${place.category.toLowerCase()}; the ${place.cuisine!.toLowerCase()} dishes really stood out.`;
+      return {
+        placeId: place.id,
+        rating,
+        note,
+        comment: note,
+        review: note,
+        text: note,
+        when: `2026-09-${String(18 + index).padStart(2, "0")}`,
+      };
+    }),
   },
   {
     id: "sam",
@@ -39,7 +87,26 @@ export const sampleFriends: SampleFriend[] = [
     handle: "@crumbtrail",
     initials: "SP",
     bio: "Following the scent of fresh bread.",
-    visits: [],
+    avatarUri: "https://i.pravatar.cc/150?u=sam",
+    profilePictureUri: "https://i.pravatar.cc/150?u=sam",
+    profilePicture: "https://i.pravatar.cc/150?u=sam",
+    avatarUrl: "https://i.pravatar.cc/150?u=sam",
+    photoUrl: "https://i.pravatar.cc/150?u=sam",
+    imageUrl: "https://i.pravatar.cc/150?u=sam",
+    imageUri: "https://i.pravatar.cc/150?u=sam",
+    visits: catalogPlaces.slice(24, 29).map((place, index) => {
+      const rating = [5, 3, 4, 5, 4][index % 5]!;
+      const note = `Found a lovely ${place.cuisine!.toLowerCase()} bite in ${place.neighborhood}; left with a new favorite.`;
+      return {
+        placeId: place.id,
+        rating,
+        note,
+        comment: note,
+        review: note,
+        text: note,
+        when: `2026-09-${String(26 + index).padStart(2, "0")}`,
+      };
+    }),
   },
 ];
 

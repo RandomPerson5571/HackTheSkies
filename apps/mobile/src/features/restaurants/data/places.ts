@@ -3,6 +3,11 @@ import { cuisineCovers } from "../../food-dex/models/foodDex.ts";
 import restaurantPhotos from "./restaurantPhotos.json" with { type: "json" };
 import importedRestaurants from "./importedRestaurants.json" with { type: "json" };
 import type { DietaryPreference } from "../../profile/models/profile";
+import {
+  rarityPolicy,
+  rarityScore,
+  type Rarity,
+} from "../models/recommendations.ts";
 
 export type Category =
   "All" | "Coffee" | "Pizza" | "Bakery" | "Ramen" | "Restaurant";
@@ -80,6 +85,9 @@ export type Place = {
   locationAccuracy?: string;
   priceLevel?: PriceLevel;
   rating?: number;
+  // Public rating count from the listing source; missing when no page matched.
+  ratingCount?: number;
+  rarity?: Rarity;
   // Optional aggregate from a future community/provider feed. Missing is unrated.
   ratingSummary?: { averageRating: number; reviewCount: number };
   /** Compliance must be explicitly confirmed by a reliable venue/provider source. */
@@ -124,6 +132,29 @@ function photoFor(restaurant: (typeof importedRestaurants)[number]): Place["phot
   };
 }
 
+type ImportedRestaurant = (typeof importedRestaurants)[number] & {
+  rating_count?: number | null;
+};
+const ratingCounts = (importedRestaurants as ImportedRestaurant[])
+  .map((restaurant) => restaurant.rating_count)
+  .filter(
+    (count): count is number =>
+      typeof count === "number" && count >= rarityPolicy.minimumRatings,
+  )
+  .sort((a, b) => a - b);
+// Venues without enough public ratings are scored as if they had the median
+// count, so they are neither boosted nor penalised for missing data.
+const medianRatingCount = ratingCounts[Math.floor(ratingCounts.length / 2)];
+
+function rarityFor(restaurant: ImportedRestaurant): Rarity | undefined {
+  const count =
+    (restaurant.rating_count ?? 0) >= rarityPolicy.minimumRatings
+      ? restaurant.rating_count!
+      : undefined;
+  const value = rarityScore(restaurant.rating, count ?? medianRatingCount ?? 0);
+  return value === null ? undefined : { value, estimated: count === undefined };
+}
+
 // Imported restaurant listings; not a live availability feed.
 export const places: Place[] = importedRestaurants.map((restaurant): Place => ({
   id: restaurant.id,
@@ -153,6 +184,8 @@ export const places: Place[] = importedRestaurants.map((restaurant): Place => ({
           ? "$$$$"
           : "$$$",
   rating: restaurant.rating,
+  ratingCount: (restaurant as ImportedRestaurant).rating_count ?? undefined,
+  rarity: rarityFor(restaurant),
 }));
 
 export const categories: Category[] = [

@@ -1,5 +1,6 @@
 import { useMenuSound } from "../hooks/useMenuSound";
 import { FeedbackPressable as Pressable } from "../components/FeedbackPressable";
+import { SheetDragHandle } from "../components/SheetDragHandle";
 import { playFeedback, prepareFeedback } from "../lib/sensory";
 import {
   useCallback,
@@ -19,6 +20,7 @@ import {
   Keyboard,
   Linking,
   Modal,
+  PanResponder,
   Platform,
   ScrollView,
   StyleSheet,
@@ -33,6 +35,7 @@ import { migrateWebBookmarks } from "../lib/migrateWebBookmarks";
 import { places as bundledPlaces } from "../features/restaurants/data/places";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
+import { resizeScanImage } from "../features/food-dex/services/scanImages";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { MenuLensScreen } from "../features/menu-lens/screens/MenuLensScreen";
 import { FoodCameraScreen } from "../features/food-dex/screens/FoodCameraScreen";
@@ -46,8 +49,10 @@ import {
   cuisines,
   foodSpecialties,
   restaurantTypes,
-  placeCenter,
+  mapCenter,
   type Category,
+  priceLevels,
+  type PriceLevel,
   type Place,
 } from "../features/restaurants/data/places";
 
@@ -58,7 +63,8 @@ import {
 import { SettingsScreen } from "../features/profile/screens/SettingsScreen";
 
 const token = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
-import { colors } from "../theme/index";
+import { applyAvatarTheme, colors } from "../theme/index";
+import { avatarPalettes } from "../features/profile/models/customization";
 import { SavedScreen } from "../features/saved/screens/SavedScreen";
 import { RestaurantsScreen } from "../features/restaurants/screens/RestaurantsScreen";
 import { useRestaurantCollection } from "../features/restaurants/hooks/useRestaurantCollection";
@@ -89,7 +95,7 @@ const navigationItems = [
   { id: "restaurants", label: "Restaurants", icon: "restaurant-outline" },
   { id: "challenges", label: "Quests", icon: "flag-outline" },
   { id: "favorites", label: "Favourites", icon: "heart-outline" },
-  { id: "journal", label: "Journal", icon: "book-outline" },
+  { id: "dex", label: "Food Dex", icon: "book-outline" },
   { id: "profile", label: "Profile", icon: "person-outline" },
 ] as const satisfies ReadonlyArray<{
   id: string;
@@ -148,7 +154,14 @@ const webGlassBlur = (
 ) as ViewStyle;
 
 function FoodMap({ migrationError = "" }: { migrationError?: string }) {
-  const { places, error: backendError } = useBackend();
+  const {
+    places,
+    mapPlaces,
+    mapCount,
+    mapNeedsZoom,
+    loadMapViewport,
+    error: backendError,
+  } = useBackend();
   const insets = useSafeAreaInsets();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const camera = useRef<MapCamera>(null);
@@ -164,6 +177,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   );
   const [foodTypeFilter, setFoodTypeFilter] = useState<string[]>([]);
   const [cuisineFilter, setCuisineFilter] = useState<string[]>([]);
+  const [priceFilter, setPriceFilter] = useState<PriceLevel | null>(null);
   const [filtersExpanded, setFiltersExpanded] = useState(false);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [filtersProgress] = useState(() => new Animated.Value(0));
@@ -171,6 +185,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [cardScale] = useState(() => new Animated.Value(1));
   const [cardOpacity] = useState(() => new Animated.Value(1));
   const [cardTranslateY] = useState(() => new Animated.Value(0));
+  const [cardDragY] = useState(() => new Animated.Value(0));
   useEffect(() => {
     let active = true;
     void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
@@ -228,7 +243,13 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [savedReturnTab, setSavedReturnTab] = useState<
     "explore" | "restaurants" | "journal" | "profile"
   >("profile");
+  const [settingsReturnTab, setSettingsReturnTab] = useState<
+    "profile" | "favorites"
+  >("profile");
   const [cameraMode, setCameraMode] = useState<"food" | "menu">("food");
+  const [currentLocation, setCurrentLocation] = useState<
+    [number, number] | null
+  >(null);
   const [menuPhoto, setMenuPhoto] = useState<
     import("expo-camera").CameraCapturedPicture | null
   >(null);
@@ -247,6 +268,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     }),
     parseProfile,
   );
+  const appTheme =
+    avatarPalettes.find((item) => item.id === profile.customization?.palette) ??
+    avatarPalettes[0];
+  useEffect(() => {
+    applyAvatarTheme(appTheme);
+  }, [appTheme]);
   const [recommenderVisible, setRecommenderVisible] = useState(false);
   const [cameraMenuOpen, setCameraMenuOpen] = useState(false);
   const [nfcScanOpen, setNfcScanOpen] = useState(false);
@@ -313,7 +340,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           restaurantTypeFilter.includes(place.type ?? place.category)) &&
         (!foodTypeFilter.length ||
           foodTypeFilter.some((value) => matchesTypeFilter(place, value))) &&
-        (!cuisineFilter.length || cuisineFilter.includes(place.cuisine ?? "")) &&
+        (!cuisineFilter.length ||
+          cuisineFilter.includes(place.cuisine ?? "")) &&
+        (!priceFilter || place.priceLevel === priceFilter) &&
         (!savedIds || savedIds.has(place.id)) &&
         `${place.name} ${place.category} ${place.cuisine ?? ""} ${place.neighborhood} ${place.address}`
           .toLowerCase()
@@ -329,6 +358,39 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     restaurantTypeFilter,
     foodTypeFilter,
     cuisineFilter,
+    priceFilter,
+  ]);
+  const mapVisible = useMemo(() => {
+    const normalizedQuery = deferredQuery.toLowerCase().trim();
+    const savedIds = savedFilter ? new Set(savedFilter) : null;
+    return mapPlaces.filter(
+      (place) =>
+        (category === "All" || place.category === category) &&
+        (!ratingFilter ||
+          (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
+        (!restaurantTypeFilter.length ||
+          restaurantTypeFilter.includes(place.type ?? place.category)) &&
+        (!foodTypeFilter.length ||
+          foodTypeFilter.some((value) => matchesTypeFilter(place, value))) &&
+        (!cuisineFilter.length ||
+          cuisineFilter.includes(place.cuisine ?? "")) &&
+        (!priceFilter || place.priceLevel === priceFilter) &&
+        (!savedIds || savedIds.has(place.id)) &&
+        `${place.name} ${place.category} ${place.cuisine ?? ""} ${place.neighborhood} ${place.address}`
+          .toLowerCase()
+          .includes(normalizedQuery),
+    );
+  }, [
+    mapPlaces,
+    category,
+    deferredQuery,
+    savedFilter,
+    collection.ratings,
+    ratingFilter,
+    restaurantTypeFilter,
+    foodTypeFilter,
+    cuisineFilter,
+    priceFilter,
   ]);
   const rankedVisible = useMemo(
     () =>
@@ -343,17 +405,20 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     (ratingFilter ? 1 : 0) +
     (restaurantTypeFilter.length ? 1 : 0) +
     (foodTypeFilter.length ? 1 : 0) +
-    (cuisineFilter.length ? 1 : 0);
+    (cuisineFilter.length ? 1 : 0) +
+    (priceFilter ? 1 : 0);
   const active =
     selected && visible.some((place) => place.id === selected.id)
       ? selected
       : null;
   useEffect(() => {
     if (!active) return;
+    cardDragY.setValue(0);
     if (reduceMotion) {
       cardScale.setValue(1);
       cardOpacity.setValue(1);
       cardTranslateY.setValue(0);
+      cardDragY.setValue(0);
       return;
     }
     cardScale.setValue(0.9);
@@ -378,7 +443,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [active, reduceMotion, cardScale, cardOpacity, cardTranslateY]);
+  }, [active, reduceMotion, cardScale, cardOpacity, cardTranslateY, cardDragY]);
   const acceptNfcFood = useCallback((food: NfcFoodItem) => {
     setNfcScanOpen(false);
     setFoodCapture({
@@ -402,6 +467,45 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       animationDuration: 0,
     });
   }, []);
+  const dismissSelection = useCallback(() => setSelected(null), []);
+  const cardDragResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: (_, gesture) =>
+          gesture.dy > 8 && Math.abs(gesture.dy) > Math.abs(gesture.dx),
+        onPanResponderMove: (_, gesture) =>
+          cardDragY.setValue(Math.max(0, gesture.dy)),
+        onPanResponderRelease: (_, gesture) => {
+          if (gesture.dy > 100 || (gesture.dy > 45 && gesture.vy > 0.85)) {
+            Animated.timing(cardDragY, {
+              toValue: 320,
+              duration: 160,
+              useNativeDriver: true,
+            }).start(({ finished }) => {
+              if (!finished) return;
+              dismissSelection();
+              cardDragY.setValue(0);
+            });
+            return;
+          }
+          Animated.spring(cardDragY, {
+            toValue: 0,
+            speed: 22,
+            bounciness: 2,
+            useNativeDriver: true,
+          }).start();
+        },
+        onPanResponderTerminate: () => {
+          Animated.spring(cardDragY, {
+            toValue: 0,
+            speed: 22,
+            bounciness: 2,
+            useNativeDriver: true,
+          }).start();
+        },
+      }),
+    [cardDragY, dismissSelection],
+  );
   const onMapReady = useCallback(() => {
     setMapReady(true);
     setMapError(false);
@@ -468,6 +572,26 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       );
     }
   }
+  async function uploadProfilePicture() {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+      const image = result.assets?.[0];
+      if (result.canceled || !image) return;
+      const resized = await resizeScanImage(image, 256, true);
+      if (!resized.base64) throw new Error("Could not prepare this image.");
+      setProfile((previous) => ({
+        ...previous,
+        avatarUri: `data:image/jpeg;base64,${resized.base64}`,
+      }));
+    } catch {
+      Alert.alert("Upload failed", "Choose a different photo and try again.");
+    }
+  }
   function writeBlog() {
     setPlusMenuOpen(false);
     setPlusMenuVisible(false);
@@ -478,7 +602,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   function resetMap() {
     setSelected(null);
     camera.current?.setCamera({
-      centerCoordinate: placeCenter(undefined),
+      centerCoordinate: mapCenter,
       zoomLevel: 10.5,
       animationDuration: 0,
     });
@@ -486,6 +610,33 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   function multiSelectLabel(list: string[]) {
     if (!list.length) return null;
     return list.length === 1 ? list[0] : `${list.length} selected`;
+  }
+  function locateMe() {
+    if (Platform.OS !== "web" || !navigator.geolocation) {
+      resetMap();
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const coordinate: [number, number] = [
+          coords.longitude,
+          coords.latitude,
+        ];
+        setCurrentLocation(coordinate);
+        setSelected(null);
+        camera.current?.setCamera({
+          centerCoordinate: coordinate,
+          zoomLevel: 14,
+          animationDuration: 500,
+        });
+      },
+      (error) =>
+        Alert.alert(
+          "Location unavailable",
+          error.message || "Allow location access and try again.",
+        ),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
+    );
   }
   function selectedFilterLabel(dimension: FilterDimension) {
     if (dimension === "rating") {
@@ -495,6 +646,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       return multiSelectLabel(restaurantTypeFilter);
     if (dimension === "foodType") return multiSelectLabel(foodTypeFilter);
     if (dimension === "cuisine") return multiSelectLabel(cuisineFilter);
+    if (dimension === "price") return priceFilter;
     return null;
   }
   function toggleFilterValue(
@@ -513,6 +665,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     setRestaurantTypeFilter([]);
     setFoodTypeFilter([]);
     setCuisineFilter([]);
+    setPriceFilter(null);
     closeFilterDropdown();
   }
   function closeFilterDropdown() {
@@ -623,7 +776,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     }
     return (
       tab === id ||
-      (id === "journal" && tab === "dex") ||
+      (id === "dex" && (tab === "dex" || tab === "journal")) ||
       (id === "profile" && tab === "settings")
     );
   }
@@ -664,6 +817,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             key={foodCapture?.id ?? "dex"}
             dex={foodDex}
             onOpenQuests={() => setTab("challenges")}
+            onOpenJournal={() => setTab("journal")}
             capture={foodCapture}
             onOpenCamera={openFoodCamera}
             onDiscover={(cuisine) => {
@@ -678,7 +832,12 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           <CommunityScreen
             collection={collection}
             dispatch={dispatch}
+            currentLocation={currentLocation}
             storageError={migrationError || storageError || backendError}
+            onOpenSettings={() => {
+              setSettingsReturnTab("favorites");
+              setTab("settings");
+            }}
             onShowMap={(place) => {
               setTab("explore");
               setCategory("All");
@@ -703,6 +862,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               setRestaurantTypeFilter([]);
               setFoodTypeFilter([]);
               setCuisineFilter([]);
+              setPriceFilter(null);
               choose(place);
             }}
           />
@@ -721,7 +881,11 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             topInset={insets.top}
             bottomInset={insets.bottom}
             onOpenQuests={() => setTab("challenges")}
-            onOpenSettings={() => setTab("settings")}
+            onOpenSettings={() => {
+              setSettingsReturnTab("profile");
+              setTab("settings");
+            }}
+            onUploadAvatar={() => void uploadProfilePicture()}
             onOpenDex={() => setTab("dex")}
             onOpenAtlas={() => setTab("dex")}
           />
@@ -732,7 +896,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             storageError={migrationError || profileError}
             topInset={insets.top}
             bottomInset={insets.bottom}
-            onBack={() => setTab("profile")}
+            onBack={() => setTab(settingsReturnTab)}
           />
         ) : tab === "restaurants" || tab === "journal" ? (
           <RestaurantsScreen
@@ -779,13 +943,19 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               <MapView
                 ref={camera}
                 token={token}
-                center={placeCenter(selected ?? undefined)}
-                zoom={selected ? 14.7 : 10.5}
+                center={mapCenter}
+                zoom={10.5}
                 topInset={insets.top}
                 bottomInset={insets.bottom}
-                places={visible}
+                places={mapVisible}
+                onViewportChange={loadMapViewport}
+                currentLocation={currentLocation}
+                profilePictureUri={profile.avatarUri}
+                themeAccent={appTheme.foreground}
+                themeInk={appTheme.foreground}
                 selectedId={active?.id}
                 onSelect={choose}
+                onMapPress={dismissSelection}
                 onReady={onMapReady}
                 onError={onMapError}
                 renderPlaceMarker={renderPlaceMarker}
@@ -824,6 +994,23 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 )}
               </View>
             )}
+            {token &&
+              mapReady &&
+              !mapError &&
+              !mapVisible.length &&
+              mapCount !== null &&
+              !active && (
+                <View
+                  pointerEvents="none"
+                  style={[styles.mapCountHint, { bottom: insets.bottom + 100 }]}
+                >
+                  <Text style={styles.mapCountText}>
+                    {mapCount} {mapCount === 1 ? "place" : "places"} in this
+                    area
+                    {mapCount > 0 && mapNeedsZoom && " · zoom in to explore"}
+                  </Text>
+                </View>
+              )}
 
             <View
               pointerEvents="none"
@@ -922,7 +1109,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   >
                     <Icon name="options-outline" size={17} />
                     <Text style={styles.chipText}>
-                      {activeFilterCount ? `Filters (${activeFilterCount})` : "Filters"}
+                      {activeFilterCount
+                        ? `Filters (${activeFilterCount})`
+                        : "Filters"}
                     </Text>
                   </Pressable>
                 ) : (
@@ -1140,14 +1329,31 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                         setCuisineFilter,
                       )
                     ) : openFilter === "price" ? (
-                      <View style={styles.priceFilterOptions}>
-                        <Text style={styles.filterDropdownOptionText}>
-                          $ · $$ · $$$ · $$$$
-                        </Text>
-                        <Text style={styles.small}>
-                          Price data isn’t available for these listings yet.
-                        </Text>
-                      </View>
+                      ["Any price", ...priceLevels].map((value) => (
+                        <Pressable
+                          key={value}
+                          accessibilityRole="button"
+                          accessibilityState={{
+                            selected:
+                              value === "Any price"
+                                ? priceFilter === null
+                                : priceFilter === value,
+                          }}
+                          onPress={() => {
+                            setPriceFilter(
+                              value === "Any price"
+                                ? null
+                                : (value as PriceLevel),
+                            );
+                            closeFilterDropdown();
+                          }}
+                          style={styles.filterDropdownOption}
+                        >
+                          <Text style={styles.filterDropdownOptionText}>
+                            {value}
+                          </Text>
+                        </Pressable>
+                      ))
                     ) : (
                       <Text style={styles.small}>
                         Rarity data isn’t available for these listings yet.
@@ -1166,8 +1372,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 {token && (
                   <Pressable
                     accessibilityRole="button"
-                    accessibilityLabel="Show all Toronto restaurants"
-                    onPress={resetMap}
+                    accessibilityLabel="Show your current location"
+                    onPress={locateMe}
                     style={({ pressed }) => [
                       styles.roundButton,
                       pressed && styles.pressed,
@@ -1186,10 +1392,13 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                       transform: [
                         { scale: cardScale },
                         { translateY: cardTranslateY },
+                        { translateY: cardDragY },
                       ],
                     },
                   ]}
+                  {...cardDragResponder.panHandlers}
                 >
+                  <SheetDragHandle onDismiss={dismissSelection} />
                   <View style={styles.cardTop}>
                     <RestaurantPhoto
                       eager
@@ -1508,7 +1717,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               { paddingBottom: insets.bottom + 16, maxHeight: "75%" },
             ]}
           >
-            <View style={styles.sheetHandle} />
+            <SheetDragHandle onDismiss={() => setListVisible(false)} />
             <View style={styles.sheetHeading}>
               <View style={styles.flex}>
                 <Text style={styles.placeName}>
@@ -1613,6 +1822,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             },
           ]}
         >
+          <SheetDragHandle onDismiss={() => setPlusMenuOpen(false)} />
           <Pressable
             style={styles.plusMenuItem}
             accessibilityRole="button"
@@ -1646,7 +1856,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   );
 }
 export default function App() {
-  useEffect(() => { prepareFeedback(); }, []);
+  useEffect(() => {
+    prepareFeedback();
+  }, []);
   const [ready, setReady] = useState(Platform.OS !== "web");
   const [migrationError, setMigrationError] = useState("");
   useEffect(() => {
@@ -1752,7 +1964,7 @@ const styles = StyleSheet.create({
   searchActive: {
     borderColor: colors.accent,
     boxShadow: "0 10px 30px #3D568F35",
-    backgroundColor: "rgba(255,253,245,0.72)",
+    backgroundColor: "rgba(255,253,245,0.32)",
   },
   input: { flex: 1, color: colors.ink, fontSize: 14, paddingVertical: 15 },
   clear: {
@@ -1782,7 +1994,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   filterDropdownList: { flexGrow: 0 },
-  priceFilterOptions: { gap: 2, paddingVertical: 4 },
   filterDropdownOption: {
     minHeight: 38,
     flexDirection: "row",
@@ -2058,10 +2269,14 @@ const styles = StyleSheet.create({
   navItems: { flex: 1, flexDirection: "row" },
   navActive: { backgroundColor: "rgba(234,243,178,0.66)" },
   placeCard: {
-    backgroundColor: colors.paper,
+    ...webGlassBlur,
+    backgroundColor: "rgba(255,253,245,0.72)",
     borderRadius: 24,
     padding: 16,
     gap: 12,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.78)",
+    boxShadow: "0 12px 36px #263D6728, inset 0 1px 0 #FFFFFFB8",
   },
   cardTop: { flexDirection: "row", gap: 12, alignItems: "flex-start" },
   cardImage: { width: 70, height: 86, borderRadius: 13 },
@@ -2135,6 +2350,17 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     maxWidth: "85%",
   },
+  mapCountHint: {
+    position: "absolute",
+    alignSelf: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 18,
+    backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  mapCountText: { color: colors.ink, fontSize: 12, fontWeight: "600" },
   modal: { flex: 1, justifyContent: "flex-end" },
   scrim: {
     position: "absolute",
@@ -2150,14 +2376,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 22,
     paddingTop: 10,
-  },
-  sheetHandle: {
-    width: 34,
-    height: 4,
-    borderRadius: 3,
-    backgroundColor: colors.border,
-    alignSelf: "center",
-    marginBottom: 14,
   },
   sheetHeading: {
     flexDirection: "row",
@@ -2185,13 +2403,16 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.25)",
   },
   plusMenu: {
+    ...webGlassBlur,
     position: "absolute",
     bottom: 110,
     alignSelf: "center",
-    backgroundColor: colors.white,
+    backgroundColor: "rgba(255,253,245,0.72)",
     borderRadius: 16,
     paddingVertical: 6,
     minWidth: 56,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.78)",
     shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 12,

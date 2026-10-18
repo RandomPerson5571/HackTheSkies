@@ -11,18 +11,10 @@ import {
   type Dispatch,
   type ReactNode,
 } from "react";
-import {
-  Animated,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  useWindowDimensions,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { type Place } from "../../restaurants/data/places";
+import { mapCenter, type Place } from "../../restaurants/data/places";
 import { buildRecommendations } from "../../restaurants/models/recommendations";
 import { RestaurantPhoto } from "../../restaurants/components/RestaurantPhoto";
 import { colors } from "../../../theme/index";
@@ -41,63 +33,51 @@ import { usePagedList } from "../../../hooks/usePagedList";
 import { PagedListFooter } from "../../../components/PagedListFooter";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
+const FAVORITES_PAGE_SIZE = 20;
+const NEARBY_PAGE_SIZE = 6;
+const NEARBY_PAGE_LIMIT = 12;
 type Props = {
   collection: RestaurantCollection;
   dispatch: Dispatch<CollectionAction>;
   storageError: string;
+  onOpenSettings: () => void;
   onShowMap: (place: Place) => void;
+  currentLocation?: [number, number] | null;
 };
 // Card batches per page: small enough to keep first paint snappy even with the
 // full 500+ catalog loaded, large enough to avoid a button on every screenful.
-const RANKED_PAGE_SIZE = 30;
-const RATE_PAGE_SIZE = 12;
 const FRIENDS_PAGE_SIZE = 20;
 const FEED_PAGE_SIZE = 10;
 type Section = "favorites" | "friends" | "badges";
 const Navigation = createContext<{
   section: Section;
   setSection: (section: Section) => void;
+  onOpenSettings: () => void;
 } | null>(null);
 
 const sections: Section[] = ["favorites", "friends", "badges"];
 
 export function CommunityScreen(props: Props) {
-  const { width } = useWindowDimensions();
   const [section, setSection] = useState<Section>("favorites");
-  const index = sections.indexOf(section);
-  const [offset] = useState(() => new Animated.Value(index));
-  useEffect(() => {
-    Animated.timing(offset, {
-      toValue: index,
-      duration: 260,
-      useNativeDriver: true,
-    }).start();
-  }, [index, offset]);
-  const translateX = offset.interpolate({
-    inputRange: [0, 1, 2],
-    outputRange: [0, -width, -2 * width],
-  });
   return (
-    <Navigation.Provider value={{ section, setSection }}>
-      <View style={{ flex: 1, overflow: "hidden" }}>
-        <Animated.View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            width: width * sections.length,
-            transform: [{ translateX }],
-          }}
-        >
-          <View style={{ width }}>
-            <FavoritesScreen {...props} />
+    <Navigation.Provider
+      value={{ section, setSection, onOpenSettings: props.onOpenSettings }}
+    >
+      <View style={{ flex: 1 }}>
+        {sections.map((item) => (
+          <View
+            key={item}
+            style={{ flex: 1, display: section === item ? "flex" : "none" }}
+          >
+            {item === "favorites" ? (
+              <FavoritesScreen {...props} />
+            ) : item === "friends" ? (
+              <FriendsScreen {...props} />
+            ) : (
+              <AchievementsScreen {...props} />
+            )}
           </View>
-          <View style={{ width }}>
-            <FriendsScreen {...props} />
-          </View>
-          <View style={{ width }}>
-            <AchievementsScreen {...props} />
-          </View>
-        </Animated.View>
+        ))}
       </View>
     </Navigation.Provider>
   );
@@ -175,8 +155,20 @@ function Page({
     >
       <View style={s.brandHeader}>
         <CiboLogo />
-        <View style={s.brand}>
-          <Icon name={icon} size={26} />
+        <View style={s.headerActions}>
+          <View style={s.brand}>
+            <Icon name={icon} size={26} />
+          </View>
+          {navigation && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open settings"
+              onPress={navigation.onOpenSettings}
+              style={({ pressed }) => [s.brand, pressed && s.dim]}
+            >
+              <Icon name="settings-outline" size={22} />
+            </Pressable>
+          )}
         </View>
       </View>
       <View style={s.heading}>
@@ -238,27 +230,95 @@ export function FavoritesScreen({
   dispatch,
   storageError,
   onShowMap,
+  currentLocation,
 }: Props) {
-  const { places } = useBackend();
-  const recommendations = useMemo(
-    () => buildRecommendations(places, collection.ratings),
-    [places, collection.ratings],
-  );
+  const { loadFavoritesPage, loadPlacesByIds } = useBackend();
   const [query, setQuery] = useState("");
+  const [pageQuery, setPageQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
-  const ranked = collection.favorites.flatMap((id) => {
-    const place = places.find((item) => item.id === id);
-    return place ? [place] : [];
-  });
-  const unrated = places.filter(
-    (place) =>
-      !collection.ratings[place.id] &&
-      `${place.name} ${place.category}`
-        .toLowerCase()
-        .includes(query.toLowerCase().trim()),
+  const [rankedPage, setRankedPage] = useState(0);
+  const [ranked, setRanked] = useState<Place[]>([]);
+  const [rankedLoading, setRankedLoading] = useState(true);
+  const [unratedPage, setUnratedPage] = useState(0);
+  const [unrated, setUnrated] = useState<Place[]>([]);
+  const [unratedTotal, setUnratedTotal] = useState(0);
+  const [unratedLoading, setUnratedLoading] = useState(true);
+  const recommendations = useMemo(
+    () => buildRecommendations([...ranked, ...unrated], collection.ratings),
+    [ranked, unrated, collection.ratings],
   );
-  const rankedPage = usePagedList(ranked, RANKED_PAGE_SIZE);
-  const unratedPage = usePagedList(unrated, RATE_PAGE_SIZE, query);
+  const ratedIds = useMemo(
+    () =>
+      Object.entries(collection.ratings)
+        .filter(([, rating]) => rating > 0)
+        .map(([id]) => id),
+    [collection.ratings],
+  );
+  const rankedPageCount = Math.max(
+    1,
+    Math.ceil(collection.favorites.length / FAVORITES_PAGE_SIZE),
+  );
+  const unratedPageCount = Math.max(
+    1,
+    Math.ceil(Math.min(unratedTotal, NEARBY_PAGE_LIMIT) / NEARBY_PAGE_SIZE),
+  );
+  const nearbyPage = unrated.slice(
+    unratedPage * NEARBY_PAGE_SIZE,
+    (unratedPage + 1) * NEARBY_PAGE_SIZE,
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => setPageQuery(query), 250);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  useEffect(() => {
+    let active = true;
+    const ids = collection.favorites.slice(
+      rankedPage * FAVORITES_PAGE_SIZE,
+      (rankedPage + 1) * FAVORITES_PAGE_SIZE,
+    );
+    // Start the loading indicator when synchronizing a new remote page.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setRankedLoading(ids.length > 0);
+    setRanked([]);
+    void loadPlacesByIds(ids).then((page) => {
+      if (active) {
+        setRanked(page);
+        setRankedLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [collection.favorites, rankedPage, loadPlacesByIds]);
+
+  useEffect(() => {
+    let active = true;
+    // Start the loading indicator when synchronizing a new remote query.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUnratedLoading(true);
+    void loadFavoritesPage(pageQuery, 0, ratedIds, {
+      limit: NEARBY_PAGE_LIMIT,
+      randomize: true,
+      center: currentLocation ?? (mapCenter as [number, number]),
+      radiusKm: 10,
+    }).then((page) => {
+      if (!active) return;
+      setUnrated(page.places);
+      setUnratedTotal(page.total);
+      setUnratedPage(0);
+      setUnratedLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [pageQuery, ratedIds, currentLocation, loadFavoritesPage]);
+
+  function ratePlace(placeId: string, rating: number) {
+    dispatch({ type: "rate", placeId, rating });
+    setUnratedPage(0);
+  }
 
   function ratingCard(place: Place, rank?: number) {
     const rating = collection.ratings[place.id] ?? 0;
@@ -297,9 +357,7 @@ export function FavoritesScreen({
               accessibilityRole="button"
               accessibilityLabel={`Rate ${place.name} ${value} ${value === 1 ? "star" : "stars"}`}
               accessibilityState={{ selected: value === rating }}
-              onPress={() =>
-                dispatch({ type: "rate", placeId: place.id, rating: value })
-              }
+              onPress={() => ratePlace(place.id, value)}
               style={({ pressed }) => [fs.star, pressed && s.dim]}
             >
               <Icon
@@ -324,17 +382,12 @@ export function FavoritesScreen({
               <Action
                 label="Down"
                 icon="arrow-down"
-                disabled={rank === ranked.length - 1}
+                disabled={rank === collection.favorites.length - 1}
                 onPress={() =>
                   dispatch({ type: "rank", placeId: place.id, direction: 1 })
                 }
               />
-              <Action
-                label="Clear"
-                onPress={() =>
-                  dispatch({ type: "rate", placeId: place.id, rating: 0 })
-                }
-              />
+              <Action label="Clear" onPress={() => ratePlace(place.id, 0)} />
             </>
           )}
           <Action
@@ -359,7 +412,9 @@ export function FavoritesScreen({
           <Icon name="podium-outline" size={28} />
         </View>
         <View style={fs.heroCopy}>
-          <Text style={fs.heroNumber}>{ranked.length} ranked</Text>
+          <Text style={fs.heroNumber}>
+            {collection.favorites.length} ranked
+          </Text>
           <Text style={s.small}>Your personal leaderboard.</Text>
         </View>
       </View>
@@ -369,24 +424,38 @@ export function FavoritesScreen({
       <Text style={s.small}>
         Use the arrows to rank independently of your star ratings.
       </Text>
-      {!ranked.length && (
+      {!collection.favorites.length && (
         <View style={s.empty}>
           <Icon name="heart-outline" size={32} />
           <Text style={s.name}>Every favorite starts with a bite.</Text>
           <Text style={s.small}>Rate a spot below to start your ranking.</Text>
         </View>
       )}
-      {rankedPage.visible.map((place, index) =>
-        ratingCard(place, rankedPage.offset + index),
+      {rankedLoading && <Text style={s.notice}>Loading your favorites…</Text>}
+      {ranked.map((place, index) =>
+        ratingCard(place, rankedPage * FAVORITES_PAGE_SIZE + index),
       )}
-      <PagedListFooter
-        noun="ranked spots"
-        hasMore={rankedPage.hasMore}
-        shown={rankedPage.shown}
-        total={rankedPage.total}
-        remaining={rankedPage.remaining}
-        onLoadMore={rankedPage.loadMore}
-      />
+      {collection.favorites.length > FAVORITES_PAGE_SIZE && (
+        <View style={s.actions}>
+          <Action
+            label="Previous"
+            icon="chevron-back"
+            disabled={rankedPage === 0}
+            onPress={() => setRankedPage((page) => Math.max(0, page - 1))}
+          />
+          <Text style={s.small}>
+            Page {rankedPage + 1} of {rankedPageCount}
+          </Text>
+          <Action
+            label="Next"
+            icon="chevron-forward"
+            disabled={rankedPage >= rankedPageCount - 1}
+            onPress={() =>
+              setRankedPage((page) => Math.min(rankedPageCount - 1, page + 1))
+            }
+          />
+        </View>
+      )}
       <Text accessibilityRole="header" style={s.section}>
         Tried something good?
       </Text>
@@ -398,21 +467,47 @@ export function FavoritesScreen({
         placeholder="Find a spot to rate…"
         placeholderTextColor={colors.muted}
         value={query}
-        onChangeText={setQuery}
+        onChangeText={(value) => {
+          setQuery(value);
+          setUnratedPage(0);
+        }}
         onFocus={() => setSearchFocused(true)}
         onBlur={() => setSearchFocused(false)}
         style={[s.input, searchFocused && s.searchActive]}
       />
-      {unratedPage.visible.map((place) => ratingCard(place))}
-      <PagedListFooter
-        noun="spots"
-        hasMore={unratedPage.hasMore}
-        shown={unratedPage.shown}
-        total={unratedPage.total}
-        remaining={unratedPage.remaining}
-        onLoadMore={unratedPage.loadMore}
-      />
-      {!unrated.length && (
+      {unratedLoading ? (
+        <Text style={s.notice}>Loading spots…</Text>
+      ) : (
+        <>
+          <Text style={s.small}>
+            {unratedTotal
+              ? `Nearby picks · Page ${unratedPage + 1} of ${unratedPageCount}`
+              : "No spots to rate"}
+          </Text>
+          {nearbyPage.map((place) => ratingCard(place))}
+          {unratedPageCount > 1 && (
+            <View style={s.actions}>
+              <Action
+                label="Previous"
+                icon="chevron-back"
+                disabled={unratedPage === 0}
+                onPress={() => setUnratedPage((page) => Math.max(0, page - 1))}
+              />
+              <Action
+                label="Next"
+                icon="chevron-forward"
+                disabled={unratedPage >= unratedPageCount - 1}
+                onPress={() =>
+                  setUnratedPage((page) =>
+                    Math.min(unratedPageCount - 1, page + 1),
+                  )
+                }
+              />
+            </View>
+          )}
+        </>
+      )}
+      {!unratedLoading && !unrated.length && (
         <Text style={s.notice}>
           {query
             ? "No unrated spots match your search."
@@ -658,7 +753,7 @@ export function AchievementsScreen({
   const [filter, setFilter] = useState<"all" | "earned" | "progress">("all");
   const badges = cuisineBadges.map((badge) => ({
     ...badge,
-    count: badgeProgress(badge.category, collection.visited, places),
+    count: badgeProgress(badge, collection.visited, places),
   }));
   const points = calculatePoints(collection.visited, places);
   const visible = badges.filter(
@@ -709,7 +804,9 @@ export function AchievementsScreen({
         const unlocked = badge.count >= badge.goal;
         const next = places.find(
           (place) =>
-            place.category === badge.category &&
+            ("cuisine" in badge && badge.cuisine
+              ? place.cuisine === badge.category
+              : place.category === badge.category) &&
             !collection.visited.includes(place.id),
         );
         return (
@@ -799,6 +896,7 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 4,
   },
+  headerActions: { flexDirection: "row", alignItems: "center", gap: 8 },
   heading: { gap: 10 },
   eyebrow: {
     fontSize: 10,

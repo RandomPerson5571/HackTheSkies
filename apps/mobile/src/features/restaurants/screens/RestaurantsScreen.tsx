@@ -1,10 +1,12 @@
 import { useMenuSound } from "../../../hooks/useMenuSound";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { CiboLogo } from "../../../components/CiboLogo";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import {
   useMemo,
   useRef,
   useState,
+  useEffect,
   type Dispatch,
   type ComponentProps,
 } from "react";
@@ -31,7 +33,6 @@ import {
 import { RestaurantPhoto } from "../components/RestaurantPhoto";
 import {
   browseRestaurants,
-  surpriseCuisine,
   type RestaurantSort,
 } from "../models/restaurantBrowse";
 import { colors, discoveryColors } from "../../../theme/index";
@@ -63,6 +64,7 @@ const webGlassBlur = (
       }
     : {}
 ) as ViewStyle;
+const PAGE_SIZE = 12;
 
 function Icon({
   name,
@@ -105,6 +107,8 @@ export function RestaurantsScreen({
   const [actionPlace, setActionPlace] = useState<Place | null>(null);
   const [filterSheetVisible, setFilterSheetVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
+  const [page, setPage] = useState(1);
+  const [lastRandomId, setLastRandomId] = useState<string | null>(null);
   useMenuSound(creating);
   useMenuSound(managing !== null);
   useMenuSound(actionPlace !== null);
@@ -167,6 +171,28 @@ export function RestaurantsScreen({
     collectionTab,
     collection,
   ]);
+  const pageResetKey = JSON.stringify([
+    query,
+    category,
+    cuisine,
+    sort,
+    hiddenGemsOnly,
+    collectionTab,
+    mode,
+  ]);
+  const [previousPageResetKey, setPreviousPageResetKey] =
+    useState(pageResetKey);
+  if (previousPageResetKey !== pageResetKey) {
+    setPreviousPageResetKey(pageResetKey);
+    setPage(1);
+  }
+  useEffect(() => {
+    list.current?.scrollToOffset({ offset: 0, animated: false });
+  }, [query, category, cuisine, sort, hiddenGemsOnly, collectionTab, mode]);
+  const pageItems = useMemo(
+    () => visible.slice(0, page * PAGE_SIZE),
+    [visible, page],
+  );
 
   const hasFilters = Boolean(
     query || category !== "All" || cuisine !== "All" || hiddenGemsOnly,
@@ -213,12 +239,17 @@ export function RestaurantsScreen({
     setFormError("");
   }
 
-  function surprise() {
-    setCuisine(surpriseCuisine(cuisineOptions, cuisine));
-    setQuery("");
-    setCategory("All");
-    setHiddenGemsOnly(false);
-    list.current?.scrollToOffset({ offset: 0, animated: false });
+  function pickRandomSpot() {
+    if (!visible.length) return;
+    const options =
+      visible.length > 1
+        ? visible.filter((place) => place.id !== lastRandomId)
+        : visible;
+    const place = options[Math.floor(Math.random() * options.length)];
+    if (place) {
+      setLastRandomId(place.id);
+      setActionPlace(place);
+    }
   }
 
   return (
@@ -384,15 +415,6 @@ export function RestaurantsScreen({
               <Icon name="diamond-outline" size={16} color={colors.accent} />
               <Text style={styles.chipText}>Hidden gems</Text>
             </Pressable>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Surprise me with another cuisine"
-              onPress={surprise}
-              style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
-            >
-              <Icon name="shuffle-outline" size={16} color={colors.accent} />
-              <Text style={styles.chipText}>Surprise me</Text>
-            </Pressable>
             {categories.map((item) => (
               <Pressable
                 key={item}
@@ -472,7 +494,7 @@ export function RestaurantsScreen({
 
       <FlatList
         ref={list}
-        data={visible}
+        data={pageItems}
         initialNumToRender={8}
         maxToRenderPerBatch={8}
         windowSize={5}
@@ -502,7 +524,39 @@ export function RestaurantsScreen({
                 <Text style={styles.chipText}>Map</Text>
               </Pressable>
             )}
+            {mode === "discover" && visible.length > 0 && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Pick a random restaurant from these results"
+                onPress={pickRandomSpot}
+                style={({ pressed }) => [
+                  styles.randomButton,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Icon name="dice-outline" size={16} color={colors.accent} />
+                <Text style={styles.chipText}>Pick a spot</Text>
+              </Pressable>
+            )}
           </View>
+        }
+        ListFooterComponent={
+          pageItems.length < visible.length ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Show more restaurants, ${visible.length - pageItems.length} remaining`}
+              onPress={() => setPage((current) => current + 1)}
+              style={({ pressed }) => [
+                styles.loadMore,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Text style={styles.chipText}>
+                Show more spots ({visible.length - pageItems.length} left)
+              </Text>
+              <Icon name="chevron-down" size={16} color={colors.accent} />
+            </Pressable>
+          ) : null
         }
         ListEmptyComponent={
           <View style={styles.empty}>
@@ -575,10 +629,16 @@ export function RestaurantsScreen({
                     <Text style={styles.ratingText}>
                       {rec?.averageRating
                         ? rec.averageRating.toFixed(1)
-                        : "New"}
+                        : (item.rating?.toFixed(1) ?? "New")}
                     </Text>
                   </View>
-                  <Text style={styles.badge}>{recommendationBadge(rec)}</Text>
+                  <Text style={styles.badge}>
+                    {rec?.averageRating
+                      ? recommendationBadge(rec)
+                      : item.rating != null
+                        ? "Sample rating"
+                        : recommendationBadge(rec)}
+                  </Text>
                 </View>
               </Pressable>
               <Pressable
@@ -630,6 +690,7 @@ export function RestaurantsScreen({
               { paddingBottom: insets.bottom + 24, maxHeight: "85%" },
             ]}
           >
+            <SheetDragHandle onDismiss={() => setFilterSheetVisible(false)} />
             <View style={styles.sectionRow}>
               <Text
                 accessibilityRole="header"
@@ -770,6 +831,7 @@ export function RestaurantsScreen({
             accessibilityViewIsModal
             style={[styles.sheet, { paddingBottom: insets.bottom + 24 }]}
           >
+            <SheetDragHandle onDismiss={() => setInfoVisible(false)} />
             <View style={styles.sectionRow}>
               <Text
                 accessibilityRole="header"
@@ -821,6 +883,7 @@ export function RestaurantsScreen({
               { paddingBottom: insets.bottom + 24, maxHeight: "80%" },
             ]}
           >
+            <SheetDragHandle onDismiss={() => setActionPlace(null)} />
             <View style={styles.sectionRow}>
               <Text
                 accessibilityRole="header"
@@ -851,6 +914,15 @@ export function RestaurantsScreen({
                 </Text>
                 <Text style={styles.note}>{actionPlace.note}</Text>
                 <Text style={styles.small}>{actionPlace.address}</Text>
+                {actionPlace.rating != null && (
+                  <View style={styles.detailRating}>
+                    <Icon name="star" size={16} color={colors.gold} />
+                    <Text style={styles.ratingText}>
+                      {actionPlace.rating.toFixed(1)} / 5
+                    </Text>
+                    <Text style={styles.small}>Sample directory rating</Text>
+                  </View>
+                )}
                 <Pressable
                   accessibilityRole="button"
                   onPress={() => {
@@ -1003,6 +1075,12 @@ export function RestaurantsScreen({
               { paddingBottom: insets.bottom + 24, maxHeight: "80%" },
             ]}
           >
+            <SheetDragHandle
+              onDismiss={() => {
+                setCreating(false);
+                setManaging(null);
+              }}
+            />
             <View style={styles.sectionRow}>
               <Text
                 accessibilityRole="header"
@@ -1270,6 +1348,13 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: colors.ink,
   },
+  detailRating: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginTop: 10,
+    marginBottom: 8,
+  },
   badge: {
     fontSize: 11,
     fontWeight: "600",
@@ -1392,12 +1477,36 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   resultsTitle: { fontSize: 13, fontWeight: "600", color: colors.ink, flex: 1 },
+  randomButton: {
+    minHeight: 42,
+    paddingHorizontal: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.white,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
   mapButton: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     minHeight: 44,
     paddingHorizontal: 12,
+  },
+  loadMore: {
+    minHeight: 48,
+    marginVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    gap: 8,
   },
   optionChip: {
     ...webGlassBlur,

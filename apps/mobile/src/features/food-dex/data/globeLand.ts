@@ -1,4 +1,4 @@
-import { atlasCuisines, cuisineAnchors } from "../models/discovery";
+import { atlasCuisines, cuisineAnchors } from "../models/discovery.ts";
 
 // Deliberately simplified continent silhouettes for an illustrated, borderless globe.
 const continents: [number, number][][] = [

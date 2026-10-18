@@ -1,4 +1,5 @@
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { useEffect, useState } from "react";
 import {
   Animated,
@@ -132,6 +133,7 @@ export function QuestDialog({
         ]}
       >
         <View accessibilityViewIsModal style={s.dialog}>
+          <SheetDragHandle onDismiss={onClose} />
           <ScrollView contentContainerStyle={s.content}>
             <View style={s.top}>
               <Text style={s.eyebrow}>

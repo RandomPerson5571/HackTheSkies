@@ -26,6 +26,8 @@ export const foodSpecialties = [
   "BBQ",
   "Salads",
 ] as const;
+export const priceLevels = ["$", "$$", "$$$", "$$$$"] as const;
+export type PriceLevel = (typeof priceLevels)[number];
 export const cuisines = [
   "Chinese",
   "Korean",
@@ -74,6 +76,8 @@ export type Place = {
   cuisine?: string;
   sourceUrl?: string;
   locationAccuracy?: string;
+  priceLevel?: PriceLevel;
+  rating?: number;
   // Optional aggregate from a future community/provider feed. Missing is unrated.
   ratingSummary?: { averageRating: number; reviewCount: number };
 };
@@ -116,6 +120,15 @@ export const places: Place[] = importedRestaurants.map((restaurant): Place => ({
   note: `${restaurant.cuisine} · ${restaurant.category}.${restaurant.locationAccuracy === "approximate" ? " Approximate map location." : ""} Map data © OpenStreetMap contributors.`,
   sourceUrl: restaurant.source_url,
   locationAccuracy: restaurant.locationAccuracy,
+  priceLevel:
+    restaurant.estimated_price_range === "$0-$15"
+      ? "$"
+      : restaurant.estimated_price_range === "$15-$30"
+        ? "$$"
+        : restaurant.category === "Fine Dining"
+          ? "$$$$"
+          : "$$$",
+  rating: restaurant.rating,
 }));
 
 export const categories: Category[] = [

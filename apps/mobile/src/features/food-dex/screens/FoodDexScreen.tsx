@@ -1,5 +1,6 @@
 import { useMenuSound } from "../../../hooks/useMenuSound";
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { CiboLogo } from "../../../components/CiboLogo";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -39,7 +40,13 @@ import {
 } from "../components/DiscoveryReveal";
 import { CulinaryAtlas } from "../components/CulinaryAtlas";
 import { CollectionProgress } from "../components/CollectionProgress";
-import { collectionProgress, cardTier, nextDiscoveryMilestone, cuisineMastery, cuisineMasteryTarget } from "../models/discovery";
+import {
+  collectionProgress,
+  cardTier,
+  nextDiscoveryMilestone,
+  cuisineMastery,
+  cuisineMasteryTarget,
+} from "../models/discovery";
 import { playFeedback } from "../../../lib/sensory";
 import { catalogPhoto } from "../services/catalogPhotos";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
@@ -108,12 +115,14 @@ export function FoodDexScreen({
   onOpenCamera,
   dex,
   onOpenQuests,
+  onOpenJournal,
   onDiscover,
 }: {
   dex: ReturnType<typeof useFoodDex>;
   capture?: FoodCapture | null;
   onOpenCamera?: () => void;
   onOpenQuests?: () => void;
+  onOpenJournal?: () => void;
   onDiscover?: (cuisine: Cuisine) => void;
 }) {
   const insets = useSafeAreaInsets();
@@ -341,8 +350,8 @@ export function FoodDexScreen({
   ].filter(
     (dish) =>
       (filter === "all" ||
-      (filter === "collected" && !!dish.entry) ||
-      (filter === "untried" && !dish.entry)) &&
+        (filter === "collected" && !!dish.entry) ||
+        (filter === "untried" && !dish.entry)) &&
       dish.name.toLowerCase().includes(query.trim().toLowerCase()),
   );
 
@@ -369,7 +378,20 @@ export function FoodDexScreen({
           </View>
         </View>
         {onOpenQuests && (
-          <Button title="Continue my cuisine quests" icon="flag-outline" onPress={onOpenQuests} secondary />
+          <Button
+            title="Continue my cuisine quests"
+            icon="flag-outline"
+            onPress={onOpenQuests}
+            secondary
+          />
+        )}
+        {onOpenJournal && (
+          <Button
+            title="Restaurant journal"
+            icon="restaurant-outline"
+            onPress={onOpenJournal}
+            secondary
+          />
         )}
         <View style={s.viewTabs}>
           {(["collection", "atlas"] as const).map((item) => (
@@ -427,7 +449,11 @@ export function FoodDexScreen({
                   </Text>
                 </View>
                 <View style={s.brand}>
-                  <Icon name="sparkles-outline" color={colors.white} size={22} />
+                  <Icon
+                    name="sparkles-outline"
+                    color={colors.white}
+                    size={22}
+                  />
                 </View>
               </View>
               <Text style={s.heroCopy}>
@@ -527,8 +553,14 @@ export function FoodDexScreen({
                         />
                         <Text style={s.progressText}>
                           {(() => {
-                            const mastery = cuisineMastery(unlocked, catalog.length);
-                            const target = cuisineMasteryTarget(unlocked, catalog.length);
+                            const mastery = cuisineMastery(
+                              unlocked,
+                              catalog.length,
+                            );
+                            const target = cuisineMasteryTarget(
+                              unlocked,
+                              catalog.length,
+                            );
                             if (mastery) return `${mastery} badge earned`;
                             if (catalog.length)
                               return `Collect ${target.target} for ${target.label}`;
@@ -647,6 +679,7 @@ export function FoodDexScreen({
                 { paddingBottom: insets.bottom + 24 },
               ]}
             >
+              <SheetDragHandle onDismiss={() => setDetail(null)} />
               {detail && (
                 <>
                   <View style={s.row}>
@@ -680,6 +713,7 @@ export function FoodDexScreen({
             style={[s.screen, { paddingTop: insets.top }]}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
+            <SheetDragHandle onDismiss={closeScan} />
             <View style={s.modalHeading}>
               <Text style={[s.sectionTitle, s.flex]}>A new discovery</Text>
               <Pressable
@@ -900,11 +934,15 @@ export function FoodDexScreen({
                       const unlocked = targets.filter((dish) =>
                         collectionForCuisine.some(
                           (entry) =>
-                            foodKey(entry.name, cuisine!) === foodKey(dish.name, cuisine!),
+                            foodKey(entry.name, cuisine!) ===
+                            foodKey(dish.name, cuisine!),
                         ),
                       ).length;
                       const mastery = cuisineMastery(unlocked, targets.length);
-                      const target = cuisineMasteryTarget(unlocked, targets.length);
+                      const target = cuisineMasteryTarget(
+                        unlocked,
+                        targets.length,
+                      );
                       return mastery
                         ? `${mastery} badge earned`
                         : `Collect ${target.target} dishes to earn your ${target.label}`;
@@ -972,9 +1010,13 @@ export function FoodDexScreen({
                           ]}
                         >
                           <Icon
-                            name={item === "grid" ? "grid-outline" : "list-outline"}
+                            name={
+                              item === "grid" ? "grid-outline" : "list-outline"
+                            }
                             size={16}
-                            color={detailView === item ? colors.white : colors.ink}
+                            color={
+                              detailView === item ? colors.white : colors.ink
+                            }
                           />
                         </Pressable>
                       ))}
@@ -1499,7 +1541,7 @@ const s = StyleSheet.create({
   },
   collectedText: { color: colors.accent, fontWeight: "600" },
   undiscoveredText: { color: colors.muted },
-    overlay: {
+  overlay: {
     flex: 1,
     justifyContent: "flex-end",
     backgroundColor: "#3D568F99",

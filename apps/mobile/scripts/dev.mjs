@@ -26,6 +26,9 @@ for (const [index, args] of commands.entries()) {
   const child = spawn(index === 0 ? "pnpm" : process.execPath, args, {
     cwd: root,
     stdio: index === 0 ? ["ignore", "inherit", "inherit"] : "inherit",
+    // On Windows, pnpm is installed as a .cmd shim, which spawn cannot launch
+    // directly without a command shell.
+    shell: index === 0 && process.platform === "win32",
   });
   children.push(child);
   child.on("error", (error) => {

@@ -17,9 +17,10 @@ import {
   questStatus,
 } from "../src/features/quests/models/quests.ts";
 
-test("three catalog-backed paths contain four five-step chapters and seven templates", () => {
-  assert.equal(allQuests.length, 60);
-  assert.equal(new Set(allQuests.map((q) => q.id)).size, 60);
+test("all catalog-backed paths contain four five-step chapters and seven templates", () => {
+  const expectedCount = pathCuisines.length * chapters.length * 5;
+  assert.equal(allQuests.length, expectedCount);
+  assert.equal(new Set(allQuests.map((q) => q.id)).size, expectedCount);
   assert.equal(new Set(allQuests.map((q) => q.type)).size, 7);
   for (const cuisine of pathCuisines) {
     const path = questsFor(cuisine);

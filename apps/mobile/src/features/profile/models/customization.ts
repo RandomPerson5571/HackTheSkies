@@ -10,6 +10,10 @@ export const ranks = [
   { id: "artisan", name: "Flavor Artisan", level: 10 },
   { id: "connoisseur", name: "Connoisseur", level: 15 },
   { id: "master", name: "Master Chef", level: 20 },
+  { id: "legend", name: "Legendary Taster", level: 25 },
+  { id: "royal", name: "Royal Table", level: 30 },
+  { id: "celestial", name: "Celestial Chef", level: 40 },
+  { id: "mythic", name: "Mythic Epicure", level: 50 },
 ] as const;
 export type RankId = (typeof ranks)[number]["id"];
 
@@ -24,11 +28,16 @@ export const avatarPalettes = [
   {
     id: "matcha",
     name: "Matcha",
-    background: "#EAF3B2",
+    background: "#F3F4E7",
     foreground: "#253D6A",
   },
   { id: "peach", name: "Peach", background: "#FADED4", foreground: "#713D36" },
   { id: "ube", name: "Ube", background: "#E8DEF5", foreground: "#534075" },
+  { id: "citrus", name: "Citrus", background: "#FFE5A3", foreground: "#75421F" },
+  { id: "berry", name: "Berry", background: "#F6D7E7", foreground: "#713D5A" },
+  { id: "ocean", name: "Ocean", background: "#CDECF0", foreground: "#24566B" },
+  { id: "sunset", name: "Sunset", background: "#FFD7C2", foreground: "#783E3B" },
+  { id: "cherry", name: "Cherry", background: "#F5CCD0", foreground: "#743947" },
 ] as const;
 export type AvatarPaletteId = (typeof avatarPalettes)[number]["id"];
 

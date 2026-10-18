@@ -92,7 +92,13 @@ test("globe projection hides the far side and wraps around the dateline", () => 
   assert.ok(
     Math.abs(project([20, 30], 10).x - project([20, 30], 370).x) < 1e-9,
   );
-  for (const coordinate of landDots) {
+  for (const dot of landDots) {
+    const coordinate = [
+      (Math.atan2(dot.lonSin, dot.lonCos) * 180) / Math.PI,
+      (Math.atan2(dot.latSin, dot.latCos) * 180) / Math.PI,
+    ];
+    assert.ok(Math.abs(dot.lonSin ** 2 + dot.lonCos ** 2 - 1) < 1e-9);
+    assert.ok(Math.abs(dot.latSin ** 2 + dot.latCos ** 2 - 1) < 1e-9);
     const point = project(coordinate, 120);
     assert.ok(Number.isFinite(point.x) && Number.isFinite(point.y));
     assert.ok(point.x >= 0 && point.x <= 276 && point.y >= 0 && point.y <= 276);

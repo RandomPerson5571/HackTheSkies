@@ -84,7 +84,7 @@ test("restored locked cosmetics and unearned trophies cannot be equipped", () =>
   assert.equal(earned.frame, "artisan");
   assert.equal(earned.banner, "market");
   assert.equal(earned.featuredBadge, "foodie");
-  assert.equal(earned.nextRank, undefined);
+  assert.equal(earned.nextRank.id, "legend");
 });
 
 test("explicit opt-outs stay off after leveling up, and invalid preferences are discarded", () => {

@@ -1,4 +1,5 @@
 import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { SheetDragHandle } from "../../../components/SheetDragHandle";
 import { useEffect, useMemo, useState } from "react";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,7 +15,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../../theme";
 import {
   atlasCuisines,
-  cuisineAnchors,
   cuisineMastery,
 } from "../../food-dex/models/discovery";
 import {
@@ -28,9 +28,9 @@ import { CatalogPhoto } from "../../food-dex/components/CatalogPhoto";
 import { catalogPhoto } from "../../food-dex/services/catalogPhotos";
 import { useReducedMotion } from "../../food-dex/hooks/useReducedMotion";
 import {
-  atlasPoint,
   atlasProgress,
   atlasSvg,
+  countryAtPoint,
   cuisineAtPoint,
 } from "../models/culinaryAtlas";
 
@@ -44,7 +44,9 @@ export function ProfileAtlas({
   onOpenQuests?: () => void;
 }) {
   const [selected, setSelected] = useState<Cuisine | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [mapWidth, setMapWidth] = useState(0);
+  const [mapHeight, setMapHeight] = useState(0);
   const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
   const rows = useMemo(
@@ -58,9 +60,9 @@ export function ProfileAtlas({
     rows[0]!;
   const svg = useMemo(
     () => ({
-      uri: `data:image/svg+xml;utf8,${encodeURIComponent(atlasSvg(entries))}`,
+      uri: `data:image/svg+xml;utf8,${encodeURIComponent(atlasSvg(entries, selectedCountry, selected))}`,
     }),
-    [entries],
+    [entries, selectedCountry, selected],
   );
   const [mapOpacity] = useState(() => new Animated.Value(1));
   useEffect(() => {
@@ -89,51 +91,40 @@ export function ProfileAtlas({
   const detailDishes = active?.collected.length
     ? active.collected.slice(0, 6)
     : suggestions;
-  // Keep the overview calm; every cuisine is also available in the accessible list.
-  const markers: (typeof rows)[number][] = [];
-  for (const row of [...discovered].sort(
-    (a, b) => b.discoveries - a.discoveries,
-  )) {
-    const anchor = cuisineAnchors[row.cuisine]!;
-    const point = atlasPoint(anchor[0], anchor[1]);
-    const separated = markers.every((marker) => {
-      const other = cuisineAnchors[marker.cuisine]!;
-      const p = atlasPoint(other[0], other[1]);
-      return (Math.hypot(point.x - p.x, point.y - p.y) * mapWidth) / 720 >= 46;
-    });
-    if (separated && markers.length < 4) markers.push(row);
-  }
-
   return (
     <View style={s.card}>
       <View style={s.heading}>
         <View style={s.flex}>
-          <Text style={s.eyebrow}>YOUR CULINARY ADVENTURE</Text>
           <Text accessibilityRole="header" style={s.title}>
             Culinary Atlas
           </Text>
         </View>
         <View style={s.compass}>
-          <Ionicons name="compass-outline" size={26} color={colors.accent} />
+          <Ionicons name="compass-outline" size={20} color={colors.accent} />
         </View>
       </View>
-      <Text style={s.copy}>
-        Discover dishes from around the world to bring your atlas to life.
-      </Text>
+      <Text style={s.small}>Tap the map or a cuisine to explore.</Text>
       <Animated.View style={[s.mapSurface, { opacity: mapOpacity }]}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="World cuisine discovery map. Tap to explore a cuisine, or choose one below."
-          onLayout={(event) => setMapWidth(event.nativeEvent.layout.width)}
-          onPress={(event) => {
-            if (!mapWidth) return;
-            const cuisine = cuisineAtPoint(
-              (event.nativeEvent.locationX / mapWidth) * 720,
-              (event.nativeEvent.locationY / mapWidth) * 720,
-            );
-            if (cuisine) setSelected(cuisine);
+          accessibilityLabel="Interactive culinary world map"
+          accessibilityHint="Tap a country to explore its closest cuisine and your discoveries."
+          onLayout={(event) => {
+            setMapWidth(event.nativeEvent.layout.width);
+            setMapHeight(event.nativeEvent.layout.height);
           }}
-          style={s.map}
+          onPress={(event) => {
+            if (!mapWidth || !mapHeight) return;
+            const x = (event.nativeEvent.locationX / mapWidth) * 720;
+            const y = (event.nativeEvent.locationY / mapHeight) * 390;
+            const country = countryAtPoint(x, y);
+            const cuisine = cuisineAtPoint(x, y);
+            if (country && cuisine) {
+              setSelectedCountry(country);
+              setSelected(cuisine);
+            }
+          }}
+          style={({ pressed }) => [s.map, pressed && s.mapPressed]}
         >
           <Image
             source={svg}
@@ -142,45 +133,9 @@ export function ProfileAtlas({
             accessible={false}
           />
         </Pressable>
-        {markers.map((row) => {
-          const anchor = cuisineAnchors[row.cuisine]!;
-          const p = atlasPoint(anchor[0], anchor[1]);
-          return (
-            <Pressable
-              key={row.cuisine}
-              accessibilityRole="button"
-              accessibilityLabel={`${row.cuisine}, ${row.discoveries} discoveries. View cuisine details`}
-              onPress={() => setSelected(row.cuisine)}
-              style={({ pressed }) => [
-                s.marker,
-                { left: `${(p.x / 720) * 100}%`, top: `${(p.y / 390) * 100}%` },
-                pressed && s.pressed,
-              ]}
-            >
-              <CatalogPhoto
-                source={catalogPhoto(cuisineCovers[row.cuisine])}
-                label={row.cuisine}
-                style={s.markerPhoto}
-              />
-              <View style={s.markerCount}>
-                <Text style={s.markerCountText}>{row.discoveries}</Text>
-              </View>
-            </Pressable>
-          );
-        })}
       </Animated.View>
-      <View style={s.legend}>
-        <View style={s.legendItem}>
-          <View style={[s.dot, { backgroundColor: "#BCD379" }]} />
-          <Text style={s.small}>Discovered</Text>
-        </View>
-        <View style={s.legendItem}>
-          <View style={[s.dot, { backgroundColor: "#DCE2D5" }]} />
-          <Text style={s.small}>Awaiting a first bite</Text>
-        </View>
-      </View>
       <View style={s.progressHeader}>
-        <Text style={s.subtitle}>Your discovery map</Text>
+        <Text style={s.subtitle}>Cuisine progress</Text>
         <Text style={s.progressText}>
           {discovered.length} / {atlasCuisines.length} cuisines
         </Text>
@@ -202,11 +157,6 @@ export function ProfileAtlas({
           ]}
         />
       </View>
-      <Text style={s.small}>
-        {discovered.length
-          ? "Every first bite opens a new chapter. Tap a cuisine to see yours."
-          : "Your atlas starts with one dish. Where will your first bite take you?"}
-      </Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -217,7 +167,10 @@ export function ProfileAtlas({
             key={row.cuisine}
             accessibilityRole="button"
             accessibilityLabel={`${row.cuisine}, ${row.discoveries ? `${row.discoveries} discoveries` : "undiscovered"}`}
-            onPress={() => setSelected(row.cuisine)}
+            onPress={() => {
+              setSelectedCountry(null);
+              setSelected(row.cuisine);
+            }}
             style={({ pressed }) => [
               s.chip,
               row.discoveries > 0 && s.unlockedChip,
@@ -236,25 +189,15 @@ export function ProfileAtlas({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`Next adventure: explore ${next.cuisine} cuisine`}
-        onPress={() => setSelected(next.cuisine)}
+        onPress={() => {
+          setSelectedCountry(null);
+          setSelected(next.cuisine);
+        }}
         style={({ pressed }) => [s.adventure, pressed && s.pressed]}
       >
-        <View style={s.flex}>
-          <Text style={s.eyebrow}>NEXT ADVENTURE</Text>
-          <Text style={s.adventureTitle}>
-            A taste of {next.cuisine} cuisine
-          </Text>
-          <Text style={s.copy}>
-            {next.discoveries
-              ? "Keep collecting dishes to grow your cuisine stamp."
-              : "Find your first dish and light up a new region."}
-          </Text>
-        </View>
+        <Text style={s.adventureTitle}>Explore {next.cuisine}</Text>
         <Ionicons name="arrow-forward" size={22} color={colors.accent} />
       </Pressable>
-      <Text style={s.footnote}>
-        Cuisines can span borders. Discoveries in “Other” stay in your Food Dex.
-      </Text>
       <Modal
         visible={selected !== null}
         transparent
@@ -273,7 +216,7 @@ export function ProfileAtlas({
               accessibilityViewIsModal
               style={[s.sheet, { paddingBottom: Math.max(insets.bottom, 20) }]}
             >
-              <View style={s.handle} />
+              <SheetDragHandle onDismiss={() => setSelected(null)} />
               <View style={s.heading}>
                 <CatalogPhoto
                   source={catalogPhoto(cuisineCovers[selected])}
@@ -412,15 +355,15 @@ export function ProfileAtlas({
 }
 const s = StyleSheet.create({
   card: {
-    padding: 18,
-    borderRadius: 26,
+    padding: 10,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.white,
-    gap: 12,
+    gap: 6,
     overflow: "hidden",
   },
-  heading: { flexDirection: "row", alignItems: "center", gap: 12 },
+  heading: { flexDirection: "row", alignItems: "center", gap: 8 },
   flex: { flex: 1, gap: 5 },
   eyebrow: {
     fontSize: 9,
@@ -429,16 +372,16 @@ const s = StyleSheet.create({
     color: colors.muted,
   },
   title: {
-    fontSize: 27,
+    fontSize: 18,
     fontWeight: "700",
     letterSpacing: -0.8,
     color: colors.ink,
-    marginTop: 3,
+    marginTop: 0,
   },
   compass: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
@@ -447,11 +390,14 @@ const s = StyleSheet.create({
   small: { fontSize: 11, lineHeight: 17, color: colors.muted },
   mapSurface: {
     backgroundColor: "#F1F4EB",
-    borderRadius: 18,
-    position: "relative",
-    marginHorizontal: -8,
+    borderRadius: 14,
+    width: "100%",
+    maxWidth: 360,
+    alignSelf: "center",
+    overflow: "hidden",
   },
   map: { width: "100%", aspectRatio: 720 / 390 },
+  mapPressed: { opacity: 0.78 },
   marker: {
     position: "absolute",
     width: 44,
@@ -505,13 +451,13 @@ const s = StyleSheet.create({
     overflow: "hidden",
   },
   fill: { height: "100%", borderRadius: 4, backgroundColor: colors.accent },
-  chips: { gap: 8, paddingVertical: 2 },
+  chips: { gap: 6, paddingVertical: 1 },
   chip: {
-    minHeight: 44,
+    minHeight: 34,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 24,
-    paddingHorizontal: 13,
+    paddingHorizontal: 10,
     flexDirection: "row",
     gap: 6,
     alignItems: "center",
@@ -519,15 +465,14 @@ const s = StyleSheet.create({
   unlockedChip: { backgroundColor: colors.tint },
   chipText: { fontSize: 12, fontWeight: "600", color: colors.accent },
   adventure: {
-    padding: 16,
-    borderRadius: 18,
+    padding: 10,
+    borderRadius: 14,
     backgroundColor: colors.tint,
     flexDirection: "row",
     gap: 12,
     alignItems: "center",
   },
-  adventureTitle: { fontSize: 16, fontWeight: "700", color: colors.ink },
-  footnote: { fontSize: 10, lineHeight: 16, color: colors.muted },
+  adventureTitle: { fontSize: 13, fontWeight: "700", color: colors.ink },
   pressed: { opacity: 0.65 },
   modal: {
     flex: 1,
@@ -544,13 +489,6 @@ const s = StyleSheet.create({
     borderTopRightRadius: 30,
     padding: 20,
     gap: 16,
-  },
-  handle: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: colors.border,
-    alignSelf: "center",
   },
   cover: { width: 58, height: 64, borderRadius: 16 },
   detailTitle: { fontSize: 22, fontWeight: "700", color: colors.ink },

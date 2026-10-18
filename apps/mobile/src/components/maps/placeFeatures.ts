@@ -1,7 +1,7 @@
 import {
   isValidCoordinate,
   type Place,
-} from "../../features/restaurants/data/places";
+} from "../../features/restaurants/data/places.ts";
 
 export const clusterRadius = 50;
 export const clusterMaxZoom = 14;

@@ -106,7 +106,6 @@ export function ProfileScreen({
   onOpenSettings,
   onOpenDex,
   onOpenAtlas: _onOpenAtlas,
-  onOpenSaved,
 }: {
   saved?: string[];
   profile: Profile;
@@ -121,7 +120,6 @@ export function ProfileScreen({
   onOpenSettings?: () => void;
   onOpenDex?: () => void;
   onOpenAtlas?: () => void;
-  onOpenSaved?: () => void;
 }) {
   const { entries } = useFoodDex();
   const { state: quests, error: questError } = useQuests();
@@ -421,66 +419,6 @@ export function ProfileScreen({
           {questError}
         </Text>
       ) : null}
-
-      {onOpenSaved && (
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Open Saved Places, ${saved.length} restaurants`}
-          onPress={onOpenSaved}
-          style={({ pressed }) => [
-            styles.adventureCard,
-            pressed && styles.pressed,
-          ]}
-        >
-          <View style={styles.adventureIcon}>
-            <Ionicons
-              accessible={false}
-              name="bookmark-outline"
-              color={colors.white}
-              size={24}
-            />
-          </View>
-          <View style={styles.flex}>
-            <Text style={styles.adventureTitle}>Your Saved Places</Text>
-            <Text style={styles.adventureCopy}>
-              {saved.length} restaurants · Your wishlist & collections
-            </Text>
-          </View>
-          <Ionicons
-            accessible={false}
-            name="chevron-forward"
-            color={colors.ink}
-            size={20}
-          />
-        </Pressable>
-      )}
-
-      <View style={styles.adventureCard}>
-        <View style={styles.adventureIcon}>
-          <Ionicons name="compass" color={colors.white} size={26} />
-        </View>
-        <View style={styles.flex}>
-          <Text style={styles.eyebrowDark}>YOUR NEXT ADVENTURE</Text>
-          <Text style={styles.adventureTitle}>
-            Your culinary journey starts here
-          </Text>
-          <Text style={styles.adventureCopy}>
-            Choose a cuisine and unlock your first food quest.
-          </Text>
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Explore quests"
-          onPress={handleOpenQuests}
-          style={({ pressed }) => [
-            styles.adventureButton,
-            pressed && styles.pressed,
-          ]}
-        >
-          <Text style={styles.adventureButtonText}>Explore quests</Text>
-          <Ionicons name="arrow-forward" color={colors.white} size={16} />
-        </Pressable>
-      </View>
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
@@ -806,12 +744,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 1.4,
   },
-  eyebrowDark: {
-    color: colors.muted,
-    fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 1.4,
-  },
   passportTitle: {
     color: colors.ink,
     fontSize: 24,
@@ -933,50 +865,6 @@ const styles = StyleSheet.create({
   stat: { flex: 1, alignItems: "center", gap: 2 },
   statValue: { color: colors.accent, fontSize: 22, fontWeight: "700" },
   statLabel: { color: colors.muted, fontSize: 10, fontWeight: "600" },
-  adventureCard: {
-    borderRadius: 24,
-    padding: 18,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.border,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    alignItems: "center",
-    boxShadow: "0 4px 20px #3D568F10",
-  },
-  adventureIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
-    backgroundColor: colors.accent,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  adventureTitle: {
-    color: colors.ink,
-    fontSize: 16,
-    fontWeight: "700",
-    marginTop: 2,
-  },
-  adventureCopy: {
-    color: colors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 2,
-  },
-  adventureButton: {
-    width: "100%",
-    marginTop: 4,
-    backgroundColor: colors.accent,
-    borderRadius: 14,
-    minHeight: 46,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-  },
-  adventureButtonText: { color: colors.white, fontSize: 14, fontWeight: "600" },
   section: { gap: 10 },
   sectionHeader: {
     flexDirection: "row",

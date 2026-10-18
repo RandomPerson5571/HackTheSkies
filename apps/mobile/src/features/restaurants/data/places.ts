@@ -1,6 +1,7 @@
 import { catalogDishes } from "../../../../../../packages/food-catalog/data/catalog.ts";
 import restaurantPhotos from "./restaurantPhotos.json" with { type: "json" };
 import importedRestaurants from "./importedRestaurants.json" with { type: "json" };
+import type { DietaryPreference } from "../../profile/models/profile";
 
 export type Category =
   "All" | "Coffee" | "Pizza" | "Bakery" | "Ramen" | "Restaurant";
@@ -80,7 +81,18 @@ export type Place = {
   rating?: number;
   // Optional aggregate from a future community/provider feed. Missing is unrated.
   ratingSummary?: { averageRating: number; reviewCount: number };
+  /** Compliance must be explicitly confirmed by a reliable venue/provider source. */
+  confirmedDietaryOptions?: ("Halal" | "Kosher" | "Gluten-free")[];
 };
+
+export function matchesDietaryPreference(
+  place: Pick<Place, "confirmedDietaryOptions">,
+  diet: DietaryPreference,
+): boolean {
+  if (diet !== "Halal" && diet !== "Kosher" && diet !== "Gluten-free")
+    return true;
+  return place.confirmedDietaryOptions?.includes(diet) === true;
+}
 
 const photos: Record<string, NonNullable<Place["photo"]>> = restaurantPhotos;
 
@@ -111,6 +123,11 @@ export const places: Place[] = importedRestaurants.map((restaurant): Place => ({
   name: restaurant.restaurant_name,
   category: "Restaurant",
   cuisine: restaurant.cuisine,
+  confirmedDietaryOptions: (
+    restaurant as typeof restaurant & {
+      confirmed_dietary_options?: ("Halal" | "Kosher" | "Gluten-free")[];
+    }
+  ).confirmed_dietary_options,
   neighborhood: restaurant.neighbourhood,
   address: `${restaurant.address}, Toronto, ON`,
   coordinate: [restaurant.coordinate[0]!, restaurant.coordinate[1]!],

@@ -1,9 +1,20 @@
 import { parseCustomization, type Customization } from "./customization.ts";
 
+export const dietaryPreferences = [
+  "No preference",
+  "Vegetarian",
+  "Vegan",
+  "Pescatarian",
+  "Gluten-free",
+  "Halal",
+  "Kosher",
+] as const;
+export type DietaryPreference = (typeof dietaryPreferences)[number];
+
 export type Profile = {
   name: string;
   neighborhood: string;
-  diet: "No preference" | "Vegetarian" | "Vegan" | "Pescatarian";
+  diet: DietaryPreference;
   customization?: Customization;
   avatarUri?: string;
 };
@@ -16,9 +27,7 @@ export function parseProfile(value: unknown): Profile {
     profile.name.length > 50 ||
     typeof profile.neighborhood !== "string" ||
     profile.neighborhood.length > 80 ||
-    !["No preference", "Vegetarian", "Vegan", "Pescatarian"].includes(
-      profile.diet,
-    )
+    !dietaryPreferences.includes(profile.diet)
   ) {
     throw new Error("Invalid profile");
   }

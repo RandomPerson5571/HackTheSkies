@@ -12,14 +12,25 @@ const cuisineHints = [
 ] as const;
 
 // Bound prompt size before inference; the full directory exceeds provider limits.
-export function restaurantCandidates(prompt: string) {
+export function restaurantCandidates(prompt: string, diet = "No preference") {
   const query = normalize(prompt);
+  const restrictedDiet =
+    diet === "Halal" || diet === "Kosher" || diet === "Gluten-free"
+      ? diet
+      : null;
   const words =
     query.match(/[\p{L}\p{N}]+/gu)?.filter((word) => word.length > 2) ?? [];
   const hints = cuisineHints
     .filter(([pattern]) => pattern.test(query))
     .map(([, cuisine]) => cuisine);
   return restaurants
+    .filter((place) => {
+      if (!restrictedDiet) return true;
+      const dietaryPlace = place as typeof place & {
+        confirmed_dietary_options?: string[];
+      };
+      return dietaryPlace.confirmed_dietary_options?.includes(restrictedDiet);
+    })
     .map((place, index) => {
       const text = normalize(
         `${place.restaurant_name} ${place.cuisine} ${place.neighbourhood} ${place.address}`,
@@ -42,5 +53,8 @@ export function restaurantCandidates(prompt: string) {
       name: place.restaurant_name,
       cuisine: place.cuisine,
       neighborhood: place.neighbourhood,
+      confirmedDietaryOptions:
+        (place as typeof place & { confirmed_dietary_options?: string[] })
+          .confirmed_dietary_options ?? [],
     }));
 }

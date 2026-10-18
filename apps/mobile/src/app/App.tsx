@@ -54,6 +54,7 @@ import {
   priceLevels,
   type PriceLevel,
   type Place,
+  matchesDietaryPreference,
 } from "../features/restaurants/data/places";
 
 import {
@@ -332,6 +333,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     const savedIds = savedFilter ? new Set(savedFilter) : null;
     return places.filter(
       (place) =>
+        (tab !== "explore" || matchesDietaryPreference(place, profile.diet)) &&
         (category === "All" || place.category === category) &&
         (!ratingFilter ||
           (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
@@ -347,6 +349,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     );
   }, [
     places,
+    tab,
+    profile.diet,
     category,
     deferredQuery,
     savedFilter,
@@ -362,6 +366,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     const savedIds = savedFilter ? new Set(savedFilter) : null;
     return mapPlaces.filter(
       (place) =>
+        (tab !== "explore" || matchesDietaryPreference(place, profile.diet)) &&
         (category === "All" || place.category === category) &&
         (!ratingFilter ||
           (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
@@ -377,6 +382,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     );
   }, [
     mapPlaces,
+    tab,
+    profile.diet,
     category,
     deferredQuery,
     savedFilter,
@@ -744,10 +751,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             game={gamification.state}
             ratingsCount={Object.keys(collection.ratings).length}
             saved={saved}
-            onOpenSaved={() => {
-              setSavedReturnTab("profile");
-              setTab("saved");
-            }}
             profile={profile}
             onSave={setProfile}
             storageError={migrationError || profileError}
@@ -775,6 +778,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           <RestaurantsScreen
             key={tab}
             mode={tab === "journal" ? "journal" : "discover"}
+            diet={profile.diet}
             onOpenSaved={() => {
               setSavedReturnTab(tab);
               setTab("saved");
@@ -1691,7 +1695,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             },
           ]}
         >
-          <SheetDragHandle onDismiss={() => setPlusMenuOpen(false)} />
           <Pressable
             style={styles.plusMenuItem}
             accessibilityRole="button"

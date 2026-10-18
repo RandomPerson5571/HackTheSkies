@@ -1262,7 +1262,7 @@ France
 
 France
 
-[Petr Kratochvil / Wikimedia Commons / CC0](https://commons.wikimedia.org/wiki/File:Croissant-Petr_Kratochvil.jpg) · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)
+[Shixart1985 / Wikimedia Commons / CC BY 2.0](https://commons.wikimedia.org/wiki/File:Coffee,_croissants,_and_jam_on_a_plate_with_cookies_on_a_table_during_breakfast_time_in_a_cozy_setting.jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
 
 ### Crêpe
 
@@ -1842,7 +1842,7 @@ Trinidad
 
 United States
 
-[Renee Comet (photographer) / Wikimedia Commons / Public domain](https://commons.wikimedia.org/wiki/File:Cheeseburger.jpg) · [Public domain](https://creativecommons.org/publicdomain/mark/1.0/)
+[Benreis / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Cheeseburger_and_steak_fries_at_Rentier-Burger.jpg) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
 
 ### Mac and cheese
 
@@ -1906,7 +1906,7 @@ United States
 
 United States
 
-[Amadscientist / Wikimedia Commons / CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Homemade_Jambalaya.JPG) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)
+[jeffreyw / Wikimedia Commons / CC BY 2.0](https://commons.wikimedia.org/wiki/File:Jambalaya_on_plate.jpg) · [CC BY 2.0](https://creativecommons.org/licenses/by/2.0)
 
 ### Philly cheesesteak
 

@@ -35,9 +35,9 @@ export const challenges: Challenge[] = [
   },
   {
     id: "cuisine-collector",
-    title: "Five-Cuisine Passport",
+    title: "Five-Cuisine Explorer",
     cadence: "MONTHLY",
-    summary: "Collect five cuisine stamps this month.",
+    summary: "Try five different cuisines this month.",
     details: "Check in at spots serving five different cuisines.",
     metric: "cuisines",
     points: 250,
@@ -64,7 +64,7 @@ export const challenges: Challenge[] = [
   },
   {
     id: "sweet-tooth",
-    title: "Bakery Passport",
+    title: "Bakery Tour",
     cadence: "WEEKLY",
     summary: "Collect two bakery stops this week.",
     details: "Check in at two different bakeries.",
@@ -94,7 +94,7 @@ export const challenges: Challenge[] = [
   },
   {
     id: "pizza-tour",
-    title: "Pizza Passport",
+    title: "Pizza Tour",
     cadence: "MONTHLY",
     summary: "Find your favourite slice across three pizzerias.",
     details: "Check in at three different pizza spots this month.",

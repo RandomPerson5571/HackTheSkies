@@ -12,7 +12,6 @@ test("one Worker origin resolves all APIs while explicit endpoint overrides stil
     "food-scan",
     "menu-scan",
     "food-recommendations",
-    "quest-personalization",
   ])
     assert.equal(
       apiEndpoint(`/api/${name}`),

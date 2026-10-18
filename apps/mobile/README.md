@@ -131,29 +131,10 @@ uses the existing Expo dependency; no new native modules are required.
 
 ### Cibo Quests
 
-Open the flag on Explore, or **Continue my cuisine quests** in Food Dex. Japanese,
-Italian, and Korean each have four chapters of five quests. Quests include dish
-quizzes, Food Dex discovery (camera or manual entry), learning cards, mystery
-questions, exploration, chests, and three-question chapter finales. Discovery and
-exploration always offer an at-home route with the same XP. Learning cards and
-chapter stamps belong to the quest passport; they do not fabricate Food Dex entries.
-
-Each cuisine keeps its own XP and level (200 XP per level). Quest progress, the
-selected cuisine, personalized assignments, and bonus check-ins save locally under
-`cibo.quests.v1`. Quest progress does not currently sync to Supabase. The original
-12 restaurant challenges remain available as optional bonus adventures. Visits are
-explicitly self-reported, each restaurant counts once per adventure, and rewards
-can be claimed once. Weekly/monthly periods run for 7/30 days from joining.
-
-`POST /api/quest-personalization` uses the existing server-side `GROQ_API_KEY` and
-`GROQ_RECOMMENDATION_MODEL` setting. Optionally set `EXPO_PUBLIC_QUEST_URL`; otherwise
-it uses the food scan server's origin. The AI selects only curated catalog dish IDs
-and known restaurant IDs, prefers dishes missing from Food Dex, and uses the
-profile's diet and neighbourhood plus the chosen at-home/exploration preference.
-Dietary preferences enforce learning objectives without requiring a purchase or
-meal. Menus, dietary suitability, restaurant availability, and prices are not
-verified by the picker. An unavailable AI service leaves the full curated journey
-playable. A personalized quest awards 60 XP once per cuisine.
+The Quests tab contains optional restaurant challenges. Visits are self-reported,
+each restaurant counts once per adventure, and rewards can be claimed once.
+Weekly/monthly periods run for 7/30 days from joining. Challenge progress and XP
+save locally under `cibo.quests.v1` and do not currently sync to Supabase.
 
 
 ### Haptics and game feedback

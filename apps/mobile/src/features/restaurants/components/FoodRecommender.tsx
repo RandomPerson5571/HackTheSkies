@@ -16,7 +16,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors } from "../../../theme";
-import { type Place } from "../data/places";
+import { matchesDietaryPreference, type Place } from "../data/places";
+import type { DietaryPreference } from "../../profile/models/profile";
 
 import { useBackend } from "../../../lib/BackendProvider";
 
@@ -37,7 +38,7 @@ export function FoodRecommender({
   onSelect,
 }: {
   visible: boolean;
-  diet: string;
+  diet: DietaryPreference;
   onClose: () => void;
   onSelect: (place: Place) => void;
 }) {
@@ -225,7 +226,7 @@ export function FoodRecommender({
                 <Text style={styles.copy}>{result.message}</Text>
                 {result.recommendations.map((item) => {
                   const place = places.find((p) => p.id === item.id);
-                  return place ? (
+                  return place && matchesDietaryPreference(place, diet) ? (
                     <Pressable
                       key={place.id}
                       accessibilityRole="button"

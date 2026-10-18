@@ -27,7 +27,12 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { categories, type Category, type Place } from "../data/places";
+import {
+  categories,
+  matchesDietaryPreference,
+  type Category,
+  type Place,
+} from "../data/places";
 import {
   buildRecommendations,
   recommendationBadge,
@@ -42,6 +47,7 @@ import type {
   CollectionAction,
   RestaurantCollection,
 } from "../models/restaurantCollection";
+import type { DietaryPreference } from "../../profile/models/profile";
 
 import { useBackend } from "../../../lib/BackendProvider";
 import { useReducedMotion } from "../../food-dex/hooks/useReducedMotion";
@@ -56,6 +62,7 @@ type Props = {
   onOpenDex?: () => void;
   onOpenCommunity?: () => void;
   mode?: "discover" | "journal";
+  diet: DietaryPreference;
 };
 
 const webGlassBlur = (
@@ -90,6 +97,7 @@ export function RestaurantsScreen({
   onOpenDex,
   onOpenCommunity,
   mode = "discover",
+  diet,
 }: Props) {
   const { height: windowHeight } = useWindowDimensions();
   const { places } = useBackend();
@@ -193,6 +201,8 @@ export function RestaurantsScreen({
       recommendations,
     );
     return base.filter((place) => {
+      if (mode === "discover" && !matchesDietaryPreference(place, diet))
+        return false;
       if (
         hiddenGemsOnly &&
         recommendationBadge(recommendations.get(place.id)) !== "Hidden gem"
@@ -222,20 +232,23 @@ export function RestaurantsScreen({
     recommendations,
     hiddenGemsOnly,
     mode,
+    diet,
     collectionTab,
     collection,
   ]);
   useEffect(() => {
     setPage(1);
     list.current?.scrollToOffset({ offset: 0, animated: false });
-  }, [query, category, cuisine, sort, hiddenGemsOnly, collectionTab, mode]);
+  }, [query, category, cuisine, sort, hiddenGemsOnly, collectionTab, mode, diet]);
   const pageItems = useMemo(
     () => visible.slice(0, page * PAGE_SIZE),
     [visible, page],
   );
 
   const hasFilters = Boolean(
-    query || category !== "All" || cuisine !== "All" || hiddenGemsOnly,
+    query || category !== "All" || cuisine !== "All" || hiddenGemsOnly ||
+      (mode === "discover" &&
+        (diet === "Halal" || diet === "Kosher" || diet === "Gluten-free")),
   );
 
   function resetFilters() {
@@ -614,7 +627,10 @@ export function RestaurantsScreen({
             </Text>
             <Text style={styles.emptyCopy}>
               {hasFilters
-                ? "Try another food or neighborhood, or clear your filters."
+                ? mode === "discover" &&
+                  (diet === "Halal" || diet === "Kosher" || diet === "Gluten-free")
+                  ? `No restaurants with confirmed ${diet} information match. Try another filter or change your dietary preference in Settings.`
+                  : "Try another food or neighborhood, or clear your filters."
                 : mode === "journal"
                   ? "Bookmark a restaurant in Discover, or add a visited spot to this collection."
                   : "Discover a spot and save it for later."}
@@ -1063,8 +1079,8 @@ export function RestaurantsScreen({
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Icon name="list-outline" color={colors.accent} />
-                  <Text style={styles.actionTextLarge}>Add to list</Text>
+                  <Icon name="albums-outline" color={colors.accent} />
+                  <Text style={styles.actionTextLarge}>Add to collection</Text>
                 </Pressable>
                 <Pressable
                   accessibilityRole="button"

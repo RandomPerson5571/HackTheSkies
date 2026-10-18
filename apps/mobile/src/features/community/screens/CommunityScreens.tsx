@@ -743,7 +743,7 @@ export function AchievementsScreen({
   return (
     <Page
       title="A taste for adventure."
-      eyebrow="YOUR CUISINE PASSPORT"
+      eyebrow="YOUR BADGES"
       intro="Little rewards for following your appetite. Visit different spots to build your collection."
       icon="ribbon-outline"
       error={storageError}
@@ -826,7 +826,7 @@ export function AchievementsScreen({
               visited
             </Text>
             {unlocked ? (
-              <Text style={s.small}>One for the passport. Keep exploring!</Text>
+              <Text style={s.small}>Badge earned. Keep exploring!</Text>
             ) : (
               next && (
                 <Action
@@ -845,7 +845,7 @@ export function AchievementsScreen({
           <Text style={s.name}>
             {filter === "earned"
               ? "Your first badge is one bite away."
-              : "Passport complete!"}
+              : "All badges earned!"}
           </Text>
           <Text style={s.small}>
             {filter === "earned"

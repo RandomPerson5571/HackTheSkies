@@ -54,6 +54,7 @@ import {
   priceLevels,
   type PriceLevel,
   type Place,
+  matchesDietaryPreference,
 } from "../features/restaurants/data/places";
 
 import {
@@ -92,7 +93,6 @@ type IconName = React.ComponentProps<typeof Ionicons>["name"];
 
 const navigationItems = [
   { id: "explore", label: "Explore", icon: "compass-outline" },
-  { id: "restaurants", label: "Restaurants", icon: "restaurant-outline" },
   { id: "challenges", label: "Quests", icon: "flag-outline" },
   { id: "favorites", label: "Favourites", icon: "heart-outline" },
   { id: "dex", label: "Food Dex", icon: "book-outline" },
@@ -239,7 +239,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     | "camera"
     | "lens"
     | "challenges"
-  >("restaurants");
+  >("explore");
   const [savedReturnTab, setSavedReturnTab] = useState<
     "explore" | "restaurants" | "journal" | "profile"
   >("profile");
@@ -332,6 +332,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     const savedIds = savedFilter ? new Set(savedFilter) : null;
     return places.filter(
       (place) =>
+        (tab !== "explore" || matchesDietaryPreference(place, profile.diet)) &&
         (category === "All" || place.category === category) &&
         (!ratingFilter ||
           (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
@@ -347,6 +348,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     );
   }, [
     places,
+    tab,
+    profile.diet,
     category,
     deferredQuery,
     savedFilter,
@@ -362,6 +365,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     const savedIds = savedFilter ? new Set(savedFilter) : null;
     return mapPlaces.filter(
       (place) =>
+        (tab !== "explore" || matchesDietaryPreference(place, profile.diet)) &&
         (category === "All" || place.category === category) &&
         (!ratingFilter ||
           (collection.ratings[place.id] ?? 0) >= ratingFilter) &&
@@ -377,6 +381,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     );
   }, [
     mapPlaces,
+    tab,
+    profile.diet,
     category,
     deferredQuery,
     savedFilter,
@@ -448,6 +454,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     void playFeedback("click");
     Keyboard.dismiss();
     setSelected(place);
+    setMapListMode(false);
     setLinkError(false);
     setListVisible(false);
     camera.current?.setCamera({
@@ -688,7 +695,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           <FoodDexScreen
             key={foodCapture?.id ?? "dex"}
             dex={foodDex}
-            onOpenQuests={() => setTab("challenges")}
             onOpenJournal={() => setTab("journal")}
             capture={foodCapture}
             onOpenCamera={openFoodCamera}
@@ -724,8 +730,9 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             dispatch={dispatch}
             storageError={migrationError || storageError || backendError}
             onBack={() => setTab(savedReturnTab)}
-            onDiscover={() => setTab("restaurants")}
-            onOpenQuests={() => setTab("challenges")}
+            onDiscover={() => {
+              setTab("restaurants");
+            }}
             onShowMap={(place) => {
               setTab("explore");
               setCategory("All");
@@ -743,23 +750,17 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             game={gamification.state}
             ratingsCount={Object.keys(collection.ratings).length}
             saved={saved}
-            onOpenSaved={() => {
-              setSavedReturnTab("profile");
-              setTab("saved");
-            }}
             profile={profile}
             onSave={setProfile}
             storageError={migrationError || profileError}
             topInset={insets.top}
             bottomInset={insets.bottom}
-            onOpenQuests={() => setTab("challenges")}
             onOpenSettings={() => {
               setSettingsReturnTab("profile");
               setTab("settings");
             }}
             onUploadAvatar={() => void uploadProfilePicture()}
             onOpenDex={() => setTab("dex")}
-            onOpenAtlas={() => setTab("dex")}
           />
         ) : tab === "settings" ? (
           <SettingsScreen
@@ -774,6 +775,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           <RestaurantsScreen
             key={tab}
             mode={tab === "journal" ? "journal" : "discover"}
+            diet={profile.diet}
             onOpenSaved={() => {
               setSavedReturnTab(tab);
               setTab("saved");
@@ -796,18 +798,8 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           />
         ) : tab === "challenges" ? (
           <QuestsScreen
-            profile={profile}
-            entries={foodDex.entries}
             places={places}
             onBack={() => setTab("explore")}
-            onOpenDex={() => setTab("dex")}
-            onOpenCamera={openFoodCamera}
-            onExplore={(cuisine) => {
-              setCategory("All");
-              setQuery("");
-              setCuisineFilter(cuisine);
-              setTab("explore");
-            }}
           />
         ) : (
           <>
@@ -877,7 +869,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                 </Text>
               </View>
             )}
-
             <View
               pointerEvents="none"
               style={[
@@ -976,6 +967,22 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   <Text style={styles.chipText}>
                     {filtersExpanded ? "Filters ×" : "Filters"}
                   </Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Open restaurant list"
+                  onPress={() => {
+                    setSelected(null);
+                    setFiltersExpanded(false);
+                    setTab("restaurants");
+                  }}
+                  style={({ pressed }) => [
+                    styles.chip,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Icon name="list-outline" size={17} />
+                  <Text style={styles.chipText}>List</Text>
                 </Pressable>
                 {filtersVisible && (
                   <Animated.View
@@ -1253,158 +1260,158 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               </View>
               {active ? (
                 <Animated.View
-                  style={[
-                    styles.placeCard,
-                    {
-                      opacity: cardOpacity,
-                      transform: [
-                        { scale: cardScale },
-                        { translateY: cardTranslateY },
-                        { translateY: cardDragY },
-                      ],
-                    },
-                  ]}
-                  {...cardDragResponder.panHandlers}
-                >
-                  <SheetDragHandle onDismiss={dismissSelection} />
-                  <View style={styles.cardTop}>
-                    <RestaurantPhoto
-                      eager
-                      showAll
-                      place={active}
-                      recommendation={recommendations.get(active.id)}
-                      style={styles.cardImage}
-                    />
-                    <View style={styles.cardInfo}>
-                      <Text style={styles.eyebrow}>
-                        {active.category.toUpperCase()} · {active.neighborhood}
-                      </Text>
-                      <Text style={styles.placeName}>{active.name}</Text>
-                      <Text style={styles.small}>{active.note}</Text>
-                    </View>
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel="Close place details"
-                      onPress={() => setSelected(null)}
-                      style={styles.closeButton}
-                    >
-                      <Icon name="close" size={18} />
-                    </Pressable>
-                  </View>
-                  <Text style={styles.address}>{active.address}</Text>
-                  <Text style={styles.small}>
-                    {recommendationLabel(recommendations.get(active.id))} ·
-                    Sample community reviews
-                  </Text>
-                  <View style={styles.ratingRow}>
-                    <Text style={styles.small}>Your rating</Text>
-                    {[1, 2, 3, 4, 5].map((value) => (
+                    style={[
+                      styles.placeCard,
+                      {
+                        opacity: cardOpacity,
+                        transform: [
+                          { scale: cardScale },
+                          { translateY: cardTranslateY },
+                          { translateY: cardDragY },
+                        ],
+                      },
+                    ]}
+                    {...cardDragResponder.panHandlers}
+                  >
+                    <SheetDragHandle onDismiss={dismissSelection} />
+                    <View style={styles.cardTop}>
+                      <RestaurantPhoto
+                        eager
+                        showAll
+                        place={active}
+                        recommendation={recommendations.get(active.id)}
+                        style={styles.cardImage}
+                      />
+                      <View style={styles.cardInfo}>
+                        <Text style={styles.eyebrow}>
+                          {active.category.toUpperCase()} · {active.neighborhood}
+                        </Text>
+                        <Text style={styles.placeName}>{active.name}</Text>
+                        <Text style={styles.small}>{active.note}</Text>
+                      </View>
                       <Pressable
-                        key={value}
                         accessibilityRole="button"
-                        accessibilityLabel={`Rate ${active.name} ${value} ${value === 1 ? "star" : "stars"}`}
-                        accessibilityHint="Tap the selected rating again to clear it."
-                        accessibilityState={{
-                          selected: collection.ratings[active.id] === value,
+                        accessibilityLabel="Close place details"
+                        onPress={() => setSelected(null)}
+                        style={styles.closeButton}
+                      >
+                        <Icon name="close" size={18} />
+                      </Pressable>
+                    </View>
+                    <Text style={styles.address}>{active.address}</Text>
+                    <Text style={styles.small}>
+                      {recommendationLabel(recommendations.get(active.id))} ·
+                      Sample community reviews
+                    </Text>
+                    <View style={styles.ratingRow}>
+                      <Text style={styles.small}>Your rating</Text>
+                      {[1, 2, 3, 4, 5].map((value) => (
+                        <Pressable
+                          key={value}
+                          accessibilityRole="button"
+                          accessibilityLabel={`Rate ${active.name} ${value} ${value === 1 ? "star" : "stars"}`}
+                          accessibilityHint="Tap the selected rating again to clear it."
+                          accessibilityState={{
+                            selected: collection.ratings[active.id] === value,
+                          }}
+                          onPress={() =>
+                            dispatch({
+                              type: "rate",
+                              placeId: active.id,
+                              rating:
+                                collection.ratings[active.id] === value
+                                  ? 0
+                                  : value,
+                            })
+                          }
+                          style={({ pressed }) => [
+                            styles.ratingStar,
+                            pressed && styles.pressed,
+                          ]}
+                        >
+                          <Icon
+                            name={
+                              value <= (collection.ratings[active.id] ?? 0)
+                                ? "star"
+                                : "star-outline"
+                            }
+                            color={colors.accent}
+                          />
+                        </Pressable>
+                      ))}
+                    </View>
+                    <View style={styles.cardButtons}>
+                      <Pressable
+                        accessibilityRole="button"
+                        onPress={() => {
+                          setLinkError(false);
+                          void Linking.openURL(
+                            `https://www.google.com/maps/dir/?api=1&destination=${active.coordinate[1]},${active.coordinate[0]}`,
+                          ).catch(() => setLinkError(true));
                         }}
-                        onPress={() =>
-                          dispatch({
-                            type: "rate",
-                            placeId: active.id,
-                            rating:
-                              collection.ratings[active.id] === value
-                                ? 0
-                                : value,
-                          })
-                        }
                         style={({ pressed }) => [
-                          styles.ratingStar,
+                          styles.directions,
+                          pressed && styles.pressed,
+                        ]}
+                      >
+                        <Icon
+                          name="navigate-outline"
+                          size={17}
+                          color={colors.white}
+                        />
+                        <Text style={styles.directionsText}>Get directions</Text>
+                      </Pressable>
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={
+                          saved.includes(active.id)
+                            ? "Unsave place"
+                            : "Save place"
+                        }
+                        accessibilityState={{
+                          selected: saved.includes(active.id),
+                        }}
+                        onPress={() => toggleSave(active)}
+                        style={({ pressed }) => [
+                          styles.saveButton,
                           pressed && styles.pressed,
                         ]}
                       >
                         <Icon
                           name={
-                            value <= (collection.ratings[active.id] ?? 0)
-                              ? "star"
-                              : "star-outline"
+                            saved.includes(active.id)
+                              ? "bookmark"
+                              : "bookmark-outline"
                           }
                           color={colors.accent}
                         />
                       </Pressable>
-                    ))}
-                  </View>
-                  <View style={styles.cardButtons}>
-                    <Pressable
-                      accessibilityRole="button"
-                      onPress={() => {
-                        setLinkError(false);
-                        void Linking.openURL(
-                          `https://www.google.com/maps/dir/?api=1&destination=${active.coordinate[1]},${active.coordinate[0]}`,
-                        ).catch(() => setLinkError(true));
-                      }}
-                      style={({ pressed }) => [
-                        styles.directions,
-                        pressed && styles.pressed,
-                      ]}
-                    >
-                      <Icon
-                        name="navigate-outline"
-                        size={17}
-                        color={colors.white}
-                      />
-                      <Text style={styles.directionsText}>Get directions</Text>
-                    </Pressable>
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={
-                        saved.includes(active.id)
-                          ? "Unsave place"
-                          : "Save place"
-                      }
-                      accessibilityState={{
-                        selected: saved.includes(active.id),
-                      }}
-                      onPress={() => toggleSave(active)}
-                      style={({ pressed }) => [
-                        styles.saveButton,
-                        pressed && styles.pressed,
-                      ]}
-                    >
-                      <Icon
-                        name={
-                          saved.includes(active.id)
-                            ? "bookmark"
-                            : "bookmark-outline"
-                        }
-                        color={colors.accent}
-                      />
-                    </Pressable>
-                  </View>
-                  {active.sourceUrl && (
-                    <Pressable
-                      accessibilityRole="link"
-                      accessibilityLabel={`View listing source for ${active.name}`}
-                      onPress={() => {
-                        setLinkError(false);
-                        void Linking.openURL(active.sourceUrl!).catch(() =>
-                          setLinkError(true),
-                        );
-                      }}
-                      style={({ pressed }) => [
-                        { minHeight: 44, justifyContent: "center" },
-                        pressed && styles.pressed,
-                      ]}
-                    >
-                      <Text style={styles.small}>View listing source ↗</Text>
-                    </Pressable>
-                  )}
-                  {linkError && (
-                    <Text accessibilityRole="alert" style={styles.small}>
-                      Couldn’t open this link. Please try again.
-                    </Text>
-                  )}
-                </Animated.View>
-              ) : null}
+                    </View>
+                    {active.sourceUrl && (
+                      <Pressable
+                        accessibilityRole="link"
+                        accessibilityLabel={`View listing source for ${active.name}`}
+                        onPress={() => {
+                          setLinkError(false);
+                          void Linking.openURL(active.sourceUrl!).catch(() =>
+                            setLinkError(true),
+                          );
+                        }}
+                        style={({ pressed }) => [
+                          { minHeight: 44, justifyContent: "center" },
+                          pressed && styles.pressed,
+                        ]}
+                      >
+                        <Text style={styles.small}>View listing source ↗</Text>
+                      </Pressable>
+                    )}
+                    {linkError && (
+                      <Text accessibilityRole="alert" style={styles.small}>
+                        Couldn’t open this link. Please try again.
+                      </Text>
+                    )}
+                  </Animated.View>
+                ) : null}
             </View>
           </>
         )}
@@ -1690,7 +1697,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
             },
           ]}
         >
-          <SheetDragHandle onDismiss={() => setPlusMenuOpen(false)} />
           <Pressable
             style={styles.plusMenuItem}
             accessibilityRole="button"

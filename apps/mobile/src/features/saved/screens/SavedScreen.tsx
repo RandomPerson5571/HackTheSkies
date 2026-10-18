@@ -21,8 +21,6 @@ import type {
   CollectionAction,
   RestaurantCollection,
 } from "../../restaurants/models/restaurantCollection";
-import { useQuests } from "../../quests/hooks/useQuests";
-import { questsFor } from "../../quests/models/quests";
 
 function randomPlaceId(places: Place[]) {
   return places[Math.floor(Math.random() * places.length)]?.id ?? null;
@@ -70,7 +68,6 @@ export function SavedScreen({
   onBack,
   onDiscover,
   onShowMap,
-  onOpenQuests,
 }: {
   places: Place[];
   collection: RestaurantCollection;
@@ -79,7 +76,6 @@ export function SavedScreen({
   onBack: () => void;
   onDiscover: () => void;
   onShowMap: (place: Place) => void;
-  onOpenQuests: () => void;
 }) {
   const insets = useSafeAreaInsets();
   const [query, setQuery] = useState("");
@@ -96,12 +92,6 @@ export function SavedScreen({
   useMenuSound(editing !== null);
   useMenuSound(map);
 
-  const quests = useQuests();
-  const activeQuest = quests.ready
-    ? questsFor(quests.state.selectedCuisine).find(
-        (quest) => !quests.state.completed.includes(quest.id),
-      )
-    : undefined;
   const saved = useMemo(
     () => places.filter((place) => collection.saved.includes(place.id)),
     [places, collection.saved],
@@ -185,32 +175,6 @@ export function SavedScreen({
             </Text>
           </View>
         </View>
-        {activeQuest && place.cuisine === activeQuest.cuisine && (
-          <Pressable
-            accessibilityRole="button"
-            onPress={onOpenQuests}
-            style={({ pressed }) => [
-              styles.questHint,
-              pressed && styles.pressed,
-            ]}
-          >
-            <Ionicons
-              accessible={false}
-              name="flag-outline"
-              size={16}
-              color={colors.accent}
-            />
-            <Text style={styles.actionText}>
-              Explore your {activeQuest.cuisine} quest here
-            </Text>
-            <Ionicons
-              accessible={false}
-              name="chevron-forward"
-              size={14}
-              color={colors.accent}
-            />
-          </Pressable>
-        )}
         <View style={styles.actions}>
           <Action
             label={isVisited ? "Visited" : "Want to Try"}
@@ -798,15 +762,6 @@ const styles = StyleSheet.create({
   },
   placeName: { color: colors.ink, fontSize: 16, fontWeight: "700" },
   photoCaption: { color: colors.muted, fontSize: 10 },
-  questHint: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    minHeight: 44,
-    padding: 10,
-    backgroundColor: colors.tint,
-    borderRadius: 12,
-  },
   organizer: {
     gap: 10,
     borderTopWidth: 1,

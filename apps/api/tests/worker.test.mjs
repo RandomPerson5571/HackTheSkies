@@ -10,7 +10,6 @@ const paths = [
   "food-scan",
   "menu-scan",
   "food-recommendations",
-  "quest-personalization",
 ];
 test("Worker serves every migrated API with preflight, method checks and recoverable missing-key responses", async () => {
   for (const path of paths) {

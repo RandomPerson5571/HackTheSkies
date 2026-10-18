@@ -42,7 +42,7 @@ export function useGamification() {
   const persist = useCallback((next: GamificationState) => {
     const previous = stateRef.current;
     if (next.level > previous.level) {
-      void playFeedback("levelup");
+      void playFeedback("bell");
     } else if (next.badges.some((badge) => !previous.badges.includes(badge))) {
       void playFeedback("badge");
     }

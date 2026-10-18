@@ -223,7 +223,6 @@ export function QuestsScreen({
   const [generating, setGenerating] = useState(false);
   const [aiError, setAiError] = useState("");
   const [showPersonal, setShowPersonal] = useState(false);
-  useMenuSound(selected !== null);
   useMenuSound(bonusId !== null);
   useMenuSound(showPersonal);
 
@@ -947,7 +946,8 @@ export function QuestsScreen({
                           ? "Start a new adventure"
                           : "Join this adventure"
                       }
-                      onPress={() =>
+                      onPress={() => {
+                        void playFeedback("interfaceClick");
                         update((previous) => ({
                           ...previous,
                           bonus: {
@@ -958,8 +958,8 @@ export function QuestsScreen({
                               claimed: false,
                             },
                           },
-                        }))
-                      }
+                        }));
+                      }}
                     />
                   </>
                 ) : run.claimed ? (
@@ -1009,7 +1009,7 @@ export function QuestsScreen({
                         title={`Claim ${bonus.points} XP`}
                         onPress={() => {
                           update((previous) => claimBonus(previous, bonus.id));
-                          void playFeedback("chest");
+                          void playFeedback("bell");
                         }}
                       />
                     ) : (

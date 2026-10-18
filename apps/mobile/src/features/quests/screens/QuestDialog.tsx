@@ -96,11 +96,7 @@ export function QuestDialog({
     return () => animation.stop();
   }, [stage, reduced, scale]);
   function finish() {
-    void playFeedback(
-      isBoss ? "levelup"
-        : quest.type === "bonus" || quest.type === "mystery" ? "chest"
-        : "reward",
-    );
+    void playFeedback("bell");
     onComplete();
     setStage("reward");
   }
@@ -237,7 +233,7 @@ export function QuestDialog({
                           if (answer === option.id) return;
                           setAnswer(option.id);
                           if (option.id === quizDish.id) {
-                            void playFeedback("success");
+                            void playFeedback("bell");
                           } else {
                             void playFeedback("error");
                           }

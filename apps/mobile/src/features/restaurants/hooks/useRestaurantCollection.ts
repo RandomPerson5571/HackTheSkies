@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useGuestDocument } from "../../../hooks/useGuestDocument";
 import { File, Paths } from "expo-file-system";
 import { Platform } from "react-native";
+import { playFeedback } from "../../../lib/sensory";
 import { places } from "../data/places";
 import {
   emptyCollection,
@@ -59,9 +60,15 @@ export function useRestaurantCollection() {
   );
   const dispatch = useCallback(
     (action: CollectionAction) => {
+      if (
+        action.type === "save" &&
+        !collection.saved.includes(action.placeId)
+      ) {
+        void playFeedback("openBook");
+      }
       update((previous) => updateCollection(previous, action));
     },
-    [update],
+    [collection.saved, update],
   );
   return { collection, dispatch, storageError: error };
 }

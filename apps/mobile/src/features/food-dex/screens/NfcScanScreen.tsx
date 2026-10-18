@@ -51,7 +51,7 @@ export function NfcScanScreen({
     const controller = new AbortController();
     activeScan.current = controller;
     setScanning(true);
-    void playFeedback("scan");
+    void playFeedback("alert");
     setError("");
     try {
       const food = await readFoodTag(controller.signal);

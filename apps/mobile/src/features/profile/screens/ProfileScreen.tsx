@@ -177,7 +177,7 @@ export function ProfileScreen({
       ...profile,
       customization: { ...appearance.selected, ...change },
     });
-    void playFeedback("tap");
+    void playFeedback("click");
   };
 
   const featuredBadges = [
@@ -243,15 +243,15 @@ export function ProfileScreen({
   const recent = entries.slice(0, 8);
 
   const handleOpenQuests = () => {
-    void playFeedback("tap");
+    void playFeedback("click");
     onOpenQuests?.();
   };
   const handleOpenSettings = () => {
-    void playFeedback("tap");
+    void playFeedback("click");
     onOpenSettings?.();
   };
   const handleOpenDex = () => {
-    void playFeedback("tap");
+    void playFeedback("click");
     onOpenDex?.();
   };
 

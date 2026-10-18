@@ -246,10 +246,10 @@ export default memo(function MapView({ ref, ...props }: MapProps) {
       styleURL={
         process.env.EXPO_PUBLIC_MAPBOX_STYLE_URL || Mapbox.StyleURL.Light
       }
+      attributionEnabled={false}
+      logoEnabled={false}
       scaleBarEnabled={false}
       compassEnabled={false}
-      logoPosition={{ top: props.topInset + 205, left: 12 }}
-      attributionPosition={{ top: props.topInset + 205, right: 12 }}
       onDidFinishLoadingMap={props.onReady}
       onMapLoadingError={props.onError}
     >

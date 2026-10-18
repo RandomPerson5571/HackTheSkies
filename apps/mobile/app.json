@@ -50,7 +50,9 @@
           "recordAudioAndroid": false,
           "barcodeScannerEnabled": false
         }
-      ]
+      ],
+      "expo-audio",
+      "expo-video"
     ]
   }
 }

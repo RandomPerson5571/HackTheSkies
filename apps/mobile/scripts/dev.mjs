@@ -13,7 +13,7 @@ function stop(code = 0) {
   process.exitCode = code;
 }
 const commands = [
-  ["--watch", "--env-file-if-exists=.env.server.local", "server/index.ts"],
+  ["--filter", "@cibo/api", "dev"],
   [
     require.resolve("expo/bin/cli"),
     "start",
@@ -22,7 +22,8 @@ const commands = [
   ],
 ];
 for (const [index, args] of commands.entries()) {
-  const child = spawn(process.execPath, args, {
+  if (index === 0 && process.env.CIBO_REMOTE_API === "1") continue;
+  const child = spawn(index === 0 ? "pnpm" : process.execPath, args, {
     cwd: root,
     stdio: index === 0 ? ["ignore", "inherit", "inherit"] : "inherit",
   });

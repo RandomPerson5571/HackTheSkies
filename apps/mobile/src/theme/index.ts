@@ -7,7 +7,7 @@ export const colors = {
   paper: "#FFFDF5",
   white: "#FFFDF5",
   accent: "#3D568F",
-  border: "#D5DDB1",
+  border: "#E6E9D2",
   tint: "#EAF3B2",
   blue: "#3D568F",
   scrim: "#3D568F40",
@@ -46,4 +46,29 @@ export const cameraColors = {
   foreground: "#FFFFFF",
   muted: "#D5DCE8",
   border: "#FFFFFF66",
+};
+
+// Collectible cards and the atlas share a night-sky surface and warm highlights.
+export const discoveryColors = {
+  night: "#172642",
+  surface: "#213554",
+  line: "#3D526F",
+  muted: "#B8C7DC",
+  light: "#FFFDF5",
+  glow: "#EAF3B2",
+  land: "#72929D",
+  ocean: "#192E49",
+  gold: "#F4DB91",
+};
+
+export const questColors = {
+  ...colors,
+  navy: "#253D6A",
+  lime: "#EAF3B2",
+  limeDark: "#657A21",
+  lavender: "#EEEAF8",
+  peach: "#FAE9D7",
+  locked: "#ECEDE7",
+  success: "#2F714C",
+  danger: "#9F3E3E",
 };

@@ -1,9 +1,10 @@
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { playFeedback } from "../../../lib/sensory";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -53,12 +54,14 @@ export function NfcScanScreen({
     const controller = new AbortController();
     activeScan.current = controller;
     setScanning(true);
+    void playFeedback("scan");
     setError("");
     try {
       const food = await readFoodTag(controller.signal);
       if (!controller.signal.aborted) onRead(food);
     } catch (reason: unknown) {
       if (!controller.signal.aborted) {
+        void playFeedback("error");
         setError(
           reason instanceof Error
             ? reason.message
@@ -77,6 +80,7 @@ export function NfcScanScreen({
       return;
     }
     if (Platform.OS === "web") return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void startScan();
     return () => activeScan.current?.abort();
   }, [attempt, startScan, visible]);
@@ -84,6 +88,7 @@ export function NfcScanScreen({
   function recordByNumber() {
     const food = parseNfcFoodPayload(foodNumber);
     if (!food) {
+      void playFeedback("error");
       setError("Enter a valid food number from the Food Dex.");
       return;
     }

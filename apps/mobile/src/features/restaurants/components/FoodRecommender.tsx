@@ -1,10 +1,11 @@
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
 import { useEffect, useRef, useState } from "react";
+import { apiEndpoint } from "../../../lib/api";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -56,10 +57,13 @@ export function FoodRecommender({
 
   async function recommend() {
     if (!prompt.trim() || loading) return;
-    const endpoint = process.env.EXPO_PUBLIC_FOOD_RECOMMENDATIONS_URL;
+    const endpoint = apiEndpoint(
+      "/api/food-recommendations",
+      process.env.EXPO_PUBLIC_FOOD_RECOMMENDATIONS_URL,
+    );
     if (!endpoint) {
       setError(
-        "The food recommender isn’t connected yet. Set EXPO_PUBLIC_FOOD_RECOMMENDATIONS_URL to your server’s /api/food-recommendations endpoint.",
+        "The food recommender isn’t connected yet. Please try again later.",
       );
       return;
     }

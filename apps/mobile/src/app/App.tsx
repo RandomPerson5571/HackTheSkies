@@ -1,3 +1,6 @@
+import { useMenuSound } from "../hooks/useMenuSound";
+import { FeedbackPressable as Pressable } from "../components/FeedbackPressable";
+import { playFeedback, prepareFeedback } from "../lib/sensory";
 import {
   useCallback,
   useDeferredValue,
@@ -8,16 +11,16 @@ import {
   useState,
 } from "react";
 import {
-  Animated,
   ActivityIndicator,
+  AccessibilityInfo,
+  Alert,
+  Animated,
   Easing,
   FlatList,
   Keyboard,
   Linking,
-  Image,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -29,15 +32,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { migrateWebBookmarks } from "../lib/migrateWebBookmarks";
 import { places as bundledPlaces } from "../features/restaurants/data/places";
 import { StatusBar } from "expo-status-bar";
-import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MenuLensScreen } from "../features/menu-lens/screens/MenuLensScreen";
 import { FoodCameraScreen } from "../features/food-dex/screens/FoodCameraScreen";
+import { CiboLogo } from "../components/CiboLogo";
 import MapView, { type MapCamera } from "../components/maps";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import {
-  categories,
   cuisines,
   foodSpecialties,
   restaurantTypes,
@@ -50,6 +55,7 @@ import {
   ProfileScreen,
   type Profile,
 } from "../features/profile/screens/ProfileScreen";
+import { SettingsScreen } from "../features/profile/screens/SettingsScreen";
 
 const token = process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN;
 import {
@@ -65,7 +71,6 @@ import {
   recommendationLabel,
 } from "../features/restaurants/models/recommendations";
 import { FoodRecommender } from "../features/restaurants/components/FoodRecommender";
-import { RestaurantPhotoCredit } from "../features/restaurants/components/RestaurantPhotoCredit";
 import { RestaurantPhoto } from "../features/restaurants/components/RestaurantPhoto";
 import { CommunityScreen } from "../features/community/screens/CommunityScreens";
 import {
@@ -76,9 +81,26 @@ import { NfcScanScreen } from "../features/food-dex/screens/NfcScanScreen";
 import type { NfcFoodItem } from "../features/food-dex/services/nfcFood";
 import { BackendProvider, useBackend } from "../lib/BackendProvider";
 import { useGuestDocument } from "../hooks/useGuestDocument";
+import { QuestsScreen } from "../features/quests/screens/QuestsScreen";
+import { useFoodDex } from "../features/food-dex/hooks/useFoodDex";
+import { useGamification } from "../features/gamification/hooks/useGamification";
 import { parseProfile } from "../features/profile/models/profile";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
+
+const navigationItems = [
+  { id: "explore", label: "Explore", icon: "compass-outline" },
+  { id: "restaurants", label: "Restaurants", icon: "restaurant-outline" },
+  { id: "challenges", label: "Quests", icon: "flag-outline" },
+  { id: "favorites", label: "Favourites", icon: "heart-outline" },
+  { id: "journal", label: "Journal", icon: "book-outline" },
+  { id: "profile", label: "Profile", icon: "person-outline" },
+] as const satisfies ReadonlyArray<{
+  id: string;
+  label: string;
+  icon: IconName;
+}>;
+
 type FilterDimension =
   "rating" | "restaurantType" | "foodType" | "rarity" | "price" | "cuisine";
 const specialtyMatchers: Record<(typeof foodSpecialties)[number], RegExp> = {
@@ -122,16 +144,6 @@ function Icon({
 
 function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const { places, error: backendError } = useBackend();
-  const cuisineCategories = [
-    "All",
-    ...Array.from(
-      new Set(
-        places
-          .map((place) => place.cuisine)
-          .filter((cuisine): cuisine is string => Boolean(cuisine)),
-      ),
-    ).sort(),
-  ];
   const insets = useSafeAreaInsets();
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const camera = useRef<MapCamera>(null);
@@ -148,10 +160,48 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const [foodTypeFilter, setFoodTypeFilter] = useState<string | null>(null);
   const [cuisineFilter, setCuisineFilter] = useState<string | null>(null);
   const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [filtersProgress] = useState(() => new Animated.Value(0));
+  const [reduceMotion, setReduceMotion] = useState(true);
+  const [cardScale] = useState(() => new Animated.Value(1));
+  const [cardOpacity] = useState(() => new Animated.Value(1));
+  const [cardTranslateY] = useState(() => new Animated.Value(0));
+  useEffect(() => {
+    let active = true;
+    void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
+      if (active) setReduceMotion(enabled);
+    });
+    const subscription = AccessibilityInfo.addEventListener(
+      "reduceMotionChanged",
+      setReduceMotion,
+    );
+    return () => {
+      active = false;
+      subscription.remove();
+    };
+  }, []);
+  useEffect(() => {
+    const animation = Animated.timing(filtersProgress, {
+      toValue: filtersExpanded ? 1 : 0,
+      duration: reduceMotion ? 0 : filtersExpanded ? 220 : 320,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    });
+    animation.start(({ finished }) => {
+      if (finished && !filtersExpanded) {
+        setFiltersVisible(false);
+        setOpenFilter(null);
+      }
+    });
+    return () => animation.stop();
+  }, [filtersExpanded, filtersProgress, reduceMotion]);
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
   const [query, setQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const [selected, setSelected] = useState<Place | null>(null);
   const { collection, dispatch, storageError } = useRestaurantCollection();
+  const foodDex = useFoodDex();
+  const gamification = useGamification();
   const saved = collection.saved;
   const recommendations = useMemo(
     () => buildRecommendations(places, collection.ratings),
@@ -161,12 +211,24 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     | "explore"
     | "saved"
     | "restaurants"
+    | "journal"
     | "profile"
+    | "settings"
     | "favorites"
     | "dex"
     | "camera"
-  >("explore");
-  const cameraReturnTab = useRef<Exclude<typeof tab, "camera">>("explore");
+    | "lens"
+    | "challenges"
+  >("restaurants");
+  const [savedReturnTab, setSavedReturnTab] = useState<
+    "explore" | "restaurants" | "journal" | "profile"
+  >("profile");
+  const [cameraMode, setCameraMode] = useState<"food" | "menu">("food");
+  const [menuPhoto, setMenuPhoto] = useState<
+    import("expo-camera").CameraCapturedPicture | null
+  >(null);
+  const cameraReturnTab =
+    useRef<Exclude<typeof tab, "camera" | "lens">>("explore");
   const {
     value: profile,
     update: setProfile,
@@ -187,9 +249,20 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   const tabTransitionProgress = useRef(new Animated.Value(1)).current;
   const [foodCapture, setFoodCapture] = useState<FoodCapture | null>(null);
   const [listVisible, setListVisible] = useState(false);
+  const [plusMenuOpen, setPlusMenuOpen] = useState(false);
+  const [plusMenuVisible, setPlusMenuVisible] = useState(false);
+  const [plusMenuProgress] = useState(() => new Animated.Value(0));
   const [mapReady, setMapReady] = useState(false);
   const [mapError, setMapError] = useState(false);
   const [linkError, setLinkError] = useState(false);
+  useMenuSound(cameraMenuOpen);
+  useMenuSound(plusMenuOpen);
+  useMenuSound(listVisible);
+  useMenuSound(nfcScanOpen);
+  useMenuSound(recommenderVisible);
+  useMenuSound(filtersExpanded);
+  useMenuSound(openFilter !== null);
+
   useEffect(() => {
     const animation = Animated.timing(cameraMenuProgress, {
       toValue: cameraMenuOpen ? 1 : 0,
@@ -231,6 +304,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           .includes(normalizedQuery),
     );
   }, [
+    places,
     category,
     deferredQuery,
     savedFilter,
@@ -253,7 +327,37 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     selected && visible.some((place) => place.id === selected.id)
       ? selected
       : null;
-
+  useEffect(() => {
+    if (!active) return;
+    if (reduceMotion) {
+      cardScale.setValue(1);
+      cardOpacity.setValue(1);
+      cardTranslateY.setValue(0);
+      return;
+    }
+    cardScale.setValue(0.9);
+    cardOpacity.setValue(0);
+    cardTranslateY.setValue(28);
+    Animated.parallel([
+      Animated.spring(cardScale, {
+        toValue: 1,
+        friction: 7,
+        tension: 140,
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.spring(cardTranslateY, {
+        toValue: 0,
+        friction: 8,
+        tension: 140,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [active, reduceMotion, cardScale, cardOpacity, cardTranslateY]);
   const acceptNfcFood = useCallback((food: NfcFoodItem) => {
     setNfcScanOpen(false);
     setFoodCapture({
@@ -266,6 +370,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
   }, []);
 
   const choose = useCallback((place: Place) => {
+    void playFeedback("select");
     Keyboard.dismiss();
     setSelected(place);
     setLinkError(false);
@@ -285,12 +390,15 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     setMapReady(false);
   }, []);
   function toggleSave(place: Place) {
+    void playFeedback(saved.includes(place.id) ? "remove" : "save");
     dispatch({ type: "save", placeId: place.id });
   }
-  function openFoodCamera() {
+  function openFoodCamera(mode: "food" | "menu" = "food") {
+    setCameraMode(mode);
+    setMenuPhoto(null);
     Keyboard.dismiss();
     setCameraMenuOpen(false);
-    if (tab !== "camera") cameraReturnTab.current = tab;
+    if (tab !== "camera" && tab !== "lens") cameraReturnTab.current = tab;
     setTab("camera");
     setFoodCapture(null);
     setSelected(null);
@@ -350,6 +458,17 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
     ),
     [choose, recommendations],
   );
+
+  function navigationSelected(id: string) {
+    if (tab === "saved") {
+      return id === savedReturnTab;
+    }
+    return (
+      tab === id ||
+      (id === "journal" && tab === "dex") ||
+      (id === "profile" && tab === "settings")
+    );
+  }
 
   return (
     <View style={styles.screen}>
@@ -978,7 +1097,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           style={styles.cameraMenuScrim}
         />
       )}
-      {tab !== "camera" && (
+      {tab !== "camera" && tab !== "lens" && (
         <View
           style={[
             styles.nav,
@@ -987,25 +1106,28 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
         >
           {(
             [
-              ["explore", "restaurants", "dex"],
+              navigationItems.slice(0, 3),
               "camera",
-              ["favorites", "saved", "profile"],
+              navigationItems.slice(3),
             ] as const
           ).map((group, index) =>
             group === "camera" ? (
               <View key="camera" style={styles.cameraSlot}>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel="Open camera and NFC options"
+                  accessibilityLabel="Open capture options"
                   accessibilityHint="Shows food capture options"
-                  accessibilityState={{ expanded: cameraMenuOpen }}
-                  onPress={() => setCameraMenuOpen((open) => !open)}
+                  accessibilityState={{ expanded: plusMenuOpen }}
+                  onPress={() => {
+                    setPlusMenuVisible(true);
+                    setPlusMenuOpen(true);
+                  }}
                   style={({ pressed }) => [
                     styles.cameraButton,
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Icon name="camera" size={28} color={colors.white} />
+                  <Icon name="add" size={34} color={colors.white} />
                 </Pressable>
                 <Animated.View
                   pointerEvents={cameraMenuOpen ? "auto" : "none"}
@@ -1031,7 +1153,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel="Take a food photo with the camera"
-                    onPress={openFoodCamera}
+                    onPress={() => openFoodCamera()}
                     style={({ pressed }) => [
                       styles.cameraMenuItem,
                       pressed && styles.pressed,
@@ -1061,54 +1183,42 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
               </View>
             ) : (
               <View key={index} style={styles.navGroup}>
-                {group.map((item) => (
-                  <Pressable
-                    key={item}
-                    accessibilityRole="tab"
-                    accessibilityLabel={
-                      item === "explore"
-                        ? "Explore"
-                        : item === "dex"
-                          ? "Food Dex"
-                          : item === "restaurants"
-                            ? "Restaurants"
-                            : item === "saved"
-                              ? `Saved${saved.length ? ` · ${saved.length}` : ""}`
-                              : item === "favorites"
-                                ? "Favorites"
-                                : "Profile"
-                    }
-                    accessibilityState={{ selected: tab === item }}
-                    onPress={() => {
-                      setCameraMenuOpen(false);
-                      setTab(item);
-                      setFoodCapture(null);
-                      setSelected(null);
-                    }}
-                    style={({ pressed }) => [
-                      styles.navItem,
-                      tab === item && styles.navActive,
-                      pressed && styles.pressed,
-                    ]}
-                  >
-                    <Icon
-                      name={
-                        item === "explore"
-                          ? "compass-outline"
-                          : item === "dex"
-                            ? "book-outline"
-                            : item === "restaurants"
-                              ? "restaurant-outline"
-                              : item === "saved"
-                                ? "bookmark-outline"
-                                : item === "favorites"
-                                  ? "heart-outline"
-                                  : "person-outline"
-                      }
-                      color={tab === item ? colors.accent : colors.muted}
-                    />
-                  </Pressable>
-                ))}
+                <View style={styles.navItems}>
+                  {group.map((item) => (
+                    <Pressable
+                      key={item.id}
+                      accessibilityRole="tab"
+                      accessibilityLabel={item.label}
+                      accessibilityState={{
+                        selected: navigationSelected(item.id),
+                      }}
+                      onPress={() => {
+                        setCameraMenuOpen(false);
+                        if (!navigationSelected(item.id)) {
+                          void playFeedback("select");
+                        }
+                        setTab(item.id);
+                        setFoodCapture(null);
+                        setSelected(null);
+                        setListVisible(false);
+                      }}
+                      style={({ pressed }) => [
+                        styles.navItem,
+                        navigationSelected(item.id) && styles.navActive,
+                        pressed && styles.pressed,
+                      ]}
+                    >
+                      <Icon
+                        name={item.icon}
+                        color={
+                          navigationSelected(item.id)
+                            ? colors.accent
+                            : colors.muted
+                        }
+                      />
+                    </Pressable>
+                  ))}
+                </View>
               </View>
             ),
           )}
@@ -1137,7 +1247,7 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
       )}
       <Modal
         visible={listVisible}
-        animationType="none"
+        animationType="slide"
         transparent
         onRequestClose={() => setListVisible(false)}
       >
@@ -1208,7 +1318,6 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
                     />
                     <View style={styles.flex}>
                       <Text style={styles.browseTitle}>{item.name}</Text>
-                      <RestaurantPhotoCredit place={item} />
                       <Text style={styles.small}>
                         {item.category} · {item.neighborhood}
                       </Text>
@@ -1224,11 +1333,77 @@ function FoodMap({ migrationError = "" }: { migrationError?: string }) {
           </View>
         </View>
       </Modal>
+      <Modal
+        visible={plusMenuVisible}
+        transparent
+        animationType="none"
+        onRequestClose={() => setPlusMenuOpen(false)}
+      >
+        <Animated.View
+          style={[styles.plusMenuScrim, { opacity: plusMenuProgress }]}
+          pointerEvents={plusMenuOpen ? "auto" : "none"}
+        >
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setPlusMenuOpen(false)}
+          />
+        </Animated.View>
+        <Animated.View
+          style={[
+            styles.plusMenu,
+            {
+              opacity: plusMenuProgress,
+              transform: [
+                {
+                  translateY: plusMenuProgress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [16, 0],
+                  }),
+                },
+                {
+                  scale: plusMenuProgress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0.96, 1],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          <Pressable
+            style={styles.plusMenuItem}
+            accessibilityRole="button"
+            accessibilityLabel="Take photo"
+            onPress={() => {
+              setPlusMenuOpen(false);
+              openFoodCamera();
+            }}
+          >
+            <Icon name="camera-outline" size={20} color={colors.ink} />
+          </Pressable>
+          <Pressable
+            style={styles.plusMenuItem}
+            accessibilityRole="button"
+            accessibilityLabel="Upload photo"
+            onPress={() => void uploadPhoto()}
+          >
+            <Icon name="image-outline" size={20} color={colors.ink} />
+          </Pressable>
+          <Pressable
+            style={styles.plusMenuItem}
+            accessibilityRole="button"
+            accessibilityLabel="Write a blog"
+            onPress={writeBlog}
+          >
+            <Icon name="create-outline" size={20} color={colors.ink} />
+          </Pressable>
+        </Animated.View>
+      </Modal>
     </View>
   );
 }
-
 export default function App() {
+  useEffect(() => { prepareFeedback(); }, []);
   const [ready, setReady] = useState(Platform.OS !== "web");
   const [migrationError, setMigrationError] = useState("");
   useEffect(() => {
@@ -1287,20 +1462,26 @@ const styles = StyleSheet.create({
     zIndex: 30,
     elevation: 30,
   },
+  topBlur: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    backgroundColor: `${colors.paper}99`,
+  },
   headingRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
+
+  brandLockup: { gap: 10 },
   eyebrow: {
     fontSize: 10,
     fontWeight: "700",
     letterSpacing: 1.2,
     color: colors.muted,
-  },
-  wordmark: {
-    width: 132,
-    height: 62,
   },
   brand: {
     ...frostedGlassTint,
@@ -1326,6 +1507,11 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.26)",
     boxShadow: "0 8px 26px #3D568F20",
     gap: 10,
+  },
+  searchActive: {
+    borderColor: colors.accent,
+    boxShadow: "0 10px 30px #3D568F35",
+    backgroundColor: "rgba(255,253,245,0.72)",
   },
   input: { flex: 1, color: colors.ink, fontSize: 14, paddingVertical: 15 },
   clear: {
@@ -1360,8 +1546,6 @@ const styles = StyleSheet.create({
   filterDropdownOption: {
     minHeight: 38,
     justifyContent: "center",
-    borderTopWidth: 1,
-    borderColor: colors.border,
   },
   filterDropdownOptionText: {
     fontSize: 14,
@@ -1518,7 +1702,7 @@ const styles = StyleSheet.create({
   },
   cameraSlot: {
     position: "relative",
-    width: 64,
+    width: 76,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -1554,9 +1738,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cameraButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     marginTop: -16,
     backgroundColor: colors.accent,
     borderWidth: 4,
@@ -1717,5 +1901,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     paddingVertical: 36,
     textAlign: "center",
+  },
+  plusMenuScrim: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  plusMenu: {
+    position: "absolute",
+    bottom: 110,
+    alignSelf: "center",
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    paddingVertical: 6,
+    minWidth: 56,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  plusMenuItem: {
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 48,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
 });

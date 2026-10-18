@@ -1,3 +1,6 @@
+import { useMenuSound } from "../../../hooks/useMenuSound";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { CiboLogo } from "../../../components/CiboLogo";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -6,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -29,7 +31,15 @@ import {
   type FoodEntry,
 } from "../models/foodDex";
 import { CatalogPhoto } from "../components/CatalogPhoto";
-import { PhotoCredit } from "../components/PhotoCredit";
+import { DiscoveryCard } from "../components/DiscoveryCard";
+import {
+  DiscoveryReveal,
+  type DiscoveryMoment,
+} from "../components/DiscoveryReveal";
+import { CulinaryAtlas } from "../components/CulinaryAtlas";
+import { CollectionProgress } from "../components/CollectionProgress";
+import { collectionProgress, cardTier, nextDiscoveryMilestone, cuisineMastery, cuisineMasteryTarget } from "../models/discovery";
+import { playFeedback } from "../../../lib/sensory";
 import { catalogPhoto } from "../services/catalogPhotos";
 import { recognizeFood, type FoodRecognition } from "../services/foodScanner";
 import { useFoodDex } from "../hooks/useFoodDex";
@@ -99,17 +109,23 @@ export type FoodCapture = {
 export function FoodDexScreen({
   capture = null,
   onOpenCamera,
+  dex,
+  onOpenQuests,
+  onDiscover,
 }: {
+  dex: ReturnType<typeof useFoodDex>;
   capture?: FoodCapture | null;
   onOpenCamera?: () => void;
+  onOpenQuests?: () => void;
+  onDiscover?: (cuisine: Cuisine) => void;
 }) {
   const insets = useSafeAreaInsets();
-  const { entries, error: storageError, discover, remove } = useFoodDex();
+  const { entries, error: storageError, discover, remove } = dex;
   const [cuisine, setCuisine] = useState<Cuisine | null>(null);
-  const [filter, setFilter] = useState<"all" | "collected">("all");
+  const [filter, setFilter] = useState<"all" | "collected" | "untried">("all");
   const [query, setQuery] = useState("");
-  const [scanOpen, setScanOpen] = useState(Boolean(capture));
-  const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset | null>(
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [scanOpen, setScanOpen] = useState(Boolean(capture));  const [photo, setPhoto] = useState<ImagePicker.ImagePickerAsset | null>(
     capture?.photo ?? null,
   );
   const [name, setName] = useState(capture?.recognition?.name ?? "");
@@ -121,6 +137,14 @@ export function FoodDexScreen({
   const [scanError, setScanError] = useState(capture?.error ?? "");
   const [notice, setNotice] = useState("");
   const [detail, setDetail] = useState<FoodEntry | null>(null);
+  const [moment, setMoment] = useState<DiscoveryMoment | null>(null);
+  const [view, setView] = useState<"collection" | "atlas">("collection");
+  const [detailView, setDetailView] = useState<"grid" | "list">("grid");
+  const [atlasFocus, setAtlasFocus] = useState<Cuisine | null>(null);
+  useMenuSound(scanOpen);
+  useMenuSound(detail !== null);
+  useMenuSound(cuisine !== null);
+
   const request = useRef<AbortController | null>(null);
   const pickerActive = useRef(false);
   const session = useRef(0);
@@ -231,11 +255,25 @@ export function FoodDexScreen({
       );
       return;
     }
-    setNotice(`${name.trim()} discovered! Your collection just got tastier.`);
+    onDiscover?.(scanCuisine);
+    setMoment({
+      entry: {
+        id: `reveal-${Date.now()}`,
+        name: name.trim(),
+        cuisine: scanCuisine,
+        photo: photoUri,
+        discoveredAt: new Date().toISOString(),
+      },
+      before: entries,
+    });
+    const newCuisine = !entries.some((entry) => entry.cuisine === scanCuisine);
+    void playFeedback(newCuisine ? "sparkle" : "discover");
+    setNotice("");
     closeScan();
   }
 
   const cuisinesExplored = new Set(entries.map((entry) => entry.cuisine)).size;
+  const progress = collectionProgress(entries);
   const collectionForCuisine = entries.filter(
     (entry) => entry.cuisine === cuisine,
   );
@@ -265,7 +303,9 @@ export function FoodDexScreen({
       })),
   ].filter(
     (dish) =>
-      (filter === "all" || dish.entry) &&
+      (filter === "all" ||
+      (filter === "collected" && !!dish.entry) ||
+      (filter === "untried" && !dish.entry)) &&
       dish.name.toLowerCase().includes(query.trim().toLowerCase()),
   );
 
@@ -278,190 +318,281 @@ export function FoodDexScreen({
         ]}
         keyboardShouldPersistTaps="handled"
       >
+        <View style={s.brandHeader}>
+          <CiboLogo />
+          <View style={s.brand}>
+            <Icon name="book-outline" size={26} />
+          </View>
+        </View>
         <View style={s.heading}>
           <View style={s.flex}>
             <Text style={s.eyebrow}>ONE BITE AT A TIME</Text>
             <Text style={s.title}>Your Food Dex.</Text>
             <Text style={s.copy}>A little curiosity. A world of flavor.</Text>
           </View>
-          <View style={s.brand}>
-            <Icon name="book-outline" size={26} />
-          </View>
         </View>
-        <View style={s.hero}>
-          <View style={s.row}>
-            <View style={s.flex}>
-              <Text style={s.heroEyebrow}>YOUR TASTE ADVENTURE</Text>
-              <Text style={s.heroTitle}>
-                {entries.length === 0
-                  ? "Every bite is a first."
-                  : `${entries.length} delicious discoveries.`}
+        {onOpenQuests && (
+          <Button title="Continue my cuisine quests" icon="flag-outline" onPress={onOpenQuests} secondary />
+        )}
+        <View style={s.viewTabs}>
+          {(["collection", "atlas"] as const).map((item) => (
+            <Pressable
+              key={item}
+              accessibilityRole="tab"
+              accessibilityState={{ selected: view === item }}
+              onPress={() => setView(item)}
+              style={({ pressed }) => [
+                s.viewTab,
+                view === item && s.viewTabActive,
+                pressed && s.dim,
+              ]}
+            >
+              <Icon
+                name={
+                  item === "collection" ? "albums-outline" : "earth-outline"
+                }
+                color={view === item ? colors.white : colors.ink}
+                size={18}
+              />
+              <Text style={[s.viewTabText, view === item && s.white]}>
+                {item === "collection" ? "Collection" : "Culinary atlas"}
               </Text>
-            </View>
-            <Icon name="sparkles-outline" color={colors.white} size={30} />
-          </View>
-          <Text style={s.heroCopy}>
-            {entries.length === 0
-              ? "Scan something delicious to start your collection."
-              : `${cuisinesExplored} ${cuisinesExplored === 1 ? "cuisine" : "cuisines"} explored. What will you try next?`}
-          </Text>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => openScan()}
-            style={({ pressed }) => [s.heroButton, pressed && s.dim]}
-          >
-            <Icon name="scan-outline" />
-            <Text style={s.heroButtonText}>Scan a new bite</Text>
-            <Icon name="arrow-forward" size={18} />
-          </Pressable>
+            </Pressable>
+          ))}
         </View>
-        {notice ? (
-          <View accessibilityLiveRegion="polite" style={s.notice}>
-            <Icon name="checkmark-circle-outline" />
-            <Text style={[s.copy, s.flex]}>{notice}</Text>
-          </View>
-        ) : null}
         {storageError ? (
           <Text accessibilityRole="alert" style={s.error}>
             {storageError}
           </Text>
         ) : null}
-        <View style={s.row}>
-          <Text style={s.sectionTitle}>Explore by cuisine</Text>
-          <Text style={s.meta}>{cuisinesExplored} explored</Text>
-        </View>
-        <Text style={s.copy}>
-          {dishes.length} dishes across {cuisines.length} cuisine collections.
-          Find your next favorite.
-        </Text>
-        <View style={s.grid}>
-          {cuisines.map((item) => {
-            const catalog = dishes.filter((dish) => dish.cuisine === item);
-            const collected = entries.filter((entry) => entry.cuisine === item);
-            const unlocked = catalog.filter((dish) =>
-              collected.some(
-                (entry) =>
-                  foodKey(entry.name, item) === foodKey(dish.name, item),
-              ),
-            ).length;
-            return (
-              <View key={item} style={s.cuisineCard}>
+        {view === "atlas" ? (
+          <CulinaryAtlas
+            key={atlasFocus ?? "atlas"}
+            entries={entries}
+            focusCuisine={atlasFocus}
+            onExplore={(item) => {
+              setCuisine(item);
+              setFilter("all");
+              setQuery("");
+            }}
+          />
+        ) : (
+          <>
+            <View style={s.collectionCard}>
+              <View style={s.row}>
+                <View style={s.flex}>
+                  <Text style={s.heroEyebrow}>YOUR COLLECTION</Text>
+                  <Text style={s.heroTitle}>
+                    {entries.length === 0
+                      ? "Every bite is a first."
+                      : `${entries.length} ${entries.length === 1 ? "discovery" : "discoveries"}`}
+                  </Text>
+                </View>
+                <View style={s.brand}>
+                  <Icon name="sparkles-outline" color={colors.white} size={22} />
+                </View>
+              </View>
+              <Text style={s.heroCopy}>
+                {entries.length === 0
+                  ? "Scan something delicious to start your collection."
+                  : `${cuisinesExplored} ${cuisinesExplored === 1 ? "cuisine" : "cuisines"} explored. What will you try next?`}
+              </Text>
+              <View style={s.milestoneRow}>
+                <View style={s.flex}>
+                  <Text style={s.milestoneLabel}>
+                    Next reward: {nextDiscoveryMilestone(entries.length).label}
+                  </Text>
+                  <Text style={s.milestoneCount}>
+                    {nextDiscoveryMilestone(entries.length).current} /{" "}
+                    {nextDiscoveryMilestone(entries.length).target}
+                  </Text>
+                </View>
+              </View>
+              <CollectionProgress
+                value={nextDiscoveryMilestone(entries.length).fraction}
+                color={colors.tint}
+                trackColor={colors.border}
+              />
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => openScan()}
+                style={({ pressed }) => [s.heroButton, pressed && s.dim]}
+              >
+                <Icon name="scan-outline" />
+                <Text style={s.heroButtonText}>Discover a new dish</Text>
+                <Icon name="arrow-forward" size={18} />
+              </Pressable>
+              <Text style={s.meta}>
+                Catalog dishes: {progress.collected} / {progress.total} ·{" "}
+                {cuisinesExplored} cuisines explored
+              </Text>
+            </View>
+            {notice ? (
+              <View accessibilityLiveRegion="polite" style={s.notice}>
+                <Icon name="checkmark-circle-outline" />
+                <Text style={[s.copy, s.flex]}>{notice}</Text>
+              </View>
+            ) : null}
+            <View style={s.row}>
+              <Text style={s.sectionTitle}>Explore by cuisine</Text>
+              <Text style={s.meta}>{cuisinesExplored} explored</Text>
+            </View>
+            <Text style={s.copy}>
+              {dishes.length} dishes across {cuisines.length} cuisine
+              collections. Find your next favorite.
+            </Text>
+            <View style={s.grid}>
+              {cuisines.map((item) => {
+                const catalog = dishes.filter((dish) => dish.cuisine === item);
+                const collected = entries.filter(
+                  (entry) => entry.cuisine === item,
+                );
+                const unlocked = catalog.filter((dish) =>
+                  collected.some(
+                    (entry) =>
+                      foodKey(entry.name, item) === foodKey(dish.name, item),
+                  ),
+                ).length;
+                return (
+                  <View key={item} style={s.cuisineCard}>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={`${item}, ${collected.length} collected, ${unlocked} of ${catalog.length} dishes discovered`}
+                      onPress={() => {
+                        setCuisine(item);
+                        setFilter("all");
+                        setQuery("");
+                      }}
+                      style={({ pressed }) => [pressed && s.dim]}
+                    >
+                      <CatalogPhoto
+                        source={catalogPhoto(cuisineCovers[item])}
+                        style={s.cuisineImage}
+                        label={
+                          cuisineCovers[item]
+                            ? `${item} cuisine: ${cuisineCovers[item].name}`
+                            : "Other cuisines"
+                        }
+                      />
+                      <View style={s.cardBody}>
+                        <View style={s.row}>
+                          <Text style={[s.cardTitle, s.flex]}>{item}</Text>
+                          <Icon name="chevron-forward" size={16} />
+                        </View>
+                        <Text style={s.meta}>
+                          {collected.length
+                            ? `${unlocked} / ${catalog.length} dishes`
+                            : "Start collecting"}
+                        </Text>
+                        <CollectionProgress
+                          value={catalog.length ? unlocked / catalog.length : 0}
+                        />
+                        <Text style={s.progressText}>
+                          {(() => {
+                            const mastery = cuisineMastery(unlocked, catalog.length);
+                            const target = cuisineMasteryTarget(unlocked, catalog.length);
+                            if (mastery) return `${mastery} badge earned`;
+                            if (catalog.length)
+                              return `Collect ${target.target} for ${target.label}`;
+                            return "Your own discoveries";
+                          })()}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </View>
+            <View style={s.row}>
+              <Text style={s.sectionTitle}>Latest discoveries</Text>
+              <Icon name="time-outline" size={20} />
+            </View>
+            {entries.length === 0 ? (
+              <View style={s.empty}>
+                <View style={s.brand}>
+                  <Icon name="restaurant-outline" size={26} />
+                </View>
+                <Text style={s.cardTitle}>Your first bite belongs here.</Text>
+                <Text style={[s.copy, s.center]}>
+                  Snap your meal or add a dish you’ve tried. Every discovery
+                  becomes part of your story.
+                </Text>
+                <Button
+                  title="Add your first food"
+                  icon="add-outline"
+                  onPress={() => openScan()}
+                  secondary
+                />
+              </View>
+            ) : (
+              entries.slice(0, 6).map((entry) => (
                 <Pressable
+                  key={entry.id}
                   accessibilityRole="button"
-                  accessibilityLabel={`${item}, ${collected.length} collected, ${unlocked} of ${catalog.length} dishes discovered`}
-                  onPress={() => {
-                    setCuisine(item);
-                    setFilter("all");
-                    setQuery("");
-                  }}
-                  style={({ pressed }) => [pressed && s.dim]}
+                  onPress={() => setDetail(entry)}
+                  style={({ pressed }) => [s.discovery, pressed && s.dim]}
                 >
                   <CatalogPhoto
-                    source={catalogPhoto(cuisineCovers[item])}
-                    style={s.cuisineImage}
-                    label={
-                      cuisineCovers[item]
-                        ? `${item} cuisine: ${cuisineCovers[item].name}`
-                        : "Other cuisines"
+                    source={
+                      entry.photo
+                        ? { uri: entry.photo }
+                        : catalogPhoto(
+                            findCatalogDish(entry.name, entry.cuisine),
+                          )
                     }
+                    style={s.thumbnail}
+                    label={entry.name}
                   />
-                  <View style={s.cardBody}>
-                    <View style={s.row}>
-                      <Text style={[s.cardTitle, s.flex]}>{item}</Text>
-                      <Icon name="chevron-forward" size={16} />
-                    </View>
+                  <View style={s.flex}>
+                    <Text style={s.cardTitle}>{entry.name}</Text>
                     <Text style={s.meta}>
-                      {collected.length
-                        ? `${collected.length} collected`
-                        : "Ready to discover"}
-                    </Text>
-                    <View style={s.track}>
-                      <View
-                        style={[
-                          s.fill,
-                          {
-                            width: `${catalog.length ? (unlocked / catalog.length) * 100 : 0}%`,
-                          },
-                        ]}
-                      />
-                    </View>
-                    <Text style={s.progressText}>
-                      {catalog.length
-                        ? `${unlocked} / ${catalog.length} dishes`
-                        : "Your own discoveries"}
+                      {entry.cuisine} ·{" "}
+                      {new Date(entry.discoveredAt).toLocaleDateString(
+                        undefined,
+                        {
+                          month: "short",
+                          day: "numeric",
+                        },
+                      )}
                     </Text>
                   </View>
+                  <Text style={s.rarityLabel}>
+                    {cardTier(entry.name, entry.cuisine)}
+                  </Text>
+                  <Icon name="chevron-forward" size={18} />
                 </Pressable>
-                <PhotoCredit dish={cuisineCovers[item]} />
-              </View>
-            );
-          })}
-        </View>
-        <View style={s.row}>
-          <Text style={s.sectionTitle}>Latest discoveries</Text>
-          <Icon name="time-outline" size={20} />
-        </View>
-        {entries.length === 0 ? (
-          <View style={s.empty}>
-            <View style={s.brand}>
-              <Icon name="restaurant-outline" size={26} />
-            </View>
-            <Text style={s.cardTitle}>Your first bite belongs here.</Text>
-            <Text style={[s.copy, s.center]}>
-              Snap your meal or add a dish you’ve tried. Every discovery becomes
-              part of your story.
-            </Text>
-            <Button
-              title="Add your first food"
-              icon="add-outline"
-              onPress={() => openScan()}
-              secondary
-            />
-          </View>
-        ) : (
-          entries.slice(0, 6).map((entry) => (
-            <Pressable
-              key={entry.id}
-              accessibilityRole="button"
-              onPress={() => setDetail(entry)}
-              style={({ pressed }) => [s.discovery, pressed && s.dim]}
-            >
-              <CatalogPhoto
-                source={
-                  entry.photo
-                    ? { uri: entry.photo }
-                    : catalogPhoto(findCatalogDish(entry.name, entry.cuisine))
-                }
-                style={s.thumbnail}
-                label={entry.name}
-              />
-              <View style={s.flex}>
-                <Text style={s.cardTitle}>{entry.name}</Text>
-                <Text style={s.meta}>
-                  {entry.cuisine} ·{" "}
-                  {new Date(entry.discoveredAt).toLocaleDateString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </Text>
-              </View>
-              <Icon name="checkmark-circle" />
-            </Pressable>
-          ))
+              ))
+            )}
+          </>
         )}
       </ScrollView>
 
       <Modal
-        visible={cuisine !== null || scanOpen || detail !== null}
+        visible={
+          cuisine !== null || scanOpen || detail !== null || moment !== null
+        }
         transparent
         animationType="none"
         onRequestClose={() => {
-          if (detail) setDetail(null);
+          if (moment) setMoment(null);
+          else if (detail) setDetail(null);
           else if (scanOpen) closeScan();
           else setCuisine(null);
         }}
       >
-        {detail !== null ? (
+        {moment ? (
+          <DiscoveryReveal
+            moment={moment}
+            entries={entries}
+            onClose={() => setMoment(null)}
+            onAtlas={() => {
+              setAtlasFocus(moment.entry.cuisine);
+              setView("atlas");
+              setCuisine(null);
+              setMoment(null);
+            }}
+          />
+        ) : detail !== null ? (
           <View style={s.overlay}>
             <Pressable
               style={StyleSheet.absoluteFill}
@@ -469,9 +600,13 @@ export function FoodDexScreen({
               accessibilityLabel="Close discovery"
               onPress={() => setDetail(null)}
             />
-            <View
+            <ScrollView
               accessibilityViewIsModal
-              style={[s.detailSheet, { paddingBottom: insets.bottom + 24 }]}
+              style={s.cardDetailSheet}
+              contentContainerStyle={[
+                s.detailSheet,
+                { paddingBottom: insets.bottom + 24 },
+              ]}
             >
               {detail && (
                 <>
@@ -486,28 +621,7 @@ export function FoodDexScreen({
                       <Icon name="close" />
                     </Pressable>
                   </View>
-                  <CatalogPhoto
-                    eager
-                    source={
-                      detail.photo
-                        ? { uri: detail.photo }
-                        : catalogPhoto(
-                            findCatalogDish(detail.name, detail.cuisine),
-                          )
-                    }
-                    style={s.banner}
-                    label={detail.name}
-                  />
-                  {!detail.photo && (
-                    <PhotoCredit
-                      dish={findCatalogDish(detail.name, detail.cuisine)}
-                    />
-                  )}
-                  <Text style={s.title}>{detail.name}</Text>
-                  <Text style={s.copy}>
-                    {detail.cuisine} · Discovered{" "}
-                    {new Date(detail.discoveredAt).toLocaleDateString()}
-                  </Text>
+                  <DiscoveryCard key={detail.id} entry={detail} onLight />
                   <Button
                     title="Remove from collection"
                     icon="trash-outline"
@@ -520,7 +634,7 @@ export function FoodDexScreen({
                   />
                 </>
               )}
-            </View>
+            </ScrollView>
           </View>
         ) : scanOpen ? (
           <KeyboardAvoidingView
@@ -677,7 +791,12 @@ export function FoodDexScreen({
               >
                 <Icon name="arrow-back" />
               </Pressable>
-              <Text style={[s.sectionTitle, s.flex]}>{cuisine} collection</Text>
+              <View style={s.flex}>
+                <Text style={s.sectionTitle}>{cuisine} cuisine</Text>
+                <Text style={s.meta}>
+                  {collectionForCuisine.length} / {targets.length} collected
+                </Text>
+              </View>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Scan food"
@@ -688,6 +807,7 @@ export function FoodDexScreen({
               </Pressable>
             </View>
             <FlatList
+              key={detailView}
               contentContainerStyle={[
                 s.detailContent,
                 { paddingBottom: insets.bottom + 24 },
@@ -695,8 +815,12 @@ export function FoodDexScreen({
               keyboardShouldPersistTaps="handled"
               data={rows}
               keyExtractor={(dish) => dish.id}
-              initialNumToRender={6}
-              maxToRenderPerBatch={6}
+              numColumns={detailView === "grid" ? 2 : 1}
+              columnWrapperStyle={
+                detailView === "grid" ? { gap: 12 } : undefined
+              }
+              initialNumToRender={8}
+              maxToRenderPerBatch={8}
               windowSize={5}
               ListHeaderComponent={
                 <View style={s.collectionHeader}>
@@ -712,7 +836,6 @@ export function FoodDexScreen({
                             : "Other cuisines"
                         }
                       />
-                      <PhotoCredit dish={cuisineCovers[cuisine]} />
                     </>
                   )}
                   <Text style={s.title}>A taste of {cuisine}.</Text>
@@ -723,21 +846,51 @@ export function FoodDexScreen({
                   )}
                   <Text style={s.copy}>
                     {collectionForCuisine.length} collected · {targets.length}{" "}
-                    dishes to explore
+                    dishes to discover
                   </Text>
-                  <View style={s.search}>
+                  <Text style={s.meta}>
+                    {(() => {
+                      const unlocked = targets.filter((dish) =>
+                        collectionForCuisine.some(
+                          (entry) =>
+                            foodKey(entry.name, cuisine!) === foodKey(dish.name, cuisine!),
+                        ),
+                      ).length;
+                      const mastery = cuisineMastery(unlocked, targets.length);
+                      const target = cuisineMasteryTarget(unlocked, targets.length);
+                      return mastery
+                        ? `${mastery} badge earned`
+                        : `Collect ${target.target} dishes to earn your ${target.label}`;
+                    })()}
+                  </Text>
+                  {onOpenQuests && (
+                    <Pressable
+                      accessibilityRole="button"
+                      onPress={onOpenQuests}
+                      style={({ pressed }) => [s.questButton, pressed && s.dim]}
+                    >
+                      <Icon name="flag-outline" />
+                      <Text style={s.questButtonText}>
+                        Start {cuisine} Food Quest
+                      </Text>
+                      <Icon name="arrow-forward" size={18} />
+                    </Pressable>
+                  )}
+                  <View style={[s.search, searchFocused && s.searchActive]}>
                     <Icon name="search-outline" size={19} />
                     <TextInput
                       accessibilityLabel="Search dishes"
-                      placeholder="Find a dish…"
+                      placeholder="Search dishes…"
                       placeholderTextColor={colors.muted}
                       value={query}
                       onChangeText={setQuery}
+                      onFocus={() => setSearchFocused(true)}
+                      onBlur={() => setSearchFocused(false)}
                       style={s.input}
                     />
                   </View>
                   <View style={s.row}>
-                    {(["all", "collected"] as const).map((item) => (
+                    {(["all", "collected", "untried"] as const).map((item) => (
                       <Pressable
                         key={item}
                         accessibilityRole="button"
@@ -759,11 +912,32 @@ export function FoodDexScreen({
                         </Text>
                       </Pressable>
                     ))}
+                    <View style={s.viewToggle}>
+                      {(["grid", "list"] as const).map((item) => (
+                        <Pressable
+                          key={item}
+                          accessibilityRole="button"
+                          accessibilityState={{ selected: detailView === item }}
+                          onPress={() => setDetailView(item)}
+                          style={({ pressed }) => [
+                            s.toggleButton,
+                            detailView === item && s.toggleButtonActive,
+                            pressed && s.dim,
+                          ]}
+                        >
+                          <Icon
+                            name={item === "grid" ? "grid-outline" : "list-outline"}
+                            size={16}
+                            color={detailView === item ? colors.white : colors.ink}
+                          />
+                        </Pressable>
+                      ))}
+                    </View>
                   </View>
                 </View>
               }
-              renderItem={({ item: dish }) => (
-                <View key={dish.id} style={s.dishGroup}>
+              renderItem={({ item: dish }) =>
+                detailView === "grid" ? (
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel={`${dish.catalogDish ? `number ${dishNumber(dish.catalogDish)}, ` : "custom, "}${dish.name}, ${dish.entry ? "collected, view discovery" : "not collected, add food"}`}
@@ -772,7 +946,7 @@ export function FoodDexScreen({
                         ? setDetail(dish.entry)
                         : openScan(dish.name, dish.cuisine)
                     }
-                    style={({ pressed }) => [s.dish, pressed && s.dim]}
+                    style={({ pressed }) => [s.dishTile, pressed && s.dim]}
                   >
                     <CatalogPhoto
                       source={
@@ -780,29 +954,72 @@ export function FoodDexScreen({
                           ? { uri: dish.entry.photo }
                           : catalogPhoto(dish.catalogDish)
                       }
-                      style={s.dishPhoto}
+                      style={s.dishTilePhoto}
                       label={dish.name}
                     />
-                    <View style={s.flex}>
+                    <View style={s.dishTileBody}>
                       <Text style={s.eyebrow}>
                         {dish.catalogDish
                           ? `#${String(dishNumber(dish.catalogDish)).padStart(3, "0")}`
-                          : "CUSTOM"}{" "}
-                        · {dish.entry ? "COLLECTED" : "UNDISCOVERED"}
+                          : "CUSTOM"}
                       </Text>
-                      <Text style={s.cardTitle}>{dish.name}</Text>
-                      <Text style={s.meta}>{dish.note}</Text>
+                      <Text style={s.cardTitle} numberOfLines={2}>
+                        {dish.name}
+                      </Text>
+                      <Text
+                        style={[
+                          s.meta,
+                          dish.entry ? s.collectedText : s.undiscoveredText,
+                        ]}
+                      >
+                        {dish.entry ? "Collected" : "Not tried"}
+                      </Text>
                     </View>
-                    <Icon
-                      name={dish.entry ? "checkmark-circle" : "add-outline"}
-                      size={20}
-                    />
+                    {dish.entry && (
+                      <View style={s.tileBadge}>
+                        <Icon name="checkmark-circle" size={18} />
+                      </View>
+                    )}
                   </Pressable>
-                  {!dish.entry?.photo && (
-                    <PhotoCredit dish={dish.catalogDish} />
-                  )}
-                </View>
-              )}
+                ) : (
+                  <View key={dish.id} style={s.dishGroup}>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={`${dish.catalogDish ? `number ${dishNumber(dish.catalogDish)}, ` : "custom, "}${dish.name}, ${dish.entry ? "collected, view discovery" : "not collected, add food"}`}
+                      onPress={() =>
+                        dish.entry
+                          ? setDetail(dish.entry)
+                          : openScan(dish.name, dish.cuisine)
+                      }
+                      style={({ pressed }) => [s.dish, pressed && s.dim]}
+                    >
+                      <CatalogPhoto
+                        source={
+                          dish.entry?.photo
+                            ? { uri: dish.entry.photo }
+                            : catalogPhoto(dish.catalogDish)
+                        }
+                        style={s.dishPhoto}
+                        label={dish.name}
+                      />
+                      <View style={s.flex}>
+                        <Text style={s.eyebrow}>
+                          {dish.catalogDish
+                            ? `#${String(dishNumber(dish.catalogDish)).padStart(3, "0")}`
+                            : "CUSTOM"}{" "}
+                          · {dish.entry ? "COLLECTED" : "UNDISCOVERED"}
+                        </Text>
+                        <Text style={s.cardTitle}>{dish.name}</Text>
+                        <Text style={s.meta}>{dish.note}</Text>
+                      </View>
+                      <Icon
+                        name={dish.entry ? "checkmark-circle" : "add-outline"}
+                        size={20}
+                      />
+                    </Pressable>
+                  </View>
+                )
+              }
               ListEmptyComponent={
                 <View style={s.empty}>
                   <Text style={s.cardTitle}>
@@ -831,6 +1048,35 @@ export function FoodDexScreen({
 }
 
 const s = StyleSheet.create({
+  viewTabs: {
+    flexDirection: "row",
+    padding: 4,
+    borderRadius: 28,
+    backgroundColor: colors.border,
+    gap: 4,
+  },
+  viewTab: {
+    flex: 1,
+    minHeight: 44,
+    padding: 10,
+    borderRadius: 24,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  viewTabActive: { backgroundColor: colors.accent },
+  viewTabText: { color: colors.ink, fontWeight: "600", fontSize: 12 },
+  rarityLabel: { color: colors.accent, fontSize: 10, fontWeight: "700" },
+  cardDetailSheet: {
+    maxHeight: "90%",
+    width: "100%",
+    maxWidth: 480,
+    alignSelf: "center",
+    backgroundColor: colors.paper,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+  },
   screen: { flex: 1, backgroundColor: colors.paper },
   content: {
     paddingHorizontal: 20,
@@ -845,6 +1091,12 @@ const s = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     justifyContent: "space-between",
+  },
+  brandHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
   },
   heading: {
     flexDirection: "row",
@@ -1049,6 +1301,10 @@ const s = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 14,
   },
+  searchActive: {
+    borderColor: colors.accent,
+    backgroundColor: colors.tint,
+  },
   input: { flex: 1, minHeight: 50, color: colors.ink, fontSize: 14 },
   chip: {
     ...frostedGlass,
@@ -1123,7 +1379,93 @@ const s = StyleSheet.create({
     fontSize: 16,
   },
   cuisineChips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-  overlay: {
+  collectionCard: {
+    padding: 20,
+    gap: 12,
+    backgroundColor: colors.accent,
+    borderRadius: 24,
+  },
+  milestoneRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  milestoneLabel: {
+    color: colors.white,
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  milestoneCount: {
+    color: colors.white,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  questButton: {
+    backgroundColor: colors.paper,
+    borderRadius: 16,
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    padding: 14,
+  },
+  questButtonText: {
+    flex: 1,
+    color: colors.accent,
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  viewToggle: {
+    flexDirection: "row",
+    gap: 4,
+    marginLeft: "auto",
+  },
+  toggleButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  toggleButtonActive: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  dishTile: {
+    flex: 1,
+    borderRadius: 18,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    overflow: "hidden",
+    marginBottom: 12,
+  },
+  dishTilePhoto: {
+    width: "100%",
+    height: 120,
+    backgroundColor: colors.tint,
+  },
+  dishTileBody: {
+    padding: 12,
+    gap: 4,
+  },
+  tileBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.paper,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  collectedText: { color: colors.accent, fontWeight: "600" },
+  undiscoveredText: { color: colors.muted },
+    overlay: {
     flex: 1,
     justifyContent: "flex-end",
     backgroundColor: "#3D568F4D",

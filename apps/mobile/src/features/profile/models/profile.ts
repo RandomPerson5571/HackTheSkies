@@ -1,7 +1,10 @@
+import { parseCustomization, type Customization } from "./customization.ts";
+
 export type Profile = {
   name: string;
   neighborhood: string;
   diet: "No preference" | "Vegetarian" | "Vegan" | "Pescatarian";
+  customization?: Customization;
 };
 export function parseProfile(value: unknown): Profile {
   if (!value || typeof value !== "object") throw new Error("Invalid profile");
@@ -22,5 +25,6 @@ export function parseProfile(value: unknown): Profile {
     name: profile.name,
     neighborhood: profile.neighborhood,
     diet: profile.diet,
+    customization: parseCustomization(profile.customization),
   };
 }

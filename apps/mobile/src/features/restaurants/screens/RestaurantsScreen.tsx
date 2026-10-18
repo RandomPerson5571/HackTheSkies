@@ -1,3 +1,6 @@
+import { useMenuSound } from "../../../hooks/useMenuSound";
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { CiboLogo } from "../../../components/CiboLogo";
 import {
   useMemo,
   useRef,
@@ -12,9 +15,9 @@ import {
   KeyboardAvoidingView,
   Modal,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View,
@@ -24,9 +27,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { categories, type Category, type Place } from "../data/places";
 import {
   buildRecommendations,
-  recommendationLabel,
+  recommendationBadge,
 } from "../models/recommendations";
-import { RestaurantPhotoCredit } from "../components/RestaurantPhotoCredit";
 import { RestaurantPhoto } from "../components/RestaurantPhoto";
 import {
   browseRestaurants,
@@ -45,14 +47,19 @@ import type {
 } from "../models/restaurantCollection";
 
 import { useBackend } from "../../../lib/BackendProvider";
+import { useReducedMotion } from "../../food-dex/hooks/useReducedMotion";
 
 type Props = {
   collection: RestaurantCollection;
   dispatch: Dispatch<CollectionAction>;
   storageError: string;
   onShowMap: (place: Place) => void;
+  onOpenMap?: () => void;
+  onOpenSaved?: () => void;
+  onOpenDex?: () => void;
+  onOpenCommunity?: () => void;
+  mode?: "discover" | "journal";
 };
-type Filter = "discover" | "saved" | "want" | "visited" | `list:${string}`;
 
 function Icon({
   name,
@@ -71,12 +78,36 @@ export function RestaurantsScreen({
   dispatch,
   storageError,
   onShowMap,
+  onOpenMap,
+  onOpenSaved,
+  onOpenDex,
+  onOpenCommunity,
+  mode = "discover",
 }: Props) {
   const { places } = useBackend();
+  const reducedMotion = useReducedMotion();
   const insets = useSafeAreaInsets();
   const list = useRef<FlatList<Place>>(null);
+  const [collectionTab, setCollectionTab] = useState("saved");
+  const [query, setQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [category, setCategory] = useState<Category>("All");
   const [cuisine, setCuisine] = useState("All");
   const [sort, setSort] = useState<RestaurantSort>("discovery");
+  const [hiddenGemsOnly, setHiddenGemsOnly] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [listName, setListName] = useState("");
+  const [formError, setFormError] = useState("");
+  const [managing, setManaging] = useState<Place | null>(null);
+  const [actionPlace, setActionPlace] = useState<Place | null>(null);
+  const [filterSheetVisible, setFilterSheetVisible] = useState(false);
+  const [infoVisible, setInfoVisible] = useState(false);
+  useMenuSound(creating);
+  useMenuSound(managing !== null);
+  useMenuSound(actionPlace !== null);
+  useMenuSound(filterSheetVisible);
+  useMenuSound(infoVisible);
+
   const cuisineOptions = useMemo(
     () => [
       "All",
@@ -197,8 +228,29 @@ export function RestaurantsScreen({
     inCollection,
     { query, category, cuisine, sort },
     recommendations,
+    hiddenGemsOnly,
+    mode,
+    collectionTab,
+    collection,
+  ]);
+
+  const hasFilters = Boolean(
+    query || category !== "All" || cuisine !== "All" || hiddenGemsOnly,
   );
-  const hasFilters = Boolean(query || category !== "All" || cuisine !== "All");
+
+  function resetFilters() {
+    setQuery("");
+    setCategory("All");
+    setCuisine("All");
+    setHiddenGemsOnly(false);
+    setSort("discovery");
+  }
+
+  const filterCount =
+    Number(category !== "All") +
+    Number(cuisine !== "All") +
+    Number(hiddenGemsOnly) +
+    Number(sort !== "discovery");
 
   function createList() {
     const name = listName.trim();
@@ -229,13 +281,268 @@ export function RestaurantsScreen({
     setFormError("");
   }
 
+  function surprise() {
+    setCuisine(surpriseCuisine(cuisineOptions, cuisine));
+    setQuery("");
+    setCategory("All");
+    setHiddenGemsOnly(false);
+    list.current?.scrollToOffset({ offset: 0, animated: false });
+  }
+
   return (
-    <View style={[styles.screen, { paddingTop: insets.top + 16 }]}>
+    <View style={[styles.screen, { paddingTop: insets.top + 8 }]}>
+      <View style={styles.header}>
+        <View style={styles.locationRow}>
+          <CiboLogo />
+          <View style={styles.flex}>
+            <Text style={styles.eyebrow}>
+              {mode === "journal" ? "YOUR COLLECTION" : "EXPLORE TORONTO"}
+            </Text>
+            <Text accessibilityRole="header" style={styles.location}>
+              {mode === "journal" ? "Your food journal" : "Toronto, ON"}
+            </Text>
+          </View>
+          {onOpenSaved && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open saved places"
+              onPress={onOpenSaved}
+              style={({ pressed }) => [
+                styles.iconButton,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Icon name="bookmark-outline" />
+            </Pressable>
+          )}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Explain restaurant recommendations"
+            onPress={() => setInfoVisible(true)}
+            style={({ pressed }) => [
+              styles.iconButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Icon name="information-circle-outline" color={colors.muted} />
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Open sort and filters${filterCount ? `, ${filterCount} active` : ""}`}
+            onPress={() => setFilterSheetVisible(true)}
+            style={({ pressed }) => [
+              styles.iconButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Icon name="options-outline" color={colors.accent} />
+            {filterCount > 0 && <View style={styles.filterDot} />}
+          </Pressable>
+        </View>
+        <View style={[styles.search, searchFocused && styles.searchActive]}>
+          <Icon name="search-outline" color={colors.muted} />
+          <TextInput
+            accessibilityLabel="Search restaurants by name, food or neighborhood"
+            placeholder="Restaurant, food, neighborhood…"
+            placeholderTextColor={colors.muted}
+            value={query}
+            onChangeText={setQuery}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            style={styles.input}
+            returnKeyType="search"
+          />
+          {query ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Clear restaurant search"
+              onPress={() => setQuery("")}
+              style={styles.iconButton}
+            >
+              <Icon name="close" />
+            </Pressable>
+          ) : null}
+        </View>
+        {mode === "journal" ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chips}
+          >
+            {[
+              { id: "saved", name: "Saved", count: collection.saved.length },
+              {
+                id: "want",
+                name: "Want to try",
+                count: collection.saved.filter(
+                  (id) => !collection.visited.includes(id),
+                ).length,
+              },
+              {
+                id: "visited",
+                name: "Visited",
+                count: collection.visited.length,
+              },
+              ...collection.lists.map((item) => ({
+                id: item.id,
+                name: item.name,
+                count: item.placeIds.length,
+              })),
+            ].map((item) => (
+              <Pressable
+                key={item.id}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: collectionTab === item.id }}
+                onPress={() => setCollectionTab(item.id)}
+                style={({ pressed }) => [
+                  styles.chip,
+                  collectionTab === item.id && styles.selectedChip,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Text style={styles.chipText}>
+                  {item.name} · {item.count}
+                </Text>
+              </Pressable>
+            ))}
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => setCreating(true)}
+              style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
+            >
+              <Icon name="add" size={16} />
+              <Text style={styles.chipText}>New list</Text>
+            </Pressable>
+          </ScrollView>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chips}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{
+                selected: sort === "discovery" && !hiddenGemsOnly,
+              }}
+              onPress={() => {
+                setSort("discovery");
+                setHiddenGemsOnly(false);
+              }}
+              style={({ pressed }) => [
+                styles.chip,
+                sort === "discovery" && !hiddenGemsOnly && styles.selectedChip,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Icon name="sparkles-outline" size={16} color={colors.accent} />
+              <Text style={styles.chipText}>For you</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityState={{ selected: hiddenGemsOnly }}
+              onPress={() => setHiddenGemsOnly((value) => !value)}
+              style={({ pressed }) => [
+                styles.chip,
+                hiddenGemsOnly && styles.selectedChip,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Icon name="diamond-outline" size={16} color={colors.accent} />
+              <Text style={styles.chipText}>Hidden gems</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Surprise me with another cuisine"
+              onPress={surprise}
+              style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
+            >
+              <Icon name="shuffle-outline" size={16} color={colors.accent} />
+              <Text style={styles.chipText}>Surprise me</Text>
+            </Pressable>
+            {categories.map((item) => (
+              <Pressable
+                key={item}
+                accessibilityRole="button"
+                accessibilityState={{ selected: category === item }}
+                onPress={() => setCategory(item)}
+                style={({ pressed }) => [
+                  styles.chip,
+                  category === item && styles.selectedChip,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Text style={styles.chipText}>
+                  {item === "All" ? "All food" : item}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        )}
+        {storageError ? (
+          <Text accessibilityRole="alert" style={styles.notice}>
+            {storageError}
+          </Text>
+        ) : null}
+        {mode === "journal" && (
+          <View style={styles.optionRow}>
+            {onOpenDex && (
+              <Pressable
+                accessibilityRole="button"
+                onPress={onOpenDex}
+                style={({ pressed }) => [
+                  styles.chip,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Icon name="book-outline" size={16} />
+                <Text style={styles.chipText}>Food Dex & atlas</Text>
+              </Pressable>
+            )}
+            {onOpenCommunity && (
+              <Pressable
+                accessibilityRole="button"
+                onPress={onOpenCommunity}
+                style={({ pressed }) => [
+                  styles.chip,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Icon name="people-outline" size={16} />
+                <Text style={styles.chipText}>Friends & favorites</Text>
+              </Pressable>
+            )}
+          </View>
+        )}
+        {(hasFilters || sort !== "discovery") && (
+          <View style={styles.sectionRow}>
+            <Text style={[styles.small, styles.flex]}>
+              {[
+                cuisine !== "All" ? cuisine : "",
+                category !== "All" ? category : "",
+                hiddenGemsOnly ? "Hidden gems" : "",
+                sort === "name" ? "A–Z" : "",
+              ]
+                .filter(Boolean)
+                .join(" · ") || "Search results"}
+            </Text>
+            <Pressable
+              accessibilityRole="button"
+              onPress={resetFilters}
+              style={styles.iconButton}
+            >
+              <Text style={styles.chipText}>Reset</Text>
+            </Pressable>
+          </View>
+        )}
+      </View>
+
       <FlatList
         ref={list}
         data={visible}
-        initialNumToRender={6}
-        maxToRenderPerBatch={6}
+        initialNumToRender={8}
+        maxToRenderPerBatch={8}
         windowSize={5}
         keyExtractor={(place) => place.id}
         keyboardShouldPersistTaps="handled"
@@ -245,62 +552,123 @@ export function RestaurantsScreen({
           { paddingBottom: insets.bottom + 112 },
         ]}
         ListHeaderComponent={
-          <View style={styles.header}>
-            <View style={styles.headingRow}>
-              <View style={styles.flex}>
-                <Text style={styles.eyebrow}>YOUR NEXT GOOD MEAL</Text>
-                <Text accessibilityRole="header" style={styles.title}>
-                  Restaurants
-                </Text>
-              </View>
-              <View style={styles.brand}>
-                <Icon
-                  name="restaurant-outline"
-                  color={colors.accent}
-                  size={25}
-                />
-              </View>
-            </View>
-            <Text style={styles.intro}>
-              Sample community reviews power suggestions: great ratings (60%)
-              and fewer reviews (40%). Rate a place from its map card.
+          <View style={styles.resultsRow}>
+            <Text accessibilityRole="header" style={styles.resultsTitle}>
+              {visible.length} {visible.length === 1 ? "spot" : "spots"}
+              {mode === "discover" ? " to explore" : " in your journal"}
             </Text>
-            <View style={styles.summary}>
-              <View style={styles.statCard}>
-                <Text style={styles.stat}>{wantCount}</Text>
-                <Text style={styles.small}>Want to try</Text>
-              </View>
-              <View style={styles.statCard}>
-                <Text style={styles.stat}>{collection.visited.length}</Text>
-                <Text style={styles.small}>Visited</Text>
-              </View>
-              <View style={styles.statCard}>
-                <Text style={styles.stat}>{collection.lists.length}</Text>
-                <Text style={styles.small}>Your lists</Text>
-              </View>
-            </View>
-            {storageError ? (
-              <Text accessibilityRole="alert" style={styles.notice}>
-                {storageError}
-              </Text>
-            ) : null}
-            <View style={styles.sectionRow}>
-              <Text accessibilityRole="header" style={styles.sectionTitle}>
-                Your food journal
-              </Text>
+            {mode === "discover" && onOpenMap && (
               <Pressable
                 accessibilityRole="button"
-                onPress={() => {
-                  setCreating(true);
-                  setFormError("");
-                }}
+                onPress={onOpenMap}
                 style={({ pressed }) => [
-                  styles.textButton,
+                  styles.mapButton,
                   pressed && styles.pressed,
                 ]}
               >
-                <Icon name="add" color={colors.accent} />
-                <Text style={styles.actionText}>New list</Text>
+                <Icon name="map-outline" size={16} />
+                <Text style={styles.chipText}>Map</Text>
+              </Pressable>
+            )}
+          </View>
+        }
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Icon
+              name={hasFilters ? "search-outline" : "restaurant-outline"}
+              size={26}
+              color={colors.accent}
+            />
+            <Text style={styles.sectionTitle}>
+              {hasFilters
+                ? "No matches this time"
+                : mode === "journal"
+                  ? "Your next find belongs here"
+                  : "Good food, close by"}
+            </Text>
+            <Text style={styles.emptyCopy}>
+              {hasFilters
+                ? "Try another food or neighborhood, or clear your filters."
+                : mode === "journal"
+                  ? "Bookmark a restaurant in Discover, or add a visited spot to this collection."
+                  : "Discover a spot and save it for later."}
+            </Text>
+            {hasFilters ? (
+              <Pressable
+                accessibilityRole="button"
+                onPress={resetFilters}
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Text style={styles.primaryText}>Clear filters</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        }
+        renderItem={({ item }) => {
+          const saved = collection.saved.includes(item.id);
+          const rec = recommendations.get(item.id);
+          return (
+            <View style={styles.card}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`View details for ${item.name}`}
+                onPress={() => setActionPlace(item)}
+                style={({ pressed }) => [
+                  styles.cardMain,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <RestaurantPhoto
+                  showAll
+                  place={item}
+                  recommendation={rec}
+                  style={styles.photo}
+                />
+                <View style={styles.cardBody}>
+                  <Text style={styles.eyebrow} numberOfLines={1}>
+                    {item.category}
+                    {item.cuisine ? ` · ${item.cuisine}` : ""}
+                  </Text>
+                  <Text style={styles.name} numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <Text style={styles.small} numberOfLines={1}>
+                    {item.neighborhood}
+                  </Text>
+                  <View style={styles.ratingRow}>
+                    <Icon name="star" size={13} color={colors.gold} />
+                    <Text style={styles.ratingText}>
+                      {rec?.averageRating
+                        ? rec.averageRating.toFixed(1)
+                        : "New"}
+                    </Text>
+                  </View>
+                  <Text style={styles.badge}>{recommendationBadge(rec)}</Text>
+                </View>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={
+                  saved
+                    ? `Remove ${item.name} from saved restaurants`
+                    : `Save ${item.name}`
+                }
+                accessibilityState={{ selected: saved }}
+                onPress={() => dispatch({ type: "save", placeId: item.id })}
+                style={({ pressed }) => [
+                  styles.bookmarkButton,
+                  saved && styles.bookmarkSaved,
+                  pressed && styles.pressed,
+                ]}
+              >
+                <Icon
+                  name={saved ? "bookmark" : "bookmark-outline"}
+                  size={18}
+                  color={saved ? colors.white : colors.accent}
+                />
               </Pressable>
             </View>
             <ScrollView
@@ -392,94 +760,86 @@ export function RestaurantsScreen({
               ) : null}
             </View>
             <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chips}
-              keyboardShouldPersistTaps="handled"
+              style={styles.filterScroll}
+              contentContainerStyle={styles.filterContent}
             >
-              {categories.map((item) => (
-                <Pressable
-                  key={item}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: category === item }}
-                  onPress={() => setCategory(item)}
-                  style={({ pressed }) => [
-                    styles.category,
-                    category === item && styles.selectedCategory,
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.small,
-                      category === item && styles.actionText,
-                    ]}
-                  >
-                    {item === "All" ? "All food" : item}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-            <Text style={styles.small}>Cuisine</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chips}
-              keyboardShouldPersistTaps="handled"
-            >
-              {cuisineOptions.map((item) => (
-                <Pressable
-                  key={item}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: cuisine === item }}
-                  accessibilityLabel={
-                    item === "All" ? "All cuisines" : `${item} cuisine`
-                  }
-                  onPress={() => setCuisine(item)}
-                  style={({ pressed }) => [
-                    styles.category,
-                    cuisine === item && styles.selectedCategory,
-                    pressed && styles.pressed,
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.small,
-                      cuisine === item && styles.actionText,
-                    ]}
-                  >
-                    {item === "All" ? "All cuisines" : item}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-            <View style={[styles.sectionRow, { flexWrap: "wrap" }]}>
-              <View style={{ flexDirection: "row", gap: 8 }}>
+              <Text style={styles.small}>Sort</Text>
+              <View style={styles.optionRow}>
                 {(["discovery", "name"] as const).map((item) => (
                   <Pressable
                     key={item}
                     accessibilityRole="button"
-                    accessibilityLabel={
-                      item === "name"
-                        ? "Sort restaurants A to Z"
-                        : "Sort by discovery"
-                    }
                     accessibilityState={{ selected: sort === item }}
                     onPress={() => setSort(item)}
                     style={({ pressed }) => [
-                      styles.category,
-                      sort === item && styles.selectedCategory,
+                      styles.optionChip,
+                      sort === item && styles.selectedChip,
                       pressed && styles.pressed,
                     ]}
                   >
-                    <Text
-                      style={[styles.small, sort === item && styles.actionText]}
-                    >
-                      {item === "name" ? "A–Z" : "Discovery"}
+                    <Text style={styles.chipText}>
+                      {item === "name" ? "A–Z" : "For you"}
                     </Text>
                   </Pressable>
                 ))}
               </View>
+              <Text style={styles.small}>Category</Text>
+              <View style={styles.optionRow}>
+                {categories.map((item) => (
+                  <Pressable
+                    key={item}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: category === item }}
+                    onPress={() => setCategory(item)}
+                    style={({ pressed }) => [
+                      styles.optionChip,
+                      category === item && styles.selectedChip,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <Text style={styles.chipText}>
+                      {item === "All" ? "All food" : item}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+              <Text style={styles.small}>Cuisine</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.chips}
+                keyboardShouldPersistTaps="handled"
+              >
+                {cuisineOptions.map((item) => (
+                  <Pressable
+                    key={item}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: cuisine === item }}
+                    onPress={() => setCuisine(item)}
+                    style={({ pressed }) => [
+                      styles.chip,
+                      cuisine === item && styles.selectedChip,
+                      pressed && styles.pressed,
+                    ]}
+                  >
+                    <Text style={styles.chipText}>
+                      {item === "All" ? "All cuisines" : item}
+                    </Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+              <View style={styles.toggleRow}>
+                <Text style={styles.toggleLabel}>Hidden gems only</Text>
+                <Switch
+                  accessibilityLabel="Hidden gems only"
+                  value={hiddenGemsOnly}
+                  onValueChange={setHiddenGemsOnly}
+                  trackColor={{ true: colors.accent, false: colors.border }}
+                  thumbColor={colors.white}
+                />
+              </View>
+            </ScrollView>
+            <View style={styles.sectionRow}>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Surprise me with another cuisine"
@@ -491,7 +851,8 @@ export function RestaurantsScreen({
                   list.current?.scrollToOffset({ offset: 0, animated: false });
                 }}
                 style={({ pressed }) => [
-                  styles.textButton,
+                  styles.primaryButton,
+                  styles.flex,
                   pressed && styles.pressed,
                 ]}
               >
@@ -557,111 +918,156 @@ export function RestaurantsScreen({
               <Text style={styles.primaryText}>
                 {hasFilters ? "Clear filters" : "Discover restaurants"}
               </Text>
-            </Pressable>
-          </View>
-        }
-        renderItem={({ item }) => {
-          const saved = collection.saved.includes(item.id);
-          const visited = collection.visited.includes(item.id);
-          return (
-            <View style={styles.card}>
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`View ${item.name} on map`}
-                onPress={() => onShowMap(item)}
-                style={({ pressed }) => [
-                  styles.cardMain,
-                  pressed && styles.pressed,
-                ]}
+                accessibilityLabel="Close actions"
+                onPress={() => setActionPlace(null)}
+                style={styles.iconButton}
               >
+                <Icon name="close" />
+              </Pressable>
+            </View>
+            {actionPlace ? (
+              <ScrollView contentContainerStyle={styles.filterContent}>
                 <RestaurantPhoto
                   showAll
-                  place={item}
-                  recommendation={recommendations.get(item.id)}
-                  style={styles.photo}
+                  place={actionPlace}
+                  recommendation={recommendations.get(actionPlace.id)}
+                  style={styles.detailPhoto}
                 />
-                <View style={styles.flex}>
-                  <Text style={styles.eyebrow}>
-                    {item.category.toUpperCase()}
-                  </Text>
-                  <Text style={styles.name}>{item.name}</Text>
-                  <Text style={styles.small}>{item.neighborhood}</Text>
-                  <Text style={styles.small}>
-                    {recommendationLabel(recommendations.get(item.id))}
-                  </Text>
-                </View>
-                <Icon name="chevron-forward" size={18} color={colors.muted} />
-              </Pressable>
-              <Text style={styles.note}>{item.note}</Text>
-              <RestaurantPhotoCredit place={item} />
-              <View style={styles.cardActions}>
+                <Text style={styles.small}>
+                  {actionPlace.cuisine || actionPlace.category} ·{" "}
+                  {actionPlace.neighborhood}
+                </Text>
+                <Text style={styles.note}>{actionPlace.note}</Text>
+                <Text style={styles.small}>{actionPlace.address}</Text>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel={
-                    saved
-                      ? `Remove ${item.name} from saved restaurants and lists`
-                      : `Save ${item.name} to want to try`
-                  }
-                  accessibilityState={{ selected: saved }}
-                  onPress={() => dispatch({ type: "save", placeId: item.id })}
+                  onPress={() => {
+                    setActionPlace(null);
+                    onShowMap(actionPlace);
+                  }}
                   style={({ pressed }) => [
-                    styles.cardAction,
-                    saved && styles.selectedCategory,
+                    styles.primaryButton,
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Icon
-                    name={saved ? "bookmark" : "bookmark-outline"}
-                    size={17}
-                    color={colors.accent}
-                  />
-                  <Text style={styles.actionText}>
-                    {saved ? "Saved" : "Want to try"}
-                  </Text>
+                  <Text style={styles.primaryText}>View on map</Text>
                 </Pressable>
+                <Text style={styles.fieldLabel}>Your rating</Text>
+                <View style={styles.optionRow}>
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <Pressable
+                      key={rating}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Rate ${actionPlace.name} ${rating} stars`}
+                      accessibilityHint="Tap your selected rating to clear it"
+                      accessibilityState={{
+                        selected: collection.ratings[actionPlace.id] === rating,
+                      }}
+                      onPress={() =>
+                        dispatch({
+                          type: "rate",
+                          placeId: actionPlace.id,
+                          rating:
+                            collection.ratings[actionPlace.id] === rating
+                              ? 0
+                              : rating,
+                        })
+                      }
+                      style={({ pressed }) => [
+                        styles.iconButton,
+                        pressed && styles.pressed,
+                      ]}
+                    >
+                      <Icon
+                        name={
+                          rating <= (collection.ratings[actionPlace.id] ?? 0)
+                            ? "star"
+                            : "star-outline"
+                        }
+                        color={colors.accent}
+                      />
+                    </Pressable>
+                  ))}
+                </View>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel={`${visited ? "Mark as not visited" : "Mark as visited"}: ${item.name}`}
-                  accessibilityState={{ selected: visited }}
-                  onPress={() => dispatch({ type: "visit", placeId: item.id })}
+                  accessibilityState={{
+                    selected: collection.visited.includes(actionPlace.id),
+                  }}
+                  onPress={() => {
+                    dispatch({ type: "visit", placeId: actionPlace.id });
+                  }}
                   style={({ pressed }) => [
-                    styles.cardAction,
-                    visited && styles.selectedCategory,
+                    styles.actionRow,
                     pressed && styles.pressed,
                   ]}
                 >
                   <Icon
                     name={
-                      visited ? "checkmark-circle" : "checkmark-circle-outline"
+                      collection.visited.includes(actionPlace.id)
+                        ? "checkmark-circle"
+                        : "checkmark-circle-outline"
                     }
-                    size={17}
                     color={colors.accent}
                   />
-                  <Text style={styles.actionText}>
-                    {visited ? "Visited" : "Been here?"}
+                  <Text style={styles.actionTextLarge}>
+                    {collection.visited.includes(actionPlace.id)
+                      ? "Visited"
+                      : "Been here?"}
                   </Text>
                 </Pressable>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel={`Manage lists for ${item.name}`}
-                  onPress={() => setManaging(item)}
+                  onPress={() => {
+                    setManaging(actionPlace);
+                    setActionPlace(null);
+                  }}
                   style={({ pressed }) => [
-                    styles.cardAction,
+                    styles.actionRow,
                     pressed && styles.pressed,
                   ]}
                 >
-                  <Icon name="list-outline" size={17} color={colors.accent} />
-                  <Text style={styles.actionText}>Lists</Text>
+                  <Icon name="list-outline" color={colors.accent} />
+                  <Text style={styles.actionTextLarge}>Add to list</Text>
                 </Pressable>
-              </View>
-            </View>
-          );
-        }}
-      />
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{
+                    selected: collection.saved.includes(actionPlace.id),
+                  }}
+                  onPress={() =>
+                    dispatch({ type: "save", placeId: actionPlace.id })
+                  }
+                  style={({ pressed }) => [
+                    styles.actionRow,
+                    pressed && styles.pressed,
+                  ]}
+                >
+                  <Icon
+                    name={
+                      collection.saved.includes(actionPlace.id)
+                        ? "bookmark"
+                        : "bookmark-outline"
+                    }
+                  />
+                  <Text style={styles.actionTextLarge}>
+                    {collection.saved.includes(actionPlace.id)
+                      ? "Remove bookmark"
+                      : "Save restaurant"}
+                  </Text>
+                </Pressable>
+              </ScrollView>
+            ) : null}
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
       <Modal
         visible={creating || !!managing}
         transparent
-        animationType="none"
+        animationType={reducedMotion === false ? "slide" : "none"}
         onRequestClose={() => {
           setCreating(false);
           setManaging(null);
@@ -817,7 +1223,7 @@ export function RestaurantsScreen({
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.paper },
   content: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     maxWidth: 720,
     width: "100%",
     alignSelf: "center",
@@ -871,27 +1277,14 @@ const styles = StyleSheet.create({
     color: colors.accent,
     marginBottom: 3,
   },
-  small: { fontSize: 12, lineHeight: 18, color: colors.muted },
   sectionRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
     justifyContent: "space-between",
-    marginTop: 10,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
   },
-  sectionTitle: {
-    fontSize: 19,
-    fontWeight: "600",
-    color: colors.ink,
-    flexShrink: 1,
-  },
-  textButton: {
-    minHeight: 48,
+  locationRow: {
     flexDirection: "row",
-    gap: 4,
     alignItems: "center",
   },
   actionText: { fontSize: 12, fontWeight: "600", color: colors.accent },
@@ -936,6 +1329,11 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.28)",
     boxShadow: "0 8px 24px #3D568F18",
   },
+  searchActive: {
+    borderColor: colors.accent,
+    boxShadow: "0 10px 28px #3D568F30",
+    backgroundColor: "rgba(255,253,245,0.72)",
+  },
   input: {
     flex: 1,
     fontSize: 14,
@@ -944,8 +1342,8 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   iconButton: {
-    minWidth: 48,
-    minHeight: 48,
+    minWidth: 44,
+    minHeight: 44,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -962,13 +1360,15 @@ const styles = StyleSheet.create({
   selectedCategory: {
     ...frostedGlassSelected,
   },
-  resultsHeading: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 10,
+  chipText: { fontSize: 12, fontWeight: "600", color: colors.ink },
+  notice: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: colors.ink,
+    backgroundColor: colors.tint,
+    borderRadius: 12,
+    padding: 12,
   },
-  caption: { fontSize: 11, color: colors.muted, marginTop: -8 },
   card: {
     ...frostedGlass,
     padding: 16,
@@ -980,42 +1380,63 @@ const styles = StyleSheet.create({
     gap: 13,
   },
   cardMain: {
+    flex: 1,
+    minWidth: 0,
     flexDirection: "row",
     alignItems: "center",
-    gap: 13,
-    minHeight: 80,
+    gap: 12,
+    minHeight: 104,
   },
   photo: {
-    width: 76,
-    height: 80,
-    borderRadius: 15,
+    width: 104,
+    height: 104,
+    borderRadius: 14,
     backgroundColor: colors.tint,
   },
+  cardBody: { flex: 1, minWidth: 0, gap: 4 },
   name: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "600",
     color: colors.ink,
-    marginVertical: 4,
   },
-  note: { fontSize: 13, lineHeight: 20, color: colors.muted },
-  cardActions: {
+  small: { fontSize: 12, lineHeight: 18, color: colors.muted },
+  ratingRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 4,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingTop: 10,
-  },
-  cardAction: {
-    flexGrow: 1,
-    minHeight: 48,
-    flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
-    gap: 5,
-    paddingHorizontal: 8,
-    borderRadius: 12,
+    gap: 6,
+    marginTop: 2,
   },
+  ratingText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: colors.ink,
+  },
+  badge: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: colors.accent,
+    backgroundColor: colors.tint,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    overflow: "hidden",
+    alignSelf: "flex-start",
+  },
+  bookmarkButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.paper,
+  },
+  bookmarkSaved: {
+    backgroundColor: colors.accent,
+    borderColor: colors.accent,
+  },
+  note: { fontSize: 12, lineHeight: 18, color: colors.muted },
   empty: { alignItems: "center", paddingVertical: 28, gap: 16 },
   emptyCopy: {
     fontSize: 14,
@@ -1023,6 +1444,12 @@ const styles = StyleSheet.create({
     color: colors.muted,
     textAlign: "center",
     maxWidth: 300,
+  },
+  sectionTitle: {
+    fontSize: 19,
+    fontWeight: "600",
+    color: colors.ink,
+    flexShrink: 1,
   },
   primaryButton: {
     minHeight: 50,
@@ -1072,14 +1499,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     fontSize: 16,
   },
-  notice: {
-    fontSize: 13,
-    lineHeight: 20,
-    color: colors.ink,
-    backgroundColor: colors.tint,
-    borderRadius: 12,
-    padding: 12,
-  },
   memberships: { paddingVertical: 8 },
   membership: {
     flexDirection: "row",
@@ -1089,5 +1508,72 @@ const styles = StyleSheet.create({
     minHeight: 52,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+  },
+  optionRow: {
+    flexDirection: "row",
+    gap: 8,
+    flexWrap: "wrap",
+  },
+  filterScroll: { flexGrow: 0 },
+  filterContent: { gap: 12, paddingBottom: 8 },
+  detailPhoto: { width: "100%", height: 160, borderRadius: 16 },
+  filterDot: {
+    position: "absolute",
+    right: 7,
+    top: 7,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.accent,
+  },
+  resultsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    minHeight: 48,
+    gap: 8,
+  },
+  resultsTitle: { fontSize: 13, fontWeight: "600", color: colors.ink, flex: 1 },
+  mapButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    minHeight: 44,
+    paddingHorizontal: 12,
+  },
+  optionChip: {
+    ...webGlassBlur,
+    minHeight: 44,
+    paddingHorizontal: 14,
+    justifyContent: "center",
+    borderRadius: 14,
+    backgroundColor: "rgba(255,253,245,0.44)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.68)",
+  },
+  toggleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 8,
+  },
+  toggleLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.ink,
+  },
+  actionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 14,
+    minHeight: 52,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  actionTextLarge: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.ink,
   },
 });

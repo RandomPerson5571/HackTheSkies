@@ -13,7 +13,7 @@ function stop(code = 0) {
   process.exitCode = code;
 }
 const commands = [
-  ["--watch", "--env-file-if-exists=.env.server.local", "server/index.ts"],
+  ["--filter", "@cibo/api", "dev"],
   [
     require.resolve("expo/bin/cli"),
     "start",
@@ -22,9 +22,13 @@ const commands = [
   ],
 ];
 for (const [index, args] of commands.entries()) {
-  const child = spawn(process.execPath, args, {
+  if (index === 0 && process.env.CIBO_REMOTE_API === "1") continue;
+  const child = spawn(index === 0 ? "pnpm" : process.execPath, args, {
     cwd: root,
     stdio: index === 0 ? ["ignore", "inherit", "inherit"] : "inherit",
+    // On Windows, pnpm is installed as a .cmd shim, which spawn cannot launch
+    // directly without a command shell.
+    shell: index === 0 && process.platform === "win32",
   });
   children.push(child);
   child.on("error", (error) => {

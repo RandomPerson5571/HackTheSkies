@@ -1,6 +1,10 @@
+import { FeedbackPressable as Pressable } from "../../../components/FeedbackPressable";
+import { TrophyArt } from "../../profile/components/RewardArt";
+import { CiboLogo } from "../../../components/CiboLogo";
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ComponentProps,
@@ -8,7 +12,6 @@ import {
   type ReactNode,
 } from "react";
 import {
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,7 +20,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { type Place } from "../../restaurants/data/places";
+import { mapCenter, type Place } from "../../restaurants/data/places";
 import { buildRecommendations } from "../../restaurants/models/recommendations";
 import { RestaurantPhoto } from "../../restaurants/components/RestaurantPhoto";
 import { colors } from "../../../theme/index";
@@ -30,29 +33,48 @@ import { badgeProgress, cuisineBadges } from "../models/community";
 import { useBackend } from "../../../lib/BackendProvider";
 
 type IconName = ComponentProps<typeof Ionicons>["name"];
+const FAVORITES_PAGE_SIZE = 20;
+const NEARBY_PAGE_SIZE = 6;
+const NEARBY_PAGE_LIMIT = 12;
 type Props = {
   collection: RestaurantCollection;
   dispatch: Dispatch<CollectionAction>;
   storageError: string;
+  onOpenSettings: () => void;
   onShowMap: (place: Place) => void;
+  currentLocation?: [number, number] | null;
 };
 type Section = "favorites" | "friends" | "badges";
 const Navigation = createContext<{
   section: Section;
   setSection: (section: Section) => void;
+  onOpenSettings: () => void;
 } | null>(null);
+
+const sections: Section[] = ["favorites", "friends", "badges"];
 
 export function CommunityScreen(props: Props) {
   const [section, setSection] = useState<Section>("favorites");
   return (
-    <Navigation.Provider value={{ section, setSection }}>
-      {section === "favorites" ? (
-        <FavoritesScreen {...props} />
-      ) : section === "friends" ? (
-        <FriendsScreen {...props} />
-      ) : (
-        <AchievementsScreen {...props} />
-      )}
+    <Navigation.Provider
+      value={{ section, setSection, onOpenSettings: props.onOpenSettings }}
+    >
+      <View style={{ flex: 1 }}>
+        {sections.map((item) => (
+          <View
+            key={item}
+            style={{ flex: 1, display: section === item ? "flex" : "none" }}
+          >
+            {item === "favorites" ? (
+              <FavoritesScreen {...props} />
+            ) : item === "friends" ? (
+              <FriendsScreen {...props} />
+            ) : (
+              <AchievementsScreen {...props} />
+            )}
+          </View>
+        ))}
+      </View>
     </Navigation.Provider>
   );
 }
@@ -123,10 +145,28 @@ function Page({
       style={s.screen}
       contentContainerStyle={[
         s.content,
-        { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 115 },
+        { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 115 },
       ]}
       keyboardShouldPersistTaps="handled"
     >
+      <View style={s.brandHeader}>
+        <CiboLogo />
+        <View style={s.headerActions}>
+          <View style={s.brand}>
+            <Icon name={icon} size={26} />
+          </View>
+          {navigation && (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open settings"
+              onPress={navigation.onOpenSettings}
+              style={({ pressed }) => [s.brand, pressed && s.dim]}
+            >
+              <Icon name="settings-outline" size={22} />
+            </Pressable>
+          )}
+        </View>
+      </View>
       <View style={s.heading}>
         <View style={s.flex}>
           <Text style={s.eyebrow}>{eyebrow}</Text>
@@ -134,33 +174,40 @@ function Page({
             {title}
           </Text>
         </View>
-        <View style={s.brand}>
-          <Icon name={icon} size={26} />
-        </View>
+        <Text style={s.intro}>{intro}</Text>
       </View>
-      <Text style={s.intro}>{intro}</Text>
       {navigation && (
-        <View style={s.actions}>
+        <View accessibilityRole="tablist" style={s.tabs}>
           {(["favorites", "friends", "badges"] as const).map((section) => (
-            <Action
+            <Pressable
               key={section}
-              label={
-                section === "favorites"
+              accessibilityRole="tab"
+              accessibilityState={{ selected: navigation.section === section }}
+              onPress={() => navigation.setSection(section)}
+              style={({ pressed }) => [
+                s.tab,
+                navigation.section === section && s.selectedTab,
+                pressed && s.dim,
+              ]}
+            >
+              <Icon
+                name={
+                  section === "favorites"
+                    ? "heart-outline"
+                    : section === "friends"
+                      ? "people-outline"
+                      : "ribbon-outline"
+                }
+                size={18}
+              />
+              <Text style={s.tabText}>
+                {section === "favorites"
                   ? "Favorites"
                   : section === "friends"
                     ? "Friends"
-                    : "Badges"
-              }
-              icon={
-                section === "favorites"
-                  ? "heart-outline"
-                  : section === "friends"
-                    ? "people-outline"
-                    : "ribbon-outline"
-              }
-              selected={navigation.section === section}
-              onPress={() => navigation.setSection(section)}
-            />
+                    : "Badges"}
+              </Text>
+            </Pressable>
           ))}
         </View>
       )}
@@ -179,67 +226,150 @@ export function FavoritesScreen({
   dispatch,
   storageError,
   onShowMap,
+  currentLocation,
 }: Props) {
-  const { places } = useBackend();
-  const recommendations = useMemo(
-    () => buildRecommendations(places, collection.ratings),
-    [places, collection.ratings],
-  );
+  const { loadFavoritesPage, loadPlacesByIds } = useBackend();
   const [query, setQuery] = useState("");
-  const ranked = collection.favorites.flatMap((id) => {
-    const place = places.find((item) => item.id === id);
-    return place ? [place] : [];
-  });
-  const unrated = places.filter(
-    (place) =>
-      !collection.ratings[place.id] &&
-      `${place.name} ${place.category}`
-        .toLowerCase()
-        .includes(query.toLowerCase().trim()),
+  const [pageQuery, setPageQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [rankedPage, setRankedPage] = useState(0);
+  const [ranked, setRanked] = useState<Place[]>([]);
+  const [rankedLoading, setRankedLoading] = useState(true);
+  const [unratedPage, setUnratedPage] = useState(0);
+  const [unrated, setUnrated] = useState<Place[]>([]);
+  const [unratedTotal, setUnratedTotal] = useState(0);
+  const [unratedLoading, setUnratedLoading] = useState(true);
+  const recommendations = useMemo(
+    () => buildRecommendations([...ranked, ...unrated], collection.ratings),
+    [ranked, unrated, collection.ratings],
   );
+  const ratedIds = useMemo(
+    () =>
+      Object.entries(collection.ratings)
+        .filter(([, rating]) => rating > 0)
+        .map(([id]) => id),
+    [collection.ratings],
+  );
+  const rankedPageCount = Math.max(
+    1,
+    Math.ceil(collection.favorites.length / FAVORITES_PAGE_SIZE),
+  );
+  const unratedPageCount = Math.max(
+    1,
+    Math.ceil(Math.min(unratedTotal, NEARBY_PAGE_LIMIT) / NEARBY_PAGE_SIZE),
+  );
+  const nearbyPage = unrated.slice(
+    unratedPage * NEARBY_PAGE_SIZE,
+    (unratedPage + 1) * NEARBY_PAGE_SIZE,
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => setPageQuery(query), 250);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  useEffect(() => {
+    let active = true;
+    const ids = collection.favorites.slice(
+      rankedPage * FAVORITES_PAGE_SIZE,
+      (rankedPage + 1) * FAVORITES_PAGE_SIZE,
+    );
+    setRankedLoading(ids.length > 0);
+    setRanked([]);
+    void loadPlacesByIds(ids).then((page) => {
+      if (active) {
+        setRanked(page);
+        setRankedLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [collection.favorites, rankedPage, loadPlacesByIds]);
+
+  useEffect(() => {
+    let active = true;
+    setUnratedLoading(true);
+    void loadFavoritesPage(
+      pageQuery,
+      0,
+      ratedIds,
+      {
+        limit: NEARBY_PAGE_LIMIT,
+        randomize: true,
+        center: currentLocation ?? (mapCenter as [number, number]),
+        radiusKm: 10,
+      },
+    ).then((page) => {
+      if (!active) return;
+      setUnrated(page.places);
+      setUnratedTotal(page.total);
+      setUnratedPage(0);
+      setUnratedLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [pageQuery, ratedIds, currentLocation, loadFavoritesPage]);
+
+  function ratePlace(placeId: string, rating: number) {
+    dispatch({ type: "rate", placeId, rating });
+    setUnratedPage(0);
+  }
 
   function ratingCard(place: Place, rank?: number) {
     const rating = collection.ratings[place.id] ?? 0;
+    const isRanked = rank !== undefined;
     return (
-      <View key={place.id} style={s.card}>
+      <View key={place.id} style={fs.card}>
         <View style={s.row}>
-          {rank !== undefined && <Text style={s.rank}>#{rank + 1}</Text>}
+          {isRanked && (
+            <View style={fs.rankBadge}>
+              <Text style={fs.rankText}>#{rank + 1}</Text>
+            </View>
+          )}
           <RestaurantPhoto
             place={place}
             recommendation={recommendations.get(place.id)}
-            style={s.photo}
+            style={fs.photo}
           />
           <View style={s.flex}>
             <Text style={s.eyebrow}>{place.category.toUpperCase()}</Text>
             <Text style={s.name}>{place.name}</Text>
             <Text style={s.small}>{place.neighborhood}</Text>
           </View>
+          {isRanked ? (
+            <View style={fs.ratingPill}>
+              <Icon name={rating ? "star" : "star-outline"} size={15} />
+              <Text style={fs.ratingPillText}>
+                {rating ? `${rating}/5` : "Unrated"}
+              </Text>
+            </View>
+          ) : null}
         </View>
-        <View style={s.stars}>
+        <View style={fs.stars}>
           {[1, 2, 3, 4, 5].map((value) => (
             <Pressable
               key={value}
               accessibilityRole="button"
               accessibilityLabel={`Rate ${place.name} ${value} ${value === 1 ? "star" : "stars"}`}
               accessibilityState={{ selected: value === rating }}
-              onPress={() =>
-                dispatch({ type: "rate", placeId: place.id, rating: value })
-              }
-              style={({ pressed }) => [s.star, pressed && s.dim]}
+              onPress={() => ratePlace(place.id, value)}
+              style={({ pressed }) => [fs.star, pressed && s.dim]}
             >
               <Icon
                 name={value <= rating ? "star" : "star-outline"}
-                size={27}
+                size={24}
               />
             </Pressable>
           ))}
           <Text style={s.small}>{rating ? `${rating}/5` : "Unrated"}</Text>
         </View>
         <View style={s.actions}>
-          {rank !== undefined && (
+          {isRanked && (
             <>
               <Action
-                label="Move up"
+                label="Up"
                 icon="arrow-up"
                 disabled={rank === 0}
                 onPress={() =>
@@ -247,23 +377,21 @@ export function FavoritesScreen({
                 }
               />
               <Action
-                label="Move down"
+                label="Down"
                 icon="arrow-down"
-                disabled={rank === ranked.length - 1}
+                disabled={rank === collection.favorites.length - 1}
                 onPress={() =>
                   dispatch({ type: "rank", placeId: place.id, direction: 1 })
                 }
               />
               <Action
-                label="Clear rating"
-                onPress={() =>
-                  dispatch({ type: "rate", placeId: place.id, rating: 0 })
-                }
+                label="Clear"
+                onPress={() => ratePlace(place.id, 0)}
               />
             </>
           )}
           <Action
-            label="View on map"
+            label="Map"
             icon="map-outline"
             onPress={() => onShowMap(place)}
           />
@@ -279,13 +407,15 @@ export function FavoritesScreen({
       icon="heart-outline"
       error={storageError}
     >
-      <View style={s.hero}>
-        <Icon name="podium-outline" size={34} />
-        <View style={s.flex}>
-          <Text style={s.heroNumber}>{ranked.length} rated spots</Text>
-          <Text style={s.small}>
-            A personal leaderboard, one bite at a time.
+      <View style={fs.hero}>
+        <View style={fs.heroIcon}>
+          <Icon name="podium-outline" size={28} />
+        </View>
+        <View style={fs.heroCopy}>
+          <Text style={fs.heroNumber}>
+            {collection.favorites.length} ranked
           </Text>
+          <Text style={s.small}>Your personal leaderboard.</Text>
         </View>
       </View>
       <Text accessibilityRole="header" style={s.section}>
@@ -294,14 +424,40 @@ export function FavoritesScreen({
       <Text style={s.small}>
         Use the arrows to rank independently of your star ratings.
       </Text>
-      {!ranked.length && (
+      {!collection.favorites.length && (
         <View style={s.empty}>
           <Icon name="heart-outline" size={32} />
           <Text style={s.name}>Every favorite starts with a bite.</Text>
           <Text style={s.small}>Rate a spot below to start your ranking.</Text>
         </View>
       )}
-      {ranked.map((place, rank) => ratingCard(place, rank))}
+      {rankedLoading && (
+        <Text style={s.notice}>Loading your favorites…</Text>
+      )}
+      {ranked.map((place, index) =>
+        ratingCard(place, rankedPage * FAVORITES_PAGE_SIZE + index),
+      )}
+      {collection.favorites.length > FAVORITES_PAGE_SIZE && (
+        <View style={s.actions}>
+          <Action
+            label="Previous"
+            icon="chevron-back"
+            disabled={rankedPage === 0}
+            onPress={() => setRankedPage((page) => Math.max(0, page - 1))}
+          />
+          <Text style={s.small}>
+            Page {rankedPage + 1} of {rankedPageCount}
+          </Text>
+          <Action
+            label="Next"
+            icon="chevron-forward"
+            disabled={rankedPage >= rankedPageCount - 1}
+            onPress={() =>
+              setRankedPage((page) => Math.min(rankedPageCount - 1, page + 1))
+            }
+          />
+        </View>
+      )}
       <Text accessibilityRole="header" style={s.section}>
         Tried something good?
       </Text>
@@ -313,11 +469,47 @@ export function FavoritesScreen({
         placeholder="Find a spot to rate…"
         placeholderTextColor={colors.muted}
         value={query}
-        onChangeText={setQuery}
-        style={s.input}
+        onChangeText={(value) => {
+          setQuery(value);
+          setUnratedPage(0);
+        }}
+        onFocus={() => setSearchFocused(true)}
+        onBlur={() => setSearchFocused(false)}
+        style={[s.input, searchFocused && s.searchActive]}
       />
-      {unrated.map((place) => ratingCard(place))}
-      {!unrated.length && (
+      {unratedLoading ? (
+        <Text style={s.notice}>Loading spots…</Text>
+      ) : (
+        <>
+          <Text style={s.small}>
+            {unratedTotal
+              ? `Nearby picks · Page ${unratedPage + 1} of ${unratedPageCount}`
+              : "No spots to rate"}
+          </Text>
+          {nearbyPage.map((place) => ratingCard(place))}
+          {unratedPageCount > 1 && (
+            <View style={s.actions}>
+              <Action
+                label="Previous"
+                icon="chevron-back"
+                disabled={unratedPage === 0}
+                onPress={() => setUnratedPage((page) => Math.max(0, page - 1))}
+              />
+              <Action
+                label="Next"
+                icon="chevron-forward"
+                disabled={unratedPage >= unratedPageCount - 1}
+                onPress={() =>
+                  setUnratedPage((page) =>
+                    Math.min(unratedPageCount - 1, page + 1),
+                  )
+                }
+              />
+            </View>
+          )}
+        </>
+      )}
+      {!unratedLoading && !unrated.length && (
         <Text style={s.notice}>
           {query
             ? "No unrated spots match your search."
@@ -341,6 +533,7 @@ export function FriendsScreen({
   );
   const [mode, setMode] = useState<"activity" | "find">("activity");
   const [query, setQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const [filter, setFilter] = useState<string | null>(null);
   const friends = sampleFriends.filter((friend) =>
     collection.friendIds.includes(friend.id),
@@ -381,15 +574,18 @@ export function FriendsScreen({
       </View>
       {mode === "find" ? (
         <>
-          <TextInput
-            accessibilityLabel="Search sample friends by name or handle"
-            placeholder="Search a name or handle…"
-            placeholderTextColor={colors.muted}
-            value={query}
-            onChangeText={setQuery}
-            style={s.input}
-            autoCapitalize="none"
-          />
+           <TextInput
+             accessibilityLabel="Search sample friends by name or handle"
+             placeholder="Search a name or handle…"
+             placeholderTextColor={colors.muted}
+             value={query}
+             onChangeText={setQuery}
+             onFocus={() => setSearchFocused(true)}
+             onBlur={() => setSearchFocused(false)}
+             style={[s.input, searchFocused && s.searchActive]}
+             autoCapitalize="none"
+           />
+
           <Text accessibilityRole="header" style={s.section}>
             Find your food people
           </Text>
@@ -534,7 +730,7 @@ export function AchievementsScreen({
   const [filter, setFilter] = useState<"all" | "earned" | "progress">("all");
   const badges = cuisineBadges.map((badge) => ({
     ...badge,
-    count: badgeProgress(badge.category, collection.visited, places),
+    count: badgeProgress(badge, collection.visited, places),
   }));
   const earned = badges.filter((badge) => badge.count >= badge.goal).length;
   const visible = badges.filter(
@@ -553,7 +749,7 @@ export function AchievementsScreen({
       error={storageError}
     >
       <View style={s.hero}>
-        <Icon name="trophy-outline" size={38} />
+        <TrophyArt id="gourmet" size={64} />
         <View style={s.flex}>
           <Text style={s.heroNumber}>
             {earned} of {badges.length} badges earned
@@ -587,15 +783,15 @@ export function AchievementsScreen({
         const unlocked = badge.count >= badge.goal;
         const next = places.find(
           (place) =>
-            place.category === badge.category &&
+            (badge.cuisine
+              ? place.cuisine === badge.category
+              : place.category === badge.category) &&
             !collection.visited.includes(place.id),
         );
         return (
           <View key={badge.id} style={[s.card, unlocked && s.earnedCard]}>
             <View style={s.row}>
-              <View style={s.badge}>
-                <Icon name={badge.icon} size={32} />
-              </View>
+              <TrophyArt id={badge.id} size={80} locked={!unlocked} />
               <View style={s.flex}>
                 <Text style={s.eyebrow}>
                   {unlocked ? "EARNED" : "IN PROGRESS"}
@@ -670,10 +866,17 @@ const s = StyleSheet.create({
     maxWidth: 720,
     alignSelf: "center",
     paddingHorizontal: 20,
-    gap: 16,
+    gap: 20,
   },
-  flex: { flex: 1 },
-  heading: { flexDirection: "row", alignItems: "center", gap: 12 },
+  flex: { flex: 1, minWidth: 0 },
+  brandHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  headerActions: { flexDirection: "row", alignItems: "center", gap: 8 },
+  heading: { gap: 10 },
   eyebrow: {
     fontSize: 10,
     fontWeight: "700",
@@ -681,17 +884,18 @@ const s = StyleSheet.create({
     color: colors.muted,
   },
   title: {
-    fontSize: 31,
+    fontSize: 30,
+    lineHeight: 36,
     fontWeight: "700",
     letterSpacing: -1,
     color: colors.ink,
     marginTop: 5,
   },
-  intro: { fontSize: 14, lineHeight: 22, color: colors.muted },
+  intro: { fontSize: 14, lineHeight: 22, color: colors.muted, maxWidth: 520 },
   brand: {
-    width: 52,
-    height: 52,
-    borderRadius: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 16,
     backgroundColor: colors.tint,
     alignItems: "center",
     justifyContent: "center",
@@ -747,6 +951,33 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  tabs: {
+    flexDirection: "row",
+    gap: 8,
+    padding: 4,
+    borderRadius: 18,
+    backgroundColor: colors.border,
+  },
+  tab: {
+    flex: 1,
+    minWidth: 0,
+    minHeight: 44,
+    paddingVertical: 10,
+    paddingHorizontal: 6,
+    borderRadius: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+  selectedTab: { backgroundColor: colors.tint },
+  tabText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.ink,
+    flexShrink: 1,
+    textAlign: "center",
+  },
   actions: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   button: {
     minHeight: 48,
@@ -778,6 +1009,10 @@ const s = StyleSheet.create({
     fontSize: 14,
     color: colors.ink,
     backgroundColor: colors.white,
+  },
+  searchActive: {
+    borderColor: colors.accent,
+    backgroundColor: colors.tint,
   },
   notice: {
     borderRadius: 14,
@@ -814,4 +1049,75 @@ const s = StyleSheet.create({
     backgroundColor: colors.tint,
   },
   fill: { height: "100%", borderRadius: 4, backgroundColor: colors.accent },
+});
+
+const fs = StyleSheet.create({
+  card: {
+    borderRadius: 22,
+    backgroundColor: colors.white,
+    borderColor: colors.border,
+    borderWidth: 1,
+    padding: 14,
+    gap: 12,
+  },
+  rankBadge: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: colors.tint,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rankText: { fontSize: 15, fontWeight: "700", color: colors.accent },
+  photo: {
+    width: 56,
+    height: 62,
+    borderRadius: 12,
+    backgroundColor: colors.tint,
+  },
+  ratingPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: colors.tint,
+  },
+  ratingPillText: { fontSize: 12, fontWeight: "700", color: colors.accent },
+  stars: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 2,
+  },
+  star: {
+    minWidth: 40,
+    minHeight: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  hero: {
+    backgroundColor: colors.tint,
+    borderRadius: 22,
+    padding: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+  },
+  heroIcon: {
+    width: 52,
+    height: 52,
+    borderRadius: 18,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroNumber: {
+    fontSize: 22,
+    fontWeight: "600",
+    color: colors.accent,
+    marginBottom: 3,
+  },
+  heroCopy: { flex: 1, minWidth: 0, gap: 4 },
 });

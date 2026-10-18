@@ -1,0 +1,2 @@
+# Copy to .dev.vars for local Worker development. Never commit real keys.
+GROQ_API_KEY=

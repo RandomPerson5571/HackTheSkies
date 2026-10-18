@@ -15,9 +15,11 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "dev:server": "pnpm --filter mobile dev:server",
-    "start": "pnpm --filter mobile start:server",
-    "test": "pnpm --filter mobile test"
+    "dev:server": "pnpm --filter @cibo/api dev",
+    "start": "pnpm --filter @cibo/api dev",
+    "test": "pnpm --filter mobile test && pnpm --filter @cibo/api test",
+    "deploy:api": "pnpm --filter @cibo/api run deploy",
+    "check:api": "pnpm --filter @cibo/api check-types"
   },
   "devDependencies": {
     "postgres": "^3.4.9",

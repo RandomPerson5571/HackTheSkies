@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cibo-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true, "head_sampling_rate": 1 },
+  "vars": {
+    "GROQ_FOOD_SCAN_MODEL": "qwen/qwen3.8-27b",
+    "GROQ_MENU_SCAN_MODEL": "qwen/qwen3.8-27b",
+    "GROQ_RECOMMENDATION_MODEL": "qwen/qwen3.8-27b",
+  },
+  "secrets": { "required": ["GROQ_API_KEY"] },
+}

@@ -60,9 +60,9 @@ use a generic restaurant image rather than venue-specific photography.
 
 Tap the sparkles button at the top right of the map to describe a craving and get up to three restaurant suggestions. Tap a suggestion to locate it on the map. Suggestions use the restaurant directory and your profile’s dietary preference.
 
-Set `GROQ_API_KEY` in `apps/mobile/.env.server.local`, then run `pnpm dev` (app and API) or `pnpm dev:server` (API only). Optionally override `GROQ_RECOMMENDATION_MODEL` (default: `llama-3.3-70b-versatile`). The integration uses [Groq Chat Completions](https://console.groq.com/docs/text-chat).
+Set `GROQ_API_KEY` in `apps/api/.dev.vars`, then run `pnpm dev` (app and API) or `pnpm dev:server` (API only). Optionally override `GROQ_RECOMMENDATION_MODEL` (default: `qwen/qwen3.8-27b`). The integration uses [Groq Chat Completions](https://console.groq.com/docs/text-chat).
 
-Set `EXPO_PUBLIC_FOOD_RECOMMENDATIONS_URL=http://localhost:3000/api/food-recommendations` in `apps/mobile/.env.local` and restart Expo. For a physical phone, replace `localhost` with your computer’s LAN IP. Keep the Groq key on the server; never put it in an `EXPO_PUBLIC_` variable.
+Set `EXPO_PUBLIC_API_URL=http://localhost:8787` in `apps/mobile/.env.local` and restart Expo. For a physical phone, replace `localhost` with your computer’s LAN IP. Keep the Groq key on the server; never put it in an `EXPO_PUBLIC_` variable.
 
 Restaurant images use the checked-in `restaurantPhotos.json` source manifest with
 source/author/license credits. All restaurant lists and detail cards show images.
@@ -75,67 +75,106 @@ preserves existing entries, checks image responses, and writes an unmatched/sour
 error report to `data/restaurant-photo-import-report.json`. Source-site images are
 remote and have unspecified reuse rights; Wikimedia licenses remain attached.
 
-### Food camera and detection
+### Food camera and photo recognition
 
-The center camera button opens `FoodCameraScreen` above the persistent navigation.
-`useLiveFoodDetection` runs one local sampling/inference job at a time, targeting at
-most 5 Hz; actual throughput includes Expo still capture and resize latency.
-ML Kit runs on iOS/Android; browser builds use COCO-SSD's ten food categories.
-Frames are normalized to upright JPEGs; overlays map aspect-fill crops and mirror
-the live front preview. Captured-image overlays use unmirrored photo coordinates.
-Missing foods lose their visible boxes immediately, and IDs survive one missed
-inference. Reduced motion disables geometry animation and pulsing.
+The camera offers **take a photo** or **choose a photo**. Photo selection is always
+available, including in an iOS simulator without a working camera. A selected or
+captured image is converted to JPEG, resized to at most 1024 px and uploaded once
+to the Worker. Preview frames are never analyzed or uploaded. ML Kit, COCO-SSD,
+TensorFlow, and continuous detection have been removed.
 
-The shutter pauses local sampling, captures a photo, re-detects its food regions,
-compresses a selected crop to at most 1024 px, and calls Groq to observe the dish,
-cuisine, and visible ingredients without sending the catalog. The server retrieves
-up to 12 candidates from that cuisine, ranking canonical names and dish descriptions
-(including accent-insensitive matches). When an observed name exactly matches a
-canonical name in one cuisine, that catalog cuisine corrects the retrieval category.
-A second vision call verifies the photo
-against those candidates and returns a candidate ID or `NO_MATCH`. The default
-Qwen model uses a strict JSON schema with an enum of the retrieved IDs; the server
-also validates membership. Other configured models use JSON-object output with
-the same server validation. Non-food photos and categories without candidates
-skip verification. A valid `NO_MATCH` keeps the observed name/cuisine for manual
-confirmation with no catalog badge. Provider errors remain retryable failures.
+The Worker identifies the dish and cuisine through Groq, retrieves up to 12 catalog
+candidates, then verifies a candidate ID or `NO_MATCH` with a second vision call.
+Both calls share one deadline. A recognized dish appears in the frozen photo
+review; the user confirms before adding it to Food Dex. Retry sends another
+request. Retake and navigation cancel requests and ignore late responses. Missing
+configuration and network errors preserve manual entry.
 
-This retrieval uses the bundled catalog, so it needs no database or embedding
-service. It limits prompt growth as the catalog expands, at the cost of a second
-model call and a second image input. Retrieval depends on the observed cuisine;
-a wrong cuisine can exclude the correct dish. Both calls share one 25-second
-deadline and cancellation signal. Retake or navigation cancels recognition and
-ignores late results. The suggestion carries
-into the Food Dex form; users confirm before collecting a dish. Preview frames
-never leave the device. Model loading failure does not prevent manual capture.
+### Separate Cloudflare API
 
-Set server-only `GROQ_API_KEY` and optionally `GROQ_FOOD_SCAN_MODEL` in `apps/mobile/.env.server.local`.
-The mobile app uses `EXPO_PUBLIC_FOOD_SCAN_URL`. Rebuild the native client after
-installing dependencies; ML Kit isn't included in Expo Go or supported by the iOS
-simulator. Test on physical phones for detection quality, alignment, memory,
-shutter latency, and sustained sampling rate before shipping.
+All server routes now live in `apps/api`; the mobile app contains no server.
+See [API setup](../api/README.md) for local secrets, deployment and endpoints.
+`pnpm dev` starts Expo and a local Worker; `pnpm dev:web` opens the browser preview.
+Set `EXPO_PUBLIC_API_URL` to the deployed Worker origin to call it from any device.
+Set `CIBO_REMOTE_API=1` when starting Expo to skip the local Worker.
 
-Browser capture uses `FoodCameraView.web.tsx`: an inline, muted, `playsInline`
-video stream from `getUserMedia`, with local canvas capture for the custom shutter.
-It never uses a file input with `capture` or opens the device camera app. Browser
-access requires HTTPS or localhost and camera permission. Streams stop on retake
-preview, backgrounding, and leaving the camera tab. The shared app shell keeps
-the bottom navigation mounted above the camera view.
+Native Mapbox still requires a development build. After dependency changes run
+`pnpm --filter mobile exec expo prebuild --platform ios`, then `pnpm ios` and
+select your simulator. The removed ML Kit pods no longer exclude simulator ARM64.
 
-### Consolidated project
+### Cibo Lens
 
-This directory contains the iOS, Android, browser, and API application.
-`pnpm dev` starts Expo and the API together; `pnpm dev:web` selects the browser
-preview of this same app. The Restaurants screen includes Saved, cuisine filters,
-A–Z/discovery sorting, and Surprise me. Startup imports legacy browser bookmarks
-into the journal before storage hydration, once per browser origin.
+Open **+ → Lens** to photograph or upload a restaurant menu. The photo-first scanner
+uses Groq vision to read up to 24 dishes and normalized text boxes, then verifies
+catalog candidates in a second, batched request. Tap an anchored marker or a list
+row for a catalog photo, origin, description, cuisine discovery count, and collection
+action. A scan does not automatically collect dishes; **I tried this** adds one to
+the existing Food Dex. The sample menu works without a server and cannot add demo
+entries to the collection.
 
-`server/routes` preserves `/api/food-scan` and `/api/food-recommendations`;
-`server/http.ts` adapts Node HTTP streams to Web Request/Response handlers,
-including request cancellation. `server/app.ts` routes APIs and serves the
-exported `dist` app. `server/tsconfig.json` checks Node code separately from Expo
-so server-only code and credentials aren't bundled into the client.
+The Worker’s `GROQ_API_KEY` and app’s `EXPO_PUBLIC_API_URL` configuration are reused.
+Optionally set `EXPO_PUBLIC_MENU_SCAN_URL` to a separate endpoint and
+`GROQ_MENU_SCAN_MODEL` on the server to a vision-capable model (default:
+`qwen/qwen3.8-27b`). Restart Expo after changing public environment variables.
+For local development, physical devices need the computer's LAN address; deployed HTTPS Workers work on any network.
 
-Run `pnpm build` then `pnpm start` from the repository root to serve the browser
-build and APIs on one origin. Server environment lives in `.env.server.local`,
-using `.env.server.example` as a template. App environment lives in `.env.local`.
+Dietary flags use the profile's Vegetarian, Vegan, or Pescatarian preference.
+They indicate possible ingredients, never allergy safety. A rare find means an
+uncollected dish from a cuisine with fewer than two discoveries. Unknown matches
+remain readable discoveries without a canonical badge or fabricated catalog photo.
+
+This first release analyzes a single compressed capture, not video frames. Boxes
+are model estimates anchored to the frozen image, with a list alternative for
+missing or imprecise positions. Live tracking, on-device ML Kit OCR, embeddings,
+and Skia rendering are not part of this photo-first implementation. The camera
+uses the existing Expo dependency; no new native modules are required.
+
+### Cibo Quests
+
+Open the flag on Explore, or **Continue my cuisine quests** in Food Dex. Japanese,
+Italian, and Korean each have four chapters of five quests. Quests include dish
+quizzes, Food Dex discovery (camera or manual entry), learning cards, mystery
+questions, exploration, chests, and three-question chapter finales. Discovery and
+exploration always offer an at-home route with the same XP. Learning cards and
+chapter stamps belong to the quest passport; they do not fabricate Food Dex entries.
+
+Each cuisine keeps its own XP and level (200 XP per level). Quest progress, the
+selected cuisine, personalized assignments, and bonus check-ins save locally under
+`cibo.quests.v1`. Quest progress does not currently sync to Supabase. The original
+12 restaurant challenges remain available as optional bonus adventures. Visits are
+explicitly self-reported, each restaurant counts once per adventure, and rewards
+can be claimed once. Weekly/monthly periods run for 7/30 days from joining.
+
+`POST /api/quest-personalization` uses the existing server-side `GROQ_API_KEY` and
+`GROQ_RECOMMENDATION_MODEL` setting. Optionally set `EXPO_PUBLIC_QUEST_URL`; otherwise
+it uses the food scan server's origin. The AI selects only curated catalog dish IDs
+and known restaurant IDs, prefers dishes missing from Food Dex, and uses the
+profile's diet and neighbourhood plus the chosen at-home/exploration preference.
+Dietary preferences enforce learning objectives without requiring a purchase or
+meal. Menus, dietary suitability, restaurant availability, and prices are not
+verified by the picker. An unavailable AI service leaves the full curated journey
+playable. A personalized quest awards 60 XP once per cuisine.
+
+
+### Haptics and game feedback
+
+`src/lib/sensory.ts` owns feedback events. Use `playFeedback(name)` for one
+coordinated sound and haptic response; shared `FeedbackPressable` controls provide
+quiet click/selection feedback automatically. Avoid pairing a feedback event with
+an extra Expo vibration.
+
+Basic taps, selections, confirmations and errors use `expo-haptics`. Android uses
+`performAndroidHapticsAsync`; iOS and supported browsers use Expo's impact,
+selection and notification methods. Hardware and OS settings can suppress haptics,
+including while the iOS camera is active.
+
+Native game effects use `react-native-pulsar`: reward → CoinDrop, chest → Unfurl,
+new cuisine → Pip, badge → Fanfare, level up → Ascent, discovery → Sonar,
+and capture → CameraShutter. Presets are preloaded, with generated sound enabled.
+The stable Pulsar 1.7 API does not support custom synchronized audio files yet.
+Web, Expo Go and clients without Pulsar use Expo haptics plus bundled WAVs.
+
+After installing dependencies, rebuild the native development client with
+`pnpm ios` or `pnpm android` from the repository root. Reloading JavaScript alone
+cannot add Pulsar or Worklets to an existing native client. Worklets is aligned
+with Expo SDK 57's bundled version; Expo's Babel preset enables its plugin.

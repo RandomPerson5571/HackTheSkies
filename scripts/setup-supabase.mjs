@@ -91,7 +91,12 @@ try {
   await sql.begin(async (tx) => {
     await tx`create schema if not exists cibo_private`;
     await tx`create table if not exists cibo_private.migrations (id text primary key, applied_at timestamptz not null default now())`;
-    for (const id of ["202610170001_cibo", "202610170002_device_keys"]) {
+    for (const id of [
+      "202610170001_cibo",
+      "202610170002_device_keys",
+      "202610180001_restaurant_map_viewport",
+      "202610180002_favorites_pagination",
+    ]) {
       const applied =
         await tx`select id from cibo_private.migrations where id = ${id}`;
       if (!applied.length) {

@@ -27,6 +27,12 @@
       "@rnmapbox/maps",
       "expo-dev-client",
       [
+        "react-native-nfc-manager",
+        {
+          "nfcPermission": "Allow Cibo to scan NFC food tags."
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "cameraPermission": "Allow Cibo to photograph food for your Food Dex.",
@@ -41,7 +47,9 @@
           "recordAudioAndroid": false,
           "barcodeScannerEnabled": false
         }
-      ]
+      ],
+      "expo-audio",
+      "expo-video"
     ]
   }
 }

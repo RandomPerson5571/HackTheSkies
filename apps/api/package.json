@@ -1,0 +1,18 @@
+{
+  "name": "@cibo/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --ip 0.0.0.0 --port 8787",
+    "deploy": "wrangler deploy",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "types": "wrangler types",
+    "check-types": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "26.4.1",
+    "typescript": "~6.0.3",
+    "wrangler": "^4.125.0"
+  }
+}

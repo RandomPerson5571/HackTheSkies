@@ -100,6 +100,9 @@ export function ProfileScreen({
   visited = [],
   onOpenSettings,
   onOpenDex,
+  onOpenShop,
+  pointsBalance = 0,
+  pointsReady = false,
 }: {
   saved?: string[];
   visited?: string[];
@@ -113,12 +116,16 @@ export function ProfileScreen({
   storageError: string;
   onOpenSettings?: () => void;
   onOpenDex?: () => void;
+  onOpenShop?: () => void;
+  pointsBalance?: number;
+  pointsReady?: boolean;
 }) {
   const { entries } = useFoodDex();
   const { state: quests, error: questError } = useQuests();
   const [customizing, setCustomizing] = useState(false);
   const [avatarPickerVisible, setAvatarPickerVisible] = useState(false);
   const [showAllBadges, setShowAllBadges] = useState(false);
+  const [pointsInfoVisible, setPointsInfoVisible] = useState(false);
   useMenuSound(customizing);
   useMenuSound(avatarPickerVisible);
   useMenuSound(showAllBadges);
@@ -206,8 +213,8 @@ export function ProfileScreen({
           {earned
             ? pinned
               ? "Featured"
-              : "Earned Â· Tap to feature"
-            : `Locked Â· ${Math.min(progress.current, progress.target)}/${progress.target}`}
+              : "Earned: Tap to feature"
+            : `Locked: ${Math.min(progress.current, progress.target)}/${progress.target}`}
         </Text>
       </Pressable>
     );
@@ -234,9 +241,13 @@ export function ProfileScreen({
       ]}
       keyboardShouldPersistTaps="handled"
     >
-      <View style={styles.profileHeader}>
+      <View style={styles.pageHeader}>
         <View style={styles.headerTopRow}>
           <CiboLogo />
+          <View style={styles.profileHeading}>
+            <Text style={styles.eyebrow}>YOUR PERSONAL FOOD JOURNEY</Text>
+            <Text style={styles.profileTitle}>Your Profile</Text>
+          </View>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Open settings"
@@ -249,11 +260,9 @@ export function ProfileScreen({
             <Ionicons name="settings-outline" color={colors.ink} size={20} />
           </Pressable>
         </View>
+      </View>
 
-        <View>
-          <Text style={styles.eyebrow}>MY PROFILE</Text>
-          <Text style={styles.profileTitle}>Your Profile</Text>
-        </View>
+      <View style={styles.profileHeader}>
         <View style={styles.identityRow}>
           <View style={styles.avatarFrame}>
             <Pressable
@@ -308,6 +317,24 @@ export function ProfileScreen({
         )}
 
         <View style={styles.xpBlock}>
+          <View style={styles.lifetimeLabelRow}>
+            <Text style={styles.eyebrow}>LIFETIME XP</Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="About lifetime XP and points"
+              onPress={() => setPointsInfoVisible(true)}
+              style={({ pressed }) => [
+                styles.infoButton,
+                pressed && styles.pressed,
+              ]}
+            >
+              <Ionicons
+                name="information-circle-outline"
+                size={20}
+                color={colors.muted}
+              />
+            </Pressable>
+          </View>
           <View style={styles.xpRow}>
             <Text style={styles.xpText}>
               {xp.current.toLocaleString()} / {xp.needed.toLocaleString()} XP
@@ -326,7 +353,7 @@ export function ProfileScreen({
             <View style={[styles.xpFill, { width: `${xpPercent}%` }]} />
           </View>
           <Text style={styles.copy}>
-            {totalXp.toLocaleString()} total XP ·{" "}
+            {totalXp.toLocaleString()} lifetime XP ·{" "}
             {nextRank
               ? `${((nextRank.level - 1) * 200 - totalXp).toLocaleString()} XP to ${nextRank.name}`
               : "Highest rank unlocked"}
@@ -345,6 +372,26 @@ export function ProfileScreen({
             </View>
           ))}
         </View>
+      </View>
+
+      <View style={styles.pointsCard}>
+        <View style={styles.flex}>
+          <Text style={styles.eyebrow}>SPENDABLE POINTS</Text>
+          <Text style={styles.pointsBalance}>
+            {pointsReady ? pointsBalance.toLocaleString() : "…"}
+          </Text>
+          <Text style={styles.hint}>
+            Earn 1 point for every XP, including quest XP. Spend points on shop offers.
+          </Text>
+        </View>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onOpenShop}
+          style={({ pressed }) => [styles.shopButton, pressed && styles.pressed]}
+        >
+          <Text style={styles.shopButtonText}>Visit shop</Text>
+          <Ionicons name="arrow-forward" size={16} color={colors.white} />
+        </Pressable>
       </View>
 
       <Pressable
@@ -561,6 +608,48 @@ export function ProfileScreen({
         </View>
       </View>
     </Modal>
+    <Modal
+      visible={pointsInfoVisible}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setPointsInfoVisible(false)}
+    >
+      <View style={styles.avatarModalOverlay}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Close points information"
+          onPress={() => setPointsInfoVisible(false)}
+          style={StyleSheet.absoluteFill}
+        />
+        <View style={styles.avatarModal}>
+          <View style={styles.avatarModalHeader}>
+            <View style={styles.flex}>
+              <Text style={styles.sectionTitle}>Points and lifetime XP</Text>
+              <Text style={styles.hint}>
+                Every XP you earn, including quest XP, adds 1 spendable point.
+                Lifetime XP determines your level, rank, and trophies. Spending
+                points reduces your current balance, never your lifetime XP.
+              </Text>
+            </View>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Close points information"
+              onPress={() => setPointsInfoVisible(false)}
+              style={styles.avatarModalClose}
+            >
+              <Ionicons name="close" color={colors.ink} size={20} />
+            </Pressable>
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setPointsInfoVisible(false)}
+            style={styles.avatarModalCancel}
+          >
+            <Text style={styles.link}>Got it</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
     </>
   );
 }
@@ -571,7 +660,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 18,
     width: "100%",
-    maxWidth: 600,
+    maxWidth: 720,
     alignSelf: "center",
   },
   flex: { flex: 1, gap: 4 },
@@ -581,14 +670,42 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.border,
-    gap: 16,
+    gap: 22,
     boxShadow: "0 6px 24px #3D568F12",
   },
+  pageHeader: { paddingHorizontal: 4 },
+  pointsCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    padding: 20,
+    borderRadius: 24,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  pointsBalance: {
+    color: colors.ink,
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: "800",
+  },
+  shopButton: {
+    minHeight: 44,
+    paddingHorizontal: 14,
+    borderRadius: 22,
+    backgroundColor: colors.accent,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 7,
+  },
+  shopButtonText: { color: colors.white, fontSize: 13, fontWeight: "700" },
   headerTopRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  profileHeading: { flex: 1, marginLeft: 14 },
   eyebrow: {
     color: colors.muted,
     fontSize: 10,
@@ -693,6 +810,17 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   xpBlock: { gap: 8 },
+  lifetimeLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  infoButton: {
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   xpRow: {
     flexDirection: "row",
     justifyContent: "space-between",
